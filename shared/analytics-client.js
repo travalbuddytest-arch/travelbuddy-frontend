@@ -14,7 +14,7 @@
 (function () {
   'use strict';
 
-  var API_BASE = `${window.location.origin}/api/analytics`;
+  var API_BASE = `${APP_CONFIG.API_BASE_URL}/api/analytics`;
   var pageLoadedAt = Date.now();
   var reportedExit = false;
 
@@ -92,13 +92,13 @@
   // it connects to the moment it disconnects (tab close / navigation) —
   // see socket/visitorSocket.js. No events need to be sent after connecting;
   // presence itself IS the signal.
-  var SOCKET_ORIGIN = `${window.location.origin}`;
+  var SOCKET_ORIGIN = APP_CONFIG.SOCKET_URL;
 
   function connectPresenceSocket() {
     if (!window.io) return;
     try {
       var ctx = collectContext();
-      var socket = window.io(SOCKET_ORIGIN + '/live-visitors', {
+      var socket = window.io(APP_CONFIG.SOCKET_URL + '/live-visitors', {
         withCredentials: true,
         reconnection: true,
         reconnectionAttempts: Infinity,
@@ -121,7 +121,7 @@
     // (login/register/home/etc) don't need an extra <script> tag added.
     try {
       var s = document.createElement('script');
-      s.src = SOCKET_ORIGIN + '/socket.io/socket.io.js';
+      s.src = APP_CONFIG.SOCKET_URL + '/socket.io/socket.io.js';
       s.onload = connectPresenceSocket;
       s.onerror = function () {}; // e.g. backend not running — silently skip presence tracking
       document.head.appendChild(s);

@@ -3,7 +3,7 @@
 // USERS MANAGEMENT — Full Implementation
 // ══════════════════════════════════════════════
 
-const API_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 const PAGE_SIZE = 20;
 
 /* ── State ─────────────────────────────── */

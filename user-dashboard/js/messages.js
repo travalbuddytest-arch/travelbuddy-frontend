@@ -354,7 +354,7 @@
     // page itself had already loaded fine over REST. Sending the same
     // Bearer token the REST calls use keeps both in sync.
     const token = getAuthToken();
-    socket = window.io(API_ORIGIN, {
+    socket = window.io(APP_CONFIG.SOCKET_URL, {
       withCredentials: true,
       auth: token ? { token } : {},
       reconnection: true,

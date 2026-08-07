@@ -1,6 +1,6 @@
 // operations.js — Live Operations page with Socket.IO real-time updates
-const API_ORIGIN = `${window.location.origin}`;
-const SOCKET_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
+const SOCKET_ORIGIN = APP_CONFIG.SOCKET_URL;
 
 // ── API helpers ──────────────────────────────
 async function apiGet(url) {
@@ -662,6 +662,7 @@ function connectSocket() {
 
   socket = io(SOCKET_ORIGIN + '/admin', {
     auth: { token },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
   });
 

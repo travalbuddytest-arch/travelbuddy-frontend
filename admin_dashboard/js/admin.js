@@ -106,7 +106,7 @@ const searchData = [
 ];
 
 /* ---------- API Helpers ---------- */
-const API_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
   const token = localStorage.getItem('admin_token');
@@ -1346,7 +1346,7 @@ function initAdminLiveSocket() {
   const token = localStorage.getItem('admin_token');
   if (!token) return;
 
-  const liveSocket = io(`${window.location.origin}/admin`, {
+  const liveSocket = io(`${APP_CONFIG.SOCKET_URL}/admin`, {
     auth: { token },
     transports: ['websocket', 'polling'],
   });

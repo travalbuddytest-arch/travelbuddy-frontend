@@ -3,7 +3,7 @@
 
   // The address of your running backend server (Part B of the guide).
   // Change this later when you deploy the backend online (e.g. to your Render URL).
-  const API_BASE = `${window.location.origin}/api/auth`;
+  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/auth`;
 
   const panels = { details: document.getElementById('panel2'), verify: document.getElementById('panel3') };
   const toast = document.getElementById('toast');

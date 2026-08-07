@@ -3,7 +3,7 @@
 
   const toast = document.getElementById('toast');
   let toastTimer;
-  const API_ORIGIN = `${window.location.origin}`;
+  const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
   function showToast(message, type) {
     if (!toast) return;
@@ -476,7 +476,7 @@
     // anywhere except messages/notifications. Sending the same Bearer token
     // the REST calls use keeps the socket reliably authenticated everywhere.
     const token = getAuthToken();
-    const socket = window.io(API_ORIGIN, {
+    const socket = window.io(APP_CONFIG.SOCKET_URL, {
       withCredentials: true,
       auth: token ? { token } : {},
       reconnection: true,

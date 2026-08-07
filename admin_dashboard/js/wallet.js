@@ -1,4 +1,4 @@
-const API_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
   const token = localStorage.getItem('admin_token');

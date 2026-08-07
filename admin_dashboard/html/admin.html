@@ -12,9 +12,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Socket.IO Client for Live Operations - served by our own backend
-         (socket.io v4 auto-serves this at /socket.io/socket.io.js), not a
+         Socket.IO is loaded from the production backend, not a
          CDN. Avoids failures on networks that block external CDNs. -->
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="../../shared/config.js?v=1"></script>
+    <script src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
 
     <!-- Admin Styles -->
     <link rel="stylesheet" href="../css/admin.css">

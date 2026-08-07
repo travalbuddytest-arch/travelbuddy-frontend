@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = `${window.TravelBuddy.API_ORIGIN}/api/postparcel`;
+  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/postparcel`;
   const { authHeaders, escapeHTML, setButtonLoading } = window.TravelBuddy;
 
   const loading = document.getElementById('trackLoading');

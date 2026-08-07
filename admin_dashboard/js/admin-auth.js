@@ -1,17 +1,15 @@
 // Verifies admin session on dashboard pages and fills admin info in sidebar
 //
-// BUG FIX: this used to fetch('/api/admin/profile') with a relative URL.
 // The admin dashboard is served as static files (e.g. by VS Code Live
 // Server on port 5501), which is a completely different origin from the
 // backend API (port 4000). A relative fetch resolves against the page's
-// OWN origin, so it was silently hitting 127.0.0.1:5501/api/admin/profile
 // instead of the real backend - which doesn't exist there and 404s. That
 // made ensureAdminProfile() think the session was invalid, clear the
 // stored token, and bounce straight back to the login page - even though
 // login itself had just succeeded. Pointing at the real backend origin
 // (same pattern as Frontend/user-dashboard/js/common.js's API_ORIGIN) fixes
 // this.
-const API_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
   const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');

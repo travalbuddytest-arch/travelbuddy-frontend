@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = `${window.TravelBuddy.API_ORIGIN}/api/travelroutes`;
+  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/travelroutes`;
   const { authHeaders, escapeHTML, formatDate, setButtonLoading } = window.TravelBuddy;
 
   const routePostForm = document.getElementById('postRouteForm');

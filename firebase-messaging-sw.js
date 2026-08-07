@@ -6,7 +6,6 @@
 // notification banner).
 //
 // IMPORTANT: this file must be served from the site root (e.g.
-// http://localhost:5500/firebase-messaging-sw.js), because a service
 // worker's scope defaults to its own directory and everything below it —
 // if it were served from a subfolder it would only cover pages in that
 // subfolder. If your static server's root isn't the Frontend/ folder,
@@ -31,7 +30,7 @@ if (config.apiKey) {
     const body = payload.notification?.body || '';
     self.registration.showNotification(title, {
       body,
-      icon: '/images/logo.png',
+      icon: '/images/logo.jpeg',
       data: payload.data || {},
     });
   });

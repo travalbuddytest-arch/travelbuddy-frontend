@@ -828,7 +828,7 @@ if (smartMatchingSection) {
     // token (the same one login.js and common.js already save) fixes it.
     // prefer admin token when present so the /api/auth/me check validates the right session
     const homeNavToken = localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('travelBuddyToken');
-    fetch(`${window.location.origin}/api/auth/me`, {
+    fetch(`${APP_CONFIG.API_BASE_URL}/api/auth/me`, {
         headers: homeNavToken ? { Authorization: `Bearer ${homeNavToken}` } : {},
     })
         .then(async response => {
@@ -864,7 +864,7 @@ if (smartMatchingSection) {
 // Home auth routing + dashboard-matched profile modal
 // =========================
 (function initHomeAuthenticatedExperience() {
-    const API_ORIGIN = `${window.location.origin}`;
+    const API_ORIGIN = APP_CONFIG.API_BASE_URL;
     
     const isUserLoggedIn = Boolean(localStorage.getItem('travelBuddyUser'));
     const isAdminLoggedIn = Boolean(localStorage.getItem('travelBuddyAdmin'));

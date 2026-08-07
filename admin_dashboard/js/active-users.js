@@ -6,7 +6,7 @@
 // messaging-socket heartbeat) — no new tracking infra required.
 // ══════════════════════════════════════════════
 
-const API_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 const PAGE_SIZE = 20;
 const POLL_MS = 20000; // refresh live data every 20s while this page is open
 

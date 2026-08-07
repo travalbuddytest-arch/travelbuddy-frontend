@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = `${window.location.origin}/api/auth`;
+  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/auth`;
 
   const toast = document.getElementById('toast');
   const backBtn = document.getElementById('backBtn');

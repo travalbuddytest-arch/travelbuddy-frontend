@@ -11,7 +11,7 @@
   'use strict';
 
   const config = window.TravelBuddyFirebaseConfig || {};
-  if (!config.apiKey) return; // shared/firebase-config.js hasn't been filled in — nothing to do.
+  if (!config.apiKey || !config.vapidKey) return;
   if (!('Notification' in window) || !('serviceWorker' in navigator)) return; // unsupported browser.
   if (!window.TravelBuddy) return; // common.js didn't load (e.g. this isn't a dashboard page).
 

@@ -3,7 +3,7 @@
 
   // The address of your running backend server (same one register.js talks to).
   // Update this later when you deploy the backend online.
-  const API_BASE = `${window.location.origin}/api/auth`;
+  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/auth`;
 
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
@@ -338,14 +338,7 @@
   }
 
   async function initializeGoogleLogin() {
-    const firebaseConfig = {
-      apiKey: 'AIzaSyCbqWF04CH3sW2lM26MmhhJF-uwlohGgv8',
-      authDomain: 'travalbuddy.firebaseapp.com',
-      projectId: 'travalbuddy',
-      storageBucket: 'travalbuddy.firebasestorage.app',
-      messagingSenderId: '268106005436',
-      appId: '1:268106005436:web:c6cb7f02046f3f823989b9',
-    };
+    const firebaseConfig = window.TravelBuddyFirebaseConfig || {};
 
     if (!window.firebase) {
       googleBtn.disabled = true;

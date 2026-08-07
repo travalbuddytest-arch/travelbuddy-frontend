@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = `${window.TravelBuddy.API_ORIGIN}/api/postparcel`;
+  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/postparcel`;
   const { authHeaders, escapeHTML, formatDate, setButtonLoading } = window.TravelBuddy;
 
   let myParcelsCache = [];
@@ -305,7 +305,7 @@
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Opening...';
 
     try {
-      const res = await fetch(`${window.TravelBuddy.API_ORIGIN}/api/messages/start`, {
+      const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/messages/start`, {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ parcelId, travelerId }),

@@ -1,5 +1,5 @@
-const API_ORIGIN = `${window.location.origin}`;
-const SOCKET_ORIGIN = `${window.location.origin}`;
+const API_ORIGIN = APP_CONFIG.API_BASE_URL;
+const SOCKET_ORIGIN = APP_CONFIG.SOCKET_URL;
 
 async function apiGet(url) {
   const token = localStorage.getItem('admin_token');
@@ -138,6 +138,7 @@ function connectLiveSocket() {
 
   msgSocket = io(SOCKET_ORIGIN + '/admin', {
     auth: { token },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
   });
 
