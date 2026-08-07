@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support | TravelBuddy</title>
+    <meta name="description" content="Get help with sending parcels, finding travelers, payments, tracking, safety and refunds on TravelBuddy — or chat with Buddy AI and our support team.">
+    <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+
+    <!-- Site design system (buttons, FAQ accordion, route-card motif, Buddy AI chatbot styles) -->
+    <link rel="stylesheet" href="../home/style.css">
+    <link rel="stylesheet" href="support.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../shared/navbar.css">
+    <link rel="stylesheet" href="../shared/footer.css">
+    <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body data-page="support">
+
+<script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+
+<!-- ================= NAVBAR (shared component, see Frontend/shared/navbar.html) ================= -->
+<div id="tbNavbarInclude"></div>
+<script src="../shared/nav-include.js"></script>
+
+<!-- ================= HERO ================= -->
+<section class="sp-hero">
+    <div class="sp-hero-blob sp-hero-blob-a" aria-hidden="true"></div>
+    <div class="sp-hero-blob sp-hero-blob-b" aria-hidden="true"></div>
+
+    <div class="sp-hero-inner">
+        <span class="sp-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> Support is online</span>
+        <h1>How can we help <span class="text-blue">you today?</span></h1>
+        <p>Search the help centre, jump to a topic, or talk to Buddy AI and our team — whichever gets you back to sending or delivering fastest.</p>
+
+        <form class="sp-search" id="spSearchForm" role="search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="spSearchInput" placeholder="Try “track my parcel” or “refund status”…" autocomplete="off">
+            <button type="submit" class="primary-btn">Search</button>
+        </form>
+
+        <div class="sp-chips" id="spChips">
+            <button class="sp-chip" data-cat="parcels"><i class="fa-solid fa-box"></i> Sending a Parcel</button>
+            <button class="sp-chip" data-cat="trips"><i class="fa-solid fa-route"></i> Travelers &amp; Tracking</button>
+            <button class="sp-chip" data-cat="payments"><i class="fa-solid fa-wallet"></i> Payments &amp; Wallet</button>
+            <button class="sp-chip" data-cat="account"><i class="fa-solid fa-user"></i> Account</button>
+            <button class="sp-chip" data-cat="safety"><i class="fa-solid fa-shield-halved"></i> Safety</button>
+            <button class="sp-chip" data-cat="refunds"><i class="fa-solid fa-rotate-left"></i> Refunds</button>
+        </div>
+    </div>
+</section>
+
+<!-- ================= STATS STRIP ================= -->
+<section class="sp-stats-wrap">
+    <div class="sp-stats sp-reveal">
+        <div class="sp-stat">
+            <i class="fa-solid fa-bolt"></i>
+            <div><strong class="sp-count" data-count="4" data-suffix=" min">0 min</strong><span>Average first reply</span></div>
+        </div>
+        <div class="sp-stat">
+            <i class="fa-solid fa-book-open"></i>
+            <div><strong class="sp-count" data-count="60" data-suffix="+">0+</strong><span>Help articles</span></div>
+        </div>
+        <div class="sp-stat">
+            <i class="fa-solid fa-face-smile"></i>
+            <div><strong class="sp-count" data-count="97" data-suffix="%">0%</strong><span>Traveler satisfaction</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= POPULAR TOPICS ================= -->
+<section class="features sp-topics" id="topics">
+    <span class="sp-eyebrow sp-eyebrow-center">Popular topics</span>
+    <h2>Where most questions come from</h2>
+    <div class="cards" id="spTopicsGrid"></div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq-section" id="faq">
+    <div class="faq-container">
+        <div class="faq-heading">
+            <span class="faq-eyebrow">Frequently asked</span>
+            <h2>Answers, sorted by topic</h2>
+            <p>Filter by category or use the search bar above — matching questions surface instantly.</p>
+        </div>
+
+        <div class="sp-tabs" id="spTabs">
+            <button class="sp-tab active" data-cat="all">All topics</button>
+            <button class="sp-tab" data-cat="parcels">Parcels</button>
+            <button class="sp-tab" data-cat="trips">Travelers &amp; Tracking</button>
+            <button class="sp-tab" data-cat="payments">Payments</button>
+            <button class="sp-tab" data-cat="account">Account</button>
+            <button class="sp-tab" data-cat="safety">Safety</button>
+            <button class="sp-tab" data-cat="refunds">Refunds</button>
+        </div>
+
+        <div class="faq-list" id="spFaqList"></div>
+        <div class="sp-faq-empty" id="spFaqEmpty">
+            <i class="fa-solid fa-box-open"></i>
+            <strong>No matches for that search.</strong>
+            <span>Try a different term, or raise a ticket below — we'll route it to the right team.</span>
+        </div>
+    </div>
+</section>
+
+<!-- ================= CONTACT / RAISE A TICKET ================= -->
+<section class="smart-matching" id="spRoute">
+    <div class="smart-matching-inner">
+        <div class="smart-matching-heading">
+            <span class="faq-eyebrow">Still stuck?</span>
+            <h2>Let's get this sorted together</h2>
+            <p>Send us the details and we'll route your ticket to the right team, or use a direct channel on the right.</p>
+        </div>
+
+        <div class="sp-contact-grid">
+            <div class="sp-route-card sp-reveal">
+                <div class="sp-route-row">
+                    <div class="sp-route-point">
+                        <span class="sp-route-icon"><i class="fa-solid fa-user"></i></span>
+                        <h3>You</h3>
+                        <p>Sender or traveler</p>
+                    </div>
+                    <div class="sp-route-line-wrap">
+                        <span class="sp-route-line"><span class="sp-route-progress" id="spRouteProgress"></span></span>
+                        <span class="sp-route-mover" id="spRouteMover"><i class="fa-solid fa-paper-plane"></i></span>
+                    </div>
+                    <div class="sp-route-point">
+                        <span class="sp-route-icon sp-route-icon-alt"><i class="fa-solid fa-headset"></i></span>
+                        <h3>Support</h3>
+                        <p>Real humans, 24/7</p>
+                    </div>
+                </div>
+
+                <form id="spTicketForm" novalidate>
+                    <div class="sp-field-row">
+                        <div class="form-group sp-field" id="fName">
+                            <label for="tfName">Full name</label>
+                            <input type="text" id="tfName" placeholder="Jordan Rivera">
+                            <span class="sp-field-msg"></span>
+                        </div>
+                        <div class="form-group sp-field" id="fEmail">
+                            <label for="tfEmail">Email</label>
+                            <input type="email" id="tfEmail" placeholder="you@example.com">
+                            <span class="sp-field-msg"></span>
+                        </div>
+                    </div>
+                    <div class="sp-field-row">
+                        <div class="form-group sp-field" id="fTopic">
+                            <label for="tfTopic">Topic</label>
+                            <select id="tfTopic">
+                                <option value="">Select a topic…</option>
+                                <option>Sending a Parcel</option>
+                                <option>Travelers &amp; Tracking</option>
+                                <option>Payments &amp; Wallet</option>
+                                <option>Account</option>
+                                <option>Safety &amp; Trust</option>
+                                <option>Refunds</option>
+                                <option>Something else</option>
+                            </select>
+                            <span class="sp-field-msg"></span>
+                        </div>
+                        <div class="form-group sp-field" id="fRef">
+                            <label for="tfRef">Parcel / booking ID <span class="sp-optional">(optional)</span></label>
+                            <input type="text" id="tfRef" placeholder="TB-482910">
+                            <span class="sp-field-msg"></span>
+                        </div>
+                    </div>
+                    <div class="form-group sp-field" id="fMsg">
+                        <label for="tfMsg">What's going on?</label>
+                        <textarea id="tfMsg" placeholder="Tell us what happened and what you'd expect instead…"></textarea>
+                        <span class="sp-field-msg"></span>
+                    </div>
+
+                    <button type="submit" class="primary-btn sp-submit-btn" id="spSubmitBtn">
+                        <span class="sp-btn-text">Send to support <i class="fa-solid fa-arrow-right arrow-icon"></i></span>
+                        <span class="sp-spinner"></span>
+                    </button>
+
+                    <div class="sp-success" id="spSuccess">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Ticket <b id="spTicketNum"></b> logged — check your inbox for a copy. Average reply time is 4 minutes.</span>
+                    </div>
+                </form>
+            </div>
+
+            <aside class="sp-channels sp-reveal">
+                <span class="sp-channels-title">Direct channels</span>
+
+                <button type="button" class="sp-channel" id="spLiveChatBtn">
+                    <span class="sp-channel-icon"><i class="fa-solid fa-comment-dots"></i></span>
+                    <span class="sp-channel-text"><b>Chat with Buddy AI</b><small>Instant answers, human handoff anytime</small></span>
+                </button>
+
+                <a class="sp-channel" id="spEmailChannel" href="mailto:support@travelbuddy.com">
+                    <span class="sp-channel-icon"><i class="fa-solid fa-envelope"></i></span>
+                    <span class="sp-channel-text"><b>support@travelbuddy.com</b><small>Click to copy</small></span>
+                </a>
+
+                <a class="sp-channel" href="tel:+18005550142">
+                    <span class="sp-channel-icon"><i class="fa-solid fa-phone"></i></span>
+                    <span class="sp-channel-text"><b>+1 (800) 555-0142</b><small>Mon–Sun, 24/7</small></span>
+                </a>
+
+                <div class="sp-channel-note">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <p>Never share your delivery OTP with support agents — we'll never ask for it.</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FOOTER (shared component, see Frontend/shared/footer.html) ================= -->
+<div id="tbFooterInclude"></div>
+<script>window.TBInclude.injectFooter();</script>
+
+<!-- ================= BUDDY AI SUPPORT ASSISTANT ================= -->
+<div class="buddy-chatbot" id="buddyChatbot">
+    <button class="buddy-launcher" id="buddyLauncher" type="button"
+        aria-label="Open Buddy AI assistant" aria-expanded="false" aria-controls="buddyChatPanel">
+        <span class="buddy-launcher-pulse" aria-hidden="true"></span>
+        <span class="buddy-open-icon buddy-ai-mark" aria-hidden="true">
+            <span class="buddy-ai-core"><i class="fa-solid fa-headset"></i></span>
+            <span class="buddy-ai-orbit"></span>
+        </span>
+        <i class="fa-solid fa-xmark buddy-close-icon" aria-hidden="true"></i>
+        <span class="buddy-notification" id="buddyNotification">1</span>
+    </button>
+
+    <section class="buddy-panel" id="buddyChatPanel" aria-label="Buddy AI support assistant" aria-hidden="true">
+        <header class="buddy-header">
+            <div class="buddy-avatar" aria-hidden="true">
+                <i class="fa-solid fa-headset"></i>
+                <span class="buddy-online-dot"></span>
+            </div>
+            <div class="buddy-header-copy">
+                <h3>Buddy AI — Support</h3>
+                <p><span class="buddy-status-dot"></span> Online • TravelBuddy Support Assistant</p>
+            </div>
+            <button class="buddy-minimize" id="buddyMinimize" type="button" aria-label="Minimize chat">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+        </header>
+
+        <div class="buddy-messages" id="buddyMessages" role="log" aria-live="polite">
+            <div class="buddy-message buddy-bot-message">
+                <div class="buddy-message-avatar"><i class="fa-solid fa-headset"></i></div>
+                <div class="buddy-bubble">
+                    <p>Hi 👋 I'm <strong>Buddy AI</strong>, your TravelBuddy support assistant. Ask me about a parcel, payment, tracking, refund, or safety issue — or ask to speak with a human agent.</p>
+                    <span class="buddy-time">Now</span>
+                </div>
+            </div>
+
+            <div class="buddy-quick-actions" id="buddyQuickActions">
+                <button type="button" data-buddy-action="track"><i class="fa-solid fa-location-dot"></i> Track my parcel</button>
+                <button type="button" data-buddy-action="refund"><i class="fa-solid fa-rotate-left"></i> Refund status</button>
+                <button type="button" data-buddy-action="payment"><i class="fa-solid fa-wallet"></i> Payment issue</button>
+                <button type="button" data-buddy-action="agent"><i class="fa-solid fa-headset"></i> Talk to a human</button>
+            </div>
+        </div>
+
+        <div class="buddy-typing" id="buddyTyping" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </div>
+
+        <form class="buddy-input-area" id="buddyChatForm">
+            <label class="sr-only" for="buddyInput">Ask Buddy AI a question</label>
+            <input id="buddyInput" type="text" placeholder="Ask a support question…" autocomplete="off" maxlength="300">
+            <button type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+
+        <p class="buddy-powered">TravelBuddy smart assistant</p>
+    </section>
+</div>
+
+<div class="sp-toast" id="spToast"></div>
+
+<script src="../shared/nav-basic-behavior.js"></script>
+<script src="support.js"></script>
+<script src="../shared/site-banner.js?v=2"></script>
+</body>
+</html>

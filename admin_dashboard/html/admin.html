@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TravelBuddy Admin</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Socket.IO Client for Live Operations - served by our own backend
+         (socket.io v4 auto-serves this at /socket.io/socket.io.js), not a
+         CDN. Avoids failures on networks that block external CDNs. -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Admin Styles -->
+    <link rel="stylesheet" href="../css/admin.css">
+    <!-- Global animation layer: adds motion/entrance/hover effects across
+         the whole admin dashboard, including every lazy-loaded page. -->
+    <link rel="stylesheet" href="../css/animations.css">
+    <meta name="robots" content="noindex">
+</head>
+
+<body>
+    <!-- Overlay for Mobile Navigation -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside id="side">
+        <a class="brand" href="../../home/index.html" title="Back to TravelBuddy homepage">
+            <img src="../images/logo.jpeg" alt="TravelBuddy logo" class="brand-logo">
+            <div>
+                <img src="../images/name.png" alt="TravelBuddy wordmark" class="brand-wordmark">
+                <small>Admin Control Center</small>
+            </div>
+        </a>
+
+        <nav>
+            <label>CONTROL</label>
+            <button class="active" data-page="command"><i class="fa-solid fa-grid-2"></i>Command Center</button>
+            <button data-page="operations"><i class="fa-solid fa-satellite-dish"></i>Live Operations <em id="opsSidebarBadge">—</em></button>
+            <button data-page="parcels"><i class="fa-solid fa-box"></i>Parcels</button>
+
+            <label>MANAGEMENT</label>
+            <button data-page="users"><i class="fa-solid fa-users"></i>Users</button>
+            <button data-page="active-users"><i class="fa-solid fa-user-clock"></i>Active Users</button>
+            <button data-page="cancellations"><i class="fa-solid fa-truck-ramp-box"></i>Parcel Outcomes</button>
+            <button data-page="wallet"><i class="fa-solid fa-wallet"></i>Wallet & Payments</button>
+            <button data-page="messages"><i class="fa-solid fa-comments"></i>Users Activity</button>
+
+            <label>INSIGHTS</label>
+            <button data-page="analytics"><i class="fa-solid fa-chart-line"></i>Analytics</button>
+            <button data-page="system"><i class="fa-solid fa-heart-pulse"></i>System Health</button>
+        </nav>
+
+        <div class="admin" id="adminChip">
+            <span>AK</span>
+            <div>
+                <b>Admin Kumar</b>
+                <small>Super Admin</small>
+            </div>
+            <i class="fa-solid fa-ellipsis"></i>
+
+            <div class="admin-menu" id="adminMenu">
+                <button type="button" id="adminProfileBtn"><i class="fa-solid fa-user"></i><span>My Profile</span></button>
+                <button type="button" id="adminSettingsBtn"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+                <button type="button" id="adminLogoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <header>
+            <div class="title">
+                <button id="menu"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h1 id="title">Command Center</h1>
+                    <p id="sub">Live overview of your TravelBuddy platform</p>
+                </div>
+            </div>
+
+            <div class="tools">
+                <button class="search" id="openSearch"><i class="fa-solid fa-magnifying-glass"></i> Search user, parcel, dispute... <kbd>⌘ K</kbd></button>
+                <div class="bell-wrap" id="bellWrap">
+                <button class="bell" id="bellBtn" type="button" aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <b id="bellDot" hidden></b>
+                </button>
+                <div class="bell-menu" id="bellMenu">
+                    <div class="bell-menu-head">
+                        <span>Notifications</span>
+                        <button type="button" id="bellClearBtn">Clear all</button>
+                    </div>
+                    <div class="bell-menu-list" id="bellMenuList">
+                        <div class="bell-empty">You're all caught up.</div>
+                    </div>
+                </div>
+            </div>
+                <span class="live"><i></i>System Live</span>
+            </div>
+        </header>
+
+        <!-- Pages are lazy-loaded from ./pages/{id}.html -->
+        <section class="page active" id="command" data-loaded="false"></section>
+        <section class="page" id="operations" data-loaded="false"></section>
+        <section class="page" id="parcels" data-loaded="false"></section>
+        <section class="page" id="users" data-loaded="false"></section>
+        <section class="page" id="active-users" data-loaded="false"></section>
+        <section class="page" id="cancellations" data-loaded="false"></section>
+        <section class="page" id="wallet" data-loaded="false"></section>
+        <section class="page" id="messages" data-loaded="false"></section>
+        <section class="page" id="analytics" data-loaded="false"></section>
+        <section class="page" id="system" data-loaded="false"></section>
+    </main>
+
+    <!-- Search Modal -->
+    <div class="modal" id="modal">
+        <div class="searchbox">
+            <div>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="query" placeholder="Search TB-82921, email, phone, DSP-0012...">
+                <button id="close">ESC</button>
+            </div>
+            <section id="results"></section>
+        </div>
+    </div>
+
+    <!-- Admin Profile / Settings Modal -->
+    <div class="modal" id="adminProfileModal">
+        <div class="admin-profile-box">
+            <button class="admin-profile-close" id="adminProfileClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            <div class="admin-profile-head">
+                <div class="admin-profile-avatar" id="adminProfileAvatar">AD</div>
+                <div>
+                    <h2>My Profile</h2>
+                    <p id="adminProfileEmailText">Signed in admin</p>
+                </div>
+            </div>
+            <div class="admin-profile-tabs">
+                <button class="admin-profile-tab active" type="button" data-admin-tab="photo">Photo</button>
+                <button class="admin-profile-tab" type="button" data-admin-tab="details">Details</button>
+                <button class="admin-profile-tab" type="button" data-admin-tab="security">Security</button>
+            </div>
+            <section class="admin-profile-panel" id="adminPhotoPanel">
+                <div class="admin-photo-focus">
+                    <div class="admin-profile-avatar admin-profile-avatar-large" id="adminPhotoPreview">AD</div>
+                    <div class="admin-photo-actions">
+                        <label class="admin-photo-btn" for="adminProfilePhotoInput"><i class="fa-solid fa-camera"></i><span id="adminPhotoActionText">Add Photo</span></label>
+                        <input id="adminProfilePhotoInput" type="file" accept="image/*" hidden>
+                        <button type="button" class="admin-photo-remove" id="adminRemovePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button>
+                    </div>
+                    <p class="admin-photo-help">Your photo is saved to your admin account and shown across the dashboard.</p>
+                </div>
+            </section>
+            <section class="admin-profile-panel hidden" id="adminDetailsPanel">
+                <form class="admin-profile-form" id="adminProfileForm">
+                    <div class="admin-profile-row">
+                        <div class="admin-profile-field"><label for="adminFirstName">First Name</label><input id="adminFirstName" required></div>
+                        <div class="admin-profile-field"><label for="adminLastName">Last Name</label><input id="adminLastName" required></div>
+                    </div>
+                    <div class="admin-profile-field"><label for="adminProfileEmailInput">Email</label><input id="adminProfileEmailInput" type="email" disabled></div>
+                    <div class="admin-profile-field"><label for="adminProfileRole">Role</label><input id="adminProfileRole" disabled></div>
+                    <button class="admin-profile-save" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+                </form>
+            </section>
+            <section class="admin-profile-panel hidden" id="adminSecurityPanel">
+                <form class="admin-profile-form" id="adminPasswordForm">
+                    <div class="admin-profile-field"><label for="adminCurrentPassword">Current Password</label><input id="adminCurrentPassword" type="password" autocomplete="current-password"></div>
+                    <div class="admin-profile-field"><label for="adminNewPassword">New Password</label><input id="adminNewPassword" type="password" autocomplete="new-password"></div>
+                    <button class="admin-profile-save" type="submit"><i class="fa-solid fa-key"></i> Change Password</button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- User Detail Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="userDrawer">
+        <div class="drawer-header">
+            <h2>User Details</h2>
+            <button id="drawerClose"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="drawer-body" id="drawerBody">
+            <div class="drawer-loading">Loading user details...</div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        Demo action opened
+    </div>
+
+    <script type="module" src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+    <!-- Small, safe click-ripple effect used across the whole dashboard -->
+    <script src="../js/animations.js"></script>
+</body>
+
+</html>

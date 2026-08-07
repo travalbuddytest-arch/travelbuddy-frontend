@@ -1,0 +1,104 @@
+<link rel="stylesheet" href="../css/wallet.css">
+<section id="wallet-panel" class="panel">
+
+  <div class="wl-page-head">
+    <div>
+      <h2 class="wl-page-title">Wallet &amp; Payments</h2>
+      <p class="wl-page-sub">Platform-wide ledger — every top-up, hold, earning, refund and commission.</p>
+    </div>
+  </div>
+
+  <div class="wallet-summary" id="walletSummary"></div>
+
+  <!-- ═══ RECENT ACTIVITY — last 5 transactions across ALL users, site-wide ═══ -->
+  <div class="wallet-recent" id="walletRecent">
+    <div class="wallet-recent-head">
+      <h3><span class="wr-live-dot"></span> Recent Activity</h3>
+      <span class="wallet-recent-sub">Last 5 transactions across all users</span>
+    </div>
+    <div class="wallet-recent-list" id="walletRecentList"></div>
+  </div>
+
+  <!-- ═══ LEDGER ═══ -->
+  <div class="wl-ledger-head">
+    <h3 class="wl-section-title">Transaction Ledger</h3>
+    <div class="wallet-toolbar">
+      <div class="wl-search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="wlSearch" class="wl-search" placeholder="Search by user, reference or order ID...">
+      </div>
+      <button class="wl-btn wl-btn-icon" id="wlFilterToggle" title="Toggle filters" aria-label="Toggle filters">
+        <i class="fa-solid fa-sliders"></i> Filters <span class="wl-filter-count hidden" id="wlFilterCount">0</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="wl-filters hidden" id="wlFilters">
+    <div class="wl-filter-row">
+      <div class="wl-filter-field">
+        <label>Type</label>
+        <select id="wlFilterType">
+          <option value="all">All types</option>
+          <option value="topup">Top-up</option>
+          <option value="order_hold">Order Hold</option>
+          <option value="order_refund">Order Refund</option>
+          <option value="traveler_earning">Traveler Earning</option>
+          <option value="platform_commission">Platform Commission</option>
+          <option value="cancellation_fee">Cancellation Fee</option>
+          <option value="cancellation_compensation">Cancellation Compensation</option>
+        </select>
+      </div>
+      <div class="wl-filter-field">
+        <label>Direction</label>
+        <select id="wlFilterDirection">
+          <option value="all">All</option>
+          <option value="credit">Credit</option>
+          <option value="debit">Debit</option>
+          <option value="hold">Hold</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+      <div class="wl-filter-field">
+        <label>Status</label>
+        <select id="wlFilterStatus">
+          <option value="all">All</option>
+          <option value="completed">Completed</option>
+          <option value="held">Held</option>
+          <option value="released">Released</option>
+          <option value="refunded">Refunded</option>
+        </select>
+      </div>
+      <div class="wl-filter-field">
+        <label>From</label>
+        <input type="date" id="wlFilterDateFrom" class="wl-filter-input" aria-label="Filter from date">
+      </div>
+      <div class="wl-filter-field">
+        <label>To</label>
+        <input type="date" id="wlFilterDateTo" class="wl-filter-input" aria-label="Filter to date">
+      </div>
+      <button class="wl-btn wl-btn-sm" id="wlClearFilters"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+    </div>
+  </div>
+
+  <div class="wl-active-filters hidden" id="wlActiveFilters"></div>
+
+  <div class="table-wrap">
+    <table class="admin-table" id="walletTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>User</th>
+          <th>Type</th>
+          <th>Direction</th>
+          <th>Amount</th>
+          <th>Balance After</th>
+          <th>Status</th>
+          <th>Reference</th>
+        </tr>
+      </thead>
+      <tbody id="walletLedger"></tbody>
+    </table>
+  </div>
+  <div class="pagination" id="walletPagination"></div>
+  <script type="module" src="../js/wallet.js"></script>
+</section>

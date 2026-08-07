@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy — Log in</title>
+<meta name="description" content="Log in to your Travel Buddy account to manage shipments and deliveries.">
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+    <svg class="route" viewBox="0 0 900 900" aria-hidden="true">
+      <path id="routePath" d="M -50 650 C 150 500, 250 750, 420 600 S 650 350, 950 300" />
+      <circle class="route-dot" r="5">
+        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#routePath"></mpath>
+        </animateMotion>
+      </circle>
+    </svg>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <main class="stage">
+    <section class="card" role="main" aria-labelledby="welcomeTitle">
+
+      <a id="backBtn" href="../home/index.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <header class="card-header">
+        <div class="logo" aria-hidden="true">
+          <img src="../images/logo.jpeg" alt="" width="60" height="60" />
+        </div>
+        <img src="../images/name.png" class="brand-mark" alt="Travel Buddy" />
+        <h2 id="welcomeTitle" class="welcome">Welcome Back</h2>
+        <p class="subtitle">Log in to manage your shipments and trips.</p>
+      </header>
+
+      <form id="loginForm" class="form" novalidate>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              <path d="M4.5 6.5l7.5 6 7.5-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="email" id="email" name="email" placeholder="name@example.com" autocomplete="email" required aria-describedby="emailError" />
+          </div>
+          <span class="error-msg" id="emailError" role="alert"></span>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <rect x="5" y="10.5" width="14" height="9" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required aria-describedby="passwordError" minlength="8" />
+            <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password" aria-pressed="false">
+              <svg class="eye-open" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+              <svg class="eye-closed" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" hidden>
+                <path d="M3 3l18 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M9.9 5.2A10.6 10.6 0 0 1 12 5c7 0 10.5 7 10.5 7a13.6 13.6 0 0 1-3.1 3.9M6.6 6.6C3.5 8.5 1.5 12 1.5 12s3.5 7 10.5 7a10.3 10.3 0 0 0 3.3-.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.9 14.1A3.2 3.2 0 0 1 12 8.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <span class="error-msg" id="passwordError" role="alert"></span>
+        </div>
+
+        <div class="row-between">
+          <label class="checkbox">
+            <input type="checkbox" id="remember" name="remember" />
+            <span class="box" aria-hidden="true"></span>
+            Remember me
+          </label>
+          <a href="../forgot-password/forgot-password.html" class="link-muted" id="forgotLink">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary" id="loginBtn">
+          <span class="btn-label">Log in</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+
+        <div class="divider"><span>OR CONTINUE WITH</span></div>
+
+        <div class="social-row">
+          <button type="button" class="btn-social" id="googleBtn">Google</button>
+          <button type="button" class="btn-social btn-social--otp" id="otpBtn">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+              <circle cx="8" cy="15.5" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M11.2 12.3 19 4.5M17 6.5l2 2M14.5 9l2 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            OTP Login
+          </button>
+        </div>
+
+        
+
+        <p class="signup-line">New to Travel Buddy? <a href="../register/register.html" class="link-strong" id="createAccount">Create account</a></p>
+      </form>
+
+      <form id="otpPhoneForm" class="form hidden" novalidate>
+        <div class="field">
+          <label for="countryCode">Country code</label>
+          <select id="countryCode" name="countryCode" class="country-select" aria-label="Choose country calling code">
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+91" selected>🇮🇳 +91</option>
+            <option value="+61">🇦🇺 +61</option>
+            <option value="+49">🇩🇪 +49</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="phoneNumber">Mobile number</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M6.5 4h11a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11A2.5 2.5 0 0 1 6.5 4z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M12 16.5v.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M9 6.5h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="98765 43210" autocomplete="tel" inputmode="tel" required aria-describedby="phoneError" />
+          </div>
+          <span class="error-msg" id="phoneError" role="alert"></span>
+        </div>
+
+        <button type="button" class="btn-primary" id="sendOtpBtn">
+          <span class="btn-label">Send OTP</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <p class="signup-line">Enter the mobile number linked to your Travel Buddy account.</p>
+      </form>
+
+      <form id="otpVerifyForm" class="form hidden" novalidate>
+        <div class="field">
+          <label for="otpDigit1">Enter the 6-digit code</label>
+          <div class="otp-pin-grid" id="otpInputs" aria-label="Enter 6-digit verification code">
+            <input id="otpDigit1" name="otpDigit1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 1" />
+            <input id="otpDigit2" name="otpDigit2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 2" />
+            <input id="otpDigit3" name="otpDigit3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 3" />
+            <input id="otpDigit4" name="otpDigit4" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 4" />
+            <input id="otpDigit5" name="otpDigit5" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 5" />
+            <input id="otpDigit6" name="otpDigit6" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 6" />
+          </div>
+          <span class="error-msg" id="otpError" role="alert"></span>
+        </div>
+
+        <button type="button" class="btn-primary" id="verifyOtpBtn">
+          <span class="btn-label">Verify & Login</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <p class="signup-line">Didn't get a code? <button type="button" class="link-strong btn-link" id="resendOtpBtn">Resend</button></p>
+      </form>
+    </section>
+  </main>
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+  <script src="login.js"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="../css/operations.css">
+<section id="ops-panel" class="panel" style="padding:0;overflow:hidden;">
+
+  <!-- Toolbar: search / status filter / heatmap / export / sound -->
+  <div class="ops-toolbar">
+    <div class="ops-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="opsSearch" placeholder="Search order ID, city, sender, traveler…">
+    </div>
+    <select id="opsStatusFilter" title="Filter by status">
+      <option value="all">All statuses</option>
+      <option value="accepted">Accepted</option>
+      <option value="pickup_confirmed">Pickup Confirmed</option>
+      <option value="in_transit">In Transit</option>
+      <option value="delayed">Delayed only</option>
+    </select>
+    <button class="ops-toolbtn" id="opsHeatmapToggle" title="Toggle route heatmap"><i class="fa-solid fa-fire"></i><span>Heatmap</span></button>
+    <button class="ops-toolbtn" id="opsExportBtn" title="Export current snapshot as CSV"><i class="fa-solid fa-file-arrow-down"></i><span>Export CSV</span></button>
+    <button class="ops-toolbtn ops-sound-btn" id="opsSoundToggle" title="Mute/unmute alert sound"><i class="fa-solid fa-volume-high"></i></button>
+  </div>
+
+  <!-- Top Stats Bar -->
+  <div class="ops-stats" id="opsStats">
+    <div class="ops-stat"><span>Active</span><b id="opsActive">—</b></div>
+    <div class="ops-stat"><span>Accepted</span><b id="opsAccepted">—</b></div>
+    <div class="ops-stat"><span>Pickup</span><b id="opsPickup">—</b></div>
+    <div class="ops-stat"><span>In Transit</span><b id="opsTransit">—</b></div>
+    <div class="ops-stat is-delayed"><span>Delayed</span><b id="opsDelayed">—</b></div>
+    <div class="ops-stat"><span>Recent</span><b id="opsRecent">—</b></div>
+  </div>
+
+  <div class="ops-layout">
+    <!-- Map Panel -->
+    <div class="ops-map-panel">
+      <div class="ops-map" id="opsMap">
+        <div class="mapgrid"></div>
+        <!-- City pins + route lines are drawn dynamically -->
+        <div id="cityPins"></div>
+
+        <div class="ops-legend">
+          <span><i style="background:#12b76a"></i>Accepted</span>
+          <span><i style="background:#f79009"></i>Pickup</span>
+          <span><i style="background:#1769ff"></i>In Transit</span>
+          <span><i style="background:#f04438"></i>Delayed</span>
+        </div>
+
+        <!-- Journey cards overlay -->
+        <div class="map-journeys" id="mapJourneys">
+          <div class="mj-header"><i class="fa-solid fa-route"></i> Active Journeys</div>
+          <div id="miniJourneyList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Activity Feed + Extended List -->
+    <div class="ops-side">
+      <article class="panel" style="margin-bottom:12px;">
+        <div class="head">
+          <div><h3>Live Activity</h3><p>Real-time platform events</p></div>
+          <span class="live-tag" id="liveIndicator">● CONNECTING</span>
+        </div>
+        <div class="ops-activity-controls">
+          <div class="ops-timerange" id="opsTimeRange">
+            <button type="button" data-range="1h" class="active">1h</button>
+            <button type="button" data-range="today">Today</button>
+            <button type="button" data-range="week">Week</button>
+          </div>
+          <button class="ops-toolbtn small" id="opsPauseFeed" title="Pause live feed"><i class="fa-solid fa-pause"></i></button>
+        </div>
+        <div id="opsActivity"></div>
+      </article>
+      <article class="panel" style="flex:1;">
+        <div class="head">
+          <div><h3>All Active Journeys</h3><p id="journeyCount">—</p></div>
+          <button class="ops-refresh" id="opsRefresh" title="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+        </div>
+        <div id="opsJourneyList" class="ops-journey-list"></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Journey Detail Modal: timeline, contact info, OTP/status history -->
+  <div class="ops-modal" id="opsJourneyModal">
+    <div class="ops-modal-backdrop" id="opsModalBackdrop"></div>
+    <div class="ops-modal-box">
+      <button class="ops-modal-close" id="opsModalClose" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      <div id="opsModalBody"></div>
+    </div>
+  </div>
+
+  <script type="module" src="../js/operations.js"></script>
+</section>

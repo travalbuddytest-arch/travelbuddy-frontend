@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Buddy — Community-Driven Parcel Delivery</title>
+    <meta name="description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+      <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script>
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    // Hide the page instantly until we've restored scroll position
+    document.documentElement.style.visibility = 'hidden';
+</script>
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+
+<body data-page="home">
+
+<!-- ================= NAVBAR (shared component, see Frontend/shared/navbar.html) ================= -->
+
+<div id="tbNavbarInclude"></div>
+<script src="../shared/nav-include.js"></script>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <h1 id="typing"></h1>
+
+    <div class="steps">
+
+        <div class="step">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <h3>Search</h3>
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+        <div class="step">
+            <i class="fa-solid fa-box"></i>
+            <h3>Pick</h3>
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+        <div class="step">
+            <i class="fa-solid fa-truck-fast"></i>
+            <h3>Deliver</h3>
+        </div>
+
+    </div>
+
+    <h2>
+        Send It Today, Get It Today
+    </h2>
+
+    <p>
+        Our platform streamlines logistics by connecting senders directly with registered local couriers. By eliminating middlemen, we ensure faster, more cost-effictive deliveries. Parcels are picked up and delivered within hours, offering businesses and individuals a reliable solution for urgent shipments at minimal fees. 
+    </p>
+
+</section>
+
+
+
+<!-- ================= PARCEL SEARCH ================= -->
+
+<section class="parcel-search-section">
+
+    <div class="parcel-search-text">
+
+        <h1>Send parcels with <span class="text-blue">travelers already going your way.</span></h1>
+
+        <p>
+            TravelBuddy connects senders with verified travelers heading toward the same destination—making delivery faster, more affordable, and rewarding for the community.
+        </p>
+
+        <div class="trust-badges">
+            <span><i class="fa-solid fa-circle-check"></i> Verified users</span>
+            <span><i class="fa-solid fa-circle-check"></i> Secure payments</span>
+            <span><i class="fa-solid fa-circle-check"></i> OTP delivery confirmation</span>
+        </div>
+
+        <div class="hero-cta-buttons">
+            <a href="../login/login.html" class="primary-btn" id="sendParcelBtn">Send a Parcel</a>
+            <a href="../login/login.html" class="secondary-btn" id="earnBtn">Earn While Traveling</a>
+        </div>
+
+    </div>
+
+    <div class="parcel-search-card">
+
+        <div class="form-group">
+            <label for="fromInput">From</label>
+            <input type="text" id="fromInput" name="fromLocation" placeholder="Pickup location" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="toInput">To</label>
+            <input type="text" id="toInput" name="toLocation" placeholder="Destination" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="parcelType">Parcel category</label>
+            <select id="parcelType" name="parcelCategory">
+                <option value="" selected disabled>Select category</option>
+                <option value="documents">Documents</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="gifts">Gifts</option>
+                <option value="books">Books</option>
+                <option value="packaged-food">Packaged Food</option>
+                <option value="personal-items">Personal Items</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <a href="../login/login.html" class="primary-btn find-travelers-btn" id="findTravelersBtn">Find Travelers</a>
+
+    </div>
+
+</section>
+
+
+<!-- ================= Flow OF System ================= -->
+
+<section class="section-Flow">
+    <section class="post-section">
+        <div class="post-text">
+            <h2>Post Your Parcel</h2>
+            <p>
+                Need to send something urgently?
+                Simply create a parcel request with pickup and
+                destination details.
+                Verified travelers heading the same way can accept
+                your parcel and deliver it quickly.
+                Save money while enjoying same-day community delivery.
+            </p>
+            <a href="../about/about.html" class="primary-btn" aria-label="Learn more about posting a parcel">
+                Learn More <span class="arrow-icon" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <div class="post-image">
+            <img src="../images/post-your-parcel.jpg" width="1040" height="480"
+                alt="Person posting a parcel for delivery through the Travel Buddy app" loading="lazy" decoding="async">
+        </div>
+    </section>
+
+
+
+    <section class="get-section">
+        <div class="get-image">
+            <img src="../images/get-local.jpg" width="1040" height="378"
+                alt="Local courier accepting a nearby delivery request" loading="lazy" decoding="async">
+        </div>
+        <div class="get-text">
+            <h2>Get a Local Courier</h2>
+            <p>
+                Once your parcel is posted, a registered member in your area accepts the task. These local couriers are part of our trusted community, ready to pick up and deliver your package right away. By connecting directly with nearby couriers, you skip the middleman and save both time and money. It's fast, personal, and reliable your delivery is handled by someone close to you who understands the importance of speed and care.
+            </p>
+            <a href="../about/about.html" class="primary-btn" aria-label="Learn more about local couriers">
+                Learn More <span class="arrow-icon" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+    </section>
+
+   
+
+    <section class="delivered-section">
+        <div class="delivered-text">
+            <h2>Delivery Shortly</h2>
+            <p>
+                Your parcel doesn't wait around—it’s delivered within hours. With quick pickups and direct drop-offs, you can count on safe, affordable, and timely delivery every single time. No delays, just fast and reliable service across town.
+            </p>
+            <a href="../about/about.html" class="primary-btn" aria-label="Learn more about delivery timing">
+                Learn More <span class="arrow-icon" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <div class="delivered-image">
+            <img src="../images/Delivery_shortly.png" width="1040" height="567"
+                alt="Courier delivering a parcel to its destination" loading="lazy" decoding="async">
+        </div>
+    </section> 
+
+   
+
+    <section class="reach-section">
+        <div class="reach-image">
+            <img src="../images/reach-every-customer.png" width="1040" height="378"
+                alt="Local courier accepting a nearby delivery request" loading="lazy" decoding="async">
+        </div>
+        <div class="reach-text">
+            <h2>Reach Every Customer, Anytime</h2>
+            <p>
+                Our platform is built to make delivery accessible for everyone. Whether you're a business sending products or an individual sharing something personal, we ensure your parcel reaches the right person quickly and affordably. By connecting directly with local couriers, we remove barriers and make same-day delivery possible for every customer, everywhere.
+            </p>
+            <a href="../about/about.html" class="primary-btn" aria-label="Learn more about our reach">
+                Learn More <span class="arrow-icon" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+    </section>
+
+
+    <section class="trusted-section">
+        <div class="trusted-text">
+            <h2>Trusted Local Connections</h2>
+            <p>
+                Every delivery is powered by people in your community. Registered members nearby accept tasks and handle parcels with care, ensuring that your package is delivered safely and on time. This direct connection builds trust and makes delivery more personal, reliable, and efficient.
+            </p>
+            <a href="../about/about.html" class="primary-btn" aria-label="Learn more about trusted connections">
+                Learn More <span class="arrow-icon" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <div class="trusted-image">
+            <img src="../images/trust-local-connection.png" width="1040" height="480"
+                alt="Person posting a parcel for delivery through the Travel Buddy app" loading="lazy" decoding="async">
+        </div>
+    </section> 
+
+  
+
+    <section class="affordable-section">
+        <div class="affordable-image">
+            <img src="../images/affordable.png" width="1040" height="378"
+                alt="Local courier accepting a nearby delivery request" loading="lazy" decoding="async">
+        </div>
+        <div class="affordable-text">
+            <h2>Affordable For Everyone</h2>
+            <p>
+               We believe fast delivery shouldn't come at a high cost. That's why our service is designed to keep fees minimal while maintaining speed and safety. Every customer, from small businesses to everyday senders, benefits from affordable same-day delivery without hidden charges.
+            </p>
+            <a href="../about/about.html" class="primary-btn" aria-label="Learn more about affordable pricing">
+                Learn More <span class="arrow-icon" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+    </section>
+</section>
+
+
+
+<!-- ================= TWO WAYS TO USE IT ================= -->
+
+<section class="platform-ways">
+
+    <h2>One Platform. Two Ways to Use It.</h2>
+
+    <div class="ways-cards">
+
+        <div class="way-card highlight">
+
+            <div class="way-icon"><i class="fa-solid fa-box-open"></i></div>
+
+            <h3>Need to send something?</h3>
+
+            <p>Post your parcel, find a verified traveler going in the same direction, track the journey, and confirm delivery securely.</p>
+
+            <ul class="way-checklist">
+                <li><i class="fa-solid fa-check"></i> Post parcel details</li>
+                <li><i class="fa-solid fa-check"></i> Compare matching travelers</li>
+                <li><i class="fa-solid fa-check"></i> Secure payment</li>
+                <li><i class="fa-solid fa-check"></i> Track delivery progress</li>
+                <li><i class="fa-solid fa-check"></i> OTP delivery confirmation</li>
+            </ul>
+
+            <a href="../login/login.html" class="primary-btn way-btn">Send a Parcel</a>
+
+        </div>
+
+        <div class="way-card highlight">
+
+            <div class="way-icon"><i class="fa-solid fa-plane"></i></div>
+
+            <h3>Already going somewhere?</h3>
+
+            <p>Add your upcoming trip, discover parcel requests along your route, and earn by using your available travel space.</p>
+
+            <ul class="way-checklist">
+                <li><i class="fa-solid fa-check"></i> Post your trip</li>
+                <li><i class="fa-solid fa-check"></i> Find route-matched parcels</li>
+                <li><i class="fa-solid fa-check"></i> Choose what you carry</li>
+                <li><i class="fa-solid fa-check"></i> Complete delivery</li>
+                <li><i class="fa-solid fa-check"></i> Receive earnings</li>
+            </ul>
+
+            <a href="../login/login.html" class="primary-btn way-btn">Start Earning</a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= WHY CHOOSE TRAVELBUDDY ================= -->
+<section class="features why-choose-section" id="whyChoose">
+    
+    <h2>Why Choose TravelBuddy</h2>
+    <div class="cards why-choose-grid">
+        <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-bolt"></i></div><h3>Faster Route-Based Delivery</h3><p>Parcels reach destinations faster because travelers are already going that way.</p></article>
+        <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-sack-dollar"></i></div><h3>Lower Delivery Cost</h3><p>Save up to 40% compared to traditional courier services.</p></article>
+        <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div><h3>Earn While Traveling</h3><p>Turn your next journey into an earning opportunity with available luggage space.</p></article>
+        <article class="card why-card"><div class="why-icon why-check"><i class="fa-solid fa-shield-halved"></i></div><h3>Verified Community</h3><p>All users go through identity verification and background checks.</p></article>
+        <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-lock"></i></div><h3>Secure Confirmation</h3><p>OTP-based delivery confirmation ensures both parties are protected.</p></article>
+        <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-eye"></i></div><h3>Transparent Journey</h3><p>Real-time tracking and detailed records for complete transparency.</p></article>
+    </div></section>
+
+
+
+
+<!-- ================= TRUST & SAFETY ================= -->
+
+<section class="trust-orbit trust-safety-layout" id="safety">
+    <h2>Everything That Keeps You Safe</h2>
+    <div class="trust-safety-inner">
+        <div class="trust-visual">
+
+            <div class="orbit-wrap">
+                <div class="orbit-spin" id="orbitSpin">
+                    <svg class="orbit-lines" viewBox="0 0 100 100" aria-hidden="true">
+                        <g id="orbitLines"></g>
+                    </svg>
+                    <div class="orbit-ring" id="orbitRing"></div>
+                </div>
+
+                <div class="orbit-ripple" aria-hidden="true"></div>
+
+                <div class="orbit-hub">
+                    <span>Travel<br>Buddy</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="safety-content">
+            <h2>How We Keep You Safe</h2>
+
+            <div class="safety-list">
+                <article class="safety-item">
+                    <span class="safety-number">1</span>
+                    <div>
+                        <h3>Identity Verification</h3>
+                        <p>Users verify their identity through government-issued documents and background checks.</p>
+                    </div>
+                </article>
+
+                <article class="safety-item">
+                    <span class="safety-number">2</span>
+                    <div>
+                        <h3>Parcel &amp; Trip Records</h3>
+                        <p>All parcel and trip details are securely recorded on our platform.</p>
+                    </div>
+                </article>
+
+                <article class="safety-item">
+                    <span class="safety-number">3</span>
+                    <div>
+                        <h3>Protected Payment</h3>
+                        <p>Payment is held securely during delivery and released only after confirmation.</p>
+                    </div>
+                </article>
+
+                <article class="safety-item">
+                    <span class="safety-number">4</span>
+                    <div>
+                        <h3>OTP Delivery Confirmation</h3>
+                        <p>Receiver confirms delivery using a one-time password sent to their phone.</p>
+                    </div>
+                </article>
+
+                <article class="safety-item">
+                    <span class="safety-number">5</span>
+                    <div>
+                        <h3>Payment Release &amp; Ratings</h3>
+                        <p>Payment is released after successful confirmation, and both users can rate each other.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="workflow" id="how-it-works">
+
+<h2>How TravelBuddy Works</h2>
+
+<div class="timeline">
+
+<div class="flow">
+
+<div class="flow-num">1</div>
+
+
+<h4>Post Parcel</h4>
+
+<p>Share your parcel details and destination</p>
+
+</div>
+
+<div class="line"><span class="line-fill"></span></div>
+
+<div class="flow">
+
+<div class="flow-num">2</div>
+
+
+<h4>Find a Traveler</h4>
+
+<p>Browse verified travelers heading your way</p>
+
+</div>
+
+<div class="line"><span class="line-fill"></span></div>
+
+<div class="flow">
+
+<div class="flow-num">3</div>
+
+
+<h4>Confirm &amp; Pay Securely</h4>
+
+<p>Secure payment protected until delivery</p>
+
+</div>
+
+<div class="line"><span class="line-fill"></span></div>
+
+<div class="flow">
+
+<div class="flow-num">4</div>
+
+
+<h4>Track the Journey</h4>
+
+<p>Real-time tracking of your parcel</p>
+
+</div>
+
+<div class="line"><span class="line-fill"></span></div>
+
+<div class="flow">
+
+<div class="flow-num">5</div>
+
+
+<h4>Verify Delivery with OTP</h4>
+
+<p>Confirm delivery and release payment</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+
+
+<!-- ================= SMART ROUTE MATCHING ================= -->
+
+<section class="smart-matching" id="smartMatching">
+    <div class="smart-matching-inner">
+        <div class="smart-matching-heading">
+            <h2>Smart Matching for the Same Route</h2>
+            <p>
+                TravelBuddy connects parcel requests with travelers whose journey aligns
+                with pickup location, destination, travel date, parcel size, and delivery urgency.
+            </p>
+        </div>
+
+        <div class="route-card" aria-label="Example route match from Pune to Mumbai">
+            <div class="route-endpoint route-start">
+                <div class="route-pin" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></div>
+                <h3>Pune</h3>
+                <p>Pickup</p>
+            </div>
+
+            <div class="route-track">
+                <div class="route-segment">
+                    <span class="route-place">Lonavala</span>
+                    <span class="route-line"><span class="route-progress"></span></span>
+                </div>
+
+                <div class="moving-parcel" aria-hidden="true">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+
+                <div class="route-segment">
+                    <span class="route-place">Navi Mumbai</span>
+                    <span class="route-line"><span class="route-progress"></span></span>
+                </div>
+            </div>
+
+            <div class="route-endpoint route-destination">
+                <div class="route-target" aria-hidden="true"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Mumbai</h3>
+                <p>Destination</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+
+<!-- ================= FREQUENTLY ASKED QUESTIONS ================= -->
+
+<section class="faq-section" id="faq">
+    <div class="faq-container">
+        <div class="faq-heading">
+            <span class="faq-eyebrow">Need help?</span>
+            <h2>Frequently Asked Questions</h2>
+            <p>Quick answers to common questions about sending parcels and traveling with TravelBuddy.</p>
+        </div>
+
+        <div class="faq-list">
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>Is my parcel safe with a traveler?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>TravelBuddy is designed around verified users, parcel and trip records, secure payment, and OTP-based delivery confirmation. You can review the available traveler details before choosing who carries your parcel.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>How much does it cost to send a parcel?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>The cost can depend on the route, parcel size, weight, urgency, and traveler availability. You can review the available delivery option and price before confirming your request.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>Can I choose the traveler who carries my parcel?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Yes. When matching travelers are available, you can compare relevant profile and trip details before choosing the traveler you prefer.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>How can I track my parcel during the journey?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>You can follow the parcel's delivery progress from your TravelBuddy dashboard. Important trip and delivery status updates are recorded so you can stay informed throughout the journey.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>What happens if a traveler cancels the trip?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>If a traveler cancels before pickup, the request can return to matching so you can look for another suitable traveler. If payment has already been initiated, it remains protected according to the delivery status.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>When does the traveler receive the payment?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>The traveler receives payment after the parcel is successfully delivered and the delivery is confirmed through the platform's confirmation process.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>Can I send a parcel to another city or state?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Yes. You can post an intercity or interstate parcel request when a traveler is available on a matching route and the parcel follows TravelBuddy's allowed-item rules.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="faq-item">
+                <button class="faq-question" type="button" aria-expanded="false">
+                    <span>What should I do if my parcel is delayed?</span>
+                    <span class="faq-toggle" aria-hidden="true"></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Check the latest delivery status first. If the parcel is taking longer than expected, use the available support or dispute process and keep all communication and delivery details recorded on the platform.</p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= FOOTER (shared component, see Frontend/shared/footer.html) ================= -->
+<div id="tbFooterInclude"></div>
+<script>window.TBInclude.injectFooter();</script>
+
+
+
+
+<!-- ================= BUDDY AI CHATBOT ================= -->
+<div class="buddy-chatbot" id="buddyChatbot">
+    <button class="buddy-launcher" id="buddyLauncher" type="button"
+        aria-label="Open Buddy AI assistant" aria-expanded="false" aria-controls="buddyChatPanel">
+        <span class="buddy-launcher-pulse" aria-hidden="true"></span>
+        <span class="buddy-open-icon buddy-ai-mark" aria-hidden="true">
+            <span class="buddy-ai-core"><i class="fa-solid fa-sparkles"></i></span>
+            <span class="buddy-ai-orbit"></span>
+        </span>
+        <i class="fa-solid fa-xmark buddy-close-icon" aria-hidden="true"></i>
+        <span class="buddy-notification" id="buddyNotification">1</span>
+    </button>
+
+    <section class="buddy-panel" id="buddyChatPanel" aria-label="Buddy AI chat assistant" aria-hidden="true">
+        <header class="buddy-header">
+            <div class="buddy-avatar" aria-hidden="true">
+                <i class="fa-solid fa-sparkles"></i>
+                <span class="buddy-online-dot"></span>
+            </div>
+            <div class="buddy-header-copy">
+                <h3>Buddy AI</h3>
+                <p><span class="buddy-status-dot"></span> Online • TravelBuddy Assistant</p>
+            </div>
+            <button class="buddy-minimize" id="buddyMinimize" type="button" aria-label="Minimize chat">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+        </header>
+
+        <div class="buddy-messages" id="buddyMessages" role="log" aria-live="polite">
+            <div class="buddy-message buddy-bot-message">
+                <div class="buddy-message-avatar"><i class="fa-solid fa-sparkles"></i></div>
+                <div class="buddy-bubble">
+                    <p>Hi 👋 I’m <strong>Buddy AI</strong>. Ask me any TravelBuddy question—parcel, traveler, tracking, payment, safety, account, cancellation, or delivery issue.</p>
+                    <span class="buddy-time">Now</span>
+                </div>
+            </div>
+
+            <div class="buddy-quick-actions" id="buddyQuickActions">
+                <button type="button" data-buddy-action="send"><i class="fa-solid fa-box"></i> Send a Parcel</button>
+                <button type="button" data-buddy-action="track"><i class="fa-solid fa-location-dot"></i> Track Parcel</button>
+                <button type="button" data-buddy-action="traveler"><i class="fa-solid fa-route"></i> Find a Traveler</button>
+                <button type="button" data-buddy-action="how"><i class="fa-solid fa-circle-question"></i> How It Works</button>
+            </div>
+        </div>
+
+        <div class="buddy-typing" id="buddyTyping" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </div>
+
+        <form class="buddy-input-area" id="buddyChatForm">
+            <label class="sr-only" for="buddyInput">Ask Buddy AI a question</label>
+            <input id="buddyInput" type="text" placeholder="Ask any TravelBuddy question..." autocomplete="off" maxlength="300">
+            <button type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+
+        <p class="buddy-powered">TravelBuddy smart assistant</p>
+    </section>
+</div>
+
+<script src="script.js?v=2"></script>
+
+  <script>window.TB_ALWAYS_SHOW_BANNER = true;</script>
+  <script src="../shared/site-banner.js?v=2"></script>
+</body>
+</html>

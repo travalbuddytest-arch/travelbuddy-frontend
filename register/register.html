@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy — Create account</title>
+<meta name="description" content="Create a Travel Buddy account to start sending or delivering parcels in your community.">
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="register.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <main class="stage">
+    <section class="card" role="main" aria-labelledby="stepTitle">
+
+      <a href="../home/index.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <!-- Logo -->
+      <div class="reg-logo" id="regLogo">
+        <img src="../images/logo.jpeg" alt="" width="40" height="40" />
+        <img src="../images/name.png" class="reg-wordmark" alt="Travel Buddy" />
+      </div>
+
+      <!-- Details -->
+      <section class="panel active" id="panel2" aria-labelledby="stepTitle">
+        <header class="panel-header">
+          <h1 id="stepTitle" class="panel-title">Welcome</h1>
+          <p class="panel-sub">Tell us a bit more about yourself.</p>
+        </header>
+
+        <form class="form" id="detailsForm" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <input type="text" id="firstName" placeholder="First Name" autocomplete="given-name" required />
+              <span class="error-msg" id="firstNameError" role="alert"></span>
+            </div>
+            <div class="field">
+              <input type="text" id="lastName" placeholder="Last Name" autocomplete="family-name" required />
+              <span class="error-msg" id="lastNameError" role="alert"></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <input type="email" id="regEmail" placeholder="Email Address" autocomplete="email" required />
+            <span class="error-msg" id="regEmailError" role="alert"></span>
+          </div>
+
+          <div class="field">
+            <div class="input-wrap">
+              <input type="password" id="regPassword" placeholder="Password" autocomplete="new-password" required />
+              <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password" aria-pressed="false">
+                <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="display:none;">
+                  <path d="M3 3l18 18M10.6 10.7a3 3 0 0 0 4.2 4.2M6.6 6.7C4 8.3 2 12 2 12s4 7 11 7c1.8 0 3.4-.4 4.8-1.1M9.9 4.2C10.6 4.1 11.3 4 12 4c7 0 11 7 11 7-.5.9-1.4 2.2-2.7 3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <span class="error-msg" id="regPasswordError" role="alert"></span>
+          </div>
+
+          <div class="field-row field-row--phone">
+            <select id="countryCode" class="code-select" aria-label="Country code">
+              <option value="+1">+1</option>
+              <option value="+44">+44</option>
+              <option value="+91">+91</option>
+              <option value="+61">+61</option>
+              <option value="+971">+971</option>
+            </select>
+            <div class="field field--grow">
+              <input type="tel" id="phone" placeholder="Phone Number" autocomplete="tel" required />
+              <span class="error-msg" id="phoneError" role="alert"></span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="continueBtn">
+            <span class="btn-label">Continue to Verification</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Step 3: Verify -->
+      <section class="panel" id="panel3">
+        <header class="panel-header">
+          <h1 class="panel-title">Verify your account</h1>
+          <p class="panel-sub" id="verifySub">Enter both verification codes to create your account.</p>
+        </header>
+
+        <form class="form" id="otpForm" novalidate>
+          <div class="otp-group">
+            <p class="otp-label" id="emailOtpLabel">Enter the 6-digit code we sent to your email.</p>
+            <div class="otp-row" id="emailOtpRow">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 1" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 2" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 3" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 4" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 5" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 6" />
+            </div>
+            <span class="error-msg error-msg--center" id="emailOtpError" role="alert"></span>
+          </div>
+
+          <div class="otp-group">
+            <p class="otp-label" id="phoneOtpLabel">Enter the 6-digit code we sent to your mobile number.</p>
+            <div class="otp-row" id="phoneOtpRow">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 1" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 2" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 3" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 4" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 5" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 6" />
+            </div>
+            <span class="error-msg error-msg--center" id="phoneOtpError" role="alert"></span>
+          </div>
+
+          <button type="submit" class="btn-primary" id="verifyBtn">
+            <span class="btn-label">Verify &amp; Create Account</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+
+          <p class="resend-line">Didn't get a code? <button type="button" class="link-strong" id="resendBtn">Resend</button></p>
+          <button type="button" class="link-back" id="goBack2">Go Back</button>
+        </form>
+      </section>
+
+      <p class="login-line">Already have an account? <a href="../login/login.html" class="link-strong">Log in</a></p>
+
+    </section>
+  </main>
+
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="register.js"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+</body>
+</html>

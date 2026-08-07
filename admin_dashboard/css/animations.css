@@ -1,0 +1,526 @@
+/* ============================================================
+   TravelBuddy Admin — Global Animation Layer
+   Loaded once on admin.html, so it applies everywhere: every
+   lazy-loaded page fragment (users, operations, parcels, wallet,
+   analytics, cancellations, system, command) lives inside this
+   same document, and inherits all of these rules automatically.
+   ============================================================ */
+
+/* ---------- Keyframes ---------- */
+
+@keyframes tb-fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tb-fadeInDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tb-fadeInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tb-fadeInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tb-scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tb-popIn {
+  0%   { opacity: 0; transform: scale(0.7); }
+  70%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tb-shimmerSweep {
+  0%   { background-position: -300% 0; }
+  100% { background-position: 300% 0; }
+}
+
+@keyframes tb-pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(18, 183, 106, 0.45); }
+  70%  { box-shadow: 0 0 0 8px rgba(18, 183, 106, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(18, 183, 106, 0); }
+}
+
+@keyframes tb-bellRing {
+  0%, 100% { transform: rotate(0deg); }
+  15%      { transform: rotate(14deg); }
+  30%      { transform: rotate(-12deg); }
+  45%      { transform: rotate(9deg); }
+  60%      { transform: rotate(-6deg); }
+  75%      { transform: rotate(3deg); }
+}
+
+@keyframes tb-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+@keyframes tb-spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes tb-ripple {
+  from { opacity: 0.45; transform: scale(0); }
+  to   { opacity: 0;    transform: scale(2.6); }
+}
+
+@keyframes tb-underline {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes tb-barGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Sidebar ---------- */
+
+/* Uses the opacity-only tb-fadeIn (not tb-fadeInLeft) on purpose: #side's
+   `transform` is load-bearing for the mobile off-canvas sidebar (translateX
+   toggled by the .open class in admin.css). CSS animations override the
+   cascade for whatever property they animate for as long as the animation
+   is applied - with `both` fill-mode that's forever after it finishes - so
+   animating transform here would permanently pin it to translateX(0) and
+   silently defeat the mobile menu toggle. */
+#side {
+  animation: tb-fadeIn 0.45s ease both;
+}
+
+.brand-logo {
+  transition: transform 0.35s ease;
+}
+
+.brand:hover .brand-logo {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+nav button {
+  position: relative;
+  overflow: hidden;
+  animation: tb-fadeInLeft 0.4s ease both;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+nav button:nth-child(1) { animation-delay: 0.03s; }
+nav button:nth-child(2) { animation-delay: 0.07s; }
+nav button:nth-child(3) { animation-delay: 0.11s; }
+nav button:nth-child(4) { animation-delay: 0.15s; }
+nav button:nth-child(5) { animation-delay: 0.19s; }
+nav button:nth-child(6) { animation-delay: 0.23s; }
+nav button:nth-child(7) { animation-delay: 0.27s; }
+nav button:nth-child(8) { animation-delay: 0.31s; }
+
+nav button i {
+  transition: transform 0.3s ease;
+}
+
+nav button:hover i {
+  transform: scale(1.15) rotate(-6deg);
+}
+
+nav button.active i {
+  animation: tb-popIn 0.35s ease both;
+}
+
+nav button:active {
+  transform: scale(0.97) translateX(2px);
+}
+
+.admin {
+  transition: background 0.25s ease;
+  border-radius: 10px;
+}
+
+.admin:hover {
+  background: #f7f9fc;
+}
+
+.admin > span {
+  transition: transform 0.3s ease;
+}
+
+.admin:hover > span {
+  transform: scale(1.08) rotate(4deg);
+}
+
+.admin-menu.open {
+  animation: tb-fadeInUp 0.22s ease both;
+}
+
+.admin-menu button {
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.admin-menu button:hover {
+  transform: translateX(3px);
+}
+
+/* ---------- Header ---------- */
+
+header {
+  animation: tb-fadeInDown 0.4s ease both;
+}
+
+.title h1,
+.title p {
+  animation: tb-fadeInLeft 0.45s ease both;
+}
+
+#menu i {
+  transition: transform 0.25s ease;
+}
+
+#menu:hover i {
+  transform: rotate(90deg);
+}
+
+.search {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.search:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(23, 105, 255, 0.12);
+}
+
+.search kbd {
+  transition: transform 0.2s ease;
+}
+
+.search:hover kbd {
+  transform: scale(1.05);
+}
+
+.bell {
+  transition: transform 0.2s ease;
+}
+
+.bell:hover {
+  transform: scale(1.08);
+}
+
+.bell:hover i {
+  animation: tb-bellRing 0.6s ease;
+  display: inline-block;
+  transform-origin: top center;
+}
+
+.bell b {
+  animation: tb-pulseRing 1.8s infinite;
+}
+
+.bell-menu.open {
+  animation: tb-fadeInUp 0.22s ease both;
+}
+
+.bell-item {
+  animation: tb-fadeInUp 0.3s ease both;
+  transition: background 0.2s ease;
+}
+
+.bell-item:hover {
+  background: #f7f9fc;
+}
+
+.live {
+  transition: transform 0.2s ease;
+}
+
+.live:hover {
+  transform: translateY(-1px);
+}
+
+.live i {
+  animation: tb-pulseRing 1.6s infinite, pulse 1.5s infinite;
+}
+
+/* ---------- Page transitions ---------- */
+
+.page.active {
+  animation: tb-fadeIn 0.35s ease both;
+}
+
+/* ---------- Cards, KPIs, panels — entrance + hover polish ---------- */
+
+.kpi,
+.card,
+.metric-card,
+.sys-card,
+.oj-card,
+.us-risk-item,
+.mj-item,
+.reason-item,
+.au-kpi {
+  animation: tb-fadeInUp 0.45s ease both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.kpi:nth-child(1), .card:nth-child(1), .metric-card:nth-child(1), .sys-card:nth-child(1), .au-kpi:nth-child(1) { animation-delay: 0.02s; }
+.kpi:nth-child(2), .card:nth-child(2), .metric-card:nth-child(2), .sys-card:nth-child(2), .au-kpi:nth-child(2) { animation-delay: 0.07s; }
+.kpi:nth-child(3), .card:nth-child(3), .metric-card:nth-child(3), .sys-card:nth-child(3), .au-kpi:nth-child(3) { animation-delay: 0.12s; }
+.kpi:nth-child(4), .card:nth-child(4), .metric-card:nth-child(4), .sys-card:nth-child(4), .au-kpi:nth-child(4) { animation-delay: 0.17s; }
+.kpi:nth-child(5), .card:nth-child(5), .metric-card:nth-child(5), .sys-card:nth-child(5), .au-kpi:nth-child(5) { animation-delay: 0.22s; }
+.kpi:nth-child(6), .card:nth-child(6), .metric-card:nth-child(6), .sys-card:nth-child(6), .au-kpi:nth-child(6) { animation-delay: 0.27s; }
+
+.us-risk-item:nth-child(n),
+.mj-item:nth-child(n),
+.reason-item:nth-child(n),
+.oj-card:nth-child(n) {
+  animation-delay: calc(0.03s * var(--tb-i, 0));
+}
+
+.ki {
+  transition: transform 0.3s ease;
+}
+
+.kpi:hover .ki,
+.card:hover > i {
+  transform: scale(1.12) rotate(-4deg);
+}
+
+.panel {
+  animation: tb-fadeIn 0.4s ease both;
+}
+
+.head h3 {
+  position: relative;
+}
+
+.live-tag {
+  animation: tb-pulseRing 1.6s infinite;
+}
+
+/* Risk / activity rows */
+.activity > i,
+.risk > i {
+  transition: transform 0.25s ease;
+}
+
+.risk:hover > i,
+.activity:hover > i {
+  transform: scale(1.15);
+}
+
+.risk,
+.activity {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.risk:hover {
+  transform: translateX(2px);
+}
+
+/* Journeys / progress bars */
+.progress i {
+  transition: width 0.6s ease;
+}
+
+.jr {
+  animation: tb-fadeInUp 0.4s ease both;
+}
+
+/* Revenue chart bars */
+.chart .bar,
+.bar {
+  animation: tb-barGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: bottom;
+}
+
+/* ---------- Buttons (dashboard-wide) ---------- */
+
+button {
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+.us-btn,
+.ops-toolbtn,
+.admin-photo-btn,
+.admin-profile-save,
+.us-btn-primary {
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.2s ease;
+}
+
+.us-btn:hover,
+.ops-toolbtn:hover,
+.us-btn-primary:hover,
+.admin-profile-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(16, 24, 40, 0.12);
+}
+
+/* Lightweight click ripple (paired with animations.js) */
+.tb-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  pointer-events: none;
+  animation: tb-ripple 0.6s ease-out forwards;
+}
+
+/* ---------- Tables ---------- */
+
+.admin-table tbody tr,
+.pc-table tbody tr,
+.us-table tbody tr,
+.au-table tbody tr,
+.drawer-table tbody tr {
+  animation: tb-fadeInUp 0.3s ease both;
+  transition: background 0.2s ease;
+}
+
+.admin-table tbody tr:nth-child(1),
+.pc-table tbody tr:nth-child(1),
+.us-table tbody tr:nth-child(1),
+.au-table tbody tr:nth-child(1) { animation-delay: 0.02s; }
+.admin-table tbody tr:nth-child(2),
+.pc-table tbody tr:nth-child(2),
+.us-table tbody tr:nth-child(2),
+.au-table tbody tr:nth-child(2) { animation-delay: 0.05s; }
+.admin-table tbody tr:nth-child(3),
+.pc-table tbody tr:nth-child(3),
+.us-table tbody tr:nth-child(3),
+.au-table tbody tr:nth-child(3) { animation-delay: 0.08s; }
+.admin-table tbody tr:nth-child(4),
+.pc-table tbody tr:nth-child(4),
+.us-table tbody tr:nth-child(4),
+.au-table tbody tr:nth-child(4) { animation-delay: 0.11s; }
+.admin-table tbody tr:nth-child(5),
+.pc-table tbody tr:nth-child(5),
+.us-table tbody tr:nth-child(5),
+.au-table tbody tr:nth-child(5) { animation-delay: 0.14s; }
+.admin-table tbody tr:nth-child(6),
+.pc-table tbody tr:nth-child(6),
+.us-table tbody tr:nth-child(6),
+.au-table tbody tr:nth-child(6) { animation-delay: 0.17s; }
+.admin-table tbody tr:nth-child(7),
+.pc-table tbody tr:nth-child(7),
+.us-table tbody tr:nth-child(7),
+.au-table tbody tr:nth-child(7) { animation-delay: 0.2s; }
+.admin-table tbody tr:nth-child(8),
+.pc-table tbody tr:nth-child(8),
+.us-table tbody tr:nth-child(8),
+.au-table tbody tr:nth-child(8) { animation-delay: 0.23s; }
+
+.status-tag {
+  transition: transform 0.2s ease;
+}
+
+.status-tag:hover {
+  transform: scale(1.06);
+}
+
+/* ---------- Modal, Drawer, Toast ---------- */
+
+.modal.show {
+  animation: tb-fadeIn 0.2s ease both;
+}
+
+@keyframes tb-fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal.show .searchbox,
+.modal.show .admin-profile-box {
+  animation: tb-popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.drawer {
+  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-overlay.show {
+  animation: tb-fadeIn 0.25s ease both;
+}
+
+.drawer-section {
+  animation: tb-fadeInUp 0.35s ease both;
+}
+
+.dp-card {
+  animation: tb-scaleIn 0.35s ease both;
+}
+
+.toast {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.toast.show {
+  animation: tb-fadeInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.toast i {
+  color: var(--g, #12b76a);
+}
+
+/* ---------- Loading skeletons ---------- */
+
+.skel-box,
+.skel-icon,
+.skel-line,
+.skel-badge,
+.skel-bar,
+.skel-chart-bar,
+.us-skeleton-row,
+.pc-skeleton-row {
+  background-size: 300% 100%;
+  animation: tb-shimmerSweep 1.4s ease-in-out infinite;
+}
+
+/* ---------- Map / route pins (Live Operations) ---------- */
+
+.pin {
+  animation: tb-float 2.4s ease-in-out infinite;
+}
+
+.route {
+  animation: tb-fadeIn 0.5s ease both;
+}
+
+/* ---------- Misc micro-interactions ---------- */
+
+a {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.head a:hover {
+  transform: translateX(2px);
+}
+
+.us-export-menu:not(.hidden),
+.admin-profile-panel:not(.hidden) {
+  animation: tb-fadeInUp 0.25s ease both;
+}
+
+.admin-profile-tab {
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+::selection {
+  background: rgba(23, 105, 255, 0.18);
+}

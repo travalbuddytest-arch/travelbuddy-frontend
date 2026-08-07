@@ -1,0 +1,97 @@
+<link rel="stylesheet" href="../css/messages.css">
+<section id="messages-panel" class="panel">
+
+  <div class="wl-page-head">
+    <div>
+      <h2 class="wl-page-title">Users Activity</h2>
+      <p class="wl-page-sub">Every conversation on the platform — messages, calls and activity, in one place.</p>
+    </div>
+  </div>
+
+  <div class="wallet-summary" id="msgSummary"></div>
+
+  <!-- ═══ RECENT ACTIVITY — last 8 messages/calls across ALL conversations, site-wide ═══ -->
+  <div class="wallet-recent" id="msgRecent">
+    <div class="wallet-recent-head">
+      <h3><span class="wr-live-dot"></span> Recent Activity</h3>
+      <span class="wallet-recent-sub">Last 8 messages and calls across all conversations</span>
+    </div>
+    <div class="wallet-recent-list" id="msgRecentList"></div>
+  </div>
+
+  <!-- ═══ CONVERSATIONS ═══ -->
+  <div class="wl-ledger-head">
+    <h3 class="wl-section-title">All Conversations</h3>
+    <div class="wallet-toolbar">
+      <div class="wl-search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="msgSearch" class="wl-search" placeholder="Search by user, email or order ID...">
+      </div>
+      <button class="wl-btn wl-btn-icon" id="msgFilterToggle" title="Toggle filters" aria-label="Toggle filters">
+        <i class="fa-solid fa-sliders"></i> Filters <span class="wl-filter-count hidden" id="msgFilterCount">0</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="wl-filters hidden" id="msgFilters">
+    <div class="wl-filter-row">
+      <div class="wl-filter-field">
+        <label>Status</label>
+        <select id="msgFilterStatus">
+          <option value="all">All statuses</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+          <option value="read_only">Read only</option>
+          <option value="blocked">Blocked</option>
+        </select>
+      </div>
+      <div class="wl-filter-field">
+        <label>From</label>
+        <input type="date" id="msgFilterDateFrom" class="wl-filter-input" aria-label="Filter from date">
+      </div>
+      <div class="wl-filter-field">
+        <label>To</label>
+        <input type="date" id="msgFilterDateTo" class="wl-filter-input" aria-label="Filter to date">
+      </div>
+      <button class="wl-btn wl-btn-sm" id="msgClearFilters"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+    </div>
+  </div>
+
+  <div class="wl-active-filters hidden" id="msgActiveFilters"></div>
+
+  <div class="table-wrap">
+    <table class="admin-table" id="msgTable">
+      <thead>
+        <tr>
+          <th>Started</th>
+          <th>Sender</th>
+          <th>Traveler</th>
+          <th>Order</th>
+          <th>Last Activity</th>
+          <th>Messages</th>
+          <th>Calls</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="msgLedger"></tbody>
+    </table>
+  </div>
+  <div class="pagination" id="msgPagination"></div>
+
+  <!-- ═══ THREAD VIEW MODAL ═══ -->
+  <div class="modal msg-thread-modal" id="msgThreadModal">
+    <div class="msg-thread-box">
+      <div class="msg-thread-head">
+        <div>
+          <h3 id="msgThreadTitle">Conversation</h3>
+          <p id="msgThreadSub"></p>
+        </div>
+        <button type="button" class="msg-thread-close" id="msgThreadClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="msg-thread-body" id="msgThreadBody"></div>
+    </div>
+  </div>
+
+  <script type="module" src="../js/messages.js"></script>
+</section>

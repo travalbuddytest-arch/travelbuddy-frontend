@@ -1,0 +1,167 @@
+<link rel="stylesheet" href="../css/users.css">
+
+<section id="users-panel" class="panel us-panel">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="us-header">
+    <div>
+      <h2>Users Management</h2>
+      <p>Manage all platform users, verification, activity, reports, earnings and account security.</p>
+    </div>
+    <div class="us-header-actions">
+      <button class="us-btn us-btn-icon" id="usRefreshBtn" title="Refresh" aria-label="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <div class="us-export-wrap">
+        <button class="us-btn us-btn-icon" id="usExportBtn" title="Export" aria-label="Export"><i class="fa-solid fa-file-arrow-down"></i></button>
+        <div class="us-export-menu hidden" id="usExportMenu">
+          <button data-format="csv"><i class="fa-solid fa-file-csv"></i> CSV</button>
+          <button data-format="excel"><i class="fa-solid fa-file-excel"></i> Excel</button>
+        </div>
+      </div>
+      <button class="us-btn us-btn-primary" id="usAddUserBtn"><i class="fa-solid fa-plus"></i> Add User</button>
+    </div>
+  </div>
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <div class="us-kpi-grid" id="usKpiGrid">
+    <div class="us-kpi skel" data-kpi="total"><div class="us-kpi-icon blue"><i class="fa-solid fa-users"></i></div><div class="us-kpi-data"><span>Total Users</span><strong class="us-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="us-kpi skel" data-kpi="active"><div class="us-kpi-icon green"><i class="fa-solid fa-circle-dot"></i></div><div class="us-kpi-data"><span>Active Users</span><strong class="us-count" data-target="0">—</strong><small>Online now</small></div></div>
+    <div class="us-kpi skel" data-kpi="verified"><div class="us-kpi-icon purple"><i class="fa-solid fa-shield-check"></i></div><div class="us-kpi-data"><span>Verified Users</span><strong class="us-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="us-kpi skel" data-kpi="travelers"><div class="us-kpi-icon orange"><i class="fa-solid fa-plane"></i></div><div class="us-kpi-data"><span>Travelers</span><strong class="us-count" data-target="0">—</strong><small>Total travelers</small></div></div>
+    <div class="us-kpi skel" data-kpi="senders"><div class="us-kpi-icon cyan"><i class="fa-solid fa-box-open"></i></div><div class="us-kpi-data"><span>Senders</span><strong class="us-count" data-target="0">—</strong><small>Total senders</small></div></div>
+    <div class="us-kpi skel" data-kpi="suspended"><div class="us-kpi-icon red"><i class="fa-solid fa-user-slash"></i></div><div class="us-kpi-data"><span>Suspended Users</span><strong class="us-count" data-target="0">—</strong><small>Suspended + Blocked</small></div></div>
+  </div>
+
+  <!-- ═══ HIGH RISK USERS ═══ -->
+  <div class="us-risk-panel hidden" id="usRiskPanel">
+    <div class="us-risk-head">
+      <h3><i class="fa-solid fa-triangle-exclamation"></i> High Risk Users</h3>
+      <button class="us-btn us-btn-sm" id="usRiskToggle">Hide</button>
+    </div>
+    <div class="us-risk-list" id="usRiskList"></div>
+  </div>
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="us-toolbar">
+    <div class="us-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="usSearch" placeholder="Search by name, email, phone, user ID, wallet ID…" aria-label="Search users">
+    </div>
+    <div class="us-toolbar-actions">
+      <button class="us-btn us-btn-icon" id="usFilterToggle" title="Toggle filters" aria-label="Toggle filters"><i class="fa-solid fa-filter"></i></button>
+      <button class="us-btn us-btn-icon" id="usRiskShowBtn" title="High risk users" aria-label="High risk users"><i class="fa-solid fa-triangle-exclamation"></i></button>
+      <button class="us-btn us-btn-icon" id="usAnalyticsToggle" title="Analytics" aria-label="Analytics"><i class="fa-solid fa-chart-pie"></i></button>
+      <span class="us-badge" id="usResultCount">—</span>
+    </div>
+  </div>
+
+  <!-- ═══ FILTERS ═══ -->
+  <div class="us-filters hidden" id="usFilters">
+    <div class="us-filter-row">
+      <label>Role</label>
+      <select id="usFilterRole"><option value="all">All</option><option value="sender">Sender</option><option value="traveler">Traveler</option><option value="both">Both</option></select>
+      <label>Status</label>
+      <select id="usFilterStatus"><option value="all">All</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="blocked">Blocked</option></select>
+      <label>Verification</label>
+      <select id="usFilterVerification"><option value="all">All</option><option value="verified">Verified</option><option value="pending">Pending</option><option value="rejected">Rejected</option><option value="not_submitted">Not Submitted</option></select>
+      <label>Has Reports</label>
+      <select id="usFilterReports"><option value="all">All</option><option value="true">Has open reports</option></select>
+    </div>
+    <div class="us-filter-row">
+      <label>Joined From</label><input type="date" id="usFilterDateFrom" class="us-filter-input">
+      <label>Joined To</label><input type="date" id="usFilterDateTo" class="us-filter-input">
+      <label>Min Wallet ₹</label><input type="number" id="usFilterMinWallet" class="us-filter-input us-filter-narrow" placeholder="0">
+      <label>Min Rating</label><input type="number" id="usFilterMinRating" class="us-filter-input us-filter-narrow" min="0" max="5" step="0.1" placeholder="0">
+      <button class="us-btn us-btn-sm" id="usClearFilters">Reset Filters</button>
+    </div>
+  </div>
+
+  <!-- ═══ ANALYTICS ═══ -->
+  <div class="us-analytics hidden" id="usAnalytics">
+    <div class="us-analytics-grid">
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-chart-line"></i> Daily Registrations (30d)</h3>
+        <div class="us-chart" id="usChartDaily"></div>
+      </article>
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-chart-column"></i> Monthly Growth</h3>
+        <div class="us-chart" id="usChartMonthly"></div>
+      </article>
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-chart-pie"></i> Role Distribution</h3>
+        <div id="usChartRoles"></div>
+      </article>
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-shield-halved"></i> Verification Status</h3>
+        <div id="usChartVerification"></div>
+      </article>
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-user-clock"></i> Active vs Inactive</h3>
+        <div id="usChartActive"></div>
+      </article>
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-plane-departure"></i> Top Travelers</h3>
+        <div id="usTopTravelers"></div>
+      </article>
+      <article class="us-panel-card">
+        <h3><i class="fa-solid fa-box-open"></i> Top Senders</h3>
+        <div id="usTopSenders"></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- ═══ BULK ACTIONS BAR ═══ -->
+  <div class="us-bulk-bar hidden" id="usBulkBar">
+    <span id="usBulkCount">0 selected</span>
+    <button class="us-btn us-btn-sm us-btn-success" data-bulk="verify"><i class="fa-solid fa-check-double"></i> Verify</button>
+    <button class="us-btn us-btn-sm us-btn-warning" data-bulk="suspend"><i class="fa-solid fa-ban"></i> Suspend</button>
+    <button class="us-btn us-btn-sm us-btn-success" data-bulk="activate"><i class="fa-solid fa-circle-check"></i> Activate</button>
+    <button class="us-btn us-btn-sm" data-bulk="notify"><i class="fa-solid fa-bell"></i> Notify</button>
+    <button class="us-btn us-btn-sm us-btn-danger" data-bulk="delete"><i class="fa-solid fa-trash"></i> Delete</button>
+    <button class="us-btn us-btn-sm" id="usBulkDeselect"><i class="fa-solid fa-xmark"></i> Deselect</button>
+  </div>
+
+  <!-- ═══ DATA TABLE ═══ -->
+  <div class="us-table-wrap">
+    <table class="us-table" id="usTable" role="grid" aria-label="Users table">
+      <thead>
+        <tr>
+          <th class="us-th-check"><input type="checkbox" id="usSelectAll" aria-label="Select all"></th>
+          <th>User</th>
+          <th>User ID</th>
+          <th>Contact</th>
+          <th>Role</th>
+          <th>Verification</th>
+          <th>Wallet</th>
+          <th>Posted</th>
+          <th>Accepted</th>
+          <th>Completed</th>
+          <th>Cancelled</th>
+          <th>Rating</th>
+          <th>Reports</th>
+          <th>Last Active</th>
+          <th>Status</th>
+          <th class="us-th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usTableBody">
+        <tr><td colspan="16" class="us-empty"><div class="us-skeleton-row"></div><div class="us-skeleton-row"></div><div class="us-skeleton-row"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ PAGINATION ═══ -->
+  <div class="us-pagination" id="usPagination"></div>
+
+  <!-- ═══ USER PROFILE MODAL ═══ -->
+  <div class="us-modal-overlay hidden" id="usModalOverlay">
+    <div class="us-modal" role="dialog" aria-modal="true" aria-label="User profile">
+      <button class="us-modal-close" id="usModalClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <div class="us-modal-body" id="usModalBody"><div class="us-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading profile…</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="us-toast" id="usToast"><i class="fa-solid fa-circle-check"></i><span id="usToastMsg"></span></div>
+
+  <script type="module" src="../js/users.js"></script>
+</section>

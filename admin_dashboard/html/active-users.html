@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="../css/active-users.css">
+
+<section id="au-panel" class="panel au-panel">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="au-header">
+    <div>
+      <h2>Active Users</h2>
+      <p>Who's on TravelBuddy right now, and who visited recently.</p>
+    </div>
+    <div class="au-header-actions">
+      <span class="au-live-pill" id="auLivePill"><i></i>Live</span>
+      <button class="au-btn au-btn-icon" id="auRefreshBtn" title="Refresh" aria-label="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+    </div>
+  </div>
+
+  <!-- ═══ KPI CARDS (click any card to jump to that slice of the table) ═══ -->
+  <div class="au-kpi-grid" id="auKpiGrid">
+    <div class="au-kpi skel" data-kpi="onlineNow" data-filter="online" role="button" tabindex="0" aria-label="Show users online now"><div class="au-kpi-icon green"><i class="fa-solid fa-circle-dot"></i></div><div class="au-kpi-data"><span>Online Now</span><strong class="au-count" data-target="0">—</strong><small>Connected this instant</small></div><i class="fa-solid fa-arrow-right au-kpi-go"></i></div>
+    <div class="au-kpi skel" data-kpi="activeLast15Min" data-filter="15min" role="button" tabindex="0" aria-label="Show users active in the last 15 minutes"><div class="au-kpi-icon blue"><i class="fa-solid fa-bolt"></i></div><div class="au-kpi-data"><span>Active (15 min)</span><strong class="au-count" data-target="0">—</strong><small>Recently browsing</small></div><i class="fa-solid fa-arrow-right au-kpi-go"></i></div>
+    <div class="au-kpi skel" data-kpi="activeToday" data-filter="today" role="button" tabindex="0" aria-label="Show users who visited today"><div class="au-kpi-icon purple"><i class="fa-solid fa-calendar-day"></i></div><div class="au-kpi-data"><span>Visited Today</span><strong class="au-count" data-target="0">—</strong><small>Unique visitors</small></div><i class="fa-solid fa-arrow-right au-kpi-go"></i></div>
+    <div class="au-kpi skel" data-kpi="activeThisWeek" data-filter="week" role="button" tabindex="0" aria-label="Show users active this week"><div class="au-kpi-icon orange"><i class="fa-solid fa-calendar-week"></i></div><div class="au-kpi-data"><span>Active (7d)</span><strong class="au-count" data-target="0">—</strong><small>Weekly reach</small></div><i class="fa-solid fa-arrow-right au-kpi-go"></i></div>
+    <div class="au-kpi skel" data-kpi="newLoginsToday" data-filter="new" role="button" tabindex="0" aria-label="Show new users who joined and visited today"><div class="au-kpi-icon cyan"><i class="fa-solid fa-user-plus"></i></div><div class="au-kpi-data"><span>New Today</span><strong class="au-count" data-target="0">—</strong><small>Signed up + visited</small></div><i class="fa-solid fa-arrow-right au-kpi-go"></i></div>
+    <div class="au-kpi skel" data-kpi="visitRatePct" data-filter="today" role="button" tabindex="0" aria-label="Show today's visits behind the visit rate"><div class="au-kpi-icon gold"><i class="fa-solid fa-chart-pie"></i></div><div class="au-kpi-data"><span>Visit Rate</span><strong class="au-count" data-target="0" data-suffix="%">—</strong><small>Of total users, today</small></div><i class="fa-solid fa-arrow-right au-kpi-go"></i></div>
+  </div>
+
+  <!-- ═══ TIMELINE ═══ -->
+  <article class="au-panel-card">
+    <h3><i class="fa-solid fa-chart-line"></i> Visits by Hour (Today)</h3>
+    <div class="au-chart" id="auTimelineChart"></div>
+  </article>
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="au-toolbar">
+    <div class="au-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="auSearch" placeholder="Search by name or email…" aria-label="Search active users">
+    </div>
+    <div class="au-tabs" id="auTabs" role="tablist">
+      <button class="au-tab active" data-filter="today" type="button">Today</button>
+      <button class="au-tab" data-filter="online" type="button">Online Now</button>
+      <button class="au-tab" data-filter="15min" type="button">Last 15 min</button>
+      <button class="au-tab" data-filter="week" type="button">This Week</button>
+      <button class="au-tab" data-filter="new" type="button">New Today</button>
+      <button class="au-tab" data-filter="all" type="button">All Visits</button>
+    </div>
+    <span class="au-badge" id="auResultCount">—</span>
+  </div>
+
+  <!-- ═══ VISIT LOG TABLE ═══ -->
+  <div class="au-table-wrap" id="auTableWrap">
+    <table class="au-table" id="auTable" role="grid" aria-label="Active users table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Contact</th>
+          <th>Role</th>
+          <th>Account Status</th>
+          <th>Joined</th>
+          <th>Last Active</th>
+          <th>Status</th>
+          <th class="au-th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="auTableBody">
+        <tr><td colspan="8" class="au-empty"><div class="au-skeleton-row"></div><div class="au-skeleton-row"></div><div class="au-skeleton-row"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ PAGINATION ═══ -->
+  <div class="au-pagination" id="auPagination"></div>
+
+  <script type="module" src="../js/active-users.js"></script>
+</section>

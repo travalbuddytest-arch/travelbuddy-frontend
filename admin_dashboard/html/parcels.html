@@ -1,0 +1,163 @@
+<link rel="stylesheet" href="../css/parcels.css">
+
+<section id="parcels-panel" class="panel pc-panel">
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <div class="pc-kpi-grid" id="pcKpiGrid">
+    <div class="pc-kpi skel" data-status="all"><div class="pc-kpi-icon"><i class="fa-solid fa-box"></i></div><div class="pc-kpi-data"><span>Total Parcels</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel" data-status="pending"><div class="pc-kpi-icon pending"><i class="fa-solid fa-clock"></i></div><div class="pc-kpi-data"><span>Pending Approval</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel" data-status="accepted"><div class="pc-kpi-icon accepted"><i class="fa-solid fa-user-check"></i></div><div class="pc-kpi-data"><span>Waiting Traveller</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel" data-status="pickup_confirmed"><div class="pc-kpi-icon pickup"><i class="fa-solid fa-hand-holding-box"></i></div><div class="pc-kpi-data"><span>Waiting Pickup</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel" data-status="in_transit"><div class="pc-kpi-icon transit"><i class="fa-solid fa-truck-fast"></i></div><div class="pc-kpi-data"><span>In Transit</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel" data-status="delivered"><div class="pc-kpi-icon delivered"><i class="fa-solid fa-circle-check"></i></div><div class="pc-kpi-data"><span>Delivered Today</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel" data-status="cancelled"><div class="pc-kpi-icon cancelled"><i class="fa-solid fa-ban"></i></div><div class="pc-kpi-data"><span>Cancelled</span><strong class="pc-count" data-target="0">—</strong><small>—</small></div></div>
+    <div class="pc-kpi skel pc-kpi-revenue"><div class="pc-kpi-icon revenue"><i class="fa-solid fa-indian-rupee-sign"></i></div><div class="pc-kpi-data"><span>Revenue Today</span><strong class="pc-count" data-target="0">₹0</strong><small>—</small></div></div>
+    <div class="pc-kpi skel"><div class="pc-kpi-icon success"><i class="fa-solid fa-percent"></i></div><div class="pc-kpi-data"><span>Success Rate</span><strong class="pc-count" data-target="0">—%</strong><small>—</small></div></div>
+    <div class="pc-kpi skel"><div class="pc-kpi-icon warning"><i class="fa-solid fa-gauge-high"></i></div><div class="pc-kpi-data"><span>Avg Delivery</span><strong class="pc-count" data-target="0">—h</strong><small>—</small></div></div>
+  </div>
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="pc-toolbar">
+    <div class="pc-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="pcSearch" placeholder="Search parcels, order IDs, cities, senders, travellers…" aria-label="Search parcels">
+      <kbd>⌘K</kbd>
+    </div>
+    <div class="pc-toolbar-actions">
+      <button class="pc-btn pc-btn-icon" id="pcFilterToggle" title="Toggle filters" aria-label="Toggle filters"><i class="fa-solid fa-filter"></i></button>
+      <button class="pc-btn pc-btn-icon" id="pcRefreshBtn" title="Refresh" aria-label="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <button class="pc-btn pc-btn-icon" id="pcExportBtn" title="Export CSV" aria-label="Export CSV"><i class="fa-solid fa-file-arrow-down"></i></button>
+      <select id="pcSortSelect" class="pc-select" aria-label="Sort by">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="highest">Highest Value</option>
+        <option value="lowest">Lowest Value</option>
+      </select>
+      <span class="pc-badge" id="pcResultCount">—</span>
+    </div>
+  </div>
+
+  <!-- ═══ SMART FILTERS ═══ -->
+  <div class="pc-filters hidden" id="pcFilters">
+    <div class="pc-filter-row">
+      <label>Status</label>
+      <select id="pcFilterStatus"><option value="all">All</option><option value="pending">Pending</option><option value="accepted">Accepted</option><option value="pickup_confirmed">Pickup Confirmed</option><option value="in_transit">In Transit</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select>
+      <label>Priority</label>
+      <select id="pcFilterPriority"><option value="all">All</option><option value="normal">Normal</option><option value="medium">Medium</option><option value="urgent">Urgent</option><option value="critical">Critical</option><option value="high_value">High Value</option><option value="fragile">Fragile</option><option value="medical">Medical</option><option value="express">Express</option></select>
+      <label>Category</label>
+      <select id="pcFilterCategory"><option value="all">All</option><option value="general">General</option><option value="documents">Documents</option><option value="electronics">Electronics</option><option value="clothing">Clothing</option><option value="food">Food</option><option value="fragile">Fragile</option><option value="medical">Medical</option><option value="household">Household</option><option value="other">Other</option></select>
+      <label>Payment</label>
+      <select id="pcFilterPayment"><option value="all">All</option><option value="unpaid">Unpaid</option><option value="held">Held</option><option value="released">Released</option><option value="refunded">Refunded</option></select>
+    </div>
+    <div class="pc-filter-row">
+      <label>From</label><input type="text" id="pcFilterFrom" placeholder="City" class="pc-filter-input" aria-label="Filter by origin city">
+      <label>To</label><input type="text" id="pcFilterTo" placeholder="City" class="pc-filter-input" aria-label="Filter by destination city">
+      <label>From</label><input type="date" id="pcFilterDateFrom" class="pc-filter-input" aria-label="Filter from date">
+      <label>To</label><input type="date" id="pcFilterDateTo" class="pc-filter-input" aria-label="Filter to date">
+      <button class="pc-btn pc-btn-sm" id="pcClearFilters">Clear</button>
+    </div>
+  </div>
+
+  <!-- ═══ BULK ACTIONS BAR ═══ -->
+  <div class="pc-bulk-bar hidden" id="pcBulkBar">
+    <span id="pcBulkCount">0 selected</span>
+    <button class="pc-btn pc-btn-sm pc-btn-success" data-bulk="approve"><i class="fa-solid fa-check"></i> Approve</button>
+    <button class="pc-btn pc-btn-sm pc-btn-danger" data-bulk="cancel"><i class="fa-solid fa-ban"></i> Cancel</button>
+    <button class="pc-btn pc-btn-sm pc-btn-danger" data-bulk="delete"><i class="fa-solid fa-trash"></i> Delete</button>
+    <button class="pc-btn pc-btn-sm" id="pcBulkDeselect"><i class="fa-solid fa-xmark"></i> Deselect</button>
+  </div>
+
+  <!-- ═══ DATA TABLE ═══ -->
+  <div class="pc-table-wrap">
+    <table class="pc-table" id="pcTable" role="grid" aria-label="Parcels table">
+      <thead>
+        <tr>
+          <th class="pc-th-check"><input type="checkbox" id="pcSelectAll" aria-label="Select all"></th>
+          <th class="pc-th-id sortable" data-col="orderId">Order ID</th>
+          <th class="sortable" data-col="category">Category</th>
+          <th>Sender</th>
+          <th>Traveller</th>
+          <th class="sortable" data-col="fromCity">Pickup</th>
+          <th class="sortable" data-col="toCity">Destination</th>
+          <th class="sortable" data-col="weight">Weight</th>
+          <th class="sortable" data-col="price">Price</th>
+          <th>Priority</th>
+          <th>Payment</th>
+          <th>Progress</th>
+          <th>Status</th>
+          <th>Health</th>
+          <th class="sortable" data-col="createdAt">Created</th>
+          <th class="pc-th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="pcTableBody">
+        <tr><td colspan="16" class="pc-empty"><div class="pc-skeleton-row"></div><div class="pc-skeleton-row"></div><div class="pc-skeleton-row"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ PAGINATION ═══ -->
+  <div class="pc-pagination" id="pcPagination"></div>
+
+  <!-- ═══ ANALYTICS PANEL ═══ -->
+  <div class="pc-analytics hidden" id="pcAnalytics">
+    <div class="pc-analytics-grid">
+      <article class="pc-panel-card">
+        <h3><i class="fa-solid fa-chart-line"></i> Daily Parcels (30d)</h3>
+        <div class="pc-chart" id="pcChartDaily"></div>
+      </article>
+      <article class="pc-panel-card">
+        <h3><i class="fa-solid fa-chart-pie"></i> Categories</h3>
+        <div id="pcChartCategory"></div>
+      </article>
+      <article class="pc-panel-card">
+        <h3><i class="fa-solid fa-route"></i> Top Routes</h3>
+        <div id="pcChartRoutes"></div>
+      </article>
+      <article class="pc-panel-card">
+        <h3><i class="fa-solid fa-user-check"></i> Top Travellers</h3>
+        <div id="pcChartTravellers"></div>
+      </article>
+      <article class="pc-panel-card">
+        <h3><i class="fa-solid fa-clock"></i> Peak Hours</h3>
+        <div class="pc-chart" id="pcChartPeak"></div>
+      </article>
+      <article class="pc-panel-card">
+        <h3><i class="fa-solid fa-lightbulb"></i> AI Insights</h3>
+        <div id="pcInsights"></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- ═══ AUDIT LOG PANEL ═══ -->
+  <div class="pc-audit hidden" id="pcAuditLog">
+    <div class="pc-panel-card"><h3><i class="fa-solid fa-clock-rotate-left"></i> Audit Log</h3><div id="pcAuditList"></div></div>
+  </div>
+
+  <!-- ═══ PARCEL DETAILS MODAL ═══ -->
+  <div class="pc-drawer-overlay hidden" id="pcDrawerOverlay">
+    <aside class="pc-drawer" id="pcDrawer" role="dialog" aria-modal="true" aria-label="Parcel details">
+      <div class="pc-drawer-header">
+        <h2 id="pcDrawerTitle">Parcel Details</h2>
+        <div class="pc-drawer-actions">
+          <button class="pc-btn pc-btn-icon" id="pcDrawerTimeline" title="Timeline"><i class="fa-solid fa-timeline"></i></button>
+          <button class="pc-btn pc-btn-icon" id="pcDrawerClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="pc-drawer-body" id="pcDrawerBody"><div class="pc-loading">Loading…</div></div>
+    </aside>
+  </div>
+
+  <!-- ═══ TIMELINE MODAL ═══ -->
+  <div class="pc-modal-overlay hidden" id="pcTimelineOverlay">
+    <div class="pc-modal" role="dialog" aria-label="Parcel timeline">
+      <div class="pc-modal-header"><h3><i class="fa-solid fa-timeline"></i> Parcel Timeline</h3><button class="pc-btn pc-btn-icon" id="pcTimelineClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="pc-modal-body" id="pcTimelineBody"></div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="pc-toast" id="pcToast"><i class="fa-solid fa-circle-check"></i><span id="pcToastMsg"></span></div>
+
+  <script type="module" src="../js/parcels.js"></script>
+</section>

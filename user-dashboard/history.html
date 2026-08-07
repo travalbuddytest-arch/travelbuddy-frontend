@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy — History</title>
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/history.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="../home/index.html" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="Travel Buddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList">
+        <a href="overview.html" class="nav-item" data-section="overview">
+          <i class="fa-solid fa-gauge"></i><span>Overview</span>
+        </a>
+        <a href="post.html" class="nav-item" data-section="post">
+          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
+        </a>
+        <a href="pickup.html" class="nav-item" data-section="pickup">
+          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
+        </a>
+        <a href="track.html" class="nav-item" data-section="track">
+          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
+        </a>
+        <a href="messages.html" class="nav-item" data-section="messages">
+          <i class="fa-solid fa-message"></i><span>Messages</span>
+          <span class="nav-badge" id="navMsgBadge">3</span>
+        </a>
+        <a href="notifications.html" class="nav-item" data-section="notifications">
+          <i class="fa-solid fa-bell"></i><span>Notifications</span>
+          <span class="nav-badge" id="navNotifBadge">4</span>
+        </a>
+        <a href="payments.html" class="nav-item" data-section="payments">
+          <i class="fa-solid fa-wallet"></i><span>Payments</span>
+        </a>
+        <a href="history.html" class="nav-item active" data-section="history">
+          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title" id="pageTitle">History</h1>
+
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
+          </div>
+
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">BS</div>
+            <div class="user-meta">
+              <span class="user-name">Bhushan</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="content" id="content">
+
+        <section class="view active history-view" id="view-history" aria-labelledby="historyHeading">
+
+          <div class="history-heading">
+            <div>
+              <span class="eyebrow">Delivered parcels</span>
+              <h2 id="historyHeading">Delivered &amp; Cancelled Parcels</h2>
+              <p>Every delivered and cancelled parcel is safely archived here.</p>
+            </div>
+            <div class="history-filter-tabs" id="historyFilterTabs" role="tablist">
+              <button type="button" class="tab-btn active" data-filter="all">All</button>
+              <button type="button" class="tab-btn" data-filter="sender">Sent by Me</button>
+              <button type="button" class="tab-btn" data-filter="traveler">Delivered by Me</button>
+            </div>
+          </div>
+
+          <div class="history-stats" id="historyStats">
+            <div class="history-stat">
+              <span class="history-stat-value" id="historyTotalCount">0</span>
+              <span class="history-stat-label">Total Delivered</span>
+            </div>
+            <div class="history-stat">
+              <span class="history-stat-value" id="historySentCount">0</span>
+              <span class="history-stat-label">Sent by You</span>
+            </div>
+            <div class="history-stat">
+              <span class="history-stat-value" id="historyDeliveredCount">0</span>
+              <span class="history-stat-label">Delivered by You</span>
+            </div>
+          </div>
+
+          <div class="history-section-label"><i class="fa-solid fa-ban"></i> Cancelled parcels</div>
+          <div class="history-stats cancellation-stats">
+            <div class="history-stat"><span class="history-stat-value" id="historyCancelledTotalCount">0</span><span class="history-stat-label">Total Cancelled</span></div>
+            <div class="history-stat"><span class="history-stat-value" id="historyCancelledByYouCount">0</span><span class="history-stat-label">Cancelled by You</span></div>
+            <div class="history-stat"><span class="history-stat-value" id="historyCancelledByOtherCount">0</span><span class="history-stat-label">Cancelled by Other</span></div>
+          </div>
+
+          <ul class="history-list" id="historyList">
+            <li class="skeleton-row"></li>
+            <li class="skeleton-row"></li>
+            <li class="skeleton-row"></li>
+          </ul>
+
+          <div class="empty-state hidden" id="historyEmpty">
+            <i class="fa-solid fa-box-archive"></i>
+            <p>No delivered parcels yet. Once a parcel journey completes, it'll show up here.</p>
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= HISTORY DETAIL MODAL ================= -->
+  <div class="modal-overlay hidden" id="historyModalOverlay">
+    <div class="modal-card history-modal" id="historyModalCard" role="dialog" aria-modal="true" aria-labelledby="historyModalTitle">
+      <button class="modal-close" id="historyModalClose" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="history-modal-head">
+        <span class="tag tag--delivered"><i class="fa-solid fa-circle-check"></i> Delivered</span>
+        <span class="history-modal-number" id="historyModalNumber">TB-000000</span>
+      </div>
+
+      <h2 class="modal-title" id="historyModalTitle">Parcel Details</h2>
+
+      <div class="history-route" id="historyModalRoute">
+        <span class="route-pill" id="historyModalRoutePill"></span>
+      </div>
+
+      <p class="history-modal-desc" id="historyModalDesc"></p>
+
+      <div class="history-modal-meta">
+        <span><i class="fa-solid fa-weight-hanging"></i> <span id="historyModalWeight"></span></span>
+        <span><i class="fa-solid fa-indian-rupee-sign"></i><span id="historyModalPrice"></span></span>
+        <span><i class="fa-solid fa-user"></i> <span id="historyModalCounterpart"></span></span>
+      </div>
+
+      <ol class="history-timeline" id="historyModalTimeline"></ol>
+
+      <section class="traveler-rating-box hidden" id="travelerRatingBox" aria-labelledby="travelerRatingTitle">
+        <h3 id="travelerRatingTitle">Rate your traveler</h3>
+        <p id="travelerRatingHelp">How was your delivery experience?</p>
+        <div class="star-rating" id="travelerStarRating" role="radiogroup" aria-label="Traveler rating">
+          <button type="button" data-score="1" aria-label="1 star">★</button><button type="button" data-score="2" aria-label="2 stars">★</button><button type="button" data-score="3" aria-label="3 stars">★</button><button type="button" data-score="4" aria-label="4 stars">★</button><button type="button" data-score="5" aria-label="5 stars">★</button>
+        </div>
+        <textarea id="travelerRatingComment" maxlength="300" placeholder="Share a short comment (optional)"></textarea>
+        <button type="button" class="rating-submit-btn" id="travelerRatingSubmit">Submit Rating</button>
+        <p class="rating-status" id="travelerRatingStatus"></p>
+      </section>
+    </div>
+  </div>
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="/socket.io/socket.io.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/history.js?v=archive-history-20260710"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+  <script src="../shared/firebase-config.js?v=1"></script>
+  <script src="../shared/push-client.js?v=1"></script>
+</body>
+</html>

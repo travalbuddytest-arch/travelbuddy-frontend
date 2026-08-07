@@ -1,0 +1,197 @@
+.system-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.sys-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  margin-bottom: 4px;
+}
+.sys-banner.healthy {
+  background: #ecfdf3;
+  border: 1px solid #d1fadf;
+  color: #079455;
+}
+.sys-banner.degraded {
+  background: #fff7e8;
+  border: 1px solid #fedfbe;
+  color: #f79009;
+}
+.sys-banner i { font-size: 24px; }
+.sys-banner strong {
+  font-size: 14px;
+  display: block;
+}
+.sys-banner span {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.sys-card {
+  background: #fff;
+  border: 1px solid var(--card-border, #e9edf3);
+  border-radius: var(--card-radius, 14px);
+  box-shadow: var(--card-shadow, 0 1px 2px rgba(16,24,40,.04));
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.sys-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-shadow-hover, 0 10px 24px rgba(16,24,40,.08));
+  border-color: #dbe3ee;
+}
+
+.sys-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+.sys-card-header i {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  border-radius: 10px;
+}
+.sys-card-header > div { flex: 1; }
+.sys-card-header strong { font-size: 12.5px; font-weight: 700; color: var(--t); display: block; }
+.sys-card-header span { font-size: 9px; color: #98a2b3; }
+.sys-card-header.ok i {
+  color: var(--b);
+  background: linear-gradient(160deg, #eef4ff, #e3ecff);
+  box-shadow: inset 0 0 0 1px rgba(23, 105, 255, .08);
+}
+.sys-card-header.err i {
+  color: #f04438;
+  background: linear-gradient(160deg, #fff0ee, #ffe1dd);
+  box-shadow: inset 0 0 0 1px rgba(240, 68, 56, .1);
+}
+
+.sys-card-body {
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.sys-card-body div {
+  display: flex;
+  flex-direction: column;
+}
+.sys-card-body span {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  color: #98a2b3;
+  text-transform: uppercase;
+}
+.sys-card-body b {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--t);
+  font-variant-numeric: tabular-nums;
+}
+.sys-card-body .error-text {
+  color: #f04438;
+  font-size: 9px;
+  word-break: break-all;
+}
+
+.sys-card-footer {
+  padding: 10px 16px;
+  border-top: 1px solid #f0f2f5;
+}
+
+.coll-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.coll-grid span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 9px;
+}
+.coll-grid b {
+  font-size: 9px;
+}
+.coll-grid small {
+  font-size: 8px;
+  color: #98a2b3;
+}
+
+.mem-bar {
+  display: flex;
+  gap: 12px;
+}
+.mem-item {
+  display: flex;
+  flex-direction: column;
+}
+.mem-item span {
+  font-size: 8px;
+  color: #98a2b3;
+}
+.mem-item strong {
+  font-size: 11px;
+}
+
+.status-tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+.status-tag.active { background: #ecfdf3; color: #12b76a; }
+.status-tag.danger { background: #fff0ee; color: #f04438; }
+
+.retry-inline {
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 10px;
+  cursor: pointer;
+  color: var(--b);
+  margin-left: 8px;
+}
+.retry-inline:hover { background: #eef4ff; }
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .system-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .sys-card-body { grid-template-columns: 1fr; }
+  .sys-banner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .mem-bar { flex-wrap: wrap; }
+}
+
+/* ══════════════════════════════════════════════
+   ACCESSIBILITY
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+.retry-inline:focus-visible {
+  outline: 2px solid var(--b);
+  outline-offset: 2px;
+}

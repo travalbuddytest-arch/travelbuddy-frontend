@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy — Post a Parcel</title>
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/post.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="../home/index.html" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="Travel Buddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList">
+        <a href="overview.html" class="nav-item" data-section="overview">
+          <i class="fa-solid fa-gauge"></i><span>Overview</span>
+        </a>
+        <a href="post.html" class="nav-item active" data-section="post">
+          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
+        </a>
+        <a href="pickup.html" class="nav-item" data-section="pickup">
+          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
+        </a>
+        <a href="track.html" class="nav-item" data-section="track">
+          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
+        </a>
+        <a href="messages.html" class="nav-item" data-section="messages">
+          <i class="fa-solid fa-message"></i><span>Messages</span>
+          <span class="nav-badge" id="navMsgBadge">3</span>
+        </a>
+        <a href="notifications.html" class="nav-item" data-section="notifications">
+          <i class="fa-solid fa-bell"></i><span>Notifications</span>
+          <span class="nav-badge" id="navNotifBadge">4</span>
+        </a>
+        <a href="payments.html" class="nav-item" data-section="payments">
+          <i class="fa-solid fa-wallet"></i><span>Payments</span>
+        </a>
+        <a href="history.html" class="nav-item" data-section="history">
+          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title" id="pageTitle">Post a Parcel</h1>
+
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
+          </div>
+
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">BS</div>
+            <div class="user-meta">
+              <span class="user-name">Bhushan</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="content" id="content">
+
+        <section class="view active" id="view-post">
+
+          <div class="panel-grid panel-grid--split">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Post a New Parcel</h2>
+                <p class="panel-sub">Tell travelers what you need delivered.</p>
+              </div>
+
+              <form class="stack-form" id="postParcelForm">
+                <div class="form-row">
+                  <div class="field">
+                    <label>From</label>
+                    <input type="text" id="postFrom" placeholder="e.g. Mumbai" required />
+                  </div>
+                  <div class="field">
+                    <label>To</label>
+                    <input type="text" id="postTo" placeholder="e.g. Pune" required />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Parcel Description</label>
+                  <input type="text" id="postDesc" placeholder="e.g. Documents envelope, 2kg box of books" required />
+                </div>
+
+                <div class="form-row">
+                  <div class="field">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="postWeight" min="0.1" step="0.1" placeholder="1.5" required />
+                  </div>
+                  <div class="field">
+                    <label>Offer Price (₹)</label>
+                    <input type="number" id="postPrice" min="0" placeholder="300" required />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Preferred Pickup Date</label>
+                  <input type="date" id="postDate" required />
+                </div>
+
+                <button type="submit" class="btn-primary" id="postSubmitBtn">
+                  <span class="btn-label"><i class="fa-solid fa-paper-plane"></i> Post Parcel</span>
+                  <span class="spinner" aria-hidden="true"></span>
+                </button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>My Posted Parcels</h2>
+              </div>
+              <ul class="parcel-list" id="myParcelList"></ul>
+            </div>
+          </div>
+
+          <div class="panel hidden" id="routeRecommendationsPanel">
+            <div class="panel-head">
+              <h2>Travelers on Your Route</h2>
+              <p class="panel-sub">These travelers have already posted a route matching the parcel you just posted.</p>
+            </div>
+            <ul class="parcel-list" id="routeRecommendationsList"></ul>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= WALLET TOP-UP MODAL ================= -->
+  <div class="modal-overlay hidden" id="walletTopupOverlay">
+    <div class="modal-card wallet-topup-modal" role="dialog" aria-modal="true" aria-labelledby="walletTopupTitle">
+      <button class="modal-close" id="walletTopupClose" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h2 class="modal-title" id="walletTopupTitle">Add money to wallet</h2>
+      <p class="wallet-topup-copy" id="walletTopupMessage">
+        Your wallet balance is not enough to post this parcel.
+      </p>
+      <div class="wallet-topup-summary">
+        <div>
+          <span>Wallet balance</span>
+          <strong id="walletCurrentBalance">Rs. 0.00</strong>
+        </div>
+        <div>
+          <span>Need to add</span>
+          <strong id="walletShortageAmount">Rs. 0.00</strong>
+        </div>
+      </div>
+      <div class="modal-actions modal-actions--end">
+        <button type="button" class="btn-ghost" id="walletTopupCancel">Cancel</button>
+        <button type="button" class="btn-primary btn-primary--inline" id="walletTopupProceed">
+          <span class="btn-label"><i class="fa-solid fa-wallet"></i> Add Money</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PARCEL DETAIL / EDIT MODAL ================= -->
+  <div class="modal-overlay hidden" id="parcelModalOverlay">
+    <div class="modal-card" id="parcelModalCard">
+      <button class="modal-close" id="parcelModalClose" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h2 class="modal-title">Parcel Details</h2>
+
+      <form class="stack-form" id="editParcelForm">
+        <input type="hidden" id="editParcelId" />
+        <div class="form-row">
+          <div class="field">
+            <label>From</label>
+            <input type="text" id="editFrom" required />
+          </div>
+          <div class="field">
+            <label>To</label>
+            <input type="text" id="editTo" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Parcel Description</label>
+          <input type="text" id="editDesc" required />
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Weight (kg)</label>
+            <input type="number" id="editWeight" min="0.1" step="0.1" required />
+          </div>
+          <div class="field">
+            <label>Offer Price (₹)</label>
+            <input type="number" id="editPrice" min="0" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Preferred Pickup Date</label>
+          <input type="date" id="editDate" required />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="deleteParcelBtn">
+            <i class="fa-solid fa-trash"></i> Delete Parcel
+          </button>
+          <button type="submit" class="btn-primary btn-primary--inline" id="saveParcelBtn">
+            <span class="btn-label"><i class="fa-solid fa-check"></i> Save Changes</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="/socket.io/socket.io.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/post.js?v=cancel-500-final-20260710"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+  <script src="../shared/firebase-config.js?v=1"></script>
+  <script src="../shared/push-client.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+.analytics-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.metric-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--card-border, #e9edf3);
+  border-radius: var(--card-radius, 14px);
+  padding: 16px;
+  box-shadow: var(--card-shadow, 0 1px 2px rgba(16,24,40,.04));
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-shadow-hover, 0 10px 24px rgba(16,24,40,.08));
+  border-color: #dbe3ee;
+}
+.metric-card span {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: #98a2b3;
+  margin-bottom: 6px;
+}
+.metric-card strong {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+  color: var(--t);
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+.metric-card .green { color: #12b76a; }
+.metric-card .red { color: #f04438; }
+.metric-card .orange { color: #f79009; }
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.analytics-grid .panel h3 {
+  font-size: 12px;
+  margin: 0 0 12px;
+  color: var(--t);
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 130px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+.chart-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 28px;
+}
+.chart-col .bar {
+  width: 100%;
+  max-width: 28px;
+  background: linear-gradient(#6d98ff, #1769ff);
+  border-radius: 4px 4px 1px 1px;
+  transition: 0.3s;
+  min-height: 4px;
+}
+.chart-col span {
+  font-size: 7px;
+  color: #98a2b3;
+  white-space: nowrap;
+}
+
+.status-list {
+  padding: 4px 0;
+}
+.stat-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+.stat-bar span {
+  width: 100px;
+  font-size: 10px;
+  color: #667085;
+}
+.stat-bar b {
+  width: 30px;
+  text-align: right;
+  font-size: 11px;
+}
+.stat-bar i {
+  flex: 1;
+  height: 8px;
+  background: #f0f3f7;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.stat-bar i u {
+  display: block;
+  height: 100%;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: width 0.8s;
+}
+
+.route-list {
+  padding: 4px 0;
+}
+.route-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 10px;
+}
+.route-row span {
+  width: 120px;
+  color: #667085;
+}
+.route-row b {
+  width: 30px;
+  text-align: right;
+}
+.route-row .cell-mono {
+  width: 60px;
+  text-align: right;
+  font-family: 'SF Mono', monospace;
+  font-size: 9px;
+  color: #079455;
+}
+.route-row i {
+  flex: 1;
+  height: 6px;
+  background: #f0f3f7;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.route-row i u {
+  display: block;
+  height: 100%;
+  background: var(--b);
+  border-radius: 20px;
+  text-decoration: none;
+}
+
+.loading {
+  font-size: 11px;
+}
+
+.error {
+  font-size: 11px;
+}
+
+.retry-inline {
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 10px;
+  cursor: pointer;
+  color: var(--b);
+  margin-left: 8px;
+}
+.retry-inline:hover { background: #eef4ff; }
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .analytics-metrics { grid-template-columns: repeat(2, 1fr); }
+  .analytics-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 576px) {
+  .analytics-metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-bar span { width: 76px; }
+  .route-row span { width: 84px; }
+}
+@media (max-width: 480px) {
+  .analytics-metrics { grid-template-columns: 1fr; }
+  .stat-bar span, .route-row span { width: 64px; font-size: 9px; }
+  .route-row .cell-mono { width: 46px; }
+}
+
+/* ══════════════════════════════════════════════
+   ACCESSIBILITY
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+.retry-inline:focus-visible {
+  outline: 2px solid var(--b);
+  outline-offset: 2px;
+}

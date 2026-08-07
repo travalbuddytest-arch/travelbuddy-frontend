@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="../css/cancellations.css">
+<section id="cancellations-panel" class="panel">
+  <div class="outcome-tabs" id="outcomeTabs">
+    <button data-outcome="all" class="active">All Outcomes</button>
+    <button data-outcome="delivered">Delivered</button>
+    <button data-outcome="cancelled">Cancelled</button>
+  </div>
+  <div class="cancel-patterns" id="cancelPatterns"></div>
+  <div class="table-wrap">
+    <table class="admin-table" id="cancelTable">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Route</th>
+          <th>Sender</th>
+          <th>Outcome</th>
+          <th id="colCounterparty">Traveler / Cancelled By</th>
+          <th id="colAmount">Amount</th>
+          <th id="colReason">Reason</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="cancellationList"></tbody>
+    </table>
+  </div>
+  <div class="pagination" id="cancelPagination"></div>
+  <script type="module" src="../js/cancellations.js"></script>
+</section>

@@ -1,0 +1,32 @@
+
+:root{--tb-cookie-blue:#0d6efd;--tb-cookie-text:#17233d;--tb-cookie-muted:#667085;--tb-cookie-bg:#fff;--tb-cookie-border:#e5eaf2;--tb-cookie-banner-bg:#f4f1e6;--tb-cookie-banner-border:#e3ddc8;--tb-cookie-banner-text:#1c1c1c}
+.tb-cookie-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.28);backdrop-filter:blur(3px);z-index:99997;opacity:0;pointer-events:none;transition:.25s}
+.tb-cookie-backdrop.show{opacity:1;pointer-events:auto}
+.tb-cookie-banner,.tb-cookie-modal{font-family:inherit;box-sizing:border-box}
+.tb-cookie-banner{position:fixed;left:0;right:0;bottom:0;width:100%;background:var(--tb-cookie-banner-bg);border-top:1px solid var(--tb-cookie-banner-border);box-shadow:0 -8px 30px rgba(15,23,42,.10);z-index:99998;padding:26px 48px 20px;display:none;flex-direction:column;gap:12px;color:var(--tb-cookie-banner-text)}
+.tb-cookie-banner.show{display:flex;animation:tbCookieUp .3s ease}
+.tb-cookie-row{display:flex;gap:32px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.tb-cookie-copy{flex:1;min-width:280px}
+.tb-cookie-title{margin:0 0 8px;font-size:19px;font-weight:800}
+.tb-cookie-text{margin:0;color:#3d3d3d;font-size:14px;line-height:1.6}
+.tb-cookie-banner .tb-cookie-text{color:#3d3d3d}
+.tb-cookie-link{color:inherit;font-weight:800;text-decoration:underline}
+.tb-cookie-actions{display:flex;gap:12px;flex-wrap:wrap;flex:0 0 auto}
+.tb-cookie-btn{border:0;border-radius:12px;padding:13px 22px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
+.tb-cookie-btn:hover{transform:translateY(-1px)}
+.tb-cookie-primary{background:var(--tb-cookie-blue);color:#fff}
+.tb-cookie-secondary{background:#eef4ff;color:#1557d6}
+.tb-cookie-banner .tb-cookie-ghost{background:transparent;color:#1c1c1c;border:1px solid #c9c2a8}
+.tb-cookie-modal .tb-cookie-ghost{background:#f5f7fa;color:#344054}
+.tb-cookie-manage{align-self:flex-start;background:none;border:0;padding:0;margin:0;font:inherit;font-size:13px;font-weight:800;color:#1c1c1c;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.tb-cookie-manage:hover{text-decoration:underline}
+.tb-cookie-modal{position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-46%) scale(.98);width:min(560px,calc(100% - 28px));max-height:86vh;overflow:auto;background:#fff;color:var(--tb-cookie-text);border-radius:22px;box-shadow:0 28px 90px rgba(15,23,42,.28);padding:24px;opacity:0;pointer-events:none;transition:.25s}
+.tb-cookie-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.tb-cookie-modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.tb-cookie-modal h2{margin:0;font-size:22px}.tb-cookie-modal .tb-cookie-text{color:var(--tb-cookie-muted)}.tb-cookie-close{border:0;background:#f2f4f7;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px}
+.tb-cookie-option{display:flex;gap:14px;justify-content:space-between;padding:16px 0;border-top:1px solid var(--tb-cookie-border)}.tb-cookie-option:first-of-type{margin-top:18px}.tb-cookie-option h3{margin:0 0 4px;font-size:15px}.tb-cookie-option p{margin:0;color:var(--tb-cookie-muted);font-size:13px;line-height:1.45}
+.tb-cookie-always{font-size:12px;font-weight:800;color:#087443}.tb-cookie-switch{position:relative;width:46px;height:26px;flex:0 0 auto}.tb-cookie-switch input{opacity:0;width:0;height:0}.tb-cookie-slider{position:absolute;inset:0;background:#cfd6e2;border-radius:99px;cursor:pointer;transition:.2s}.tb-cookie-slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}.tb-cookie-switch input:checked+.tb-cookie-slider{background:var(--tb-cookie-blue)}.tb-cookie-switch input:checked+.tb-cookie-slider:before{transform:translateX(20px)}
+.tb-cookie-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
+.tb-cookie-settings-link{position:fixed;right:16px;bottom:16px;z-index:99990;border:1px solid var(--tb-cookie-border);background:#fff;color:#344054;border-radius:999px;padding:9px 14px;box-shadow:0 8px 24px rgba(15,23,42,.12);font:inherit;font-size:12px;font-weight:700;cursor:pointer;display:none}
+.tb-cookie-settings-link.show{display:block}
+@keyframes tbCookieUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media(max-width:760px){.tb-cookie-banner{padding:18px 16px 16px}.tb-cookie-row{flex-direction:column;align-items:stretch;gap:14px}.tb-cookie-actions{justify-content:stretch}.tb-cookie-btn{flex:1}.tb-cookie-settings-link{right:10px;bottom:10px}}

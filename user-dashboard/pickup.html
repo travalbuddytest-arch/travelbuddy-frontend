@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy — Pick Up a Parcel</title>
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/pickup.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="../home/index.html" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="Travel Buddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList">
+        <a href="overview.html" class="nav-item" data-section="overview">
+          <i class="fa-solid fa-gauge"></i><span>Overview</span>
+        </a>
+        <a href="post.html" class="nav-item" data-section="post">
+          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
+        </a>
+        <a href="pickup.html" class="nav-item active" data-section="pickup">
+          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
+        </a>
+        <a href="track.html" class="nav-item" data-section="track">
+          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
+        </a>
+        <a href="messages.html" class="nav-item" data-section="messages">
+          <i class="fa-solid fa-message"></i><span>Messages</span>
+          <span class="nav-badge" id="navMsgBadge">3</span>
+        </a>
+        <a href="notifications.html" class="nav-item" data-section="notifications">
+          <i class="fa-solid fa-bell"></i><span>Notifications</span>
+          <span class="nav-badge" id="navNotifBadge">4</span>
+        </a>
+        <a href="payments.html" class="nav-item" data-section="payments">
+          <i class="fa-solid fa-wallet"></i><span>Payments</span>
+        </a>
+        <a href="history.html" class="nav-item" data-section="history">
+          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title" id="pageTitle">Pick Up a Parcel</h1>
+
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
+          </div>
+
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">BS</div>
+            <div class="user-meta">
+              <span class="user-name">Bhushan</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="content" id="content">
+
+        <section class="view active" id="view-pickup">
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Find Parcels on Your Route</h2>
+              <p class="panel-sub">Enter the route you're travelling — we'll match parcels going the same way.</p>
+            </div>
+
+            <form class="search-row" id="routeSearchForm">
+              <div class="field">
+                <label>From</label>
+                <input type="text" id="routeFrom" placeholder="e.g. Mumbai" required />
+              </div>
+              <div class="field">
+                <label>To</label>
+                <input type="text" id="routeTo" placeholder="e.g. Pune" required />
+              </div>
+              <button type="submit" class="btn-primary btn-primary--inline" id="routeSearchBtn">
+                <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Matching Parcels</h2>
+              <span class="result-count" id="resultCount"></span>
+            </div>
+            <ul class="parcel-list parcel-list--pickup" id="pickupResults"></ul>
+            <p class="empty-state hidden" id="pickupEmpty">
+              <i class="fa-solid fa-box-open"></i>
+              Enter a route above to see parcels heading your way.
+            </p>
+          </div>
+
+          <div class="panel-grid panel-grid--split">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Post Your Travel Route</h2>
+                <p class="panel-sub">Save the route you're travelling — senders posting a parcel on the same route will see you as a recommended traveler.</p>
+              </div>
+
+              <form class="stack-form" id="postRouteForm">
+                <div class="form-row">
+                  <div class="field">
+                    <label>From</label>
+                    <input type="text" id="routePostFrom" placeholder="e.g. Pune" required />
+                  </div>
+                  <div class="field">
+                    <label>To</label>
+                    <input type="text" id="routePostTo" placeholder="e.g. Delhi" required />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Travel Date</label>
+                  <input type="date" id="routePostDate" required />
+                </div>
+
+                <div class="field">
+                  <label>Notes (optional)</label>
+                  <input type="text" id="routePostNotes" placeholder="e.g. Travelling by train, can carry small parcels" maxlength="200" />
+                </div>
+
+                <button type="submit" class="btn-primary" id="routePostBtn">
+                  <span class="btn-label"><i class="fa-solid fa-route"></i> Post Route</span>
+                  <span class="spinner" aria-hidden="true"></span>
+                </button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>My Posted Routes</h2>
+              </div>
+              <ul class="parcel-list" id="myRouteList"></ul>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="/socket.io/socket.io.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/pickup.js"></script>
+  <script src="js/pickup-route.js"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+  <script src="../shared/firebase-config.js?v=1"></script>
+  <script src="../shared/push-client.js?v=1"></script>
+</body>
+</html>
+

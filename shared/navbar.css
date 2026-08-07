@@ -1,0 +1,262 @@
+/* ==========================
+   SHARED NAVBAR
+   Scoped to .tb-nav-header / #mainNav so this file is safe to include
+   on any page (e.g. Support) without clashing with that page's own CSS.
+   Visuals are copied 1:1 from the original Home page navbar.
+========================== */
+
+.tb-nav-header{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 8px clamp(16px, 6vw, 8%);
+    background:#fff;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);
+    font-family:'Poppins',sans-serif;
+}
+
+.tb-nav-header .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:15px;
+    font-weight:500;
+    color:#0d6efd;
+    min-width:0;
+}
+
+.tb-nav-header .logonav img{
+    width:30px;
+    height:40px;
+}
+
+.tb-nav-header .namenav img{
+    width:150px;
+    height:auto;
+}
+
+#mainNav{
+    display:flex;
+    align-items:center;
+    gap:35px;
+}
+
+#mainNav a{
+    position:relative;
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:color .3s;
+}
+
+#mainNav a::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-6px;
+    width:0%;
+    height:2px;
+    background:#0d6efd;
+    border-radius:2px;
+    transition:width .3s ease;
+}
+
+#mainNav a:hover{
+    color:#0d6efd;
+}
+
+#mainNav a:hover::after{
+    width:100%;
+}
+
+#mainNav a.active{
+    color:#0d6efd;
+    font-weight:600;
+}
+
+#mainNav a.active::after{
+    width:100%;
+}
+
+.register-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background:#dce7ff;
+    color:#7291d2;
+    border:none;
+    padding:12px 24px;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+.register-btn:hover{
+    background:#455c80;
+    color:#edebeb;
+}
+
+/* Mobile hamburger button */
+.menu-toggle{
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:flex-end;
+    gap:5px;
+    width:32px;
+    height:26px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    z-index:1101;
+}
+
+.menu-toggle span{
+    display:block;
+    width:100%;
+    height:3px;
+    border-radius:2px;
+    background:#0d6efd;
+    transition:.3s ease;
+}
+
+.menu-toggle.active span:nth-child(1){
+    transform:translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2){
+    opacity:0;
+}
+
+.menu-toggle.active span:nth-child(3){
+    transform:translateY(-8px) rotate(-45deg);
+    width:100%;
+}
+
+.nav-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.4);
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .3s ease;
+    z-index:990;
+}
+
+.nav-overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+body.nav-open{
+    overflow:hidden;
+}
+
+/* Logged-in profile chip */
+.guest-nav-actions { display:flex; align-items:center; gap:10px; }
+/* [hidden] is only a default UA style, and it loses to the display:flex
+   rule above regardless of specificity/order. Without this, the guest
+   Login/Register button stays visible even after JS sets
+   guestActions.hidden = true for a logged-in user/admin. */
+.guest-nav-actions[hidden] { display:none !important; }
+.home-user-chip { position:relative; margin-left:8px; }
+.home-user-chip[hidden] { display:none !important; }
+.home-user-trigger { min-width:0; width:auto; height:auto; min-height:48px; padding:6px 10px 6px 6px; border:1.5px solid #dfe7f3; border-radius:999px; gap:10px; box-shadow:none; display:flex; align-items:center; cursor:pointer; font-family:inherit; color:#142744; }
+.home-user-trigger:hover,
+.home-user-chip.open .home-user-trigger { border-color:#0d6efd; box-shadow:0 6px 16px -8px rgba(13,110,253,.35); }
+.home-avatar { width:34px; height:34px; flex:0 0 34px; border-radius:50%; display:grid; place-items:center; background:#347ff0; color:#fff; font-size:13px; font-weight:700; }
+.home-user-meta { min-width:0; flex:1; display:flex; flex-direction:column; align-items:flex-start; line-height:1.25; }
+.home-user-meta strong { max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:600; color:#172b4d; }
+.home-user-meta small { margin-top:0; font-size:11px; color:#8da0bd; font-weight:400; }
+.home-user-chevron { color:#8da0bd; transition:transform .2s ease; font-size:10px; margin-left:2px; }
+.home-user-chip.open .home-user-chevron { transform:rotate(180deg); }
+.home-user-menu { position:absolute; top:calc(100% + 8px); right:0; width:220px; padding:7px; border:1px solid #e3eaf5; border-radius:16px; background:#fff; box-shadow:0 14px 34px rgba(24,48,82,.16); display:none; z-index:1002; }
+.home-user-chip.open .home-user-menu { display:block; animation:homeMenuIn .18s ease-out; }
+.home-user-menu a, .home-user-menu button { width:100%; min-height:42px; padding:0 11px; border:0; border-radius:10px; background:transparent; color:#172b4d; display:flex; align-items:center; gap:10px; text-decoration:none; font:500 14px/1 Poppins,sans-serif; cursor:pointer; text-align:left; }
+.home-user-menu a:hover, .home-user-menu button:hover { background:#eef4ff; color:#1677ff; }
+.home-user-menu i { width:18px; text-align:center; font-size:14px; }
+button[hidden]{ display:none !important; }
+@keyframes homeMenuIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+@media (max-width: 900px) {
+    .home-user-chip { width:100%; margin:8px 0 0; }
+    .home-user-trigger { width:100%; min-width:0; }
+    .home-user-menu { position:static; width:100%; margin-top:8px; box-shadow:none; border-radius:16px; }
+    .guest-nav-actions { width:100%; flex-direction:column; }
+    .guest-nav-actions .register-btn { width:100%; text-align:center; }
+}
+
+@media(max-width:768px){
+    .tb-nav-header{
+        flex-direction:row;
+        justify-content:space-between;
+        align-items:center;
+        gap:0;
+    }
+
+    .menu-toggle{
+        display:flex;
+    }
+
+    #mainNav{
+        position:fixed;
+        top:0;
+        right:-100%;
+        width:min(82vw, 320px);
+        max-width:320px;
+        height:100vh;
+        background:#fff;
+        flex-direction:column;
+        align-items:flex-start;
+        justify-content:flex-start;
+        gap:26px;
+        padding:100px 30px 40px;
+        box-shadow:-10px 0 30px rgba(0,0,0,.15);
+        transition:right .4s ease;
+        z-index:1050;
+        overflow-y:auto;
+    }
+
+    #mainNav.active{
+        right:0;
+    }
+
+    #mainNav a{
+        width:100%;
+        font-size:17px;
+    }
+
+    #mainNav .register-btn{
+        width:100%;
+        margin-top:10px;
+    }
+}
+
+@media(max-width:600px){
+    .tb-nav-header{
+        padding:8px 14px;
+    }
+
+    .tb-nav-header .namenav img{
+        width:min(120px, 42vw);
+        height:auto;
+    }
+
+    .tb-nav-header .logonav img{
+        width:26px;
+        height:34px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .tb-nav-header{
+        animation:none !important;
+    }
+}

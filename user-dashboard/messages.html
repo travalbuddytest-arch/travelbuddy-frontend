@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy - Messages</title>
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/messages.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="../home/index.html" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="Travel Buddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList">
+        <a href="overview.html" class="nav-item" data-section="overview">
+          <i class="fa-solid fa-gauge"></i><span>Overview</span>
+        </a>
+        <a href="post.html" class="nav-item" data-section="post">
+          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
+        </a>
+        <a href="pickup.html" class="nav-item" data-section="pickup">
+          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
+        </a>
+        <a href="track.html" class="nav-item" data-section="track">
+          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
+        </a>
+        <a href="messages.html" class="nav-item active" data-section="messages">
+          <i class="fa-solid fa-message"></i><span>Messages</span>
+          <span class="nav-badge" id="navMsgBadge">0</span>
+        </a>
+        <a href="notifications.html" class="nav-item" data-section="notifications">
+          <i class="fa-solid fa-bell"></i><span>Notifications</span>
+          <span class="nav-badge" id="navNotifBadge">4</span>
+        </a>
+        <a href="payments.html" class="nav-item" data-section="payments">
+          <i class="fa-solid fa-wallet"></i><span>Payments</span>
+        </a>
+        <a href="history.html" class="nav-item" data-section="history">
+          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title" id="pageTitle">Messages</h1>
+
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
+          </div>
+
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">Travel Buddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <section class="view active" id="view-messages">
+          <div class="messages-shell" id="messagesShell">
+            <aside class="thread-panel" id="threadPanel" aria-label="Conversations">
+              <div class="thread-panel-head">
+                <h2>Messages</h2>
+                <div class="thread-search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="search" id="conversationSearch" placeholder="Search conversations" autocomplete="off" />
+                </div>
+              </div>
+              <div class="thread-list" id="threadList"></div>
+            </aside>
+
+            <div class="chat-panel" id="chatPanel">
+              <div class="chat-empty" id="chatEmpty">
+                <i class="fa-solid fa-comments"></i>
+                <p>Select a conversation to start chatting.</p>
+              </div>
+
+              <div class="chat-active hidden" id="chatActive">
+                <div class="chat-header">
+                  <button type="button" class="chat-back" id="chatBackBtn" aria-label="Back to conversations">
+                    <i class="fa-solid fa-arrow-left"></i>
+                  </button>
+                  <div class="avatar avatar--sm" id="chatAvatar">VT</div>
+                  <div class="chat-identity">
+                    <h3 id="chatName">-</h3>
+                    <span id="chatMeta">-</span>
+                  </div>
+                  <button type="button" class="icon-btn call-btn" id="audioCallBtn" aria-label="Start private audio call">
+                    <i class="fa-solid fa-phone"></i>
+                  </button>
+                </div>
+                <div class="parcel-bar" id="parcelBar"></div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="typing-indicator hidden" id="typingIndicator">Typing...</div>
+                <form class="chat-input-row" id="chatForm">
+                  <button type="button" class="attach-btn" id="attachBtn" aria-label="Attach file">
+                    <i class="fa-solid fa-paperclip"></i>
+                  </button>
+                  <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" />
+                  <button type="submit" class="send-btn" aria-label="Send message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="call-modal hidden" id="incomingCallModal" role="dialog" aria-modal="true">
+            <div class="call-card">
+              <div class="avatar call-avatar" id="incomingAvatar">VS</div>
+              <h3 id="incomingRole">Verified Sender</h3>
+              <p id="incomingPublicId">SD-0000</p>
+              <strong>Incoming Audio Call</strong>
+              <div class="call-actions">
+                <button type="button" class="btn-ghost call-reject" id="rejectCallBtn"><i class="fa-solid fa-phone-slash"></i> Reject</button>
+                <button type="button" class="btn-primary btn-primary--inline" id="acceptCallBtn">
+                  <span class="btn-label"><i class="fa-solid fa-phone"></i> Accept</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="active-call hidden" id="activeCallBar">
+            <div>
+              <strong id="activeCallPeer">Verified Traveler</strong>
+              <span id="activeCallTime">00:00</span>
+            </div>
+            <button type="button" class="icon-btn" id="muteCallBtn" aria-label="Mute microphone">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+            <button type="button" class="icon-btn end-call-btn" id="endCallBtn" aria-label="End call">
+              <i class="fa-solid fa-phone-slash"></i>
+            </button>
+          </div>
+
+          <audio id="remoteAudio" autoplay></audio>
+        </section>
+      </main>
+    </div>
+  </div>
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="/socket.io/socket.io.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/messages.js"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+  <script src="../shared/firebase-config.js?v=1"></script>
+  <script src="../shared/push-client.js?v=1"></script>
+</body>
+</html>

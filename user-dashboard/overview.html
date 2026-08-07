@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Travel Buddy - Overview</title>
+<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/common.css" />
+<link rel="stylesheet" href="css/overview.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="../home/index.html" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="Travel Buddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList">
+        <a href="overview.html" class="nav-item active" data-section="overview">
+          <i class="fa-solid fa-gauge"></i><span>Overview</span>
+        </a>
+        <a href="post.html" class="nav-item" data-section="post">
+          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
+        </a>
+        <a href="pickup.html" class="nav-item" data-section="pickup">
+          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
+        </a>
+        <a href="track.html" class="nav-item" data-section="track">
+          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
+        </a>
+        <a href="messages.html" class="nav-item" data-section="messages">
+          <i class="fa-solid fa-message"></i><span>Messages</span>
+          <span class="nav-badge" id="navMsgBadge">3</span>
+        </a>
+        <a href="notifications.html" class="nav-item" data-section="notifications">
+          <i class="fa-solid fa-bell"></i><span>Notifications</span>
+          <span class="nav-badge" id="navNotifBadge">4</span>
+        </a>
+        <a href="payments.html" class="nav-item" data-section="payments">
+          <i class="fa-solid fa-wallet"></i><span>Payments</span>
+        </a>
+        <a href="history.html" class="nav-item" data-section="history">
+          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title" id="pageTitle">Overview</h1>
+
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
+          </div>
+
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">Travel Buddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <section class="view active" id="view-overview">
+          <div class="overview-hero">
+            <div class="overview-copy">
+              <span class="eyebrow">User dashboard</span>
+              <h2 id="overviewGreeting">Welcome back</h2>
+              <p>Manage parcels, find matching routes, continue conversations, and track wallet activity from one place.</p>
+            </div>
+            <div class="wallet-chip">
+              <span class="wallet-chip-icon"><i class="fa-solid fa-wallet"></i></span>
+              <div>
+                <span class="wallet-chip-label">Wallet balance</span>
+                <span class="wallet-chip-value" id="heroWalletValue">Rs. 0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-icon stat-icon--blue"><i class="fa-solid fa-box"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="statActiveParcels">0</span>
+                <span class="stat-label">Active Parcels</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon stat-icon--green"><i class="fa-solid fa-truck-fast"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="statCompletedDeliveries">0</span>
+                <span class="stat-label">Completed Deliveries</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon stat-icon--purple"><i class="fa-solid fa-route"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="statTripsPosted">0</span>
+                <span class="stat-label">Trips Posted</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon stat-icon--gold"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="statTotalEarnings">Rs. 0</span>
+                <span class="stat-label">Total Earnings</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-grid">
+            <div class="panel panel--wide">
+              <div class="panel-head panel-head--row">
+                <h2>Recent Activity</h2>
+                <a class="link-btn" href="notifications.html">View all</a>
+              </div>
+              <ul class="activity-list" id="activityList"></ul>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Quick Actions</h2>
+              </div>
+              <div class="quick-actions">
+                <a class="quick-btn" href="post.html">
+                  <i class="fa-solid fa-box"></i>
+                  <span>Post a Parcel</span>
+                </a>
+                <a class="quick-btn" href="pickup.html">
+                  <i class="fa-solid fa-route"></i>
+                  <span>Find Parcels on my Route</span>
+                </a>
+                <a class="quick-btn" href="messages.html">
+                  <i class="fa-solid fa-message"></i>
+                  <span>Check Messages</span>
+                </a>
+                <a class="quick-btn" href="payments.html">
+                  <i class="fa-solid fa-wallet"></i>
+                  <span>View Payments</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-grid panel-grid--split">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Wallet Snapshot</h2>
+              </div>
+              <div class="wallet-snapshot">
+                <div class="wallet-metric">
+                  <span class="wallet-metric-icon wallet-metric-icon--blue"><i class="fa-solid fa-wallet"></i></span>
+                  <div>
+                    <span class="wallet-metric-value" id="walletBalanceValue">Rs. 0</span>
+                    <span class="wallet-metric-label">Available balance</span>
+                  </div>
+                </div>
+                <div class="wallet-metric">
+                  <span class="wallet-metric-icon wallet-metric-icon--green"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+                  <div>
+                    <span class="wallet-metric-value" id="walletEarningsValue">Rs. 0</span>
+                    <span class="wallet-metric-label">Earned as a traveler</span>
+                  </div>
+                </div>
+              </div>
+              <a class="btn-ghost wallet-cta" href="payments.html">
+                <i class="fa-solid fa-plus"></i> Add money to wallet
+              </a>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Experience Tips</h2>
+                <p class="panel-sub">Small steps that reduce delivery confusion.</p>
+              </div>
+              <ul class="tip-list">
+                <li><i class="fa-solid fa-circle-info"></i><span>Add parcel size, weight, and fragile details before posting.</span></li>
+                <li><i class="fa-solid fa-shield-halved"></i><span>Confirm pickup and drop timing in messages before handoff.</span></li>
+                <li><i class="fa-solid fa-receipt"></i><span>Keep payment inside the platform for a clear transaction record.</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="/socket.io/socket.io.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/overview.js"></script>
+  <script src="../shared/site-banner.js?v=2"></script>
+  <script src="../shared/firebase-config.js?v=1"></script>
+  <script src="../shared/push-client.js?v=1"></script>
+</body>
+</html>
+

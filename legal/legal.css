@@ -1,0 +1,219 @@
+/* ==========================
+   LEGAL PAGES — shared styles
+   Reuses --brand / --ink / --muted / --soft-bg
+   tokens defined in ../home/style.css
+========================== */
+
+.legal-hero{
+    padding:clamp(48px, 8vw, 84px) clamp(18px, 6vw, 8%) clamp(36px, 6vw, 56px);
+    text-align:center;
+    background:linear-gradient(155deg, #0b1b34 0%, #0d6efd 55%, #3d8bff 100%);
+}
+
+.legal-hero h1{
+    color:#fff;
+    font-size:clamp(30px, 5vw, 46px);
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.legal-hero p{
+    color:#dce7ff;
+    font-size:clamp(14px, 2vw, 16px);
+    max-width:560px;
+    margin:0 auto;
+}
+
+.legal-hero .legal-updated{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:18px;
+    padding:7px 16px;
+    border-radius:30px;
+    background:rgba(255,255,255,.14);
+    color:#fff;
+    font-size:13px;
+    font-weight:500;
+}
+
+.legal-wrap{
+    background:var(--soft-bg);
+    padding:clamp(36px, 6vw, 60px) clamp(18px, 6vw, 8%) clamp(60px, 8vw, 96px);
+}
+
+.legal-layout{
+    max-width:1120px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:240px 1fr;
+    gap:clamp(28px, 4vw, 48px);
+    align-items:start;
+}
+
+.legal-nav{
+    position:sticky;
+    top:88px;
+    background:#fff;
+    border:1px solid var(--border-soft);
+    border-radius:16px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.legal-nav a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border-radius:10px;
+    text-decoration:none;
+    color:var(--ink-soft);
+    font-size:14.5px;
+    font-weight:500;
+    transition:background .2s ease, color .2s ease;
+}
+
+.legal-nav a i{
+    font-size:15px;
+    color:var(--muted);
+    width:18px;
+    text-align:center;
+    transition:color .2s ease;
+}
+
+.legal-nav a:hover{
+    background:var(--brand-light);
+    color:var(--brand);
+}
+
+.legal-nav a:hover i{
+    color:var(--brand);
+}
+
+.legal-nav a.active{
+    background:var(--brand-light);
+    color:var(--brand);
+    font-weight:600;
+}
+
+.legal-nav a.active i{
+    color:var(--brand);
+}
+
+.legal-content{
+    background:#fff;
+    border:1px solid var(--border-soft);
+    border-radius:20px;
+    padding:clamp(28px, 4vw, 46px);
+    box-shadow:0 20px 50px rgba(13,32,58,.06);
+}
+
+.legal-content h2{
+    color:var(--ink);
+    font-size:clamp(20px, 2.4vw, 25px);
+    font-weight:700;
+    margin:34px 0 14px;
+    scroll-margin-top:90px;
+}
+
+.legal-content h2:first-child{
+    margin-top:0;
+}
+
+.legal-content h3{
+    color:var(--ink);
+    font-size:17px;
+    font-weight:600;
+    margin:22px 0 10px;
+}
+
+.legal-content p{
+    color:var(--ink-soft);
+    line-height:1.8;
+    font-size:15px;
+    margin-bottom:14px;
+}
+
+.legal-content ul{
+    margin:0 0 16px;
+    padding-left:20px;
+}
+
+.legal-content li{
+    color:var(--ink-soft);
+    line-height:1.8;
+    font-size:15px;
+    margin-bottom:6px;
+}
+
+.legal-content strong{
+    color:var(--ink);
+}
+
+.legal-content a{
+    color:var(--brand);
+    font-weight:500;
+}
+
+.legal-callout{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    background:var(--brand-light);
+    border:1px solid var(--brand-tint);
+    border-radius:14px;
+    padding:16px 18px;
+    margin:18px 0 22px;
+}
+
+.legal-callout i{
+    color:var(--brand);
+    font-size:18px;
+    margin-top:2px;
+}
+
+.legal-callout p{
+    margin:0;
+    color:var(--ink);
+    font-size:14.5px;
+}
+
+.legal-divider{
+    border:none;
+    border-top:1px solid var(--border-soft);
+    margin:28px 0;
+}
+
+.legal-contact-box{
+    margin-top:30px;
+    padding:20px;
+    border-radius:14px;
+    background:var(--soft-bg);
+    border:1px solid var(--border-soft);
+}
+
+.legal-contact-box p{
+    margin-bottom:8px;
+}
+
+.legal-contact-box p:last-child{
+    margin-bottom:0;
+}
+
+@media(max-width:860px){
+    .legal-layout{
+        grid-template-columns:1fr;
+    }
+    .legal-nav{
+        position:static;
+        flex-direction:row;
+        overflow-x:auto;
+        gap:6px;
+    }
+    .legal-nav a{
+        white-space:nowrap;
+    }
+}
