@@ -1186,13 +1186,30 @@ function initAdminProfileModal() {
   document.getElementById('adminProfilePhotoInput')?.addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast('Please choose an image file.'); return; }
-    if (file.size > 5 * 1024 * 1024) { showToast('Choose an image smaller than 5 MB.'); return; }
+    
+    // Validate file type - only JPG/JPEG/PNG allowed
+    const validMimes = ['image/jpeg', 'image/png'];
+    const validExts = ['.jpg', '.jpeg', '.png'];
+    const hasValidMime = validMimes.includes(file.type);
+    const hasValidExt = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
+    
+    if (!hasValidMime || !hasValidExt) {
+      showToast('Invalid image format. Please upload a JPG, JPEG, or PNG image.', 'error');
+      e.target.value = '';
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image is too large. Please select an image smaller than 5 MB.', 'error');
+      e.target.value = '';
+      return;
+    }
+    
     try {
       await savePhoto(await resizeAdminPhoto(file));
-      showToast('Photo updated');
+      showToast('Photo updated', 'success');
     } catch (err) {
-      showToast(err?.data?.error || 'Could not save photo.');
+      showToast(err?.data?.error || 'Could not save photo.', 'error');
     }
     e.target.value = '';
   });

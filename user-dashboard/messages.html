@@ -181,6 +181,19 @@
           </div>
 
           <audio id="remoteAudio" autoplay></audio>
+
+          <!-- Image Preview Modal -->
+          <div class="image-preview-modal hidden" id="imagePreviewModal" role="dialog" aria-modal="true" aria-label="Image preview">
+            <div class="image-preview-container">
+              <button class="image-preview-close" id="imagePreviewClose" aria-label="Close image preview">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              <img class="image-preview-img" id="imagePreviewImg" alt="Message image preview" />
+            </div>
+          </div>
+
+          <!-- Chat File Input -->
+          <input type="file" id="chatAttachInput" accept="image/jpeg,image/png" aria-label="Attach image to message" />
         </section>
       </main>
     </div>

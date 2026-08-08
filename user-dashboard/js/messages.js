@@ -21,6 +21,10 @@
   const incomingCallModal = document.getElementById('incomingCallModal');
   const activeCallBar = document.getElementById('activeCallBar');
   const remoteAudio = document.getElementById('remoteAudio');
+  const chatAttachInput = document.getElementById('chatAttachInput');
+  const imagePreviewModal = document.getElementById('imagePreviewModal');
+  const imagePreviewImg = document.getElementById('imagePreviewImg');
+  const imagePreviewClose = document.getElementById('imagePreviewClose');
 
   let socket = null;
   let conversations = [];
@@ -36,6 +40,10 @@
   let ringbackInterval = null;
   let pendingAutoCall = new URLSearchParams(window.location.search).get('call') === 'audio';
   let pendingAcceptCallId = new URLSearchParams(window.location.search).get('acceptCall');
+  let selectedImageForCompose = null;
+  let lastScrollTop = 0;
+  let isUserScrolling = false;
+  let hasMoreMessages = true;
 
   // These two URL params ('call=audio' from "call this traveler" links, and
   // 'acceptCall=<id>' from the global incoming-call popup's "Answer"
@@ -52,6 +60,111 @@
     cleanUrl.searchParams.delete('call');
     cleanUrl.searchParams.delete('acceptCall');
     window.history.replaceState({}, '', cleanUrl.toString());
+  }
+
+  // ============================================================
+  // UTILITY FUNCTIONS
+  // ============================================================
+
+  /**
+   * Resolves an image URL to ensure it uses the production backend
+   * Handles: null, undefined, full URLs, relative /uploads paths, data URLs
+   */
+  function resolveImageUrl(url) {
+    if (!url) return '';
+    if (typeof url !== 'string') return '';
+    if (url.startsWith('data:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/')) {
+      return `${API_ORIGIN}${url}`;
+    }
+    return url;
+  }
+
+  /**
+   * Validates if a file is an acceptable image (JPG/JPEG/PNG)
+   */
+  function isValidImageFile(file) {
+    if (!file) return false;
+    const validMimes = ['image/jpeg', 'image/png'];
+    const validExts = ['.jpg', '.jpeg', '.png'];
+    const hasValidMime = validMimes.includes(file.type);
+    const hasValidExt = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
+    return hasValidMime && hasValidExt;
+  }
+
+  /**
+   * Shows error toast for invalid image
+   */
+  function showImageError(type = 'format') {
+    if (type === 'format') {
+      window.showToast('Invalid image format. Please upload a JPG, JPEG, or PNG image.', 'error');
+    } else if (type === 'size') {
+      window.showToast('Image is too large. Please select a smaller file.', 'error');
+    }
+  }
+
+  /**
+   * Auto-scrolls to bottom only if user is near the bottom
+   */
+  function scrollToLatest(force = false) {
+    if (!chatMessages) return;
+    const isAtBottom = Math.abs(chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight) < 50;
+    if (force || isAtBottom) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+
+  /**
+   * Detects if user is manually scrolling
+   */
+  function setupScrollDetection() {
+    if (!chatMessages) return;
+    chatMessages.addEventListener('scroll', () => {
+      isUserScrolling = true;
+      lastScrollTop = chatMessages.scrollTop;
+      clearTimeout(window.scrollIdleTimer);
+      window.scrollIdleTimer = setTimeout(() => {
+        isUserScrolling = false;
+      }, 1000);
+    });
+  }
+
+  /**
+   * Create an image element with error fallback
+   */
+  function createImageElement(src, alt = 'Message image') {
+    const img = document.createElement('img');
+    img.src = resolveImageUrl(src);
+    img.alt = alt;
+    img.className = 'msg-image';
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showImagePreview(img.src);
+    });
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+    });
+    return img;
+  }
+
+  /**
+   * Show image preview modal
+   */
+  function showImagePreview(src) {
+    if (!imagePreviewModal || !imagePreviewImg) return;
+    imagePreviewImg.src = resolveImageUrl(src);
+    imagePreviewModal.classList.remove('hidden');
+  }
+
+  /**
+   * Close image preview modal
+   */
+  function closeImagePreview() {
+    if (!imagePreviewModal) return;
+    imagePreviewModal.classList.add('hidden');
+    imagePreviewImg.src = '';
   }
 
   const rtcConfig = {
@@ -151,9 +264,13 @@
       return;
     }
 
-    threadListEl.innerHTML = filtered.map((conversation) => `
+    threadListEl.innerHTML = filtered.map((conversation) => {
+      const hasPhoto = conversation.other.profilePhoto;
+      const photoStyle = hasPhoto ? `style="background-image:url(${resolveImageUrl(escapeHTML(conversation.other.profilePhoto))})" title="Profile photo"` : '';
+      const photoContent = !hasPhoto ? escapeHTML(initials(conversation.other)) : '';
+      return `
       <button class="thread-item ${conversation.id === activeConversationId ? 'active' : ''}" data-id="${escapeHTML(conversation.id)}">
-        <div class="avatar avatar--sm">${escapeHTML(initials(conversation.other))}</div>
+        <div class="avatar avatar--sm" ${photoStyle}>${photoContent}</div>
         <div class="thread-meta">
           <div class="thread-name">
             <span>${escapeHTML(conversation.other.label)}</span>
@@ -168,7 +285,8 @@
           ${conversation.unreadCount ? `<span class="unread-count">${escapeHTML(conversation.unreadCount)}</span>` : ''}
         </span>
       </button>
-    `).join('');
+    `;
+    }).join('');
 
     threadListEl.querySelectorAll('.thread-item').forEach((el) => {
       el.addEventListener('click', () => openConversation(el.dataset.id));
@@ -177,7 +295,19 @@
   }
 
   function renderHeader(conversation) {
-    document.getElementById('chatAvatar').textContent = initials(conversation.other);
+    const chatAvatarEl = document.getElementById('chatAvatar');
+    if (chatAvatarEl) {
+      if (conversation.other.profilePhoto) {
+        chatAvatarEl.style.backgroundImage = `url(${resolveImageUrl(conversation.other.profilePhoto)})`;
+        chatAvatarEl.textContent = '';
+        chatAvatarEl.classList.add('has-photo');
+      } else {
+        chatAvatarEl.style.backgroundImage = '';
+        chatAvatarEl.textContent = initials(conversation.other);
+        chatAvatarEl.classList.remove('has-photo');
+      }
+    }
+    
     document.getElementById('chatName').textContent = conversation.other.label;
     document.getElementById('chatMeta').textContent = [
       conversation.other.publicId,
@@ -242,27 +372,78 @@
     return '<i class="fa-solid fa-check msg-tick" title="Sent"></i>';
   }
 
+  /**
+   * Format call log message for display
+   */
+  function formatCallLogMessage(content) {
+    // Convert internal call log strings to user-friendly display
+    const lowerContent = (content || '').toLowerCase();
+    
+    if (lowerContent.includes('missed')) {
+      return { icon: 'fa-phone-slash', label: '✕ Missed call', error: true };
+    } else if (lowerContent.includes('declined')) {
+      return { icon: 'fa-phone-slash', label: '✕ Call declined', error: true };
+    } else if (lowerContent.includes('incoming')) {
+      return { icon: 'fa-phone', label: '☎ Incoming call', ok: true };
+    } else if (lowerContent.includes('outgoing')) {
+      return { icon: 'fa-phone', label: '☎ Outgoing call', ok: true };
+    } else if (lowerContent.includes('duration')) {
+      // Extract duration if present: "Call - 02:34"
+      const durationMatch = content.match(/\d{1,2}:\d{2}/);
+      if (durationMatch) {
+        return { icon: 'fa-phone', label: `☎ Voice call • ${durationMatch[0]}`, ok: true };
+      }
+      return { icon: 'fa-phone', label: '☎ Voice call', ok: true };
+    }
+    
+    return { icon: 'fa-phone', label: '☎ ' + content, ok: true };
+  }
+
   function renderMessages() {
     const messages = messagesByConversation.get(activeConversationId) || [];
+    const conversation = activeConversation();
+    
     chatMessages.innerHTML = messages.map((message) => {
       if (message.messageType === 'call') {
-        const missed = /missed|declined|busy/i.test(message.content);
+        const callInfo = formatCallLogMessage(message.content);
         return `
           <div class="call-log-row">
-            <span class="call-log-pill">
-              <i class="fa-solid ${missed ? 'fa-phone-slash' : 'fa-phone'}"></i>
-              ${escapeHTML(message.content)}
+            <span class="call-log-pill ${callInfo.error ? 'error' : callInfo.ok ? 'success' : ''}">
+              <i class="fa-solid ${callInfo.icon}"></i>
+              <span>${escapeHTML(callInfo.label)}</span>
               <span class="call-log-time">${escapeHTML(formatTime(message.createdAt))}</span>
             </span>
           </div>`;
       }
+      
+      // Handle image messages
+      if (message.messageType === 'image' || message.imageUrl) {
+        return `
+          <div class="msg-bubble ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
+            <img class="msg-image" src="${resolveImageUrl(escapeHTML(message.imageUrl || message.content))}" alt="Message image" style="cursor:pointer;" data-src="${resolveImageUrl(escapeHTML(message.imageUrl || message.content))}" />
+            <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
+          </div>`;
+      }
+      
+      // Regular text messages
       return `
         <div class="msg-bubble ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
           ${escapeHTML(message.content)}
           <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
         </div>`;
     }).join('');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Attach click handlers for images
+    chatMessages.querySelectorAll('.msg-image').forEach((img) => {
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const src = img.getAttribute('data-src');
+        if (src) showImagePreview(src);
+      });
+    });
+    
+    // Auto-scroll to latest
+    setTimeout(() => scrollToLatest(), 0);
   }
 
   async function loadMessages(conversationId) {
@@ -415,29 +596,149 @@
   async function handleSend(e) {
     e.preventDefault();
     const content = chatInput.value.trim();
-    if (!content || !activeConversationId) return;
+    const hasImage = selectedImageForCompose !== null;
+    
+    if (!content && !hasImage) return;
+    if (!activeConversationId) return;
+    
     const clientMessageId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    const payload = { conversationId: activeConversationId, content, messageType: 'text', clientMessageId };
-    chatInput.value = '';
-    socket?.emit('typing:stop', { conversationId: activeConversationId });
+    
+    // Send text message
+    if (content && !hasImage) {
+      const payload = { conversationId: activeConversationId, content, messageType: 'text', clientMessageId };
+      chatInput.value = '';
+      socket?.emit('typing:stop', { conversationId: activeConversationId });
 
-    if (socket?.connected) {
-      socket.emit('message:send', payload, async (ack) => {
-        if (ack?.ok) return;
-        window.showToast(ack?.error || 'Could not send message.', 'error');
-      });
+      if (socket?.connected) {
+        socket.emit('message:send', payload, async (ack) => {
+          if (ack?.ok) return;
+          window.showToast(ack?.error || 'Could not send message.', 'error');
+        });
+        return;
+      }
+
+      try {
+        const message = await sendViaRest(payload);
+        const list = messagesByConversation.get(activeConversationId) || [];
+        list.push(message);
+        messagesByConversation.set(activeConversationId, list);
+        renderMessages();
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      }
+      return;
+    }
+    
+    // Send image message
+    if (selectedImageForCompose) {
+      try {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const imageData = event.target.result;
+          const payload = {
+            conversationId: activeConversationId,
+            content: content || '[Image]',
+            imageUrl: imageData,
+            messageType: 'image',
+            clientMessageId
+          };
+          
+          chatInput.value = '';
+          selectedImageForCompose = null;
+          removeComposedImage();
+          socket?.emit('typing:stop', { conversationId: activeConversationId });
+
+          if (socket?.connected) {
+            socket.emit('message:send', payload, async (ack) => {
+              if (ack?.ok) return;
+              window.showToast(ack?.error || 'Could not send image.', 'error');
+            });
+            return;
+          }
+
+          sendViaRest(payload).then((message) => {
+            const list = messagesByConversation.get(activeConversationId) || [];
+            list.push(message);
+            messagesByConversation.set(activeConversationId, list);
+            renderMessages();
+          }).catch((err) => {
+            window.showToast(err.message, 'error');
+          });
+        };
+        reader.readAsDataURL(selectedImageForCompose);
+      } catch (err) {
+        window.showToast('Could not send image: ' + err.message, 'error');
+      }
+    }
+  }
+
+  function removeComposedImage() {
+    selectedImageForCompose = null;
+    const preview = document.getElementById('composeImagePreview');
+    if (preview) preview.remove();
+  }
+
+  function handleAttachClick() {
+    chatAttachInput?.click();
+  }
+
+  function handleAttachInputChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    if (!isValidImageFile(file)) {
+      showImageError('format');
+      e.target.value = '';
       return;
     }
 
-    try {
-      const message = await sendViaRest(payload);
-      const list = messagesByConversation.get(activeConversationId) || [];
-      list.push(message);
-      messagesByConversation.set(activeConversationId, list);
-      renderMessages();
-    } catch (err) {
-      window.showToast(err.message, 'error');
+    // Check file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showImageError('size');
+      e.target.value = '';
+      return;
     }
+
+    // Read and display preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      selectedImageForCompose = file;
+      const preview = document.createElement('img');
+      preview.id = 'composeImagePreview';
+      preview.className = 'compose-image-preview';
+      preview.src = event.target.result;
+      preview.alt = 'Image preview';
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'compose-image-remove';
+      removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      removeBtn.setAttribute('aria-label', 'Remove image');
+      removeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        removeComposedImage();
+        chatAttachInput.value = '';
+      });
+
+      preview.style.position = 'relative';
+      preview.style.display = 'inline-block';
+      
+      const existingPreview = document.getElementById('composeImagePreview');
+      if (existingPreview) existingPreview.remove();
+      
+      const existingRemoveBtn = document.querySelector('.compose-image-remove');
+      if (existingRemoveBtn) existingRemoveBtn.remove();
+
+      chatForm?.insertBefore(preview, chatForm.firstChild);
+      chatForm?.insertBefore(removeBtn, chatForm.firstChild);
+    };
+    reader.onerror = () => {
+      window.showToast('Could not read image file.', 'error');
+      e.target.value = '';
+    };
+    reader.readAsDataURL(file);
   }
 
   function handleTyping() {
@@ -676,7 +977,17 @@
   conversationSearch?.addEventListener('input', renderThreads);
   chatBackBtn?.addEventListener('click', () => messagesShell.classList.remove('chat-open'));
   audioCallBtn?.addEventListener('click', startCall);
-  attachBtn?.addEventListener('click', () => window.showToast('Attachments are structured for the next release. Text messaging is active now.', 'error'));
+  attachBtn?.addEventListener('click', handleAttachClick);
+  chatAttachInput?.addEventListener('change', handleAttachInputChange);
+
+  // Image preview modal handlers
+  imagePreviewClose?.addEventListener('click', closeImagePreview);
+  imagePreviewModal?.addEventListener('click', (e) => {
+    if (e.target === imagePreviewModal) closeImagePreview();
+  });
+
+  // Setup scroll detection
+  setupScrollDetection();
 
   connectSocket();
   loadConversations().catch((err) => {

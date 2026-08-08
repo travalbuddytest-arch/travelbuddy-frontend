@@ -895,7 +895,22 @@ if (smartMatchingSection) {
     const authHeaders = () => ({ 'Content-Type':'application/json', Authorization:`Bearer ${localStorage.getItem(isAdminLoggedIn ? 'travelBuddyAdminToken' : 'travelBuddyToken') || ''}` });
 
 
-    function renderAvatar(el, user, name) { if (!el) return; if (user.profilePhoto) { el.textContent=''; el.style.backgroundImage=`url(${user.profilePhoto})`; el.classList.add('has-photo'); } else { el.style.backgroundImage=''; el.classList.remove('has-photo'); el.textContent=initials(name); } }
+    function renderAvatar(el, user, name) {
+      if (!el) return;
+      if (user.profilePhoto) {
+        el.textContent='';
+        // Handle both data URLs and regular URLs
+        const photoUrl = user.profilePhoto.startsWith('data:') ? user.profilePhoto : 
+                        (user.profilePhoto.startsWith('http') ? user.profilePhoto :
+                        (user.profilePhoto.startsWith('/') ? `${API_ORIGIN}${user.profilePhoto}` : user.profilePhoto));
+        el.style.backgroundImage=`url(${photoUrl})`;
+        el.classList.add('has-photo');
+      } else {
+        el.style.backgroundImage='';
+        el.classList.remove('has-photo');
+        el.textContent=initials(name);
+      }
+    }
     function syncHomeAvatars(user) { const name=getName(user); renderAvatar(document.getElementById('homeAvatar'),user,name); renderAvatar(document.getElementById('homeModalAvatar'),user,name); }
     function resizePhoto(file) { return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=reject; reader.onload=()=>{ const img=new Image(); img.onerror=reject; img.onload=()=>{ const size=320, c=document.createElement('canvas'); c.width=size;c.height=size; const ctx=c.getContext('2d'); const side=Math.min(img.width,img.height), sx=(img.width-side)/2, sy=(img.height-side)/2; ctx.drawImage(img,sx,sy,side,side,0,0,size,size); resolve(c.toDataURL('image/jpeg',.82)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); }
     async function saveHomePhoto(profilePhoto) {
@@ -913,7 +928,35 @@ if (smartMatchingSection) {
         populate();
         return saved;
     }
-    async function handleHomePhoto(e) { const file=e.target.files?.[0]; if(!file)return; if(!file.type.startsWith('image/')) return alert('Please choose an image file.'); if(file.size>5*1024*1024) return alert('Choose an image smaller than 5 MB.'); try { await saveHomePhoto(await resizePhoto(file)); } catch(err) { alert(err.message); } e.target.value=''; }
+    async function handleHomePhoto(e) {
+      const file=e.target.files?.[0];
+      if(!file) return;
+      
+      // Validate file type - only JPG/JPEG/PNG allowed
+      const validMimes = ['image/jpeg', 'image/png'];
+      const validExts = ['.jpg', '.jpeg', '.png'];
+      const hasValidMime = validMimes.includes(file.type);
+      const hasValidExt = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
+      
+      if (!hasValidMime || !hasValidExt) {
+        alert('Invalid image format. Please upload a JPG, JPEG, or PNG image.');
+        e.target.value='';
+        return;
+      }
+      
+      if(file.size>5*1024*1024) {
+        alert('Image is too large. Please select an image smaller than 5 MB.');
+        e.target.value='';
+        return;
+      }
+      
+      try {
+        await saveHomePhoto(await resizePhoto(file));
+      } catch(err) {
+        alert(err.message);
+      }
+      e.target.value='';
+    }
     async function removeHomePhoto() { try { await saveHomePhoto(''); } catch(err) { alert(err.message); } const input=document.getElementById('homeProfilePhotoInput'); if(input) input.value=''; }
 
     function ensureModal() {
@@ -936,7 +979,7 @@ if (smartMatchingSection) {
             <section class="home-profile-panel home-photo-only" id="homeProfilePanel">
               <div class="home-photo-focus">
                 <div class="home-profile-avatar home-profile-avatar-large" id="homePhotoPreview">TB</div>
-                <div class="home-photo-actions"><label class="home-photo-btn" for="homeProfilePhotoInput"><i class="fa-solid fa-camera"></i><span id="homePhotoActionText">Add Photo</span></label><input id="homeProfilePhotoInput" type="file" accept="image/*" hidden><button type="button" class="home-photo-remove" id="homeRemovePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button></div>
+                <div class="home-photo-actions"><label class="home-photo-btn" for="homeProfilePhotoInput"><i class="fa-solid fa-camera"></i><span id="homePhotoActionText">Add Photo</span></label><input id="homeProfilePhotoInput" type="file" accept="image/jpeg,image/png" hidden><button type="button" class="home-photo-remove" id="homeRemovePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button></div>
                 <p class="home-photo-help">Your photo is saved to your TravelBuddy account and used in your profile avatar.</p>
               </div>
             </section>

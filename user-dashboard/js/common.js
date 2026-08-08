@@ -620,7 +620,7 @@
             <div class="avatar profile-avatar profile-avatar-large" id="profilePhotoPreview">TB</div>
             <div class="profile-photo-actions">
               <label class="btn-ghost profile-photo-btn" for="profilePhotoInput"><i class="fa-solid fa-camera"></i><span id="profilePhotoActionText">Add Photo</span></label>
-              <input id="profilePhotoInput" type="file" accept="image/*" hidden>
+              <input id="profilePhotoInput" type="file" accept="image/jpeg,image/png" hidden>
               <button type="button" class="btn-ghost" id="removeProfilePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button>
             </div>
             <p class="profile-photo-help">Your photo is saved to your TravelBuddy account and shown in your profile avatar.</p>
@@ -677,7 +677,37 @@
       updateDashboardUser(data.user);
       return data.user;
     }
-    document.getElementById('profilePhotoInput')?.addEventListener('change', async (e)=>{ const f=e.target.files?.[0]; if(!f)return; if(!f.type.startsWith('image/')||f.size>5*1024*1024)return alert('Choose an image smaller than 5 MB.'); try { const photo=await resizeProfilePhoto(f); await saveDashboardPhoto(photo); showToast('Profile photo saved.', 'success'); } catch(err) { showToast(err.message, 'error'); } e.target.value=''; });
+    document.getElementById('profilePhotoInput')?.addEventListener('change', async (e)=>{
+      const f=e.target.files?.[0];
+      if(!f) return;
+      
+      // Validate file type - only JPG/JPEG/PNG allowed
+      const validMimes = ['image/jpeg', 'image/png'];
+      const validExts = ['.jpg', '.jpeg', '.png'];
+      const hasValidMime = validMimes.includes(f.type);
+      const hasValidExt = validExts.some(ext => f.name.toLowerCase().endsWith(ext));
+      
+      if (!hasValidMime || !hasValidExt) {
+        showToast('Invalid image format. Please upload a JPG, JPEG, or PNG image.', 'error');
+        e.target.value='';
+        return;
+      }
+      
+      if(f.size>5*1024*1024) {
+        showToast('Image is too large. Please select an image smaller than 5 MB.', 'error');
+        e.target.value='';
+        return;
+      }
+      
+      try {
+        const photo=await resizeProfilePhoto(f);
+        await saveDashboardPhoto(photo);
+        showToast('Profile photo saved.', 'success');
+      } catch(err) {
+        showToast(err.message, 'error');
+      }
+      e.target.value='';
+    });
     document.getElementById('removeProfilePhoto')?.addEventListener('click',async()=>{ try { await saveDashboardPhoto(''); showToast('Profile photo removed.', 'success'); } catch(err) { showToast(err.message, 'error'); } });
   }
 
