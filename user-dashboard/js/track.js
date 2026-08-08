@@ -118,10 +118,10 @@
   function setRouteProgress(parcel) {
     const progress = progressByStatus[parcel.status] || 18;
     if (routeProgress) {
-      routeProgress.style.setProperty('--route-progress', `${progress}%`);
+      routeProgress.style.setProperty('--route-progress-factor', String(progress / 100));
     }
     if (routeCard) {
-      routeCard.style.setProperty('--route-progress', `${progress}%`);
+      routeCard.style.setProperty('--route-progress-factor', String(progress / 100));
       const current = parcel.status === 'delivered'
         ? 'destination'
         : parcel.status === 'accepted'

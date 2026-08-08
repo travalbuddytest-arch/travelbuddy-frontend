@@ -60,7 +60,7 @@
   position: absolute;
   inset: -20%;
   background: linear-gradient(120deg, transparent, rgba(255,255,255,0.42), transparent);
-  animation: route-bg 6s ease-in-out infinite;
+  opacity: .7;
 }
 
 .route-glow {
@@ -70,7 +70,7 @@
   border-radius: 50%;
   background: rgba(13, 110, 253, 0.12);
   filter: blur(3px);
-  animation: float-soft 5s ease-in-out infinite;
+  opacity: .7;
 }
 
 .route-glow--one { left: 10%; top: 16%; }
@@ -109,7 +109,9 @@
 .route-line-base { width: 100%; }
 
 .route-line-progress {
-  width: var(--route-progress, 18%);
+  width: 100%;
+  transform: scaleX(var(--route-progress-factor, .18));
+  transform-origin: left center;
   border-top-color: var(--primary);
   filter: drop-shadow(0 0 8px rgba(13, 110, 253, 0.26));
   animation: route-draw 0.7s ease both;
@@ -160,7 +162,7 @@
 .route-card[data-current="middle"] .point-dot--origin,
 .route-card[data-current="middle"] .point-dot--destination,
 .route-card[data-current="destination"] .point-dot--destination {
-  animation: status-pulse 1.8s ease-in-out infinite;
+  animation: status-pulse .9s ease-out both;
 }
 
 .route-card[data-current="destination"] .point-dot {
@@ -326,7 +328,7 @@
 .timeline-item.is-current .timeline-dot {
   color: #fff;
   background: var(--primary);
-  animation: status-pulse 1.8s ease-in-out infinite;
+  animation: status-pulse .9s ease-out both;
 }
 
 .timeline-item h4 {
@@ -471,8 +473,8 @@
 }
 
 @keyframes route-draw {
-  from { width: 0; }
-  to { width: var(--route-progress, 18%); }
+  from { transform: scaleX(0); }
+  to { transform: scaleX(var(--route-progress-factor, .18)); }
 }
 
 @keyframes label-in {
@@ -562,8 +564,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .route-card::before,
-  .route-glow,
   .route-line-progress,
   .route-point,
   .timeline-dot,
@@ -573,6 +573,16 @@
   .route-card--skeleton::after {
     animation: none !important;
   }
+}
+
+.parcel-summary,
+.traveler-card,
+.action-panel,
+.timeline-item { min-width: 0; }
+
+@media (hover: none), (pointer: coarse) {
+  .traveler-card:active,
+  .action-panel:active { transform: scale(.995); }
 }
 
 .order-track-search{display:flex;gap:10px;max-width:720px;margin:18px 0 22px}.order-track-search input{flex:1;min-width:0;padding:13px 15px;border:1px solid #d5deea;border-radius:12px;font:inherit;text-transform:uppercase}.order-track-search button{border:0;border-radius:12px;background:#0d6efd;color:#fff;padding:0 20px;font-weight:700;cursor:pointer}@media(max-width:600px){.order-track-search{flex-direction:column}.order-track-search button{padding:13px}}

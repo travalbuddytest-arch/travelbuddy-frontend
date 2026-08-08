@@ -30,3 +30,4 @@
 .tb-cookie-settings-link.show{display:block}
 @keyframes tbCookieUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(max-width:760px){.tb-cookie-banner{padding:18px 16px 16px}.tb-cookie-row{flex-direction:column;align-items:stretch;gap:14px}.tb-cookie-actions{justify-content:stretch}.tb-cookie-btn{flex:1}.tb-cookie-settings-link{right:10px;bottom:10px}}
+@media(max-width:760px){.tb-cookie-modal{left:12px;right:12px;top:12px;bottom:12px;transform:none;width:auto;max-height:none}.tb-cookie-modal.show{transform:none}}

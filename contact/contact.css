@@ -5,6 +5,11 @@
    are namespaced "ct-" so they never clash with other pages' CSS.
 ========================== */
 
+html, body { width:100%; max-width:100%; overflow-x:hidden; }
+*, *::before, *::after { box-sizing:border-box; }
+img, video, svg, canvas { max-width:100%; }
+img { height:auto; }
+
 /* ---------- HERO ---------- */
 .ct-hero{
     position:relative;
@@ -165,4 +170,14 @@
 @media (prefers-reduced-motion: reduce){
     .ct-reveal{ opacity:1; transform:none; transition:none; }
     .ct-eyebrow i{ animation:none; }
+}
+
+@media(max-width:560px){
+    .ct-hero, .ct-main { padding-inline:16px; }
+    .ct-cards-wrap { padding-inline:16px; }
+    .ct-form-card, .ct-side-card { padding-inline:18px; }
+    .ct-submit-btn, .ct-socials { width:100%; }
+    .ct-socials { justify-content:flex-start; }
+    .ct-toast { left:12px; right:12px; width:auto; transform:translateY(16px); border-radius:14px; }
+    .ct-toast.ct-show { transform:translateY(0); }
 }

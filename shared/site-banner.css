@@ -31,3 +31,4 @@
 .tb-banner-reopen.show{display:none!important}
 @keyframes tbBannerSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(max-width:760px){.tb-banner-bar{padding:18px 16px 16px}.tb-banner-row{flex-direction:column;align-items:stretch;gap:14px}.tb-banner-actions{justify-content:stretch}.tb-banner-btn{flex:1}.tb-banner-reopen{right:10px;bottom:10px}}
+@media(max-width:760px){.tb-notice-modal{left:12px;right:12px;top:12px;bottom:12px;transform:none;width:auto;max-height:none}.tb-notice-modal.show{transform:none}}

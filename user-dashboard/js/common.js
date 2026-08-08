@@ -8,7 +8,16 @@
   function showToast(message, type) {
     if (!toast) return;
     clearTimeout(toastTimer);
-    toast.textContent = message;
+    const icons = {
+      success: 'fa-circle-check',
+      error: 'fa-circle-exclamation',
+      warning: 'fa-triangle-exclamation',
+      info: 'fa-circle-info',
+    };
+    const icon = document.createElement('i');
+    icon.className = `fa-solid ${icons[type] || icons.info}`;
+    icon.setAttribute('aria-hidden', 'true');
+    toast.replaceChildren(icon, document.createTextNode(String(message ?? '')));
     toast.className = 'toast show' + (type ? ' ' + type : '');
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
   }

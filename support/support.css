@@ -6,6 +6,11 @@
    home/style.css or navbar.css/footer.css selectors.
 ========================== */
 
+html, body { width:100%; max-width:100%; overflow-x:hidden; }
+*, *::before, *::after { box-sizing:border-box; }
+img, video, svg, canvas { max-width:100%; }
+img { height:auto; }
+
 .sr-only{
     position:absolute; width:1px; height:1px; padding:0; margin:-1px;
     overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
@@ -301,4 +306,16 @@
     .sp-reveal{ opacity:1; transform:none; transition:none; }
     .sp-route-icon, .sp-eyebrow i{ animation:none; }
     .sp-route-progress, .sp-route-mover{ animation-duration:.001ms !important; }
+}
+
+@media(max-width:560px){
+    .sp-hero, .sp-topics { padding-inline:16px; }
+    .sp-stats-wrap { padding-inline:16px; }
+    .sp-search { border-radius:18px; flex-wrap:wrap; padding:8px 10px; }
+    .sp-search input { min-width:0; flex:1 1 150px; }
+    .sp-search .primary-btn { width:100%; }
+    .sp-chip { width:100%; justify-content:center; }
+    .sp-route-row { grid-template-columns:1fr; gap:14px; }
+    .sp-route-line-wrap { width:100%; }
+    .sp-toast { left:12px; right:12px; width:auto; border-radius:14px; }
 }

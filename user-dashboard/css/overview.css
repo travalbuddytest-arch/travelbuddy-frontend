@@ -8,7 +8,7 @@
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
   margin-bottom: 24px;
 }
@@ -24,6 +24,7 @@
   box-shadow: var(--shadow-card);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   animation: card-pop 0.45s cubic-bezier(.2,.8,.2,1) both;
+  min-width: 0;
 }
 .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
 .stat-grid .stat-card:nth-child(1) { animation-delay: .02s; }
@@ -52,7 +53,7 @@
 .stat-icon--purple { background: linear-gradient(135deg, #7C5CFC, #A78BFA); }
 .stat-icon--gold { background: linear-gradient(135deg, #F5A524, #FBC55A); }
 
-.stat-info { display: flex; flex-direction: column; }
+.stat-info { display: flex; flex-direction: column; min-width: 0; }
 .stat-value { font-size: 22px; font-weight: 700; line-height: 1.1; }
 .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 

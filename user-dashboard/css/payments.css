@@ -61,6 +61,8 @@
 #txExportBtn { flex: 0 0 auto; margin-left: auto; }
 @media (max-width: 640px) {
   .tx-filters { padding: 0 14px 14px; }
+  .tx-filter-input,
+  .tx-filter-select { width: 100%; min-width: 0; flex: 1 1 100%; }
   #txExportBtn { margin-left: 0; }
 }
 

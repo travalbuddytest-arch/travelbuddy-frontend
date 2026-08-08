@@ -324,6 +324,7 @@
 /* Tablet */
 @media (max-width: 1180px) { .us-modal { width: 90%; min-width: 0; } }
 @media (max-width: 900px)  { .us-modal-overlay { left: 0; } }
+@media (max-width: 992px) and (min-width: 901px) { .us-modal-overlay { left: var(--sidebar-w-collapsed, 84px); } }
 /* Mobile: full width with a small margin, not edge-to-edge */
 @media (max-width: 640px) {
   .us-modal-overlay { padding: 10px; }

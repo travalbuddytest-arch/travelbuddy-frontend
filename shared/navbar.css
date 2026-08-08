@@ -7,6 +7,7 @@
 
 .tb-nav-header{
     width:100%;
+    max-width:100%;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -43,6 +44,7 @@
     display:flex;
     align-items:center;
     gap:35px;
+    min-width:0;
 }
 
 #mainNav a{
@@ -51,6 +53,9 @@
     color:#333;
     font-weight:500;
     transition:color .3s;
+    min-height:44px;
+    display:inline-flex;
+    align-items:center;
 }
 
 #mainNav a::after{
@@ -95,6 +100,7 @@
     cursor:pointer;
     font-size:15px;
     transition:.3s;
+    min-height:44px;
 }
 
 .register-btn:hover{
@@ -181,17 +187,10 @@ body.nav-open{
 .home-user-chip.open .home-user-menu { display:block; animation:homeMenuIn .18s ease-out; }
 .home-user-menu a, .home-user-menu button { width:100%; min-height:42px; padding:0 11px; border:0; border-radius:10px; background:transparent; color:#172b4d; display:flex; align-items:center; gap:10px; text-decoration:none; font:500 14px/1 Poppins,sans-serif; cursor:pointer; text-align:left; }
 .home-user-menu a:hover, .home-user-menu button:hover { background:#eef4ff; color:#1677ff; }
+.home-user-menu a:active, .home-user-menu button:active, .register-btn:active { transform:scale(.98); }
 .home-user-menu i { width:18px; text-align:center; font-size:14px; }
 button[hidden]{ display:none !important; }
 @keyframes homeMenuIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-
-@media (max-width: 900px) {
-    .home-user-chip { width:100%; margin:8px 0 0; }
-    .home-user-trigger { width:100%; min-width:0; }
-    .home-user-menu { position:static; width:100%; margin-top:8px; box-shadow:none; border-radius:16px; }
-    .guest-nav-actions { width:100%; flex-direction:column; }
-    .guest-nav-actions .register-btn { width:100%; text-align:center; }
-}
 
 @media(max-width:768px){
     .tb-nav-header{
@@ -208,10 +207,10 @@ button[hidden]{ display:none !important; }
     #mainNav{
         position:fixed;
         top:0;
-        right:-100%;
+        right:0;
         width:min(82vw, 320px);
         max-width:320px;
-        height:100vh;
+        height:100dvh;
         background:#fff;
         flex-direction:column;
         align-items:flex-start;
@@ -219,13 +218,21 @@ button[hidden]{ display:none !important; }
         gap:26px;
         padding:100px 30px 40px;
         box-shadow:-10px 0 30px rgba(0,0,0,.15);
-        transition:right .4s ease;
+        transform:none;
+        clip-path:inset(0 0 0 100%);
+        transition:clip-path .4s ease;
         z-index:1050;
         overflow-y:auto;
     }
 
+    .home-user-chip { width:100%; margin:8px 0 0; }
+    .home-user-trigger { width:100%; min-width:0; }
+    .home-user-menu { position:static; width:100%; margin-top:8px; box-shadow:none; border-radius:16px; }
+    .guest-nav-actions { width:100%; flex-direction:column; }
+    .guest-nav-actions .register-btn { width:100%; text-align:center; }
+
     #mainNav.active{
-        right:0;
+        clip-path:inset(0);
     }
 
     #mainNav a{

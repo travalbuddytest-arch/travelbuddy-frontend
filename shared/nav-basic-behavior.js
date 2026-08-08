@@ -134,6 +134,7 @@
     });
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
+            closeMobileNav();
             chip.classList.remove('open');
             trigger && trigger.setAttribute('aria-expanded', 'false');
         }

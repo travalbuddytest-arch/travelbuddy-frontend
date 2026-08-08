@@ -4,6 +4,11 @@
    tokens defined in ../home/style.css
 ========================== */
 
+html, body { width:100%; max-width:100%; overflow-x:hidden; }
+*, *::before, *::after { box-sizing:border-box; }
+img, video, svg, canvas { max-width:100%; }
+img { height:auto; }
+
 .legal-hero{
     padding:clamp(48px, 8vw, 84px) clamp(18px, 6vw, 8%) clamp(36px, 6vw, 56px);
     text-align:center;
@@ -215,5 +220,12 @@
     }
     .legal-nav a{
         white-space:nowrap;
+        flex:0 0 auto;
     }
+}
+
+@media(max-width:480px){
+    .legal-wrap { padding-inline:14px; }
+    .legal-content { padding:22px 18px; border-radius:14px; }
+    .legal-content p, .legal-content li { font-size:14px; }
 }

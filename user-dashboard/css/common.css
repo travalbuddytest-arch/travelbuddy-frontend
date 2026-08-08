@@ -13,16 +13,24 @@
   --warning-bg: #FEF3DD;
   --error: #E0374A;
   --error-bg: #FDEAED;
+  --warning-bg: #FEF3DD;
+  --info: #4F8DFF;
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
   --shadow-card: 0 10px 30px -12px rgba(20, 38, 66, 0.10);
   --shadow-hover: 0 16px 36px -14px rgba(13, 110, 253, 0.22);
   --font: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ease-standard: cubic-bezier(.2,.8,.2,1);
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 450ms;
 }
 
-* { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { width: 100%; max-width: 100%; margin: 0; min-height: 100%; overflow-x: hidden; }
+img, video, svg, canvas { max-width: 100%; }
+img { height: auto; }
 
 body {
   font-family: var(--font);
@@ -33,6 +41,16 @@ body {
 
 button { font-family: var(--font); }
 
+:where(button,a,input,select,textarea):focus-visible {
+  outline: 3px solid rgba(13,110,253,.28);
+  outline-offset: 3px;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled { cursor: not-allowed; opacity: .62; }
+
 /* ============================================================
    LAYOUT SHELL
 ============================================================ */
@@ -40,6 +58,7 @@ button { font-family: var(--font); }
 .app-shell {
   display: flex;
   min-height: 100vh;
+  min-width: 0;
 }
 
 /* ---------- Sidebar ---------- */
@@ -163,6 +182,7 @@ button { font-family: var(--font); }
 /* ---------- Main ---------- */
 .main {
   flex: 1;
+  min-width: 0;
   margin-left: 250px;
   display: flex;
   flex-direction: column;
@@ -338,6 +358,7 @@ button { font-family: var(--font); }
 .content {
   padding: 24px 28px 60px;
   flex: 1;
+  min-width: 0;
 }
 
 /* ============================================================
@@ -410,7 +431,11 @@ button { font-family: var(--font); }
   font-size: 13.5px;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
+.field select, .field textarea { width: 100%; min-width: 0; max-width: 100%; }
 .field input::placeholder { color: var(--text-faint); }
 .field input:focus {
   border-color: var(--primary);
@@ -518,10 +543,16 @@ button { font-family: var(--font); }
   z-index: 999;
   width: max-content;
   max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
+.toast > i { flex: 0 0 auto; font-size: 15px; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
 .toast.error { background: var(--error); }
 .toast.success { background: var(--success); }
+.toast.warning { background: var(--warning); color: #17233d; }
+.toast.info { background: var(--info); }
 
 /* Richer popup used for real-time notifications (parcel/message/wallet
    events) - icon + text + optional "Tap to view" hint, with a bouncier
@@ -649,10 +680,11 @@ input:focus-visible {
   padding: 32px;
   width: 100%;
   max-width: 480px;
-  max-height: 90vh;
+  max-height: calc(100dvh - 24px);
   overflow-y: auto;
   animation: modalIn 0.2s ease;
 }
+.table-wrap, .data-table-wrap, [class*="table-wrap"] { max-width: 100%; }
 @keyframes modalIn {
   from { opacity: 0; transform: translateY(12px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -782,9 +814,23 @@ input:focus-visible {
 
 @media (max-width: 640px) {
   .content { padding: 18px 16px 50px; }
-  .topbar { padding: 14px 16px; }
+  .topbar { width:100%; min-width:0; padding:14px 10px; gap:8px; overflow:hidden; }
+  .page-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topbar-actions { min-width:0; flex-shrink:1; gap:6px; }
+  .user-chip { flex-shrink:0; padding:4px; }
   .form-row { flex-direction: column; }
   .search-row { flex-direction: column; align-items: stretch; }
+  .search-row .field,
+  .btn-primary--inline,
+  .btn-ghost { width: 100%; min-width: 0; }
+  .panel-head--row { align-items: flex-start; flex-wrap: wrap; }
+  .link-btn { margin-left: 0; }
+  .modal-overlay { padding: 12px; }
+  .modal-card { padding: 24px 18px; }
+  .profile-head { align-items: flex-start; }
+  .profile-tabs { overflow-x: auto; flex-wrap: nowrap; }
+  .toast { top: auto; bottom: calc(14px + env(safe-area-inset-bottom)); left: 12px; right: 12px; width: auto; max-width: none; transform: translateY(16px); }
+  .toast.show { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

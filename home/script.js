@@ -97,12 +97,30 @@ if (menuToggle && mainNav) {
         navOverlay.addEventListener("click", closeMobileNav);
     }
 
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMobileNav();
+    });
+
     // Close the menu automatically if the viewport grows back to desktop size
     window.addEventListener("resize", () => {
         if (window.innerWidth > 768) closeMobileNav();
     });
 
 }
+
+// Keep the drawer closable even if the navbar markup is injected after this
+// script captures its initial element references.
+window.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const currentMenuToggle = document.getElementById("menuToggle");
+    const currentMainNav = document.getElementById("mainNav");
+    const currentNavOverlay = document.getElementById("navOverlay");
+    currentMenuToggle?.classList.remove("active");
+    currentMainNav?.classList.remove("active");
+    currentNavOverlay?.classList.remove("active");
+    document.body.classList.remove("nav-open");
+    currentMenuToggle?.setAttribute("aria-expanded", "false");
+});
 
 // Smooth scrolling for navigation
 document.querySelectorAll("nav a").forEach(link => {
@@ -271,25 +289,6 @@ const lineObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.line').forEach(line => lineObserver.observe(line));
 
-// =========================
-// Hero Buttons Effect
-// =========================
-
-document.querySelectorAll('button').forEach(button => {
-
-    button.addEventListener('mouseenter', () => {
-
-        button.style.transform = "translateY(-3px) scale(1.02)";
-
-    });
-
-    button.addEventListener('mouseleave', () => {
-
-        button.style.transform = "translateY(0px) scale(1)";
-
-    });
-
-});
 
 // =========================
 // Hero Title Animation

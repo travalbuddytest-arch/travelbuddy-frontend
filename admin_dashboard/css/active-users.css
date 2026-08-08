@@ -119,7 +119,7 @@
 }
 .au-search-wrap input:focus { outline: none; border-color: var(--au-primary); box-shadow: 0 0 0 3px var(--au-primary-light); }
 
-.au-tabs { display: flex; gap: 4px; background: var(--au-bg); border: 1px solid var(--au-border); border-radius: var(--au-radius-sm); padding: 3px; }
+.au-tabs { display: flex; gap: 4px; width:100%; min-width:0; max-width:100%; overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--au-bg); border: 1px solid var(--au-border); border-radius: var(--au-radius-sm); padding: 3px; }
 .au-tab { border: none; background: transparent; color: var(--au-text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: var(--au-transition); }
 .au-tab:hover { color: var(--au-primary); }
 .au-tab.active { background: var(--au-card); color: var(--au-primary); box-shadow: var(--au-shadow); }
@@ -127,7 +127,7 @@
 .au-badge { font-size: 11.5px; font-weight: 700; color: var(--au-text-secondary); background: var(--au-bg); border: 1px solid var(--au-border); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
 
 /* ── Table ────────────────────────────────── */
-.au-table-wrap { background: var(--au-card); border: 1px solid var(--au-border); border-radius: var(--au-radius); overflow-x: auto; box-shadow: var(--au-shadow); transition: border-color .3s ease, box-shadow .3s ease; }
+.au-table-wrap { width:100%; max-width:100%; background: var(--au-card); border: 1px solid var(--au-border); border-radius: var(--au-radius); overflow-x: auto; -webkit-overflow-scrolling: touch; box-shadow: var(--au-shadow); transition: border-color .3s ease, box-shadow .3s ease; }
 .au-table-wrap.au-flash { animation: au-flash 1s ease; }
 @keyframes au-flash {
   0% { border-color: var(--au-primary); box-shadow: 0 0 0 3px var(--au-primary-light); }

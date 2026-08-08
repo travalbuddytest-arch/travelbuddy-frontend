@@ -11,6 +11,9 @@
   --g: #12b76a;
   --r: #f04438;
   --o: #f79009;
+  --i: #4f8dff;
+  --warning-bg: #fff7e8;
+  --error-bg: #fff0ee;
 
   /* Card / KPI design tokens (professional admin surface) */
   --card-radius: 14px;
@@ -22,6 +25,9 @@
   --sidebar-w: 250px;
   --sidebar-w-collapsed: 84px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 450ms;
 }
 
 /* Accessibility: visible keyboard-focus ring everywhere, without adding a
@@ -43,12 +49,13 @@
   }
 }
 
-img { max-width: 100%; }
-html { overflow-x: hidden; }
+img, video, svg, canvas { max-width: 100%; }
+img { height: auto; }
+html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
 
 body {
   margin: 0;
-  font-family: Inter, sans-serif;
+  font-family: 'Poppins', sans-serif;
   background: var(--bg);
   color: var(--t);
   overflow-x: hidden;
@@ -58,6 +65,7 @@ button,
 input,
 select {
   font: inherit;
+  max-width: 100%;
 }
 
 button {
@@ -66,6 +74,11 @@ button {
 button:active {
   transform: scale(0.97);
 }
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled { cursor: not-allowed; opacity: .62; }
 
 #side {
   position: fixed;
@@ -278,6 +291,7 @@ nav em {
 main {
   margin-left: var(--sidebar-w);
   min-height: 100vh;
+  min-width: 0;
   transition: margin-left 0.3s var(--ease);
 }
 
@@ -288,6 +302,7 @@ main {
   margin: 0 auto;
   padding: 27px 28px 45px;
   animation: page-in 0.28s var(--ease);
+  min-width: 0;
 }
 
 header {
@@ -355,7 +370,10 @@ header {
   text-align: left;
   font-size: 11px;
   padding: 0 11px;
+  min-width: 0;
+  max-width: 100%;
 }
+.table-wrap, .pc-table-wrap, .us-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 .search kbd {
   float: right;
@@ -1743,7 +1761,7 @@ header {
 }
 
 @media (max-width: 768px) {
-  .kpis { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .cards { grid-template-columns: 1fr; }
   header { padding: 0 16px; }
 }
@@ -1813,11 +1831,11 @@ header {
   /* .welcome layout is owned by command.css (it loads after this file
      for the Command Center page, so any rule here would be silently
      overridden anyway — see command.css for the real responsive rules). */
-  .kpis { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 }
 
 @media (max-width: 480px) {
-  .kpis { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .kpis { grid-template-columns: 1fr; gap: 8px; }
   .page { padding: 14px 10px; }
 }
 
@@ -1859,7 +1877,7 @@ header {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 250px;
   width: auto;
-  height: 100vh;
+  height: 100dvh;
   background: rgba(16, 24, 40, .55);
   z-index: 2000;
   isolation: isolate;
@@ -1870,6 +1888,9 @@ header {
   padding: 24px;
   box-sizing: border-box;
   overflow: auto;
+}
+@media (max-width: 992px) and (min-width: 901px) {
+  #usModalOverlay { left: var(--sidebar-w-collapsed); }
 }
 @media (max-width: 900px) {
   #usModalOverlay { left: 0; }
