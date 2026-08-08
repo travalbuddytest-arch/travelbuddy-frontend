@@ -7,9 +7,23 @@
 // =========================
 
 // Save scroll position continuously
-window.addEventListener('scroll', () => {
+// PERF FIX: writing to sessionStorage is synchronous and relatively slow.
+// Doing it on every single 'scroll' event (which can fire dozens of times
+// per animation frame) was the main cause of scroll jank/lag site-wide.
+// We now throttle the write to at most once per animation frame via a
+// requestAnimationFrame "ticking" flag, so the expensive write happens
+// ~60 times/sec at most instead of hundreds of times/sec.
+let __scrollSaveTicking = false;
+function __saveScrollPosition() {
     sessionStorage.setItem('scrollPosition', window.scrollY.toString());
-});
+    __scrollSaveTicking = false;
+}
+window.addEventListener('scroll', () => {
+    if (!__scrollSaveTicking) {
+        __scrollSaveTicking = true;
+        requestAnimationFrame(__saveScrollPosition);
+    }
+}, { passive: true });
 
 window.addEventListener('beforeunload', () => {
     sessionStorage.setItem('scrollPosition', window.scrollY.toString());
@@ -349,24 +363,27 @@ if (typing) {
 // =========================
 // Navbar Shadow on Scroll
 // =========================
+// PERF FIX: this used to re-query the DOM for <header> and write an inline
+// style on every scroll event (forces style recalc every tick = jank).
+// Now: query once, toggle a class instead of writing style strings, and
+// throttle to one update per animation frame.
+
+const __navHeaderEl = document.querySelector("header");
+let __navShadowTicking = false;
+
+function __updateNavShadow() {
+    if (__navHeaderEl) {
+        __navHeaderEl.classList.toggle("is-scrolled", window.scrollY > 40);
+    }
+    __navShadowTicking = false;
+}
 
 window.addEventListener("scroll", () => {
-
-    const header = document.querySelector("header");
-
-    if (window.scrollY > 40) {
-
-        header.style.boxShadow =
-        "0 8px 30px rgba(0,0,0,.12)";
-
-    } else {
-
-        header.style.boxShadow =
-        "0 2px 12px rgba(0,0,0,.08)";
-
+    if (!__navShadowTicking) {
+        __navShadowTicking = true;
+        requestAnimationFrame(__updateNavShadow);
     }
-
-});
+}, { passive: true });
 
 // =========================
 // Fade-in CSS Helper

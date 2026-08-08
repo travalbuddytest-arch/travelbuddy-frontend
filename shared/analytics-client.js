@@ -68,9 +68,20 @@
     } catch (e) { /* ignore */ }
   }
 
-  // Fire the page_view as soon as this script runs (it's included near the
-  // top of <body> alongside nav-include.js on every page).
-  track('page_view');
+  // Analytics is non-critical. Starting a cross-origin request while the
+  // parser is still building the page competes with the first paint.
+  function runWhenIdle(callback) {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(callback, { timeout: 2500 });
+    else window.setTimeout(callback, 800);
+  }
+
+  function startAnalytics() {
+    track('page_view');
+    schedulePresenceSocket();
+  }
+
+  if (document.readyState === 'complete') runWhenIdle(startAnalytics);
+  else window.addEventListener('load', function () { runWhenIdle(startAnalytics); }, { once: true });
 
   // 'pagehide' fires reliably for both tab close and same-tab navigation,
   // including on mobile Safari where 'beforeunload'/'unload' are unreliable.
@@ -95,13 +106,13 @@
   var SOCKET_ORIGIN = APP_CONFIG.SOCKET_URL;
 
   function connectPresenceSocket() {
-    if (!window.io) return;
+    if (!window.io || window.TBAnalyticsPresenceSocket) return;
     try {
       var ctx = collectContext();
       var socket = window.io(APP_CONFIG.SOCKET_URL + '/live-visitors', {
         withCredentials: true,
         reconnection: true,
-        reconnectionAttempts: Infinity,
+        reconnectionAttempts: 2,
         transports: ['websocket', 'polling'],
         query: {
           page: ctx.page,
@@ -111,20 +122,27 @@
       // Best-effort only — a failed/blocked presence socket must never
       // affect the page itself, hence no error handling beyond this.
       socket.on('connect_error', function () {});
+      window.TBAnalyticsPresenceSocket = socket;
     } catch (e) { /* ignore */ }
   }
 
-  if (window.io) {
-    connectPresenceSocket();
-  } else {
+  function schedulePresenceSocket() {
+    runWhenIdle(function () {
+      if (document.visibilityState === 'hidden') return;
+      if (window.io) {
+        connectPresenceSocket();
+        return;
+      }
     // Load the client lazily so pages that don't already include it
     // (login/register/home/etc) don't need an extra <script> tag added.
     try {
       var s = document.createElement('script');
       s.src = APP_CONFIG.SOCKET_URL + '/socket.io/socket.io.js';
+      s.async = true;
       s.onload = connectPresenceSocket;
       s.onerror = function () {}; // e.g. backend not running — silently skip presence tracking
       document.head.appendChild(s);
-    } catch (e) { /* ignore */ }
+      } catch (e) { /* ignore */ }
+    });
   }
 })();

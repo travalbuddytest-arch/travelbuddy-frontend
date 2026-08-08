@@ -24,12 +24,10 @@
 
   async function refreshWalletBalance() {
     try {
-      const res = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return;
+      const user = await window.TravelBuddy.getCurrentUser();
+      if (!user) return;
       const walletValue = document.getElementById('walletBalanceValue');
-      if (walletValue) walletValue.textContent = formatRupees(data.user?.walletBalance || 0);
-      localStorage.setItem('travelBuddyUser', JSON.stringify(data.user || {}));
+      if (walletValue) walletValue.textContent = formatRupees(user.walletBalance || 0);
     } catch (err) {
       console.error('Wallet refresh failed:', err);
     }

@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Buddy — Community-Driven Parcel Delivery</title>
     <meta name="description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <link rel="canonical" href="https://travelbuddyweb1.netlify.app/">
+    <meta property="og:title" content="Travel Buddy — Community-Driven Parcel Delivery">
+    <meta property="og:description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://travelbuddyweb1.netlify.app/">
+    <meta property="og:image" content="https://travelbuddyweb1.netlify.app/images/post-your-parcel.jpg">
+    <meta property="og:site_name" content="TravelBuddy">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Travel Buddy — Community-Driven Parcel Delivery">
+    <meta name="twitter:description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <meta name="twitter:image" content="https://travelbuddyweb1.netlify.app/images/post-your-parcel.jpg">
     <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
@@ -15,9 +28,10 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/navbar.css">
     <link rel="stylesheet" href="../shared/footer.css">
+    <link rel="stylesheet" href="../shared/seo-page.css">
 
     <script src="../shared/config.js?v=1"></script>
     <script src="../shared/auth-cookie-client.js?v=1"></script>
@@ -29,7 +43,24 @@
     // Hide the page instantly until we've restored scroll position
     document.documentElement.style.visibility = 'hidden';
 </script>
-  <link rel="stylesheet" href="../shared/site-banner.css?v=2">
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TravelBuddy",
+    "url": "https://travelbuddyweb1.netlify.app/",
+    "logo": "https://travelbuddyweb1.netlify.app/images/logo.jpeg"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TravelBuddy",
+    "url": "https://travelbuddyweb1.netlify.app/"
+  }
+  </script>
 </head>
 
 <body data-page="home">
@@ -163,7 +194,7 @@
             </a>
         </div>
         <div class="post-image">
-            <img src="../images/post-your-parcel.jpg" width="1040" height="480"
+            <img src="../images/post-your-parcel.jpg" width="1040" height="480" loading="lazy" decoding="async"
                 alt="Person posting a parcel for delivery through the Travel Buddy app" loading="lazy" decoding="async">
         </div>
     </section>
@@ -172,7 +203,7 @@
 
     <section class="get-section">
         <div class="get-image">
-            <img src="../images/get-local.jpg" width="1040" height="378"
+            <img src="../images/get-local.jpg" width="1040" height="378" loading="lazy" decoding="async"
                 alt="Local courier accepting a nearby delivery request" loading="lazy" decoding="async">
         </div>
         <div class="get-text">
@@ -199,7 +230,7 @@
             </a>
         </div>
         <div class="delivered-image">
-            <img src="../images/Delivery_shortly.png" width="1040" height="567"
+            <img src="../images/Delivery_shortly.png" width="1040" height="567" loading="lazy" decoding="async"
                 alt="Courier delivering a parcel to its destination" loading="lazy" decoding="async">
         </div>
     </section> 
@@ -208,7 +239,7 @@
 
     <section class="reach-section">
         <div class="reach-image">
-            <img src="../images/reach-every-customer.png" width="1040" height="378"
+            <img src="../images/reach-every-customer.png" width="1040" height="378" loading="lazy" decoding="async"
                 alt="Local courier accepting a nearby delivery request" loading="lazy" decoding="async">
         </div>
         <div class="reach-text">
@@ -234,7 +265,7 @@
             </a>
         </div>
         <div class="trusted-image">
-            <img src="../images/trust-local-connection.png" width="1040" height="480"
+            <img src="../images/trust-local-connection.png" width="1040" height="480" loading="lazy" decoding="async"
                 alt="Person posting a parcel for delivery through the Travel Buddy app" loading="lazy" decoding="async">
         </div>
     </section> 
@@ -243,7 +274,7 @@
 
     <section class="affordable-section">
         <div class="affordable-image">
-            <img src="../images/affordable.png" width="1040" height="378"
+            <img src="../images/affordable.png" width="1040" height="378" loading="lazy" decoding="async"
                 alt="Local courier accepting a nearby delivery request" loading="lazy" decoding="async">
         </div>
         <div class="affordable-text">
@@ -642,6 +673,20 @@
 </section>
 
 
+<!-- ================= EXPLORE LINKS (SEO internal linking to public landing pages) ================= -->
+<section class="seo-section" aria-label="Explore TravelBuddy">
+    <h2>Explore TravelBuddy</h2>
+    <div class="seo-links-row">
+        <a href="../post-parcel/index.html"><i class="fa-solid fa-box"></i> Post a Parcel</a>
+        <a href="../send-parcel/index.html"><i class="fa-solid fa-paper-plane"></i> Send a Parcel</a>
+        <a href="../carry-parcel/index.html"><i class="fa-solid fa-suitcase-rolling"></i> Carry a Parcel</a>
+        <a href="../parcel-delivery/index.html"><i class="fa-solid fa-truck-fast"></i> Parcel Delivery</a>
+        <a href="../how-travelbuddy-works/index.html"><i class="fa-solid fa-diagram-project"></i> How It Works</a>
+        <a href="../safety/index.html"><i class="fa-solid fa-shield-halved"></i> Safety</a>
+        <a href="../faq/index.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+    </div>
+</section>
+
 <!-- ================= FOOTER (shared component, see Frontend/shared/footer.html) ================= -->
 <div id="tbFooterInclude"></div>
 <script>window.TBInclude.injectFooter();</script>
@@ -710,7 +755,6 @@
 
 <script src="script.js?v=3"></script>
 
-  <script>window.TB_ALWAYS_SHOW_BANNER = true;</script>
-  <script src="../shared/site-banner.js?v=2"></script>
+  <script src="../shared/site-banner.js?v=3"></script>
 </body>
 </html>

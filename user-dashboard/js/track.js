@@ -2,7 +2,7 @@
   'use strict';
 
   const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/postparcel`;
-  const { authHeaders, escapeHTML, setButtonLoading } = window.TravelBuddy;
+  const { authHeaders, escapeHTML, setButtonLoading, QRVerification } = window.TravelBuddy;
 
   const loading = document.getElementById('trackLoading');
   const empty = document.getElementById('trackEmpty');
@@ -30,19 +30,23 @@
   const orderTrackInput = document.getElementById('orderTrackInput');
 
   const stages = [
-    { key: 'pending', title: 'Parcel Posted / Searching for Traveler', field: 'createdAt', icon: 'fa-magnifying-glass' },
-    { key: 'accepted', title: 'Request Accepted', field: 'acceptedAt', icon: 'fa-check' },
-    { key: 'pickup_confirmed', title: 'Pickup Confirmed', field: 'pickupConfirmedAt', icon: 'fa-box' },
+    { key: 'pending', title: 'Posted', field: 'createdAt', icon: 'fa-magnifying-glass' },
+    { key: 'accepted', title: 'Accepted', field: 'acceptedAt', icon: 'fa-check' },
+    { key: 'pickup_verification', title: 'Pickup Verification', field: 'pickupVerificationAt', icon: 'fa-qrcode' },
+    { key: 'pickup_confirmed', title: 'Picked Up', field: 'pickupConfirmedAt', icon: 'fa-box' },
     { key: 'in_transit', title: 'In Transit', field: 'inTransitAt', icon: 'fa-route' },
+    { key: 'delivery_verification', title: 'Delivery Verification', field: 'deliveryVerificationAt', icon: 'fa-qrcode' },
     { key: 'delivered', title: 'Delivered', field: 'deliveredAt', icon: 'fa-flag-checkered' },
   ];
 
-  const statusOrder = ['pending', 'accepted', 'pickup_confirmed', 'in_transit', 'delivered'];
+  const statusOrder = ['pending', 'accepted', 'pickup_verification', 'pickup_confirmed', 'in_transit', 'delivery_verification', 'delivered'];
   const progressByStatus = {
     pending: 8,
     accepted: 25,
-    pickup_confirmed: 38,
+    pickup_verification: 32,
+    pickup_confirmed: 46,
     in_transit: 70,
+    delivery_verification: 84,
     delivered: 100,
     cancelled: 18,
   };
@@ -87,8 +91,15 @@
     selector.value = selectedId || activeParcels[0]?.id || '';
   }
 
+  function timelineStatus(parcel) {
+    if (parcel.status === 'accepted') return 'pickup_verification';
+    if (parcel.status === 'in_transit') return 'delivery_verification';
+    return parcel.status;
+  }
+
   function stageState(parcel, stage) {
-    const currentIndex = statusOrder.indexOf(parcel.status);
+    const currentStatus = timelineStatus(parcel);
+    const currentIndex = statusOrder.indexOf(currentStatus);
     const stageIndex = statusOrder.indexOf(stage.key);
     if (parcel.status === 'cancelled') return stageIndex === 0 ? 'complete' : 'pending';
     if (stageIndex < currentIndex || parcel.status === 'delivered') return 'complete';
@@ -116,7 +127,7 @@
   }
 
   function setRouteProgress(parcel) {
-    const progress = progressByStatus[parcel.status] || 18;
+    const progress = progressByStatus[timelineStatus(parcel)] || 18;
     if (routeProgress) {
       routeProgress.style.setProperty('--route-progress-factor', String(progress / 100));
     }
@@ -144,13 +155,26 @@
     }
 
     if (parcel.role !== 'traveler') {
+      const qrAction = parcel.status === 'accepted'
+        ? { action: 'show-pickup-qr', label: 'Show Pickup QR', icon: 'fa-qrcode' }
+        : parcel.status === 'in_transit'
+          ? { action: 'show-delivery-qr', label: 'Show Delivery QR', icon: 'fa-qrcode' }
+          : null;
+
       actionPanel.innerHTML = `
         <h3>Available Actions</h3>
-        <p>You can view progress, message the traveler, start a private in-app audio call, or report a problem. Only the assigned traveler can update journey status.</p>
+        <p>${qrAction ? 'Display the stage-specific QR code for the accepted traveler to scan.' : 'You can view progress, message the traveler, start a private in-app audio call, or report a problem. Only the assigned traveler can update journey status.'}</p>
         <div class="action-buttons">
+          ${qrAction ? `<button type="button" class="btn-primary btn-primary--inline" id="showQrBtn" data-action="${qrAction.action}">
+            <span class="btn-label"><i class="fa-solid ${qrAction.icon}"></i> ${qrAction.label}</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>` : ''}
           <button type="button" class="btn-ghost" id="reportProblemBtn"><i class="fa-solid fa-triangle-exclamation"></i> Report a Problem</button>
         </div>
       `;
+      document.getElementById('showQrBtn')?.addEventListener('click', (event) => {
+        openJourneyQrDisplay(event.currentTarget.dataset.action);
+      });
       document.getElementById('reportProblemBtn')?.addEventListener('click', () => {
         window.showToast('Problem reporting is not available yet.', 'error');
       });
@@ -158,9 +182,9 @@
     }
 
     const actionByStatus = {
-      accepted: { action: 'confirm-pickup', label: 'Confirm Pickup', icon: 'fa-box' },
+      accepted: { action: 'scan-pickup-qr', label: 'Scan Pickup QR', icon: 'fa-qrcode' },
       pickup_confirmed: { action: 'start-journey', label: 'Start Journey', icon: 'fa-route' },
-      in_transit: { action: 'confirm-delivery', label: 'Confirm Delivery', icon: 'fa-flag-checkered' },
+      in_transit: { action: 'scan-delivery-qr', label: 'Scan Delivery QR', icon: 'fa-qrcode' },
     };
     const action = actionByStatus[parcel.status];
 
@@ -174,18 +198,25 @@
 
     actionPanel.innerHTML = `
       <h3>Available Actions</h3>
-      <p>This action updates the parcel journey after backend authorization and transition checks.</p>
+      <p>${action.action.startsWith('scan-') ? 'Open the camera only when you are ready to scan the matching parcel QR.' : 'This action updates the parcel journey after backend authorization and transition checks.'}</p>
       <div class="action-buttons">
         <button type="button" class="btn-primary btn-primary--inline" id="statusActionBtn" data-action="${action.action}">
           <span class="btn-label"><i class="fa-solid ${action.icon}"></i> ${action.label}</span>
           <span class="spinner" aria-hidden="true"></span>
         </button>
+        ${action.action.startsWith('scan-') ? `<button type="button" class="btn-ghost" id="otpFallbackBtn" data-action="${action.action === 'scan-pickup-qr' ? 'confirm-pickup' : 'confirm-delivery'}">
+          <i class="fa-solid fa-key"></i> Verify using OTP
+        </button>` : ''}
       </div>
     `;
     document.getElementById('statusActionBtn')?.addEventListener('click', (event) => {
       const a = event.currentTarget.dataset.action;
-      if (a === 'confirm-pickup' || a === 'confirm-delivery') openJourneyOtpModal(a);
+      if (a === 'scan-pickup-qr' || a === 'scan-delivery-qr') openJourneyQrScanner(a);
+      else if (a === 'confirm-pickup' || a === 'confirm-delivery') openJourneyOtpModal(a);
       else handleStatusAction(event);
+    });
+    document.getElementById('otpFallbackBtn')?.addEventListener('click', (event) => {
+      openJourneyOtpModal(event.currentTarget.dataset.action);
     });
   }
 
@@ -251,6 +282,307 @@
     const index = parcels.findIndex((parcel) => String(parcel.id) === String(id));
     if (index >= 0) parcels[index] = data.parcel;
     return data.parcel;
+  }
+
+  let qrCountdownTimer = null;
+  let qrStatusPollTimer = null;
+  let activeScanner = null;
+  let activeScannerControls = null;
+  let scannerLocked = false;
+
+  function qrStageFromAction(action) {
+    const isPickup = action === 'show-pickup-qr' || action === 'scan-pickup-qr';
+    return {
+      purpose: isPickup ? 'pickup' : 'delivery',
+      label: isPickup ? 'Pickup' : 'Delivery',
+      create: isPickup ? QRVerification.createPickupQr : QRVerification.createDeliveryQr,
+      verify: isPickup ? QRVerification.verifyPickupQr : QRVerification.verifyDeliveryQr,
+      otpAction: isPickup ? 'confirm-pickup' : 'confirm-delivery',
+    };
+  }
+
+  function formatCountdown(expiresAt) {
+    const expires = new Date(expiresAt).getTime();
+    if (!expiresAt || Number.isNaN(expires)) return 'Expiration unavailable';
+    const remaining = Math.max(0, Math.floor((expires - Date.now()) / 1000));
+    const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const seconds = String(remaining % 60).padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  function setQrStatus(kind, message) {
+    const status = document.getElementById('journeyQrStatus');
+    if (!status) return;
+    status.className = `journey-qr-status is-${kind || 'info'}`;
+    status.innerHTML = message || '';
+  }
+
+  function stopQrStatusPolling() {
+    if (qrStatusPollTimer) clearInterval(qrStatusPollTimer);
+    qrStatusPollTimer = null;
+  }
+
+  function hasStageAdvanced(parcel, stage) {
+    if (!parcel || !stage) return false;
+    if (stage.purpose === 'pickup') {
+      return ['pickup_confirmed', 'in_transit', 'delivered'].includes(parcel.status);
+    }
+    return parcel.status === 'delivered';
+  }
+
+  function stageSuccessMessage(stage, message) {
+    const fallback = stage.purpose === 'pickup'
+      ? 'Parcel successfully handed over'
+      : 'Parcel Delivered Successfully';
+    return `<i class="fa-solid fa-circle-check"></i> ${stage.label} Verified<br><span>${escapeHTML(message || fallback)}</span>`;
+  }
+
+  function startQrStatusPolling(stage) {
+    stopQrStatusPolling();
+    if (!selectedId) return;
+    qrStatusPollTimer = setInterval(async () => {
+      try {
+        const parcel = await refreshParcel(selectedId);
+        if (!hasStageAdvanced(parcel, stage)) return;
+        stopQrStatusPolling();
+        if (qrCountdownTimer) clearInterval(qrCountdownTimer);
+        const refreshBtn = document.getElementById('refreshQrBtn');
+        if (refreshBtn) refreshBtn.disabled = true;
+        setQrStatus('success', stageSuccessMessage(stage));
+        window.showToast(`${stage.label} verified successfully.`, 'success');
+        selectParcel(selectedId);
+      } catch (err) {
+        stopQrStatusPolling();
+      }
+    }, 5000);
+  }
+
+  function closeJourneyQrModal() {
+    const modal = document.getElementById('journeyQrModal');
+    if (modal) modal.hidden = true;
+    if (qrCountdownTimer) clearInterval(qrCountdownTimer);
+    stopQrStatusPolling();
+    stopQrScanner();
+    scannerLocked = false;
+  }
+
+  function ensureQrModal() {
+    if (document.getElementById('journeyQrModal')) return;
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="journey-qr-modal" id="journeyQrModal" hidden>
+        <div class="journey-qr-backdrop"></div>
+        <div class="journey-qr-card" role="dialog" aria-modal="true" aria-labelledby="journeyQrTitle">
+          <button class="journey-qr-close" type="button" aria-label="Close">&times;</button>
+          <div class="journey-qr-icon"><i class="fa-solid fa-qrcode"></i></div>
+          <h2 id="journeyQrTitle">Pickup Verification</h2>
+          <p id="journeyQrMessage">Show this QR code to your traveler.</p>
+          <div class="journey-qr-body" id="journeyQrBody"></div>
+          <div class="journey-qr-status is-info" id="journeyQrStatus" role="status"></div>
+          <div class="journey-qr-actions" id="journeyQrActions"></div>
+        </div>
+      </div>
+    `);
+    const modal = document.getElementById('journeyQrModal');
+    modal.querySelector('.journey-qr-close').onclick = closeJourneyQrModal;
+    modal.querySelector('.journey-qr-backdrop').onclick = closeJourneyQrModal;
+  }
+
+  function renderQrDisplayShell(stage) {
+    document.getElementById('journeyQrTitle').textContent = `${stage.label} Verification`;
+    document.getElementById('journeyQrMessage').textContent = `Show this ${stage.label} QR code to your traveler`;
+    document.getElementById('journeyQrBody').innerHTML = `
+      <div class="journey-qr-label">${stage.label} QR</div>
+      <div class="journey-qr-code" id="journeyQrCode" aria-label="${stage.label} QR code">
+        <div class="journey-qr-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Generating QR...</div>
+      </div>
+      <div class="journey-qr-countdown" id="journeyQrCountdown">QR expires in: --:--</div>
+      <p class="journey-qr-note">The QR contains only a backend token. TravelBuddy verifies the parcel, stage, and authorization on the server.</p>
+    `;
+    document.getElementById('journeyQrActions').innerHTML = `
+      <button type="button" class="btn-primary btn-primary--inline" id="refreshQrBtn">
+        <span class="btn-label"><i class="fa-solid fa-rotate"></i> Refresh QR</span>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+    `;
+  }
+
+  function startQrCountdown(expiresAt, stage) {
+    const countdown = document.getElementById('journeyQrCountdown');
+    const refreshBtn = document.getElementById('refreshQrBtn');
+    if (qrCountdownTimer) clearInterval(qrCountdownTimer);
+
+    const tick = () => {
+      const expires = new Date(expiresAt).getTime();
+      const expired = !expiresAt || Number.isNaN(expires) || Date.now() >= expires;
+      if (expired) {
+        countdown.textContent = 'QR Expired';
+        setQrStatus('warning', '<i class="fa-solid fa-triangle-exclamation"></i> QR expired. Generate a new QR before scanning.');
+        stopQrStatusPolling();
+        if (refreshBtn) {
+          refreshBtn.disabled = false;
+          refreshBtn.querySelector('.btn-label').innerHTML = '<i class="fa-solid fa-rotate"></i> Generate New QR';
+        }
+        clearInterval(qrCountdownTimer);
+        return;
+      }
+      countdown.textContent = `QR expires in: ${formatCountdown(expiresAt)}`;
+      if (refreshBtn) refreshBtn.disabled = false;
+    };
+
+    tick();
+    qrCountdownTimer = setInterval(tick, 1000);
+    if (refreshBtn) refreshBtn.onclick = () => loadQrToken(stage, true);
+  }
+
+  async function loadQrToken(stage, isRefresh) {
+    const code = document.getElementById('journeyQrCode');
+    const refreshBtn = document.getElementById('refreshQrBtn');
+    if (!code || !selectedId) return;
+    stopQrStatusPolling();
+    setButtonLoading(refreshBtn, true, '<i class="fa-solid fa-circle-notch fa-spin"></i> Generating');
+    code.innerHTML = '<div class="journey-qr-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Generating QR...</div>';
+    setQrStatus('info', '<i class="fa-solid fa-clock"></i> Generating secure QR token...');
+    try {
+      const data = await stage.create(selectedId);
+      if (!data.qrToken || !data.expiresAt) throw new Error(QRVerification.UNAVAILABLE_MESSAGE);
+      code.innerHTML = '';
+      if (!window.QRCode) throw new Error('QR display library is unavailable. Please try again or use OTP.');
+      new window.QRCode(code, {
+        text: String(data.qrToken),
+        width: 220,
+        height: 220,
+        correctLevel: window.QRCode.CorrectLevel.M,
+      });
+      setQrStatus('info', '<i class="fa-solid fa-hourglass-half"></i> Waiting for traveler to scan...');
+      startQrCountdown(data.expiresAt, stage);
+      startQrStatusPolling(stage);
+      if (isRefresh) window.showToast(`${stage.label} QR refreshed.`, 'success');
+    } catch (err) {
+      code.innerHTML = '<div class="journey-qr-placeholder"><i class="fa-solid fa-qrcode"></i></div>';
+      setQrStatus('error', `<i class="fa-solid fa-circle-exclamation"></i> ${escapeHTML(err.message || QRVerification.UNAVAILABLE_MESSAGE)}`);
+    } finally {
+      setButtonLoading(refreshBtn, false);
+    }
+  }
+
+  function openJourneyQrDisplay(action) {
+    ensureQrModal();
+    const stage = qrStageFromAction(action);
+    const modal = document.getElementById('journeyQrModal');
+    renderQrDisplayShell(stage);
+    modal.hidden = false;
+    loadQrToken(stage, false);
+  }
+
+  function renderQrScannerShell(stage) {
+    document.getElementById('journeyQrTitle').textContent = `${stage.label} Verification`;
+    document.getElementById('journeyQrMessage').textContent = `Open device camera and scan the ${stage.label.toLowerCase()} QR code.`;
+    document.getElementById('journeyQrBody').innerHTML = `
+      <div class="journey-qr-label">${stage.label} QR Scanner</div>
+      <div class="journey-qr-scanner" id="qrScannerViewport">
+        <video id="qrScannerVideo" muted playsinline></video>
+        <div class="journey-qr-placeholder" id="qrScannerPlaceholder"><i class="fa-solid fa-camera"></i></div>
+      </div>
+      <p class="journey-qr-note">Camera permission is requested only after pressing Scan.</p>
+    `;
+    document.getElementById('journeyQrActions').innerHTML = `
+      <button type="button" class="btn-primary btn-primary--inline" id="startQrScanBtn">
+        <span class="btn-label"><i class="fa-solid fa-camera"></i> Scan ${stage.label} QR</span>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+      <span class="journey-qr-fallback-label">${stage.purpose === 'pickup' ? "Can't scan?" : 'Having trouble?'}</span>
+      <button type="button" class="btn-ghost" id="qrOtpFallbackBtn"><i class="fa-solid fa-key"></i> Verify using OTP</button>
+    `;
+    document.getElementById('startQrScanBtn').onclick = () => startQrScanner(stage);
+    document.getElementById('qrOtpFallbackBtn').onclick = () => {
+      closeJourneyQrModal();
+      openJourneyOtpModal(stage.otpAction);
+    };
+  }
+
+  async function stopQrScanner() {
+    try {
+      if (activeScannerControls) activeScannerControls.stop();
+    } catch (err) {}
+    const video = document.getElementById('qrScannerVideo');
+    if (video?.srcObject) {
+      video.srcObject.getTracks().forEach((track) => track.stop());
+      video.srcObject = null;
+    }
+    activeScanner = null;
+    activeScannerControls = null;
+  }
+
+  async function handleQrDetected(stage, decodedText) {
+    if (scannerLocked) return;
+    scannerLocked = true;
+    setQrStatus('info', '<i class="fa-solid fa-qrcode"></i> QR detected. Verifying...');
+    await stopQrScanner();
+    const startBtn = document.getElementById('startQrScanBtn');
+    if (startBtn) startBtn.disabled = true;
+    try {
+      const data = await stage.verify(selectedId, decodedText);
+      setQrStatus('success', stageSuccessMessage(stage, data.message));
+      if (data.parcel) {
+        const index = parcels.findIndex((parcel) => String(parcel.id) === String(selectedId));
+        if (index >= 0) parcels[index] = data.parcel;
+      } else {
+        await refreshParcel(selectedId).catch(() => {});
+      }
+      window.showToast(data.message || `${stage.label} verified successfully.`, 'success');
+      selectParcel(selectedId);
+    } catch (err) {
+      scannerLocked = false;
+      if (startBtn) startBtn.disabled = false;
+      setQrStatus('error', `<i class="fa-solid fa-circle-exclamation"></i> ${escapeHTML(err.message || 'Invalid QR. Please try again or use OTP.')}`);
+    }
+  }
+
+  async function startQrScanner(stage) {
+    const startBtn = document.getElementById('startQrScanBtn');
+    if (!selectedId || scannerLocked) return;
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setQrStatus('error', '<i class="fa-solid fa-video-slash"></i> Camera unavailable on this browser. Use OTP instead.');
+      return;
+    }
+    if (!window.ZXingBrowser?.BrowserQRCodeReader) {
+      setQrStatus('error', '<i class="fa-solid fa-circle-exclamation"></i> QR scanner library is unavailable. Please try again or use OTP.');
+      return;
+    }
+
+    setButtonLoading(startBtn, true, '<i class="fa-solid fa-camera"></i> Requesting camera');
+    setQrStatus('info', '<i class="fa-solid fa-camera"></i> Requesting camera permission...');
+    try {
+      await stopQrScanner();
+      const video = document.getElementById('qrScannerVideo');
+      const placeholder = document.getElementById('qrScannerPlaceholder');
+      activeScanner = new window.ZXingBrowser.BrowserQRCodeReader();
+      activeScannerControls = await activeScanner.decodeFromConstraints(
+        { video: { facingMode: { ideal: 'environment' } } },
+        video,
+        (result) => {
+          if (result) handleQrDetected(stage, result.getText());
+        }
+      );
+      if (placeholder) placeholder.hidden = true;
+      setQrStatus('info', '<i class="fa-solid fa-camera"></i> Scanner active. Point the camera at the QR code.');
+    } catch (err) {
+      setQrStatus('error', '<i class="fa-solid fa-video-slash"></i> Camera unavailable or permission was denied. Use OTP instead.');
+      await stopQrScanner();
+    } finally {
+      setButtonLoading(startBtn, false);
+    }
+  }
+
+  function openJourneyQrScanner(action) {
+    ensureQrModal();
+    const stage = qrStageFromAction(action);
+    const modal = document.getElementById('journeyQrModal');
+    scannerLocked = false;
+    stopQrStatusPolling();
+    renderQrScannerShell(stage);
+    setQrStatus('info', '<i class="fa-solid fa-circle-info"></i> Press Scan when you are ready.');
+    modal.hidden = false;
   }
 
   let otpTimer = null;

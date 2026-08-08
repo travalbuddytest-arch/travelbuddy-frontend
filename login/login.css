@@ -1,3 +1,9 @@
+/* RESPONSIVE FIX: overflow-x:hidden was only set on body, not html.
+   On mobile browsers the actual scrollable area is html's scrollWidth,
+   so horizontal overflow from any element could still create stray
+   blank space / rubber-band scroll beyond the page content. */
+html{overflow-x:hidden;}
+
 :root {
   --primary: #0D6EFD;
   --secondary: #4F8DFF;
@@ -135,7 +141,7 @@ body {
   position: relative;
   z-index: 1;
   min-height: 100dvh;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,7 +153,7 @@ body {
   width: var(--card-w);
   max-width: min(95vw, 100%);
   max-height: calc(100dvh - 24px);
-  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
   overflow-y: auto;
   scrollbar-width: thin;
   background: var(--card-bg);

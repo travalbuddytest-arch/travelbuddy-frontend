@@ -136,11 +136,9 @@
     if (!heroValue && !balanceValue) return;
 
     try {
-      const res = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return;
-
-      const balance = `Rs. ${Number(data.user?.walletBalance || 0).toLocaleString('en-IN')}`;
+      const user = await window.TravelBuddy.getCurrentUser();
+      if (!user) return;
+      const balance = `Rs. ${Number(user.walletBalance || 0).toLocaleString('en-IN')}`;
       if (heroValue) heroValue.textContent = balance;
       if (balanceValue) balanceValue.textContent = balance;
     } catch (err) {

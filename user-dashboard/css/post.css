@@ -73,6 +73,8 @@
 }
 .tag--pending { background: var(--warning-bg); color: var(--warning); }
 .tag--accepted { background: #E7F0FE; color: var(--primary); }
+.tag--pickup_verification,
+.tag--delivery_verification { background: #f1f6ff; color: #1d4ed8; }
 .tag--pickup_confirmed { background: var(--warning-bg); color: #7A4B00; }
 .tag--in_transit { background: #E9EEFF; color: #3056C8; }
 .tag--delivered { background: var(--success-bg); color: var(--success); }
@@ -218,7 +220,7 @@
 .traveler-profile-overlay .traveler-profile-card{
   position:relative;
   width:min(440px,100%);
-  max-height:calc(100vh - 40px);
+  max-height:calc(100dvh - 40px);
   overflow:auto;
   background:#fff;
   border:1px solid rgba(255,255,255,.65);

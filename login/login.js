@@ -32,6 +32,24 @@
   let currentPhoneNumber = '';
   const LOGIN_STATE_KEY = 'travelBuddyLoginState';
 
+  // Where auth-guard.js sent the visitor from before bouncing them here
+  // (see shared/auth-guard.js). Only ever a same-site relative path into
+  // user-dashboard/*, never used for admin — open-redirect guard below.
+  function getSafeRedirectTarget() {
+    try {
+      const raw = new URLSearchParams(window.location.search).get('redirect');
+      if (!raw) return null;
+      const decoded = decodeURIComponent(raw);
+      // Must be a relative path back into the protected user-dashboard
+      // area — reject absolute/protocol-relative URLs and anything else
+      // to prevent this becoming an open redirect.
+      if (!/^\/user-dashboard\//.test(decoded)) return null;
+      return `..${decoded}`;
+    } catch (err) {
+      return null;
+    }
+  }
+
   function saveLoginState() {
     const state = {
       email: emailInput.value,
@@ -79,11 +97,12 @@
   // navigation, and uses location.replace() so the old login page (with its
   // "loading" button state) isn't left in the browser's back-button history.
   function goToDashboard(delay) {
+    const destination = getSafeRedirectTarget() || '../user-dashboard/overview.html';
     setTimeout(() => {
       try {
-        window.location.replace('../user-dashboard/overview.html');
+        window.location.replace(destination);
       } catch (err) {
-        window.location.href = '../user-dashboard/overview.html';
+        window.location.href = destination;
       }
     }, delay);
   }
@@ -94,7 +113,7 @@
   function goToRoleDashboard(role, delay) {
     const destination = role === 'admin'
       ? '../admin_dashboard/html/admin.html'
-      : '../user-dashboard/overview.html';
+      : (getSafeRedirectTarget() || '../user-dashboard/overview.html');
     setTimeout(() => {
       try {
         window.location.replace(destination);

@@ -1,0 +1,19 @@
+# Clean SEO-friendly URLs for existing public pages.
+# These are 200 rewrites (not redirects): the original .html paths keep
+# working exactly as before (nothing existing breaks), the clean URL is
+# just an additional way to reach the same file, and canonical tags point
+# search engines at the clean version.
+/about            /about/about.html                          200
+/about/           /about/about.html                          200
+/contact          /contact/contact.html                      200
+/contact/         /contact/contact.html                      200
+/support          /support/support.html                      200
+/support/         /support/support.html                      200
+/legal/privacy               /legal/privacy.html               200
+/legal/privacy/              /legal/privacy.html               200
+/legal/terms                 /legal/terms.html                 200
+/legal/terms/                /legal/terms.html                 200
+/legal/community-guidelines  /legal/community-guidelines.html  200
+/legal/community-guidelines/ /legal/community-guidelines.html  200
+/legal/prohibited-items      /legal/prohibited-items.html      200
+/legal/prohibited-items/     /legal/prohibited-items.html      200

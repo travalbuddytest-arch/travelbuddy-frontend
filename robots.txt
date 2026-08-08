@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /user-dashboard/
+Disallow: /admin_dashboard/
+Disallow: /api/
+Disallow: /login/
+Disallow: /register/
+Disallow: /forgot-password/
+
+Sitemap: https://travelbuddyweb1.netlify.app/sitemap.xml

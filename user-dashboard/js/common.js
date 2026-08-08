@@ -132,7 +132,13 @@
 
   personalizeUser();
 
+  let currentUserRequest = null;
   async function refreshCurrentUser() {
+    // Multiple dashboard modules need the current user (header, wallet,
+    // overview). Reuse the in-flight request so page startup never sends the
+    // same /auth/me request two or three times.
+    if (currentUserRequest) return currentUserRequest;
+    currentUserRequest = (async () => {
     try {
       const res = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
       const data = await res.json();
@@ -142,19 +148,28 @@
           localStorage.removeItem('travelBuddyUser');
           window.location.href = '../login/login.html';
         }
-        return;
+        return null;
       }
       saveStoredUser(data.user);
       personalizeUser();
       populateProfileForms(data.user);
+      return data.user;
     } catch (err) {
       console.error('Profile refresh failed:', err);
+      return null;
+    } finally {
+      currentUserRequest = null;
     }
+    })();
+    return currentUserRequest;
   }
+  window.TravelBuddy.getCurrentUser = refreshCurrentUser;
 
   async function refreshMessageBadge() {
     const badge = document.getElementById('navMsgBadge');
-    if (!badge) return;
+    // messages.js derives this from the conversation response it already
+    // needs, so avoid a redundant unread-count request on that heavy page.
+    if (!badge || document.getElementById('conversationSearch')) return;
 
     try {
       const res = await fetch(`${API_ORIGIN}/api/messages/unread-count`, { headers: authHeaders() });
@@ -577,7 +592,7 @@
       el.textContent = '';
       const img = document.createElement('img');
       img.className = 'tb-profile-photo';
-      img.src = photo;
+      img.src = resolveMediaUrl(photo);
       img.alt = 'Profile photo';
       img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit;';
       el.appendChild(img);
@@ -587,6 +602,14 @@
       el.textContent = getInitials(name);
     }
   }
+  // The API stores uploads as relative paths (for example /uploads/avatar.png).
+  // Resolve them against Render, rather than the Netlify page origin.
+  function resolveMediaUrl(value) {
+    const source = String(value || '').trim();
+    if (!source || source.startsWith('data:') || /^https?:\/\//i.test(source)) return source;
+    try { return new URL(source, `${API_ORIGIN}/`).href; } catch (err) { return source; }
+  }
+  window.TravelBuddy.resolveMediaUrl = resolveMediaUrl;
   function resizeProfilePhoto(file) { return new Promise((resolve,reject)=>{ const r=new FileReader(); r.onerror=reject; r.onload=()=>{ const img=new Image(); img.onerror=reject; img.onload=()=>{ const size=320,c=document.createElement('canvas'); c.width=size;c.height=size; const x=c.getContext('2d'),side=Math.min(img.width,img.height),sx=(img.width-side)/2,sy=(img.height-side)/2; x.drawImage(img,sx,sy,side,side,0,0,size,size); resolve(c.toDataURL('image/jpeg',.82)); }; img.src=r.result; }; r.readAsDataURL(file); }); }
 
   function createProfileModal() {
@@ -620,7 +643,7 @@
             <div class="avatar profile-avatar profile-avatar-large" id="profilePhotoPreview">TB</div>
             <div class="profile-photo-actions">
               <label class="btn-ghost profile-photo-btn" for="profilePhotoInput"><i class="fa-solid fa-camera"></i><span id="profilePhotoActionText">Add Photo</span></label>
-              <input id="profilePhotoInput" type="file" accept="image/jpeg,image/png" hidden>
+              <input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden>
               <button type="button" class="btn-ghost" id="removeProfilePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button>
             </div>
             <p class="profile-photo-help">Your photo is saved to your TravelBuddy account and shown in your profile avatar.</p>
@@ -673,41 +696,30 @@
       const res = await fetch(`${API_ORIGIN}/api/auth/me`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(payload) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not save profile photo.');
+      // The server has silently returned a saved user before without the
+      // photo actually taking (the toast still said "saved" either way).
+      // Comparing what came back against what we sent turns that into an
+      // honest error instead of a false success, and refetching /api/auth/me
+      // once catches the case where the PUT response itself is stale but
+      // the write did land.
+      if ((data.user?.profilePhoto || '') !== profilePhoto) {
+        try {
+          const check = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
+          const checkData = await check.json();
+          if (check.ok && (checkData.user?.profilePhoto || '') === profilePhoto) {
+            data.user = checkData.user;
+          } else {
+            throw new Error('not saved');
+          }
+        } catch (verifyErr) {
+          throw new Error('The photo did not save on the server. Please try again, or use a smaller image.');
+        }
+      }
       localStorage.setItem('travelBuddyUser', JSON.stringify(data.user));
       updateDashboardUser(data.user);
       return data.user;
     }
-    document.getElementById('profilePhotoInput')?.addEventListener('change', async (e)=>{
-      const f=e.target.files?.[0];
-      if(!f) return;
-      
-      // Validate file type - only JPG/JPEG/PNG allowed
-      const validMimes = ['image/jpeg', 'image/png'];
-      const validExts = ['.jpg', '.jpeg', '.png'];
-      const hasValidMime = validMimes.includes(f.type);
-      const hasValidExt = validExts.some(ext => f.name.toLowerCase().endsWith(ext));
-      
-      if (!hasValidMime || !hasValidExt) {
-        showToast('Invalid image format. Please upload a JPG, JPEG, or PNG image.', 'error');
-        e.target.value='';
-        return;
-      }
-      
-      if(f.size>5*1024*1024) {
-        showToast('Image is too large. Please select an image smaller than 5 MB.', 'error');
-        e.target.value='';
-        return;
-      }
-      
-      try {
-        const photo=await resizeProfilePhoto(f);
-        await saveDashboardPhoto(photo);
-        showToast('Profile photo saved.', 'success');
-      } catch(err) {
-        showToast(err.message, 'error');
-      }
-      e.target.value='';
-    });
+    document.getElementById('profilePhotoInput')?.addEventListener('change', async (e)=>{ const f=e.target.files?.[0]; if(!f)return; const allowed=['image/jpeg','image/png']; if(!allowed.includes(f.type)){ showToast('Invalid image format\nPlease upload a JPG, JPEG, or PNG image.', 'error'); e.target.value=''; return; } if(f.size>5*1024*1024){ showToast('Choose an image smaller than 5 MB.', 'error'); e.target.value=''; return; } try { const photo=await resizeProfilePhoto(f); const preview=document.getElementById('profilePhotoPreview'); if(preview) renderProfileAvatar(preview,{...parseStoredUser(),profilePhoto:photo},getDisplayName(parseStoredUser())); await saveDashboardPhoto(photo); showToast('Profile photo saved.', 'success'); } catch(err) { showToast(err.message, 'error'); } e.target.value=''; });
     document.getElementById('removeProfilePhoto')?.addEventListener('click',async()=>{ try { await saveDashboardPhoto(''); showToast('Profile photo removed.', 'success'); } catch(err) { showToast(err.message, 'error'); } });
   }
 
@@ -724,7 +736,10 @@
     document.querySelectorAll('[data-user-name], #userName, #profileName, .user-name').forEach((el) => {
       el.textContent = fullName;
     });
-    document.querySelectorAll('.avatar, [data-user-avatar], #userAvatar, #profileAvatar, #profilePhotoPreview, .user-avatar, .profile-avatar').forEach((el) => {
+    // Only hydrate avatars that represent the signed-in user. Message thread
+    // avatars and chat headers represent other people and must keep their
+    // conversation-specific photos.
+    document.querySelectorAll('.user-chip .avatar, [data-user-avatar], #userAvatar, #profileAvatar, #profilePhotoPreview, .user-avatar, .profile-avatar').forEach((el) => {
       renderProfileAvatar(el, user, fullName);
     });
     populateProfileForms(user);

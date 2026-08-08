@@ -1,4 +1,10 @@
-﻿:root {
+﻿/* RESPONSIVE FIX: overflow-x:hidden was only set on body, not html.
+   On mobile browsers the actual scrollable area is html's scrollWidth,
+   so horizontal overflow from any element could still create stray
+   blank space / rubber-band scroll beyond the page content. */
+html{overflow-x:hidden;}
+
+:root {
   --primary: #0D6EFD;
   --secondary: #4F8DFF;
   --bg: #F5F8FF;
@@ -32,6 +38,17 @@ html, body { width: 100%; max-width: 100%; margin: 0; min-height: 100%; overflow
 img, video, svg, canvas { max-width: 100%; }
 img { height: auto; }
 
+/* Keep the dashboard responsive for people who request reduced motion and
+   avoid continuous paint work on lower-powered mobile devices. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   font-family: var(--font);
   background: var(--bg);
@@ -57,7 +74,7 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
 
 .app-shell {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
   min-width: 0;
 }
 
@@ -186,7 +203,7 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
   margin-left: 250px;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .topbar {
@@ -833,10 +850,11 @@ input:focus-visible {
 
 @media (max-width: 640px) {
   .content { padding: 18px 16px 50px; }
-  .topbar { width:100%; min-width:0; padding:14px 10px; gap:8px; overflow:hidden; }
+  .topbar { width:100%; min-width:0; padding:14px 10px; gap:8px; overflow:visible; }
   .page-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .topbar-actions { min-width:0; flex-shrink:1; gap:6px; }
   .user-chip { flex-shrink:0; padding:4px; }
+  .user-menu { width:min(190px, calc(100vw - 24px)); right:-4px; }
   .form-row { flex-direction: column; }
   .search-row { flex-direction: column; align-items: stretch; }
   .search-row .field,

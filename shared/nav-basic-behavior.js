@@ -50,13 +50,25 @@
     }
 
     // ---- Shadow on scroll ----
+    // PERF FIX: query the header once (not on every scroll tick), toggle a
+    // class instead of writing inline styles, and throttle to one update
+    // per animation frame via requestAnimationFrame. The old version ran a
+    // DOM query + inline style write on every single scroll event, which is
+    // the main cause of the site-wide scroll lag.
+    var navHeaderEl = document.querySelector('.tb-nav-header');
+    var navShadowTicking = false;
+    function updateNavShadow() {
+        if (navHeaderEl) {
+            navHeaderEl.classList.toggle('is-scrolled', window.scrollY > 40);
+        }
+        navShadowTicking = false;
+    }
     window.addEventListener('scroll', function () {
-        var header = document.querySelector('.tb-nav-header');
-        if (!header) return;
-        header.style.boxShadow = window.scrollY > 40
-            ? '0 8px 30px rgba(0,0,0,.12)'
-            : '0 2px 12px rgba(0,0,0,.08)';
-    });
+        if (!navShadowTicking) {
+            navShadowTicking = true;
+            requestAnimationFrame(updateNavShadow);
+        }
+    }, { passive: true });
 
     // ---- Guest vs logged-in chip (same logic/logic source as home/script.js) ----
     var guestActions = document.getElementById('guestNavActions');

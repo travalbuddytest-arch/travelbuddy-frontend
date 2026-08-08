@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, getAuthToken } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, escapeHTML, getAuthToken, resolveMediaUrl } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/messages`;
   
 
@@ -17,14 +17,24 @@
   const chatBackBtn = document.getElementById('chatBackBtn');
   const audioCallBtn = document.getElementById('audioCallBtn');
   const attachBtn = document.getElementById('attachBtn');
+  const chatPhotoInput = document.getElementById('chatPhotoInput');
   const typingIndicator = document.getElementById('typingIndicator');
   const incomingCallModal = document.getElementById('incomingCallModal');
   const activeCallBar = document.getElementById('activeCallBar');
   const remoteAudio = document.getElementById('remoteAudio');
-  const chatAttachInput = document.getElementById('chatAttachInput');
-  const imagePreviewModal = document.getElementById('imagePreviewModal');
-  const imagePreviewImg = document.getElementById('imagePreviewImg');
-  const imagePreviewClose = document.getElementById('imagePreviewClose');
+  const chatAvatarBtn = document.getElementById('chatAvatar');
+  const chatIdentity = document.getElementById('chatIdentity');
+  const chatMenuWrap = document.getElementById('chatMenuWrap');
+  const chatMenuBtn = document.getElementById('chatMenuBtn');
+  const contactProfileOverlay = document.getElementById('contactProfileOverlay');
+  const contactProfileClose = document.getElementById('contactProfileClose');
+  const chatConfirmOverlay = document.getElementById('chatConfirmOverlay');
+  const chatConfirmTitle = document.getElementById('chatConfirmTitle');
+  const chatConfirmText = document.getElementById('chatConfirmText');
+  const chatConfirmCancel = document.getElementById('chatConfirmCancel');
+  const chatConfirmOk = document.getElementById('chatConfirmOk');
+
+  let pendingPhoto = null; // { file, dataUrl } staged for the next send
 
   let socket = null;
   let conversations = [];
@@ -40,10 +50,6 @@
   let ringbackInterval = null;
   let pendingAutoCall = new URLSearchParams(window.location.search).get('call') === 'audio';
   let pendingAcceptCallId = new URLSearchParams(window.location.search).get('acceptCall');
-  let selectedImageForCompose = null;
-  let lastScrollTop = 0;
-  let isUserScrolling = false;
-  let hasMoreMessages = true;
 
   // These two URL params ('call=audio' from "call this traveler" links, and
   // 'acceptCall=<id>' from the global incoming-call popup's "Answer"
@@ -60,111 +66,6 @@
     cleanUrl.searchParams.delete('call');
     cleanUrl.searchParams.delete('acceptCall');
     window.history.replaceState({}, '', cleanUrl.toString());
-  }
-
-  // ============================================================
-  // UTILITY FUNCTIONS
-  // ============================================================
-
-  /**
-   * Resolves an image URL to ensure it uses the production backend
-   * Handles: null, undefined, full URLs, relative /uploads paths, data URLs
-   */
-  function resolveImageUrl(url) {
-    if (!url) return '';
-    if (typeof url !== 'string') return '';
-    if (url.startsWith('data:')) return url;
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    if (url.startsWith('/')) {
-      return `${API_ORIGIN}${url}`;
-    }
-    return url;
-  }
-
-  /**
-   * Validates if a file is an acceptable image (JPG/JPEG/PNG)
-   */
-  function isValidImageFile(file) {
-    if (!file) return false;
-    const validMimes = ['image/jpeg', 'image/png'];
-    const validExts = ['.jpg', '.jpeg', '.png'];
-    const hasValidMime = validMimes.includes(file.type);
-    const hasValidExt = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
-    return hasValidMime && hasValidExt;
-  }
-
-  /**
-   * Shows error toast for invalid image
-   */
-  function showImageError(type = 'format') {
-    if (type === 'format') {
-      window.showToast('Invalid image format. Please upload a JPG, JPEG, or PNG image.', 'error');
-    } else if (type === 'size') {
-      window.showToast('Image is too large. Please select a smaller file.', 'error');
-    }
-  }
-
-  /**
-   * Auto-scrolls to bottom only if user is near the bottom
-   */
-  function scrollToLatest(force = false) {
-    if (!chatMessages) return;
-    const isAtBottom = Math.abs(chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight) < 50;
-    if (force || isAtBottom) {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-  }
-
-  /**
-   * Detects if user is manually scrolling
-   */
-  function setupScrollDetection() {
-    if (!chatMessages) return;
-    chatMessages.addEventListener('scroll', () => {
-      isUserScrolling = true;
-      lastScrollTop = chatMessages.scrollTop;
-      clearTimeout(window.scrollIdleTimer);
-      window.scrollIdleTimer = setTimeout(() => {
-        isUserScrolling = false;
-      }, 1000);
-    });
-  }
-
-  /**
-   * Create an image element with error fallback
-   */
-  function createImageElement(src, alt = 'Message image') {
-    const img = document.createElement('img');
-    img.src = resolveImageUrl(src);
-    img.alt = alt;
-    img.className = 'msg-image';
-    img.style.cursor = 'pointer';
-    img.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showImagePreview(img.src);
-    });
-    img.addEventListener('error', () => {
-      img.style.display = 'none';
-    });
-    return img;
-  }
-
-  /**
-   * Show image preview modal
-   */
-  function showImagePreview(src) {
-    if (!imagePreviewModal || !imagePreviewImg) return;
-    imagePreviewImg.src = resolveImageUrl(src);
-    imagePreviewModal.classList.remove('hidden');
-  }
-
-  /**
-   * Close image preview modal
-   */
-  function closeImagePreview() {
-    if (!imagePreviewModal) return;
-    imagePreviewModal.classList.add('hidden');
-    imagePreviewImg.src = '';
   }
 
   const rtcConfig = {
@@ -232,6 +133,13 @@
     return identity?.role === 'sender' ? 'VS' : 'VT';
   }
 
+  function avatarMarkup(identity) {
+    const photo = identity?.profilePhoto || identity?.avatar || identity?.photo;
+    if (!photo) return escapeHTML(initials(identity));
+    const src = resolveMediaUrl ? resolveMediaUrl(photo) : photo;
+    return `<img class="tb-profile-photo" src="${escapeHTML(src)}" alt="Profile photo">`;
+  }
+
   function activeConversation() {
     return conversations.find((conversation) => String(conversation.id) === String(activeConversationId));
   }
@@ -264,13 +172,9 @@
       return;
     }
 
-    threadListEl.innerHTML = filtered.map((conversation) => {
-      const hasPhoto = conversation.other.profilePhoto;
-      const photoStyle = hasPhoto ? `style="background-image:url(${resolveImageUrl(escapeHTML(conversation.other.profilePhoto))})" title="Profile photo"` : '';
-      const photoContent = !hasPhoto ? escapeHTML(initials(conversation.other)) : '';
-      return `
+    threadListEl.innerHTML = filtered.map((conversation) => `
       <button class="thread-item ${conversation.id === activeConversationId ? 'active' : ''}" data-id="${escapeHTML(conversation.id)}">
-        <div class="avatar avatar--sm" ${photoStyle}>${photoContent}</div>
+        <div class="avatar avatar--sm ${conversation.other?.profilePhoto || conversation.other?.avatar || conversation.other?.photo ? 'has-photo' : ''}">${avatarMarkup(conversation.other)}</div>
         <div class="thread-meta">
           <div class="thread-name">
             <span>${escapeHTML(conversation.other.label)}</span>
@@ -285,8 +189,7 @@
           ${conversation.unreadCount ? `<span class="unread-count">${escapeHTML(conversation.unreadCount)}</span>` : ''}
         </span>
       </button>
-    `;
-    }).join('');
+    `).join('');
 
     threadListEl.querySelectorAll('.thread-item').forEach((el) => {
       el.addEventListener('click', () => openConversation(el.dataset.id));
@@ -295,19 +198,9 @@
   }
 
   function renderHeader(conversation) {
-    const chatAvatarEl = document.getElementById('chatAvatar');
-    if (chatAvatarEl) {
-      if (conversation.other.profilePhoto) {
-        chatAvatarEl.style.backgroundImage = `url(${resolveImageUrl(conversation.other.profilePhoto)})`;
-        chatAvatarEl.textContent = '';
-        chatAvatarEl.classList.add('has-photo');
-      } else {
-        chatAvatarEl.style.backgroundImage = '';
-        chatAvatarEl.textContent = initials(conversation.other);
-        chatAvatarEl.classList.remove('has-photo');
-      }
-    }
-    
+    const chatAvatar = document.getElementById('chatAvatar');
+    chatAvatar.innerHTML = avatarMarkup(conversation.other);
+    chatAvatar.classList.toggle('has-photo', Boolean(conversation.other?.profilePhoto || conversation.other?.avatar || conversation.other?.photo));
     document.getElementById('chatName').textContent = conversation.other.label;
     document.getElementById('chatMeta').textContent = [
       conversation.other.publicId,
@@ -372,78 +265,59 @@
     return '<i class="fa-solid fa-check msg-tick" title="Sent"></i>';
   }
 
-  /**
-   * Format call log message for display
-   */
-  function formatCallLogMessage(content) {
-    // Convert internal call log strings to user-friendly display
-    const lowerContent = (content || '').toLowerCase();
-    
-    if (lowerContent.includes('missed')) {
-      return { icon: 'fa-phone-slash', label: '✕ Missed call', error: true };
-    } else if (lowerContent.includes('declined')) {
-      return { icon: 'fa-phone-slash', label: '✕ Call declined', error: true };
-    } else if (lowerContent.includes('incoming')) {
-      return { icon: 'fa-phone', label: '☎ Incoming call', ok: true };
-    } else if (lowerContent.includes('outgoing')) {
-      return { icon: 'fa-phone', label: '☎ Outgoing call', ok: true };
-    } else if (lowerContent.includes('duration')) {
-      // Extract duration if present: "Call - 02:34"
-      const durationMatch = content.match(/\d{1,2}:\d{2}/);
-      if (durationMatch) {
-        return { icon: 'fa-phone', label: `☎ Voice call • ${durationMatch[0]}`, ok: true };
-      }
-      return { icon: 'fa-phone', label: '☎ Voice call', ok: true };
+  function renderMessage(message) {
+    if (message.messageType === 'call') {
+      const missed = /missed|declined|busy/i.test(message.content);
+      return `
+        <div class="call-log-row">
+          <span class="call-log-pill">
+            <i class="fa-solid ${missed ? 'fa-phone-slash' : 'fa-phone'}"></i>
+            ${escapeHTML(message.content)}
+            <span class="call-log-time">${escapeHTML(formatTime(message.createdAt))}</span>
+          </span>
+        </div>`;
     }
-    
-    return { icon: 'fa-phone', label: '☎ ' + content, ok: true };
+    if (message.messageType === 'image') {
+      const imageUrl = resolveMediaUrl ? resolveMediaUrl(message.content) : message.content;
+      return `
+        <div class="msg-bubble has-image ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
+          <img class="msg-bubble-image" src="${escapeHTML(imageUrl)}" alt="Photo" loading="lazy" />
+          <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
+        </div>`;
+    }
+    return `
+      <div class="msg-bubble ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
+        ${escapeHTML(message.content)}
+        <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
+      </div>`;
   }
 
   function renderMessages() {
     const messages = messagesByConversation.get(activeConversationId) || [];
-    const conversation = activeConversation();
-    
-    chatMessages.innerHTML = messages.map((message) => {
-      if (message.messageType === 'call') {
-        const callInfo = formatCallLogMessage(message.content);
-        return `
-          <div class="call-log-row">
-            <span class="call-log-pill ${callInfo.error ? 'error' : callInfo.ok ? 'success' : ''}">
-              <i class="fa-solid ${callInfo.icon}"></i>
-              <span>${escapeHTML(callInfo.label)}</span>
-              <span class="call-log-time">${escapeHTML(formatTime(message.createdAt))}</span>
-            </span>
-          </div>`;
-      }
-      
-      // Handle image messages
-      if (message.messageType === 'image' || message.imageUrl) {
-        return `
-          <div class="msg-bubble ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
-            <img class="msg-image" src="${resolveImageUrl(escapeHTML(message.imageUrl || message.content))}" alt="Message image" style="cursor:pointer;" data-src="${resolveImageUrl(escapeHTML(message.imageUrl || message.content))}" />
-            <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
-          </div>`;
-      }
-      
-      // Regular text messages
-      return `
-        <div class="msg-bubble ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
-          ${escapeHTML(message.content)}
-          <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
-        </div>`;
-    }).join('');
-    
-    // Attach click handlers for images
-    chatMessages.querySelectorAll('.msg-image').forEach((img) => {
-      img.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const src = img.getAttribute('data-src');
-        if (src) showImagePreview(src);
-      });
+    chatMessages.innerHTML = messages.map(renderMessage).join('');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function showNewMessagesIndicator() {
+    if (document.getElementById('newMessagesIndicator')) return;
+    const indicator = document.createElement('button');
+    indicator.type = 'button';
+    indicator.id = 'newMessagesIndicator';
+    indicator.className = 'new-messages-indicator';
+    indicator.textContent = 'New messages';
+    indicator.addEventListener('click', () => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      indicator.remove();
     });
-    
-    // Auto-scroll to latest
-    setTimeout(() => scrollToLatest(), 0);
+    chatMessages.appendChild(indicator);
+  }
+
+  function appendMessage(message) {
+    const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 80;
+    chatMessages.insertAdjacentHTML('beforeend', renderMessage(message));
+    if (isNearBottom || message.fromMe) chatMessages.scrollTop = chatMessages.scrollHeight;
+    else showNewMessagesIndicator();
+    return isNearBottom;
   }
 
   async function loadMessages(conversationId) {
@@ -500,9 +374,23 @@
     if (!res.ok) throw new Error(data.error || 'Could not load conversations.');
     conversations = data.conversations || [];
     renderThreads();
+    if (socket?.connected) {
+      conversations.forEach((conversation) => socket.emit('conversation:join', { conversationId: conversation.id }));
+    }
     if (conversations.length) {
       const requested = conversationId && conversations.some((c) => String(c.id) === String(conversationId));
-      await openConversation(requested ? conversationId : conversations[0].id);
+      const isMobileLayout = window.matchMedia('(max-width: 720px)').matches;
+      // On mobile the thread list and an open chat can't share the screen, so
+      // landing on a chat automatically (instead of the conversation list)
+      // made it look like the two views were stuck open together. Only
+      // auto-open a conversation on mobile when the person deep-linked to
+      // one specifically (?conversation=<id>); otherwise let them pick from
+      // the list first, same as WhatsApp/Telegram. Desktop still has room
+      // for both panels, so it keeps auto-selecting the first conversation.
+      const mustOpen = requested || !isMobileLayout || pendingAutoCall || pendingAcceptCallId;
+      if (mustOpen) {
+        await openConversation(requested ? conversationId : conversations[0].id);
+      }
       if (pendingAutoCall) {
         pendingAutoCall = false;
         setTimeout(startCall, 350);
@@ -534,14 +422,10 @@
     // and the server rejected it with "Login required", even though the
     // page itself had already loaded fine over REST. Sending the same
     // Bearer token the REST calls use keeps both in sync.
-    const token = getAuthToken();
-    socket = window.io(APP_CONFIG.SOCKET_URL, {
-      withCredentials: true,
-      auth: token ? { token } : {},
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      transports: ['websocket', 'polling'],
-    });
+    // common.js has already created the authenticated dashboard socket. Reuse
+    // it for messages/calls so this page does not maintain two connections.
+    socket = window.TravelBuddy.socket;
+    if (!socket) return;
 
     socket.on('connect', () => {
       conversations.forEach((conversation) => socket.emit('conversation:join', { conversationId: conversation.id }));
@@ -553,17 +437,18 @@
         if (String(conversation.other.userId) === String(userId)) conversation.other.online = online;
         return conversation;
       });
-      loadConversations().catch(() => renderThreads());
+      renderThreads();
     });
     socket.on('message:new', ({ message, conversationId }) => {
       const list = messagesByConversation.get(conversationId) || [];
-      if (!list.some((item) => String(item.id) === String(message.id))) {
+      const isNew = !list.some((item) => String(item.id) === String(message.id));
+      if (isNew) {
         list.push(message);
         messagesByConversation.set(conversationId, list);
       }
-      if (String(conversationId) === String(activeConversationId)) {
-        renderMessages();
-        markRead(conversationId);
+      if (isNew && String(conversationId) === String(activeConversationId)) {
+        const wasNearBottom = appendMessage(message);
+        if (wasNearBottom || message.fromMe) markRead(conversationId);
       }
     });
     socket.on('messages:read', ({ conversationId }) => {
@@ -593,150 +478,110 @@
     }));
   }
 
-  async function handleSend(e) {
-    e.preventDefault();
-    const content = chatInput.value.trim();
-    const hasImage = selectedImageForCompose !== null;
-    
-    if (!content && !hasImage) return;
-    if (!activeConversationId) return;
-    
-    const clientMessageId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    
-    // Send text message
-    if (content && !hasImage) {
-      const payload = { conversationId: activeConversationId, content, messageType: 'text', clientMessageId };
-      chatInput.value = '';
-      socket?.emit('typing:stop', { conversationId: activeConversationId });
-
+  function sendOneMessage(payload) {
+    return new Promise((resolve, reject) => {
       if (socket?.connected) {
-        socket.emit('message:send', payload, async (ack) => {
-          if (ack?.ok) return;
-          window.showToast(ack?.error || 'Could not send message.', 'error');
+        socket.emit('message:send', payload, (ack) => {
+          if (ack?.ok) resolve(ack.message || null);
+          else reject(new Error(ack?.error || 'Could not send message.'));
         });
         return;
       }
+      sendViaRest(payload).then(resolve).catch(reject);
+    });
+  }
 
+  async function handleSend(e) {
+    e.preventDefault();
+    const content = chatInput.value.trim();
+    if ((!content && !pendingPhoto) || !activeConversationId) return;
+    socket?.emit('typing:stop', { conversationId: activeConversationId });
+
+    // A staged photo goes out as its own image message first, then any
+    // typed caption follows as a normal text message — mirrors how
+    // WhatsApp/Telegram handle "photo + caption" without needing a
+    // combined message type the backend doesn't have yet.
+    if (pendingPhoto) {
+      const photoPayload = {
+        conversationId: activeConversationId,
+        content: pendingPhoto.dataUrl,
+        messageType: 'image',
+        clientMessageId: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      };
+      clearPendingPhoto();
       try {
-        const message = await sendViaRest(payload);
+        const message = await sendOneMessage(photoPayload);
+        if (message) {
+          const list = messagesByConversation.get(activeConversationId) || [];
+          list.push(message);
+          messagesByConversation.set(activeConversationId, list);
+          renderMessages();
+        }
+      } catch (err) {
+        window.showToast(err.message || 'Could not send photo. Ask the backend team to accept messageType "image".', 'error');
+      }
+    }
+
+    if (!content) return;
+    chatInput.value = '';
+    const textPayload = {
+      conversationId: activeConversationId,
+      content,
+      messageType: 'text',
+      clientMessageId: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    };
+    try {
+      const message = await sendOneMessage(textPayload);
+      if (message) {
         const list = messagesByConversation.get(activeConversationId) || [];
         list.push(message);
         messagesByConversation.set(activeConversationId, list);
         renderMessages();
-      } catch (err) {
-        window.showToast(err.message, 'error');
       }
-      return;
-    }
-    
-    // Send image message
-    if (selectedImageForCompose) {
-      try {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const imageData = event.target.result;
-          const payload = {
-            conversationId: activeConversationId,
-            content: content || '[Image]',
-            imageUrl: imageData,
-            messageType: 'image',
-            clientMessageId
-          };
-          
-          chatInput.value = '';
-          selectedImageForCompose = null;
-          removeComposedImage();
-          socket?.emit('typing:stop', { conversationId: activeConversationId });
-
-          if (socket?.connected) {
-            socket.emit('message:send', payload, async (ack) => {
-              if (ack?.ok) return;
-              window.showToast(ack?.error || 'Could not send image.', 'error');
-            });
-            return;
-          }
-
-          sendViaRest(payload).then((message) => {
-            const list = messagesByConversation.get(activeConversationId) || [];
-            list.push(message);
-            messagesByConversation.set(activeConversationId, list);
-            renderMessages();
-          }).catch((err) => {
-            window.showToast(err.message, 'error');
-          });
-        };
-        reader.readAsDataURL(selectedImageForCompose);
-      } catch (err) {
-        window.showToast('Could not send image: ' + err.message, 'error');
-      }
+    } catch (err) {
+      window.showToast(err.message, 'error');
     }
   }
 
-  function removeComposedImage() {
-    selectedImageForCompose = null;
-    const preview = document.getElementById('composeImagePreview');
-    if (preview) preview.remove();
+  function clearPendingPhoto() {
+    pendingPhoto = null;
+    chatPhotoInput.value = '';
+    document.getElementById('attachPreview')?.classList.add('hidden');
   }
 
-  function handleAttachClick() {
-    chatAttachInput?.click();
-  }
-
-  function handleAttachInputChange(e) {
-    const file = e.target.files?.[0];
+  function stagePhotoFile(file) {
     if (!file) return;
-
-    // Validate file
-    if (!isValidImageFile(file)) {
-      showImageError('format');
-      e.target.value = '';
+    const allowed = ['image/jpeg', 'image/png'];
+    const validExtension = ['.jpg', '.jpeg', '.png'].some((extension) => file.name.toLowerCase().endsWith(extension));
+    if (!allowed.includes(file.type) || !validExtension) {
+      window.showToast('Invalid image format\nPlease upload a JPG, JPEG, or PNG image.', 'error');
       return;
     }
-
-    // Check file size (5MB limit)
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      showImageError('size');
-      e.target.value = '';
+    if (file.size > 8 * 1024 * 1024) {
+      window.showToast('Choose an image smaller than 8 MB.', 'error');
       return;
     }
-
-    // Read and display preview
     const reader = new FileReader();
-    reader.onload = (event) => {
-      selectedImageForCompose = file;
-      const preview = document.createElement('img');
-      preview.id = 'composeImagePreview';
-      preview.className = 'compose-image-preview';
-      preview.src = event.target.result;
-      preview.alt = 'Image preview';
-      
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.className = 'compose-image-remove';
-      removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-      removeBtn.setAttribute('aria-label', 'Remove image');
-      removeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        removeComposedImage();
-        chatAttachInput.value = '';
-      });
-
-      preview.style.position = 'relative';
-      preview.style.display = 'inline-block';
-      
-      const existingPreview = document.getElementById('composeImagePreview');
-      if (existingPreview) existingPreview.remove();
-      
-      const existingRemoveBtn = document.querySelector('.compose-image-remove');
-      if (existingRemoveBtn) existingRemoveBtn.remove();
-
-      chatForm?.insertBefore(preview, chatForm.firstChild);
-      chatForm?.insertBefore(removeBtn, chatForm.firstChild);
-    };
-    reader.onerror = () => {
-      window.showToast('Could not read image file.', 'error');
-      e.target.value = '';
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Downscale to a reasonable chat-photo size before turning it into
+        // a data URL so a full-resolution phone photo doesn't blow past
+        // the backend's JSON body-size limit.
+        const maxSide = 1280;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        pendingPhoto = { dataUrl: canvas.toDataURL('image/jpeg', 0.8), name: file.name };
+        const preview = document.getElementById('attachPreview');
+        document.getElementById('attachPreviewImg').src = pendingPhoto.dataUrl;
+        document.getElementById('attachPreviewName').textContent = file.name;
+        preview?.classList.remove('hidden');
+        chatInput.focus();
+      };
+      img.src = reader.result;
     };
     reader.readAsDataURL(file);
   }
@@ -974,20 +819,138 @@
 
   chatForm?.addEventListener('submit', handleSend);
   chatInput?.addEventListener('input', handleTyping);
-  conversationSearch?.addEventListener('input', renderThreads);
+  let conversationSearchTimer;
+  conversationSearch?.addEventListener('input', () => {
+    clearTimeout(conversationSearchTimer);
+    conversationSearchTimer = setTimeout(renderThreads, 180);
+  });
   chatBackBtn?.addEventListener('click', () => messagesShell.classList.remove('chat-open'));
   audioCallBtn?.addEventListener('click', startCall);
-  attachBtn?.addEventListener('click', handleAttachClick);
-  chatAttachInput?.addEventListener('change', handleAttachInputChange);
 
-  // Image preview modal handlers
-  imagePreviewClose?.addEventListener('click', closeImagePreview);
-  imagePreviewModal?.addEventListener('click', (e) => {
-    if (e.target === imagePreviewModal) closeImagePreview();
+  // ---------- Photo attachment ----------
+  attachBtn?.addEventListener('click', () => chatPhotoInput.click());
+  chatPhotoInput?.addEventListener('change', (e) => stagePhotoFile(e.target.files?.[0]));
+  document.getElementById('attachPreviewRemove')?.addEventListener('click', clearPendingPhoto);
+  chatMessages?.addEventListener('click', (e) => {
+    const img = e.target.closest('.msg-bubble-image');
+    if (img) window.open(img.src, '_blank', 'noopener');
   });
 
-  // Setup scroll detection
-  setupScrollDetection();
+  // ---------- Chat header "more" menu ----------
+  chatMenuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    chatMenuWrap.classList.toggle('open');
+    chatMenuBtn.setAttribute('aria-expanded', chatMenuWrap.classList.contains('open') ? 'true' : 'false');
+  });
+  document.addEventListener('click', () => chatMenuWrap?.classList.remove('open'));
+
+  // ---------- Contact profile popup (item 3) ----------
+  function openContactProfile() {
+    const conversation = activeConversation();
+    if (!conversation) return;
+    const contactAvatar = document.getElementById('contactProfileAvatar');
+    contactAvatar.innerHTML = avatarMarkup(conversation.other);
+    contactAvatar.classList.toggle('has-photo', Boolean(conversation.other?.profilePhoto || conversation.other?.avatar || conversation.other?.photo));
+    document.getElementById('contactProfileName').textContent = conversation.other.label;
+    document.getElementById('contactProfileRole').textContent = [
+      conversation.other.publicId,
+      conversation.other.isVerified ? 'Identity Verified' : 'Verification pending',
+    ].join(' - ');
+    document.getElementById('contactProfileRating').textContent = conversation.other.rating ? conversation.other.rating.toFixed(1) : '-';
+    // deliveredCount isn't part of the conversation payload today - show a
+    // sensible placeholder and try to fetch the real figure if the backend
+    // exposes it, without blocking the popup from opening.
+    const deliveredEl = document.getElementById('contactProfileDelivered');
+    deliveredEl.textContent = conversation.other.deliveredCount ?? '-';
+    document.getElementById('contactProfileInfo').innerHTML = `
+      <div><strong>Route</strong><br>${escapeHTML(conversation.parcel.fromCity)} -> ${escapeHTML(conversation.parcel.toCity)}</div>
+      <div><strong>Parcel</strong><br>${escapeHTML(conversation.parcel.parcelNumber)}</div>
+    `;
+    contactProfileOverlay.classList.remove('hidden');
+    if (conversation.other.id) {
+      fetch(`${API_ORIGIN}/api/users/${encodeURIComponent(conversation.other.id)}/profile-summary`, { headers: authHeaders() })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.deliveredCount != null) deliveredEl.textContent = data.deliveredCount;
+        })
+        .catch(() => {}); // profile-summary endpoint may not exist yet - popup already shows what we have
+    }
+  }
+  chatAvatarBtn?.addEventListener('click', openContactProfile);
+  chatIdentity?.addEventListener('click', openContactProfile);
+  chatIdentity?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openContactProfile(); } });
+  contactProfileClose?.addEventListener('click', () => contactProfileOverlay.classList.add('hidden'));
+  contactProfileOverlay?.addEventListener('click', (e) => { if (e.target === contactProfileOverlay) contactProfileOverlay.classList.add('hidden'); });
+  document.getElementById('chatMenuViewProfile')?.addEventListener('click', () => { chatMenuWrap.classList.remove('open'); openContactProfile(); });
+
+  // ---------- Clear chat / Delete chat (item 7) ----------
+  function askConfirm(title, text) {
+    return new Promise((resolve) => {
+      chatConfirmTitle.textContent = title;
+      chatConfirmText.textContent = text;
+      chatConfirmOverlay.classList.remove('hidden');
+      const cleanup = (result) => {
+        chatConfirmOverlay.classList.add('hidden');
+        chatConfirmOk.removeEventListener('click', onOk);
+        chatConfirmCancel.removeEventListener('click', onCancel);
+        resolve(result);
+      };
+      const onOk = () => cleanup(true);
+      const onCancel = () => cleanup(false);
+      chatConfirmOk.addEventListener('click', onOk);
+      chatConfirmCancel.addEventListener('click', onCancel);
+    });
+  }
+
+  document.getElementById('chatMenuClear')?.addEventListener('click', async () => {
+    chatMenuWrap.classList.remove('open');
+    if (!activeConversationId) return;
+    const ok = await askConfirm('Clear this chat?', 'This removes every message in this conversation for both of you. This cannot be undone.');
+    if (!ok) return;
+    try {
+      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}/messages`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Clearing chat needs a backend endpoint that isn\'t wired up yet.');
+      }
+      messagesByConversation.set(activeConversationId, []);
+      renderMessages();
+      window.showToast('Chat cleared.', 'success');
+    } catch (err) {
+      window.showToast(err.message, 'error');
+    }
+  });
+
+  document.getElementById('chatMenuDelete')?.addEventListener('click', async () => {
+    chatMenuWrap.classList.remove('open');
+    if (!activeConversationId) return;
+    const ok = await askConfirm('Delete this chat?', 'This deletes the entire conversation for both of you, like deleting a chat in WhatsApp. This cannot be undone.');
+    if (!ok) return;
+    try {
+      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Deleting a chat needs a backend endpoint that isn\'t wired up yet.');
+      }
+      const deletedId = activeConversationId;
+      conversations = conversations.filter((c) => String(c.id) !== String(deletedId));
+      messagesByConversation.delete(deletedId);
+      activeConversationId = null;
+      chatActive.classList.add('hidden');
+      chatEmpty.classList.remove('hidden');
+      messagesShell.classList.remove('chat-open');
+      renderThreads();
+      window.showToast('Chat deleted.', 'success');
+    } catch (err) {
+      window.showToast(err.message, 'error');
+    }
+  });
 
   connectSocket();
   loadConversations().catch((err) => {

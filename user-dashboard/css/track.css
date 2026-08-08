@@ -217,6 +217,8 @@
 }
 
 .status-badge.is-accepted { color: var(--primary); background: rgba(13, 110, 253, 0.1); }
+.status-badge.is-pickup_verification,
+.status-badge.is-delivery_verification { color: #1d4ed8; background: #f1f6ff; }
 .status-badge.is-pickup_confirmed { color: #7A4B00; background: var(--warning-bg); }
 .status-badge.is-in_transit { color: #3056C8; background: #E9EEFF; }
 .status-badge.is-delivered { color: var(--success); background: var(--success-bg); }
@@ -591,6 +593,9 @@
 /* OTP-protected pickup and delivery verification */
 .journey-otp-modal[hidden]{display:none}.journey-otp-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px}.journey-otp-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.58);backdrop-filter:blur(5px)}.journey-otp-card{position:relative;width:min(440px,100%);background:#fff;border-radius:22px;padding:30px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.25);animation:otpPop .22s ease-out}.journey-otp-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:30px;cursor:pointer;color:#64748b}.journey-otp-icon{width:62px;height:62px;margin:0 auto 14px;border-radius:18px;display:grid;place-items:center;background:#eaf2ff;color:#2563eb;font-size:25px}.journey-otp-card h2{margin:0 0 9px}.journey-otp-card p{color:#64748b}.journey-otp-dest{margin:14px 0;font-size:13px;font-weight:700;color:#334155}.journey-otp-input{width:100%;box-sizing:border-box;text-align:center;font-size:30px;font-weight:800;letter-spacing:10px;padding:14px;border:2px solid #dbe4f0;border-radius:14px;outline:none}.journey-otp-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.1)}.journey-otp-error{min-height:22px;margin:8px 0;color:#dc2626;font-size:13px}.journey-otp-verify{width:100%;justify-content:center}.journey-otp-resend{margin-top:12px;border:0;background:transparent;color:#2563eb;font-weight:700;cursor:pointer}.journey-otp-resend:disabled{color:#94a3b8;cursor:not-allowed}.journey-otp-note{font-size:12px!important;margin-bottom:0}@keyframes otpPop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}@media(max-width:520px){.journey-otp-card{padding:25px 18px}.journey-otp-input{font-size:25px;letter-spacing:7px}}
 
+/* QR-first pickup and delivery verification */
+.journey-qr-modal[hidden]{display:none}.journey-qr-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px}.journey-qr-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.58);backdrop-filter:blur(5px)}.journey-qr-card{position:relative;width:min(470px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;background:#fff;border-radius:22px;padding:30px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.25);animation:otpPop .22s ease-out}.journey-qr-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:30px;cursor:pointer;color:#64748b}.journey-qr-icon{width:62px;height:62px;margin:0 auto 14px;border-radius:18px;display:grid;place-items:center;background:#eaf2ff;color:#2563eb;font-size:25px}.journey-qr-card h2{margin:0 0 9px}.journey-qr-card p{color:#64748b}.journey-qr-body{display:grid;gap:12px;margin:18px 0}.journey-qr-label{font-size:12px;font-weight:800;text-transform:uppercase;color:#2563eb;letter-spacing:0}.journey-qr-code{width:min(280px,100%);aspect-ratio:1;margin:0 auto;padding:18px;border:1px solid #dbe7ff;border-radius:18px;background:#f8fbff;display:grid;place-items:center}.journey-qr-code img,.journey-qr-code canvas{width:100%!important;height:100%!important;max-width:220px;max-height:220px;image-rendering:auto}.journey-qr-loading,.journey-qr-placeholder{display:grid;place-items:center;gap:8px;color:#64748b;font-size:13px;font-weight:700}.journey-qr-placeholder i{font-size:46px;color:#94a3b8}.journey-qr-countdown{display:inline-flex;justify-content:center;justify-self:center;padding:9px 13px;border-radius:999px;background:#f1f6ff;color:#1d4ed8;font-size:14px;font-weight:800}.journey-qr-status{min-height:24px;margin:8px 0 0;font-size:13px;font-weight:700;line-height:1.45}.journey-qr-status i{margin-right:6px}.journey-qr-status.is-info{color:#475569}.journey-qr-status.is-success{padding:12px;border-radius:14px;background:#ecfdf3;color:#12805c}.journey-qr-status.is-success i{font-size:18px}.journey-qr-status.is-success span{display:block;margin-top:3px;color:#166534}.journey-qr-status.is-error{color:#dc2626}.journey-qr-status.is-warning{color:#a16207}.journey-qr-actions{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:16px}.journey-qr-actions .btn-primary,.journey-qr-actions .btn-ghost{justify-content:center}.journey-qr-fallback-label{flex-basis:100%;color:#64748b;font-size:12px;font-weight:700}.journey-qr-scanner{position:relative;width:100%;max-width:360px;aspect-ratio:1;margin:0 auto;border:1px solid #dbe7ff;border-radius:18px;background:#0f172a;overflow:hidden;display:grid;place-items:center}.journey-qr-scanner video{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover}.journey-qr-scanner .journey-qr-placeholder{position:relative;z-index:1}.journey-qr-note{margin:0!important;font-size:12px!important}@media(max-width:520px){.journey-qr-card{padding:25px 18px}.journey-qr-code{width:min(250px,100%);padding:14px}.journey-qr-actions{flex-direction:column}.journey-qr-actions .btn-primary,.journey-qr-actions .btn-ghost{width:100%}.journey-qr-fallback-label{flex-basis:auto}.journey-qr-scanner{max-width:300px}}
+
 
 /* Compact connected route map refresh */
 .track-grid{grid-template-columns:minmax(0,.82fr) minmax(380px,1.18fr);gap:18px}
@@ -636,11 +641,11 @@
   }
 
   .app-shell {
-    height: 100vh;
+    height: 100dvh;
   }
 
   .main {
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
   }
 

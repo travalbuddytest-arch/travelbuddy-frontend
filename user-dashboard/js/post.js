@@ -23,8 +23,10 @@
     const labels = {
       pending: 'Pending',
       accepted: 'Request Accepted',
+      pickup_verification: 'Pickup Verification',
       pickup_confirmed: 'Pickup Confirmed',
       in_transit: 'In Transit',
+      delivery_verification: 'Delivery Verification',
       delivered: 'Delivered',
       cancelled: 'Cancelled',
     };

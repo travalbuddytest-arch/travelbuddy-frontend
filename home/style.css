@@ -2,8 +2,6 @@
    GOOGLE FONT & RESET
 ========================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
 :root{
     --brand:#0d6efd;
     --brand-dark:#0b5ed7;
@@ -41,6 +39,8 @@
 html{
     scroll-behavior:smooth;
     -webkit-text-size-adjust:100%;
+    overflow-x:hidden;
+    background:var(--soft-bg);
 }
 
 :where(button,a,input,select,textarea):focus-visible{
@@ -86,6 +86,11 @@ header{
     top:0;
     z-index:1000;
     box-shadow:0 2px 12px rgba(0,0,0,.08);
+    transition:box-shadow .2s ease;
+}
+
+header.is-scrolled{
+    box-shadow:0 8px 30px rgba(0,0,0,.12);
 }
 
 #how-it-works,
@@ -345,7 +350,7 @@ body.nav-open{
 .hero{
     padding:clamp(42px, 8vw, 80px) clamp(18px, 5vw, 5%);
     text-align:center;
-    min-height:calc(100vh - 56px);
+    min-height:calc(100dvh - 56px);
 
     background-image:linear-gradient(155deg, #0b1b34 0%, #0d6efd 42%, #3d8bff 62%, #f7f9fc 100%);
     background-size:cover;
@@ -1110,6 +1115,10 @@ body.nav-open{
     justify-content:space-between;
     align-items:flex-start;
     gap:10px;
+    /* Cap width on large screens (e.g. 16" laptops) so 5 fixed-size steps
+       don't get stretched edge-to-edge with huge gaps between them. */
+    width:min(1180px, 100%);
+    margin:0 auto;
 }
 
 .flow{
@@ -1189,7 +1198,48 @@ body.nav-open{
     transform:scaleX(1);
 }
 
+/* RESPONSIVE FIX: below 700px, 5 fixed-size 76px circles + connector
+   lines laid out in a non-wrapping row no longer fit the viewport width.
+   Since .flow-num has a fixed pixel size (not flexible), the row was
+   overflowing horizontally — clipped by body's overflow-x:hidden, which
+   cut content off-screen and, combined with iOS/Android overscroll,
+   produced the blank/black strip under this section while scrolling.
+   Fix: stack the steps vertically and turn the connector into a short
+   vertical line between them, so nothing needs to shrink below its
+   natural size. */
+@media(max-width:700px){
 
+.timeline{
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+}
+
+.flow{
+    max-width:280px;
+    width:100%;
+}
+
+.line{
+    flex:0 0 auto;
+    width:4px;
+    height:32px;
+    max-width:none;
+    min-width:0;
+    margin:6px 0;
+    align-self:center;
+}
+
+.line-fill{
+    transform:scaleY(0);
+    transform-origin:top;
+}
+
+.line.show .line-fill{
+    transform:scaleY(1);
+}
+
+}
 
 /* ==========================
       SMART ROUTE MATCHING
@@ -1624,7 +1674,7 @@ nav{
     right:-100%;
     width:min(82vw, 320px);
     max-width:320px;
-    height:100vh;
+    height:100dvh;
     background:#fff;
     flex-direction:column;
     align-items:flex-start;
@@ -3467,7 +3517,7 @@ body.why-modal-open{
 ========================== */
 .buddy-panel{
     width:min(350px,calc(100vw - 32px));
-    height:min(520px,calc(100vh - 130px));
+    height:min(520px,calc(100dvh - 130px));
 }
 .buddy-header{padding:14px 16px}
 .buddy-avatar{width:40px;height:40px}
