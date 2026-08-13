@@ -75,6 +75,25 @@
     formatDate,
   };
 
+  async function parseJsonSafe(res) {
+    try {
+      return await res.json();
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function requestErrorMessage(status, fallback) {
+    if (status === 401) return 'Your session has expired. Please log in again.';
+    if (status === 403) return "You don't have permission to perform this action.";
+    if (status === 404) return fallback || 'Requested item was not found.';
+    if (status >= 500) return fallback || 'Unable to complete the request.';
+    return fallback || 'Unable to complete the request.';
+  }
+
+  window.TravelBuddy.parseJsonSafe = parseJsonSafe;
+  window.TravelBuddy.requestErrorMessage = requestErrorMessage;
+
   function attachRipple(button) {
     button.addEventListener('click', function (e) {
       const rect = button.getBoundingClientRect();
@@ -574,12 +593,35 @@
   });
 
   const userChip = document.getElementById('userChip');
+  function closeUserMenu() {
+    if (!userChip) return;
+    userChip.classList.remove('open');
+    userChip.setAttribute('aria-expanded', 'false');
+  }
   if (userChip) {
+    userChip.setAttribute('role', 'button');
+    userChip.setAttribute('tabindex', '0');
+    userChip.setAttribute('aria-haspopup', 'menu');
+    userChip.setAttribute('aria-expanded', 'false');
+    document.getElementById('userMenu')?.setAttribute('role', 'menu');
+
+    const setUserMenuOpen = (open) => {
+      userChip.classList.toggle('open', open);
+      userChip.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
     userChip.addEventListener('click', (e) => {
       e.stopPropagation();
-      userChip.classList.toggle('open');
+      if (e.target.closest('.user-menu')) return;
+      setUserMenuOpen(!userChip.classList.contains('open'));
     });
-    document.addEventListener('click', () => userChip.classList.remove('open'));
+    userChip.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      setUserMenuOpen(!userChip.classList.contains('open'));
+    });
+    document.getElementById('userMenu')?.addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('click', closeUserMenu);
   }
 
 
@@ -860,7 +902,7 @@
           headers: authHeaders(),
           body: JSON.stringify(payload),
         });
-        const data = await res.json();
+        const data = await parseJsonSafe(res);
         if (!res.ok) {
           showToast(data.error || 'Could not update profile.', 'error');
           return;
@@ -871,7 +913,7 @@
         showToast('Profile updated.', 'success');
       } catch (err) {
         console.error(err);
-        showToast('Could not reach the server.', 'error');
+        showToast('Unable to connect to the server.', 'error');
       } finally {
         setButtonLoading(submitBtn, false);
       }
@@ -899,16 +941,16 @@
           headers: authHeaders(),
           body: JSON.stringify({ currentPassword, newPassword }),
         });
-        const data = await res.json();
+        const data = await parseJsonSafe(res);
         if (!res.ok) {
-          showToast(data.error || 'Could not change password.', 'error');
+          showToast(data.error || requestErrorMessage(res.status, 'Could not change password.'), 'error');
           return;
         }
         e.currentTarget.reset();
         showToast('Password changed successfully.', 'success');
       } catch (err) {
         console.error(err);
-        showToast('Could not reach the server.', 'error');
+        showToast('Unable to connect to the server.', 'error');
       } finally {
         setButtonLoading(submitBtn, false);
       }
@@ -922,14 +964,14 @@
     if (text.includes('my profile')) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        if (userChip) userChip.classList.remove('open');
+        closeUserMenu();
         openProfileModal('profile');
       });
     }
     if (text.includes('settings')) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        if (userChip) userChip.classList.remove('open');
+        closeUserMenu();
         openProfileModal('settings');
       });
     }
@@ -938,7 +980,7 @@
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     closeSidebar();
-    if (userChip) userChip.classList.remove('open');
+    closeUserMenu();
     closeProfileModal();
   });
 
@@ -970,7 +1012,7 @@
   document.querySelectorAll('.user-menu a[href="../login/login.html"]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      if (userChip) userChip.classList.remove('open');
+      closeUserMenu();
       logoutNow();
     });
   });

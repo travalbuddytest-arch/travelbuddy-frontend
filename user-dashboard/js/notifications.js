@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, setNotifBadge, getNotificationRoute } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, escapeHTML, setNotifBadge, getNotificationRoute, parseJsonSafe, requestErrorMessage } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/notifications`;
 
   // Every stored notification only carries a `type` + plain text from the
@@ -42,6 +42,14 @@
     setNotifBadge(unreadCount);
   }
 
+  function notificationActionError(status, fallback) {
+    if (status === 401) return 'Your session has expired. Please log in again.';
+    if (status === 403) return "You don't have permission to perform this action.";
+    if (status === 404) return 'Notification not found.';
+    if (status >= 500) return fallback || 'Unable to update notification.';
+    return fallback || 'Unable to update notification.';
+  }
+
   function renderNotifications() {
     if (!notifList) return;
 
@@ -73,9 +81,18 @@
           updateNotifBadge();
           renderNotifications();
           try {
-            await fetch(`${API_BASE}/${n.id}/read`, { method: 'PATCH', headers: authHeaders() });
+            const res = await fetch(`${API_BASE}/${encodeURIComponent(n.id)}/read`, { method: 'PATCH', headers: authHeaders() });
+            if (!res.ok) {
+              const data = parseJsonSafe ? await parseJsonSafe(res) : {};
+              throw new Error(data.error || notificationActionError(res.status));
+            }
           } catch (err) {
             console.error('mark notification read failed:', err);
+            n.read = false;
+            updateNotifBadge();
+            renderNotifications();
+            window.showToast(err.name === 'TypeError' ? 'Unable to connect to the server.' : (err.message || 'Unable to update notification.'), 'error');
+            return;
           }
         }
         const route = getNotificationRoute?.(n);
@@ -92,9 +109,9 @@
     if (!notifList) return;
     try {
       const res = await fetch(API_BASE, { headers: authHeaders() });
-      const data = await res.json();
+      const data = parseJsonSafe ? await parseJsonSafe(res) : await res.json();
       if (!res.ok) {
-        window.showToast(data.error || 'Could not load notifications.', 'error');
+        window.showToast(data.error || (requestErrorMessage ? requestErrorMessage(res.status, 'Could not load notifications.') : 'Could not load notifications.'), 'error');
         return;
       }
       notifications = data.notifications || [];
@@ -102,7 +119,7 @@
       updateNotifBadge();
     } catch (err) {
       console.error('load notifications failed:', err);
-      window.showToast('Could not reach the server.', 'error');
+      window.showToast('Unable to connect to the server.', 'error');
     }
   }
 
@@ -119,15 +136,31 @@
 
   if (markAllReadBtn) {
     markAllReadBtn.addEventListener('click', async () => {
-      notifications.forEach((n) => (n.read = true));
-      updateNotifBadge();
-      renderNotifications();
+      const previous = notifications.map((n) => ({ id: n.id, read: n.read }));
+      markAllReadBtn.disabled = true;
+      markAllReadBtn.setAttribute('aria-busy', 'true');
       try {
-        await fetch(`${API_BASE}/mark-all-read`, { method: 'PATCH', headers: authHeaders() });
+        const res = await fetch(`${API_BASE}/mark-all-read`, { method: 'PATCH', headers: authHeaders() });
+        if (!res.ok) {
+          const data = parseJsonSafe ? await parseJsonSafe(res) : {};
+          throw new Error(data.error || notificationActionError(res.status, 'Unable to update notifications.'));
+        }
+        notifications.forEach((n) => (n.read = true));
+        updateNotifBadge();
+        renderNotifications();
         window.showToast('All notifications marked as read.', 'success');
       } catch (err) {
         console.error('mark-all-read failed:', err);
-        window.showToast('Could not reach the server.', 'error');
+        previous.forEach((state) => {
+          const item = notifications.find((n) => n.id === state.id);
+          if (item) item.read = state.read;
+        });
+        updateNotifBadge();
+        renderNotifications();
+        window.showToast(err.name === 'TypeError' ? 'Unable to connect to the server.' : (err.message || 'Unable to update notifications.'), 'error');
+      } finally {
+        markAllReadBtn.disabled = false;
+        markAllReadBtn.setAttribute('aria-busy', 'false');
       }
     });
   }
