@@ -583,6 +583,8 @@
   }
 
 
+  let profilePhotoCacheBust = null;
+
   function renderProfileAvatar(el, user, name) {
     if (!el) return;
     const photo = user?.profilePhoto || '';
@@ -592,9 +594,16 @@
       el.textContent = '';
       const img = document.createElement('img');
       img.className = 'tb-profile-photo';
-      img.src = resolveMediaUrl(photo);
+      img.src = resolveMediaUrl(photo, {
+        cacheBust: profilePhotoCacheBust && profilePhotoCacheBust.path === photo ? profilePhotoCacheBust.value : null,
+      });
       img.alt = 'Profile photo';
       img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit;';
+      img.onerror = () => {
+        img.remove();
+        el.classList.remove('has-photo');
+        el.textContent = getInitials(name);
+      };
       el.appendChild(img);
       el.classList.add('has-photo');
     } else {
@@ -604,10 +613,16 @@
   }
   // The API stores uploads as relative paths (for example /uploads/avatar.png).
   // Resolve them against Render, rather than the Netlify page origin.
-  function resolveMediaUrl(value) {
+  function resolveMediaUrl(value, options) {
     const source = String(value || '').trim();
     if (!source || source.startsWith('data:') || /^https?:\/\//i.test(source)) return source;
-    try { return new URL(source, `${API_ORIGIN}/`).href; } catch (err) { return source; }
+    try {
+      const url = new URL(source, `${API_ORIGIN}/`);
+      if (options?.cacheBust) url.searchParams.set('v', String(options.cacheBust));
+      return url.href;
+    } catch (err) {
+      return source;
+    }
   }
   window.TravelBuddy.resolveMediaUrl = resolveMediaUrl;
   function resizeProfilePhoto(file) { return new Promise((resolve,reject)=>{ const r=new FileReader(); r.onerror=reject; r.onload=()=>{ const img=new Image(); img.onerror=reject; img.onload=()=>{ const size=320,c=document.createElement('canvas'); c.width=size;c.height=size; const x=c.getContext('2d'),side=Math.min(img.width,img.height),sx=(img.width-side)/2,sy=(img.height-side)/2; x.drawImage(img,sx,sy,side,side,0,0,size,size); resolve(c.toDataURL('image/jpeg',.82)); }; img.src=r.result; }; r.readAsDataURL(file); }); }
@@ -702,11 +717,19 @@
       // honest error instead of a false success, and refetching /api/auth/me
       // once catches the case where the PUT response itself is stale but
       // the write did land.
-      if ((data.user?.profilePhoto || '') !== profilePhoto) {
+      const returnedPhoto = data.user?.profilePhoto || '';
+      const savedOk = profilePhoto
+        ? (returnedPhoto && (profilePhoto.startsWith('data:image/') || returnedPhoto === profilePhoto))
+        : !returnedPhoto;
+      if (!savedOk) {
         try {
           const check = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
           const checkData = await check.json();
-          if (check.ok && (checkData.user?.profilePhoto || '') === profilePhoto) {
+          const checkedPhoto = checkData.user?.profilePhoto || '';
+          const checkedOk = profilePhoto
+            ? (checkedPhoto && (profilePhoto.startsWith('data:image/') || checkedPhoto === profilePhoto))
+            : !checkedPhoto;
+          if (check.ok && checkedOk) {
             data.user = checkData.user;
           } else {
             throw new Error('not saved');
@@ -715,7 +738,11 @@
           throw new Error('The photo did not save on the server. Please try again, or use a smaller image.');
         }
       }
-      localStorage.setItem('travelBuddyUser', JSON.stringify(data.user));
+      if (data.user?.profilePhoto) {
+        profilePhotoCacheBust = { path: data.user.profilePhoto, value: Date.now() };
+      } else {
+        profilePhotoCacheBust = null;
+      }
       updateDashboardUser(data.user);
       return data.user;
     }
@@ -744,6 +771,7 @@
     });
     populateProfileForms(user);
     personalizeUser();
+    document.dispatchEvent(new CustomEvent('travelbuddy:profile-updated', { detail: { user } }));
   }
 
 

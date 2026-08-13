@@ -23,13 +23,11 @@
   const phoneNumberInput = document.getElementById('phoneNumber');
   const phoneError = document.getElementById('phoneError');
   const sendOtpBtn = document.getElementById('sendOtpBtn');
-  const verifyOtpBtn = document.getElementById('verifyOtpBtn');
-  const resendOtpBtn = document.getElementById('resendOtpBtn');
-  const otpInputs = Array.from(document.querySelectorAll('.otp-input'));
-  const otpError = document.getElementById('otpError');
+  const loginOtpMount = document.getElementById('loginOtpMount');
   const pageTitle = document.getElementById('welcomeTitle');
   const subtitle = document.querySelector('.subtitle');
   let currentPhoneNumber = '';
+  let loginOtpVerifier = null;
   const LOGIN_STATE_KEY = 'travelBuddyLoginState';
 
   // Where auth-guard.js sent the visitor from before bouncing them here
@@ -124,21 +122,6 @@
   }
 
   restoreLoginState();
-
-  otpInputs.forEach((input, index) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/[^0-9]/g, '');
-      if (input.value.length === 1 && index < otpInputs.length - 1) {
-        otpInputs[index + 1].focus();
-      }
-    });
-
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !input.value && index > 0) {
-        otpInputs[index - 1].focus();
-      }
-    });
-  });
 
   // ---------- Toast ----------
   let toastTimer;
@@ -391,11 +374,10 @@
     window.location.href = '../forgot-password/forgot-password.html';
   });
   sendOtpBtn.addEventListener('click', sendOtp);
-  verifyOtpBtn.addEventListener('click', verifyOtp);
-  resendOtpBtn.addEventListener('click', (e) => { e.preventDefault(); sendOtp(); });
   backBtn.addEventListener('click', (e) => {
     if (backBtn.dataset.view !== 'login') {
       e.preventDefault();
+      resetLoginOtpVerifier();
       setView('login');
     }
   });
@@ -433,11 +415,10 @@
     if (view === 'verify') {
       pageTitle.textContent = 'Verify your account';
       subtitle.textContent = `Enter the 6-digit code sent to ${currentPhoneNumber}`;
-      otpInputs[0].focus();
+      loginOtpVerifier?.focus();
     }
 
     clearFieldError(phoneNumberInput.closest('.field'), phoneError);
-    clearFieldError(otpInputs[0].closest('.field'), otpError);
   }
 
   function validatePhone(showError) {
@@ -454,18 +435,6 @@
       return false;
     }
     clearFieldError(field, phoneError);
-    return true;
-  }
-
-  function validateOtp(showError) {
-    const field = otpInputs[0].closest('.field');
-    const code = otpInputs.map((input) => input.value.trim()).join('');
-
-    if (code.length !== 6 || /\D/.test(code)) {
-      if (showError) setFieldError(field, otpError, 'Enter the 6-digit code.');
-      return false;
-    }
-    clearFieldError(field, otpError);
     return true;
   }
 
@@ -513,7 +482,7 @@
 
       showToast('OTP sent. Check your phone.', 'success');
       setView('verify');
-      clearOtpInputs();
+      mountLoginOtpVerifier();
     } catch (err) {
       console.error('sendOtp failed:', err);
       showToast(`Could not reach the server. Is it running? ${err.message || ''}`.trim(), 'error');
@@ -522,15 +491,15 @@
     }
   }
 
-  async function verifyOtp() {
-    if (!validateOtp(true)) {
-      showToast('Please enter the full 6-digit code.', 'error');
-      return;
+  function resetLoginOtpVerifier() {
+    if (loginOtpVerifier) {
+      loginOtpVerifier.destroy();
+      loginOtpVerifier = null;
     }
+    loginOtpMount.innerHTML = '';
+  }
 
-    setButtonLoading(verifyOtpBtn, true);
-    const code = otpInputs.map((input) => input.value.trim()).join('');
-
+  async function verifyLoginOtpCode(code) {
     try {
       const response = await fetch(`${API_BASE}/verify-otp`, {
         method: 'POST',
@@ -541,10 +510,11 @@
 
       if (!response.ok) {
         console.error('verifyOtp response:', response.status, response.statusText, data);
-        const message = data.error || data.message || `Server returned ${response.status}`;
-        showToast(message, 'error');
-        return;
+        const toastMessage = data.error || data.message || `Server returned ${response.status}`;
+        showToast(toastMessage, 'error');
+        return { success: false, message: 'Invalid verification code. Please try again.' };
       }
+
       try {
         if (data.token) localStorage.setItem('travelBuddyToken', data.token);
         localStorage.setItem('travelBuddyUser', JSON.stringify(data.user));
@@ -552,19 +522,50 @@
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
       }
-      showToast('Verified successfully. Redirecting…', 'success');
 
-      goToDashboard(1000);
+      showToast('Verified successfully. Redirecting...', 'success');
+      return { success: true };
     } catch (err) {
       console.error('verifyOtp failed:', err);
-      showToast(`Could not reach the server. Is it running? ${err.message || ''}`.trim(), 'error');
-    } finally {
-      setButtonLoading(verifyOtpBtn, false);
+      const message = `Could not reach the server. Is it running? ${err.message || ''}`.trim();
+      showToast(message, 'error');
+      return { success: false, message };
     }
   }
 
-  function clearOtpInputs() {
-    otpInputs.forEach((input) => { input.value = ''; });
+  function mountLoginOtpVerifier() {
+    resetLoginOtpVerifier();
+    loginOtpVerifier = new OtpVerifier(loginOtpMount, {
+      length: 6,
+      resendSeconds: 120,
+      showResend: true,
+      interceptBackButton: false,
+      onComplete: verifyLoginOtpCode,
+      onResend: async () => {
+        try {
+          const response = await fetch(`${API_BASE}/send-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: currentPhoneNumber }),
+          });
+          const data = await parseResponse(response);
+
+          if (!response.ok) {
+            const message = data.error || data.message || `Server returned ${response.status}`;
+            showToast(message, 'error');
+            return { success: false, message };
+          }
+
+          showToast('A new OTP was sent. Check your phone.', 'success');
+          return { success: true };
+        } catch (err) {
+          const message = `Could not reach the server. Is it running? ${err.message || ''}`.trim();
+          showToast(message, 'error');
+          return { success: false, message };
+        }
+      },
+      onVerified: () => goToDashboard(0),
+    });
   }
 
   setView('login');

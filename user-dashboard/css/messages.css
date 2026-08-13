@@ -457,9 +457,26 @@
   display: block;
   width: 100%;
   max-width: 260px;
+  aspect-ratio: 4 / 3;
+  max-height: 300px;
+  object-fit: cover;
   border-radius: 12px;
   cursor: pointer;
+  background: #e8edf5;
 }
+.media-unavailable { min-width: 190px; }
+.media-unavailable-text {
+  display: grid;
+  place-items: center;
+  min-height: 118px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #eef3f8;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+.media-unavailable-text.hidden { display: none; }
 .msg-bubble.has-image .msg-time { padding: 4px 6px 0; }
 
 .new-messages-indicator {

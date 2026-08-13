@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="login.css" />
+<link rel="stylesheet" href="../shared/otp-verifier.css?v=1">
   <link rel="stylesheet" href="../shared/site-banner.css?v=3">
 </head>
 <body>
@@ -153,23 +154,9 @@
 
       <form id="otpVerifyForm" class="form hidden" novalidate>
         <div class="field">
-          <label for="otpDigit1">Enter the 6-digit code</label>
-          <div class="otp-pin-grid" id="otpInputs" aria-label="Enter 6-digit verification code">
-            <input id="otpDigit1" name="otpDigit1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 1" />
-            <input id="otpDigit2" name="otpDigit2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 2" />
-            <input id="otpDigit3" name="otpDigit3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 3" />
-            <input id="otpDigit4" name="otpDigit4" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 4" />
-            <input id="otpDigit5" name="otpDigit5" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 5" />
-            <input id="otpDigit6" name="otpDigit6" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" aria-label="OTP digit 6" />
-          </div>
-          <span class="error-msg" id="otpError" role="alert"></span>
+          <label>Enter the 6-digit code</label>
+          <div id="loginOtpMount"></div>
         </div>
-
-        <button type="button" class="btn-primary" id="verifyOtpBtn">
-          <span class="btn-label">Verify & Login</span>
-          <span class="spinner" aria-hidden="true"></span>
-        </button>
-        <p class="signup-line">Didn't get a code? <button type="button" class="link-strong btn-link" id="resendOtpBtn">Resend</button></p>
       </form>
     </section>
   </main>
@@ -177,6 +164,7 @@
     <script src="../shared/config.js?v=1"></script>
     <script src="../shared/auth-cookie-client.js?v=1"></script>
     <script src="../shared/analytics-client.js?v=1"></script>
+    <script src="../shared/otp-verifier.js?v=1"></script>
 <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
   <script src="../shared/firebase-config.js?v=1"></script>

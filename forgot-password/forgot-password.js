@@ -23,10 +23,7 @@
   const phoneError = document.getElementById('phoneError');
   const sendOtpBtn = document.getElementById('sendOtpBtn');
 
-  const otpBoxes = Array.from(document.querySelectorAll('.otp-box'));
-  const otpError = document.getElementById('otpError');
-  const verifyOtpBtn = document.getElementById('verifyOtpBtn');
-  const resendBtn = document.getElementById('resendBtn');
+  const forgotOtpMount = document.getElementById('forgotOtpMount');
 
   const newPassword = document.getElementById('newPassword');
   const confirmPassword = document.getElementById('confirmPassword');
@@ -38,7 +35,7 @@
   let currentIdentifier = '';
   let resetToken = '';
   let toastTimer;
-  let resendTimer;
+  let forgotOtpVerifier = null;
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -107,21 +104,6 @@
     return true;
   }
 
-  function validateOtp(showError) {
-    const code = otpBoxes.map((box) => box.value.trim()).join('');
-    otpError.classList.remove('show');
-    otpError.textContent = '';
-
-    if (code.length !== 6 || /\D/.test(code)) {
-      if (showError) {
-        otpError.textContent = 'Enter the full 6-digit OTP.';
-        otpError.classList.add('show');
-      }
-      return false;
-    }
-    return true;
-  }
-
   function validatePasswords(showError) {
     let ok = true;
 
@@ -148,13 +130,6 @@
     return ok;
   }
 
-  function clearOtp() {
-    otpBoxes.forEach((box) => {
-      box.value = '';
-      box.classList.remove('filled');
-    });
-  }
-
   function setView(view) {
     requestForm.classList.toggle('hidden', view !== 'request');
     otpForm.classList.toggle('hidden', view !== 'otp');
@@ -166,6 +141,7 @@
       pageTitle.textContent = 'Forgot Password';
       pageSubtitle.textContent = 'Choose where you want to receive your OTP.';
       backBtn.href = '../login/login.html';
+      destroyForgotOtpVerifier();
       setTimeout(() => (otpMethod.value === 'email' ? emailInput : phoneInput).focus({ preventScroll: true }), 100);
     }
 
@@ -173,8 +149,7 @@
       pageTitle.textContent = 'Verify OTP';
       pageSubtitle.textContent = `Enter the code sent to ${currentMethod === 'email' ? currentIdentifier : currentIdentifier}.`;
       backBtn.href = '#';
-      clearOtp();
-      setTimeout(() => otpBoxes[0].focus({ preventScroll: true }), 100);
+      mountForgotOtpVerifier();
     }
 
     if (view === 'reset') {
@@ -199,8 +174,7 @@
       return;
     }
 
-    const button = isResend ? resendBtn : sendOtpBtn;
-    setButtonLoading(button, true);
+    if (!isResend) setButtonLoading(sendOtpBtn, true);
 
     try {
       const body = currentMethod === 'email'
@@ -215,7 +189,9 @@
       const data = await parseResponse(response);
 
       if (!response.ok) {
-        showToast(data.error || 'Could not send OTP.', 'error');
+        const message = data.error || 'Could not send OTP.';
+        showToast(message, 'error');
+        if (isResend) return { success: false, message };
         return;
       }
 
@@ -226,23 +202,21 @@
       }
 
       if (!isResend) setView('otp');
-      startResendCooldown();
+      if (isResend) {
+        return { success: true };
+      }
     } catch (err) {
-      showToast('Could not reach the server. Is it running?', 'error');
+      const message = 'Could not reach the server. Is it running?';
+      showToast(message, 'error');
+      if (isResend) return { success: false, message };
     } finally {
-      setButtonLoading(button, false);
+      if (!isResend) setButtonLoading(sendOtpBtn, false);
     }
+
+    return { success: true };
   }
 
-  async function verifyOtp() {
-    if (!validateOtp(true)) {
-      showToast('Please enter the full OTP.', 'error');
-      return;
-    }
-
-    setButtonLoading(verifyOtpBtn, true);
-    const code = otpBoxes.map((box) => box.value.trim()).join('');
-
+  async function verifyOtp(code) {
     try {
       const body = currentMethod === 'email'
         ? { method: 'email', email: currentIdentifier, otp: code }
@@ -257,16 +231,16 @@
 
       if (!response.ok) {
         showToast(data.error || 'OTP verification failed.', 'error');
-        return;
+        return { success: false, message: 'Invalid verification code. Please try again.' };
       }
 
       resetToken = data.resetToken;
       showToast('OTP verified. Set your new password.', 'success');
-      setView('reset');
+      return { success: true };
     } catch (err) {
-      showToast('Could not reach the server. Is it running?', 'error');
-    } finally {
-      setButtonLoading(verifyOtpBtn, false);
+      const message = 'Could not reach the server. Is it running?';
+      showToast(message, 'error');
+      return { success: false, message };
     }
   }
 
@@ -307,21 +281,25 @@
     }
   }
 
-  function startResendCooldown() {
-    clearInterval(resendTimer);
-    let seconds = 30;
-    resendBtn.disabled = true;
-    resendBtn.textContent = `Resend OTP (${seconds}s)`;
-    resendTimer = setInterval(() => {
-      seconds -= 1;
-      if (seconds <= 0) {
-        clearInterval(resendTimer);
-        resendBtn.disabled = false;
-        resendBtn.textContent = 'Resend OTP';
-      } else {
-        resendBtn.textContent = `Resend OTP (${seconds}s)`;
-      }
-    }, 1000);
+  function destroyForgotOtpVerifier() {
+    if (forgotOtpVerifier) {
+      forgotOtpVerifier.destroy();
+      forgotOtpVerifier = null;
+    }
+    if (forgotOtpMount) forgotOtpMount.innerHTML = '';
+  }
+
+  function mountForgotOtpVerifier() {
+    destroyForgotOtpVerifier();
+    forgotOtpVerifier = new OtpVerifier(forgotOtpMount, {
+      length: 6,
+      resendSeconds: 30,
+      showResend: true,
+      interceptBackButton: false,
+      onComplete: verifyOtp,
+      onResend: () => sendOtp(true),
+      onVerified: () => setView('reset'),
+    });
   }
 
   // ---------- Ripple effect ----------
@@ -338,7 +316,7 @@
       ripple.addEventListener('animationend', () => ripple.remove());
     });
   }
-  [sendOtpBtn, verifyOtpBtn, setPasswordBtn].forEach(attachRipple);
+  [sendOtpBtn, setPasswordBtn].forEach(attachRipple);
 
   otpMethod.addEventListener('change', toggleMethodFields);
   emailInput.addEventListener('input', () => {
@@ -353,17 +331,12 @@
     sendOtp(false);
   });
 
-  otpForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    verifyOtp();
-  });
+  otpForm.addEventListener('submit', (e) => e.preventDefault());
 
   resetForm.addEventListener('submit', (e) => {
     e.preventDefault();
     resetPassword();
   });
-
-  resendBtn.addEventListener('click', () => sendOtp(true));
 
   backBtn.addEventListener('click', (e) => {
     const view = backBtn.dataset.view;
@@ -375,29 +348,6 @@
       e.preventDefault();
       setView('otp');
     }
-  });
-
-  otpBoxes.forEach((box, index) => {
-    box.addEventListener('input', () => {
-      box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
-      box.classList.toggle('filled', box.value !== '');
-      if (box.value && index < otpBoxes.length - 1) otpBoxes[index + 1].focus();
-    });
-    box.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !box.value && index > 0) otpBoxes[index - 1].focus();
-      if (e.key === 'ArrowLeft' && index > 0) otpBoxes[index - 1].focus();
-      if (e.key === 'ArrowRight' && index < otpBoxes.length - 1) otpBoxes[index + 1].focus();
-    });
-    box.addEventListener('paste', (e) => {
-      e.preventDefault();
-      const digits = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6).split('');
-      otpBoxes.forEach((otpBox, i) => {
-        otpBox.value = digits[i] || '';
-        otpBox.classList.toggle('filled', Boolean(digits[i]));
-      });
-      const nextIndex = Math.min(digits.length, otpBoxes.length - 1);
-      otpBoxes[nextIndex].focus();
-    });
   });
 
   document.querySelectorAll('.toggle-password').forEach((button) => {

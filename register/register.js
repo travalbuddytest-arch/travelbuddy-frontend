@@ -200,8 +200,8 @@
           // whichever box it refers to; the account still wasn't created,
           // so both boxes shake and reset for re-entry.
           const errLower = (data.error || '').toLowerCase();
-          let emailMsg = data.error || 'Verification failed.';
-          let phoneMsg = data.error || 'Verification failed.';
+          let emailMsg = 'Invalid verification code. Please try again.';
+          let phoneMsg = 'Invalid verification code. Please try again.';
           if (errLower.includes('email')) phoneMsg = 'Verification failed.';
           else if (errLower.includes('mobile') || errLower.includes('phone')) emailMsg = 'Verification failed.';
 

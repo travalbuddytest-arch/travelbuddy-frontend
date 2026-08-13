@@ -50,6 +50,7 @@
   let ringbackInterval = null;
   let pendingAutoCall = new URLSearchParams(window.location.search).get('call') === 'audio';
   let pendingAcceptCallId = new URLSearchParams(window.location.search).get('acceptCall');
+  const failedMediaUrls = new Set();
 
   // These two URL params ('call=audio' from "call this traveler" links, and
   // 'acceptCall=<id>' from the global incoming-call popup's "Answer"
@@ -137,7 +138,20 @@
     const photo = identity?.profilePhoto || identity?.avatar || identity?.photo;
     if (!photo) return escapeHTML(initials(identity));
     const src = resolveMediaUrl ? resolveMediaUrl(photo) : photo;
-    return `<img class="tb-profile-photo" src="${escapeHTML(src)}" alt="Profile photo">`;
+    return `<img class="tb-profile-photo" src="${escapeHTML(src)}" alt="Profile photo" data-fallback="${escapeHTML(initials(identity))}">`;
+  }
+
+  function bindAvatarFallbacks(root) {
+    (root || document).querySelectorAll('.avatar img.tb-profile-photo').forEach((img) => {
+      if (img.dataset.fallbackBound) return;
+      img.dataset.fallbackBound = '1';
+      img.addEventListener('error', () => {
+        const avatar = img.closest('.avatar');
+        if (!avatar) return;
+        avatar.classList.remove('has-photo');
+        avatar.textContent = img.dataset.fallback || 'TB';
+      }, { once: true });
+    });
   }
 
   function activeConversation() {
@@ -194,6 +208,7 @@
     threadListEl.querySelectorAll('.thread-item').forEach((el) => {
       el.addEventListener('click', () => openConversation(el.dataset.id));
     });
+    bindAvatarFallbacks(threadListEl);
     updateBadge();
   }
 
@@ -220,6 +235,7 @@
     audioCallBtn.disabled = conversation.status !== 'active';
     chatInput.disabled = conversation.status !== 'active';
     document.getElementById('acceptParcelBtn')?.addEventListener('click', handleAcceptParcel);
+    bindAvatarFallbacks(document.getElementById('chatActive'));
   }
 
   // Lets the traveler accept the parcel directly from the chat instead of
@@ -279,9 +295,17 @@
     }
     if (message.messageType === 'image') {
       const imageUrl = resolveMediaUrl ? resolveMediaUrl(message.content) : message.content;
+      if (!imageUrl || failedMediaUrls.has(imageUrl)) {
+        return `
+          <div class="msg-bubble has-image media-unavailable ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
+            <span class="media-unavailable-text">Media unavailable</span>
+            <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
+          </div>`;
+      }
       return `
         <div class="msg-bubble has-image ${message.fromMe ? 'me' : 'them'}" data-id="${escapeHTML(message.id)}">
           <img class="msg-bubble-image" src="${escapeHTML(imageUrl)}" alt="Photo" loading="lazy" />
+          <span class="media-unavailable-text hidden">Media unavailable</span>
           <span class="msg-time">${escapeHTML(formatTime(message.createdAt))}${message.fromMe ? ` ${renderMessageTicks(message.status)}` : ''}</span>
         </div>`;
     }
@@ -294,7 +318,9 @@
 
   function renderMessages() {
     const messages = messagesByConversation.get(activeConversationId) || [];
-    chatMessages.innerHTML = messages.map(renderMessage).join('');
+    chatMessages.innerHTML = messages.length
+      ? messages.map(renderMessage).join('')
+      : '<div class="messages-empty-state">No messages in this chat.</div>';
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
@@ -313,12 +339,23 @@
   }
 
   function appendMessage(message) {
+    chatMessages.querySelector('.messages-empty-state')?.remove();
     const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 80;
     chatMessages.insertAdjacentHTML('beforeend', renderMessage(message));
     if (isNearBottom || message.fromMe) chatMessages.scrollTop = chatMessages.scrollHeight;
     else showNewMessagesIndicator();
     return isNearBottom;
   }
+
+  chatMessages?.addEventListener('error', (e) => {
+    const img = e.target.closest?.('.msg-bubble-image');
+    if (!img) return;
+    failedMediaUrls.add(img.src);
+    const bubble = img.closest('.msg-bubble');
+    bubble?.classList.add('media-unavailable');
+    bubble?.querySelector('.media-unavailable-text')?.classList.remove('hidden');
+    img.remove();
+  }, true);
 
   async function loadMessages(conversationId) {
     const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages`, {
@@ -458,6 +495,12 @@
       });
       if (String(conversationId) === String(activeConversationId)) renderMessages();
     });
+    socket.on('messages:cleared', ({ conversationId }) => {
+      applyClearedConversation(conversationId, false);
+    });
+    socket.on('conversation:deleted', ({ conversationId }) => {
+      applyDeletedConversation(conversationId, false);
+    });
     socket.on('typing:start', ({ conversationId }) => {
       if (String(conversationId) === String(activeConversationId)) typingIndicator.classList.remove('hidden');
     });
@@ -474,6 +517,21 @@
       body: JSON.stringify(payload),
     }).then((res) => res.json().then((data) => {
       if (!res.ok) throw new Error(data.error || 'Could not send message.');
+      return data.message;
+    }));
+  }
+
+  function sendMediaViaRest(payload) {
+    return fetch(`${API_BASE}/conversations/${encodeURIComponent(payload.conversationId)}/media`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        base64: payload.content,
+        messageType: payload.messageType,
+        clientMessageId: payload.clientMessageId,
+      }),
+    }).then((res) => res.json().then((data) => {
+      if (!res.ok) throw new Error(data.error || 'Could not send media.');
       return data.message;
     }));
   }
@@ -510,10 +568,10 @@
       };
       clearPendingPhoto();
       try {
-        const message = await sendOneMessage(photoPayload);
+        const message = await sendMediaViaRest(photoPayload);
         if (message) {
           const list = messagesByConversation.get(activeConversationId) || [];
-          list.push(message);
+          if (!list.some((item) => String(item.id) === String(message.id))) list.push(message);
           messagesByConversation.set(activeConversationId, list);
           renderMessages();
         }
@@ -534,7 +592,7 @@
       const message = await sendOneMessage(textPayload);
       if (message) {
         const list = messagesByConversation.get(activeConversationId) || [];
-        list.push(message);
+        if (!list.some((item) => String(item.id) === String(message.id))) list.push(message);
         messagesByConversation.set(activeConversationId, list);
         renderMessages();
       }
@@ -867,6 +925,7 @@
       <div><strong>Parcel</strong><br>${escapeHTML(conversation.parcel.parcelNumber)}</div>
     `;
     contactProfileOverlay.classList.remove('hidden');
+    bindAvatarFallbacks(contactProfileOverlay);
     if (conversation.other.id) {
       fetch(`${API_ORIGIN}/api/users/${encodeURIComponent(conversation.other.id)}/profile-summary`, { headers: authHeaders() })
         .then((res) => (res.ok ? res.json() : null))
@@ -884,6 +943,43 @@
   document.getElementById('chatMenuViewProfile')?.addEventListener('click', () => { chatMenuWrap.classList.remove('open'); openContactProfile(); });
 
   // ---------- Clear chat / Delete chat (item 7) ----------
+  function chatActionErrorMessage(status, fallback) {
+    if (status === 401) return 'Please log in again.';
+    if (status === 403) return fallback === 'clear' ? "You don't have permission to clear this chat." : "You don't have permission to delete this chat.";
+    if (status === 404) return 'Conversation not found.';
+    if (status >= 500) return fallback === 'clear' ? 'Unable to clear the chat.' : 'Unable to delete the chat.';
+    return fallback === 'clear' ? 'Unable to clear the chat.' : 'Unable to delete the chat.';
+  }
+
+  function applyClearedConversation(conversationId, notify) {
+    if (!conversationId) return;
+    messagesByConversation.set(String(conversationId), []);
+    const conversation = conversations.find((c) => String(c.id) === String(conversationId));
+    if (conversation) {
+      conversation.lastMessage = '';
+      conversation.lastMessageAt = new Date().toISOString();
+      conversation.unreadCount = 0;
+    }
+    if (String(conversationId) === String(activeConversationId)) renderMessages();
+    renderThreads();
+    if (notify) window.showToast('Chat cleared.', 'success');
+  }
+
+  function applyDeletedConversation(conversationId, notify) {
+    if (!conversationId) return;
+    const deletedId = String(conversationId);
+    conversations = conversations.filter((c) => String(c.id) !== deletedId);
+    messagesByConversation.delete(deletedId);
+    if (String(activeConversationId) === deletedId) {
+      activeConversationId = null;
+      chatActive.classList.add('hidden');
+      chatEmpty.classList.remove('hidden');
+      messagesShell.classList.remove('chat-open');
+    }
+    renderThreads();
+    if (notify) window.showToast('Chat deleted.', 'success');
+  }
+
   function askConfirm(title, text) {
     return new Promise((resolve) => {
       chatConfirmTitle.textContent = title;
@@ -907,20 +1003,23 @@
     if (!activeConversationId) return;
     const ok = await askConfirm('Clear this chat?', 'This removes every message in this conversation for both of you. This cannot be undone.');
     if (!ok) return;
+    const clearBtn = document.getElementById('chatMenuClear');
+    clearBtn.disabled = true;
     try {
+      const targetId = activeConversationId;
       const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}/messages`, {
         method: 'DELETE',
         headers: authHeaders(),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Clearing chat needs a backend endpoint that isn\'t wired up yet.');
+        throw new Error(chatActionErrorMessage(res.status, 'clear'));
       }
-      messagesByConversation.set(activeConversationId, []);
-      renderMessages();
-      window.showToast('Chat cleared.', 'success');
+      await res.json().catch(() => ({}));
+      applyClearedConversation(targetId, true);
     } catch (err) {
-      window.showToast(err.message, 'error');
+      window.showToast(err.name === 'TypeError' ? 'Unable to connect. Please try again.' : (err.message || 'Unable to clear the chat.'), 'error');
+    } finally {
+      clearBtn.disabled = false;
     }
   });
 
@@ -929,26 +1028,23 @@
     if (!activeConversationId) return;
     const ok = await askConfirm('Delete this chat?', 'This deletes the entire conversation for both of you, like deleting a chat in WhatsApp. This cannot be undone.');
     if (!ok) return;
+    const deleteBtn = document.getElementById('chatMenuDelete');
+    deleteBtn.disabled = true;
     try {
-      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}`, {
+      const targetId = activeConversationId;
+      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(targetId)}`, {
         method: 'DELETE',
         headers: authHeaders(),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Deleting a chat needs a backend endpoint that isn\'t wired up yet.');
+        throw new Error(chatActionErrorMessage(res.status, 'delete'));
       }
-      const deletedId = activeConversationId;
-      conversations = conversations.filter((c) => String(c.id) !== String(deletedId));
-      messagesByConversation.delete(deletedId);
-      activeConversationId = null;
-      chatActive.classList.add('hidden');
-      chatEmpty.classList.remove('hidden');
-      messagesShell.classList.remove('chat-open');
-      renderThreads();
-      window.showToast('Chat deleted.', 'success');
+      await res.json().catch(() => ({}));
+      applyDeletedConversation(targetId, true);
     } catch (err) {
-      window.showToast(err.message, 'error');
+      window.showToast(err.name === 'TypeError' ? 'Unable to connect. Please try again.' : (err.message || 'Unable to delete the chat.'), 'error');
+    } finally {
+      deleteBtn.disabled = false;
     }
   });
 
