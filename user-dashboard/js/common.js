@@ -3,6 +3,13 @@
 
   const toast = document.getElementById('toast');
   let toastTimer;
+  // MUST be declared here (top of IIFE) — renderProfileAvatar() references
+  // this variable and renderProfileAvatar is called inside personalizeUser()
+  // which runs at line ~152, long before the old `let profilePhotoCacheBust`
+  // declaration at line ~628 would have been reached. A `let` in the TDZ
+  // (Temporal Dead Zone) throws ReferenceError, which was the root cause of
+  // the "Cannot access 'profilePhotoCacheBust' before initialization" error.
+  let profilePhotoCacheBust = null;
   const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
   function showToast(message, type) {
@@ -625,7 +632,7 @@
   }
 
 
-  let profilePhotoCacheBust = null;
+  // profilePhotoCacheBust is declared at the TOP of this IIFE (see line ~5).
 
   function renderProfileAvatar(el, user, name) {
     if (!el) return;
@@ -961,14 +968,17 @@
 
   document.querySelectorAll('.user-menu a').forEach((link) => {
     const text = link.textContent.trim().toLowerCase();
-    if (text.includes('my profile')) {
+    const action = link.dataset.profileAction;
+    // Handle data-profile-action attribute (used in HTML) as primary selector,
+    // fall back to text-based matching for backward compatibility.
+    if (action === 'profile' || text.includes('my profile')) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         closeUserMenu();
         openProfileModal('profile');
       });
     }
-    if (text.includes('settings')) {
+    if (action === 'settings' || text.includes('settings')) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         closeUserMenu();
