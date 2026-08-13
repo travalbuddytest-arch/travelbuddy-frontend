@@ -2,6 +2,13 @@
    MESSAGES
 ============================================================ */
 
+#view-messages.active {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .messages-shell {
   display: grid;
   grid-template-columns: 340px minmax(0, 1fr);
@@ -10,11 +17,11 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  /* This is an application viewport, not document content: each column and
-     the active chat own their internal scrolling. */
-  height: calc(100dvh - 150px);
-  height: calc(100dvh - 150px);
+  /* Use flexbox sizing to fill the parent container instead of a hardcoded pixel calc,
+     which avoids page double scrollbars. */
+  flex: 1;
   min-height: 0;
+  height: auto;
 }
 
 .thread-panel {
@@ -697,9 +704,9 @@
 @media (max-width: 720px) {
   .messages-shell {
     grid-template-columns: 1fr;
-    height: calc(100dvh - 120px);
-    height: calc(100dvh - 120px);
+    flex: 1;
     min-height: 0;
+    height: auto;
   }
 
   .thread-panel { border-right: 0; }
