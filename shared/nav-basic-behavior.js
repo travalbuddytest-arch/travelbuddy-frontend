@@ -95,12 +95,43 @@
     function initials(name) {
         return name.split(/\s+/).filter(Boolean).slice(0, 2).map(function (p) { return p[0].toUpperCase(); }).join('') || 'TB';
     }
+    function renderNavbarAvatar(avatarEl, user, name) {
+        if (!avatarEl) return;
+        var photo = user?.profilePhoto || '';
+        avatarEl.style.backgroundImage = '';
+        avatarEl.querySelectorAll('img.tb-profile-photo').forEach(function (img) { img.remove(); });
+        if (photo) {
+            avatarEl.textContent = '';
+            var img = document.createElement('img');
+            img.className = 'tb-profile-photo';
+            var apiOrigin = window.APP_CONFIG?.API_BASE_URL || 'https://travelbuddy-backend-19l6.onrender.com';
+            var photoUrl = photo.startsWith('data:') || photo.startsWith('http') 
+                ? photo 
+                : (photo.startsWith('/') ? apiOrigin + photo : apiOrigin + '/' + photo);
+            img.src = photoUrl;
+            img.alt = 'Profile photo';
+            img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit;';
+            img.onerror = function () {
+                img.remove();
+                avatarEl.style.overflow = '';
+                avatarEl.textContent = initials(name);
+            };
+            avatarEl.appendChild(img);
+            avatarEl.style.overflow = 'hidden';
+            avatarEl.classList.add('has-photo');
+        } else {
+            avatarEl.style.overflow = '';
+            avatarEl.classList.remove('has-photo');
+            avatarEl.textContent = initials(name);
+        }
+    }
+
     function render(user) {
         var nameEl = document.getElementById('homeUserName');
         var avatarEl = document.getElementById('homeAvatar');
         var name = fullName(user);
         if (nameEl) nameEl.textContent = name;
-        if (avatarEl) avatarEl.textContent = initials(name);
+        renderNavbarAvatar(avatarEl, user, name);
     }
 
     var isAdmin = Boolean(localStorage.getItem('travelBuddyAdmin'));
@@ -119,7 +150,8 @@
             var admin = readAdmin();
             var adminName = fullName(admin) || admin.name || 'Admin';
             document.getElementById('homeUserName').textContent = adminName;
-            document.getElementById('homeAvatar').textContent = initials(adminName) || 'AD';
+            var avatarEl = document.getElementById('homeAvatar');
+            renderNavbarAvatar(avatarEl, admin, adminName);
             // Admin accounts aren't senders/travelers — label them correctly and
             // send "Dashboard" to the admin control center instead of the
             // regular user dashboard.

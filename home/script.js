@@ -763,10 +763,43 @@ if (smartMatchingSection) {
     function initials(name) {
         return name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join('') || 'TB';
     }
+    function renderNavbarAvatar(avatarEl, user, name) {
+        if (!avatarEl) return;
+        const photo = user?.profilePhoto || '';
+        avatarEl.style.backgroundImage = '';
+        avatarEl.querySelectorAll('img.tb-profile-photo').forEach(img => img.remove());
+        if (photo) {
+            avatarEl.textContent = '';
+            const img = document.createElement('img');
+            img.className = 'tb-profile-photo';
+            const apiOrigin = window.APP_CONFIG?.API_BASE_URL || 'https://travelbuddy-backend-19l6.onrender.com';
+            const photoUrl = photo.startsWith('data:') || photo.startsWith('http') 
+                ? photo 
+                : (photo.startsWith('/') ? apiOrigin + photo : apiOrigin + '/' + photo);
+            img.src = photoUrl;
+            img.alt = 'Profile photo';
+            img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit;';
+            img.onerror = () => {
+                img.remove();
+                avatarEl.style.overflow = '';
+                avatarEl.textContent = initials(name);
+            };
+            avatarEl.appendChild(img);
+            avatarEl.style.overflow = 'hidden';
+            avatarEl.classList.add('has-photo');
+        } else {
+            avatarEl.style.overflow = '';
+            avatarEl.classList.remove('has-photo');
+            avatarEl.textContent = initials(name);
+        }
+    }
+
     function render(user) {
         const name = fullName(user);
-        document.getElementById('homeUserName').textContent = name;
-        document.getElementById('homeAvatar').textContent = initials(name);
+        const nameEl = document.getElementById('homeUserName');
+        if (nameEl) nameEl.textContent = name;
+        const avatarEl = document.getElementById('homeAvatar');
+        renderNavbarAvatar(avatarEl, user, name);
     }
 
     // Role-aware detection: admin session stored separately from user session.
@@ -786,8 +819,11 @@ if (smartMatchingSection) {
     const dashboardLinkLabel = document.getElementById('homeDashboardLinkLabel');
     if (isAdmin) {
         const admin = readAdmin();
-        document.getElementById('homeUserName').textContent = fullName(admin) || (admin.name || 'Admin');
-        document.getElementById('homeAvatar').textContent = (fullName(admin) && fullName(admin).split(/\s+/).map(p=>p[0]).slice(0,2).join('')) || 'AD';
+        const adminName = fullName(admin) || (admin.name || 'Admin');
+        const nameEl = document.getElementById('homeUserName');
+        if (nameEl) nameEl.textContent = adminName;
+        const avatarEl = document.getElementById('homeAvatar');
+        renderNavbarAvatar(avatarEl, admin, adminName);
         // Admin accounts aren't senders/travelers — label them correctly and
         // send "Dashboard" to the admin control center instead of the
         // regular user dashboard.
@@ -914,18 +950,31 @@ if (smartMatchingSection) {
 
     function renderAvatar(el, user, name) {
       if (!el) return;
-      if (user.profilePhoto) {
-        el.textContent='';
-        // Handle both data URLs and regular URLs
-        const photoUrl = user.profilePhoto.startsWith('data:') ? user.profilePhoto : 
-                        (user.profilePhoto.startsWith('http') ? user.profilePhoto :
-                        (user.profilePhoto.startsWith('/') ? `${API_ORIGIN}${user.profilePhoto}` : user.profilePhoto));
-        el.style.backgroundImage=`url(${photoUrl})`;
+      const photo = user?.profilePhoto || '';
+      el.style.backgroundImage = '';
+      el.querySelectorAll('img.tb-profile-photo').forEach(img => img.remove());
+      if (photo) {
+        el.textContent = '';
+        const img = document.createElement('img');
+        img.className = 'tb-profile-photo';
+        const photoUrl = photo.startsWith('data:') ? photo : 
+                        (photo.startsWith('http') ? photo :
+                        (photo.startsWith('/') ? `${API_ORIGIN}${photo}` : `${API_ORIGIN}/${photo}`));
+        img.src = photoUrl;
+        img.alt = 'Profile photo';
+        img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit;';
+        img.onerror = () => {
+          img.remove();
+          el.style.overflow = '';
+          el.textContent = initials(name);
+        };
+        el.appendChild(img);
+        el.style.overflow = 'hidden';
         el.classList.add('has-photo');
       } else {
-        el.style.backgroundImage='';
+        el.style.overflow = '';
         el.classList.remove('has-photo');
-        el.textContent=initials(name);
+        el.textContent = initials(name);
       }
     }
     function syncHomeAvatars(user) { const name=getName(user); renderAvatar(document.getElementById('homeAvatar'),user,name); renderAvatar(document.getElementById('homeModalAvatar'),user,name); }
