@@ -1,0 +1,216 @@
+/* ==========================================================================
+   OTP Verifier — reusable component styles
+   Brand tokens default to TravelBuddy's palette (register.css) but can be
+   overridden by redefining the --otp-* custom properties on an ancestor.
+   ========================================================================== */
+
+.otp-verifier {
+  --otp-primary: var(--primary, #0D6EFD);
+  --otp-success: var(--success, #17A673);
+  --otp-error: var(--error, #E0374A);
+  --otp-text-main: var(--text-main, #142642);
+  --otp-text-muted: var(--text-muted, #64748B);
+  --otp-text-faint: var(--text-faint, #94A3B8);
+  --otp-input-bg: var(--input-bg, rgba(255, 255, 255, 0.65));
+  --otp-input-border: var(--input-border, #D7E4F7);
+  --otp-radius: var(--radius-input, 14px);
+  --otp-font: var(--font, 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif);
+
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  font-family: var(--otp-font);
+  box-sizing: border-box;
+}
+.otp-verifier * { box-sizing: border-box; }
+
+/* ---------- Boxes row ---------- */
+.otp-boxes-wrap {
+  position: relative;
+  min-height: 64px;
+}
+
+.otp-boxes {
+  display: flex;
+  justify-content: center;
+  gap: clamp(6px, 2.4vw, 12px);
+  width: 100%;
+}
+
+.otp-box {
+  flex: 0 1 auto;
+  width: clamp(38px, 12.5vw, 52px);
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  border: 1.5px solid var(--otp-input-border);
+  border-radius: var(--otp-radius);
+  background: var(--otp-input-bg);
+  color: var(--otp-text-main);
+  font-family: var(--otp-font);
+  font-size: clamp(16px, 5vw, 22px);
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  caret-color: var(--otp-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    transform 0.45s cubic-bezier(0.55, 0, 0.1, 1), opacity 0.35s ease 0.05s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.otp-box::selection { background: rgba(13, 110, 253, 0.25); }
+
+.otp-box:focus {
+  border-color: var(--otp-primary);
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+.otp-box.filled {
+  border-color: var(--otp-primary);
+  animation: otp-pop 0.22s ease;
+}
+
+@keyframes otp-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.otp-box:disabled { opacity: 0.85; cursor: default; }
+
+/* ---------- Verifying / jelly wobble ---------- */
+.otp-box.otp-verifying {
+  border-color: var(--otp-primary);
+  animation: otp-jelly 0.85s ease-in-out infinite;
+}
+.otp-box.otp-verifying:nth-child(1) { animation-delay: 0s; }
+.otp-box.otp-verifying:nth-child(2) { animation-delay: 0.045s; }
+.otp-box.otp-verifying:nth-child(3) { animation-delay: 0.09s; }
+.otp-box.otp-verifying:nth-child(4) { animation-delay: 0.135s; }
+.otp-box.otp-verifying:nth-child(5) { animation-delay: 0.18s; }
+.otp-box.otp-verifying:nth-child(6) { animation-delay: 0.225s; }
+
+@keyframes otp-jelly {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  20% { transform: scale(1.09, 0.9) rotate(-3.5deg); }
+  40% { transform: scale(0.93, 1.08) rotate(3deg); }
+  60% { transform: scale(1.06, 0.95) rotate(-2deg); }
+  80% { transform: scale(0.97, 1.03) rotate(1.2deg); }
+}
+
+/* ---------- Error shake ---------- */
+.otp-boxes.otp-shake { animation: otp-shake 0.46s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+@keyframes otp-shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+.otp-box.otp-error-box {
+  border-color: var(--otp-error) !important;
+  background: rgba(224, 55, 74, 0.06);
+}
+
+/* ---------- Success morph ---------- */
+.otp-box.otp-converge {
+  transform: translateX(var(--otp-dx, 0px)) scale(0.15);
+  opacity: 0;
+}
+
+.otp-success-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.otp-success-wrap.otp-show { opacity: 1; }
+
+.otp-success-circle {
+  width: clamp(52px, 15vw, 68px);
+  height: clamp(52px, 15vw, 68px);
+  overflow: visible;
+}
+
+.otp-success-circle-bg {
+  fill: var(--otp-success);
+  transform-origin: 60px 60px;
+  transform: scale(0);
+  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.otp-success-circle-bg.otp-grow { transform: scale(1); }
+
+.otp-success-check {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.otp-success-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--otp-success);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  margin: 0;
+  text-align: center;
+}
+.otp-success-text.otp-show { opacity: 1; transform: translateY(0); }
+
+/* ---------- Error message ---------- */
+.otp-error-msg {
+  font-size: 12px;
+  color: var(--otp-error);
+  text-align: center;
+  min-height: 16px;
+  margin: 10px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.otp-error-msg.otp-show { opacity: 1; }
+
+/* ---------- Resend row ---------- */
+.otp-resend-row {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--otp-text-muted);
+  margin: 16px 0 0;
+}
+
+.otp-resend-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--otp-font);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--otp-primary);
+  cursor: pointer;
+}
+.otp-resend-btn:disabled {
+  color: var(--otp-text-faint);
+  cursor: default;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .otp-box,
+  .otp-box.otp-verifying,
+  .otp-boxes.otp-shake,
+  .otp-success-circle-bg,
+  .otp-success-text {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

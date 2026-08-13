@@ -141,8 +141,6 @@
       currentPhone = `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`;
       document.getElementById('emailOtpLabel').textContent = `Enter the 6-digit code we sent to your email: ${currentEmail}.`;
       document.getElementById('phoneOtpLabel').textContent = `Enter the 6-digit code we sent to your mobile number: ${currentPhone}.`;
-      clearOtpInputs(emailOtpBoxes);
-      clearOtpInputs(phoneOtpBoxes);
 
       if (data.emailOtp || data.phoneOtp) {
         showToast(`Development OTPs — Email: ${data.emailOtp || 'sent'}, Mobile: ${data.phoneOtp || 'sent'}`, 'success');
@@ -150,6 +148,7 @@
         showToast(data.message || 'Verification codes sent.', 'success');
       }
       goToPanel('verify');
+      mountOtpVerifiers();
     } catch (err) {
       // The server could not be reached at all (not running, wrong URL, no internet)
       showToast('Could not reach the server. Is it running?', 'error');
@@ -159,180 +158,158 @@
     }
   });
 
-  // ---------- OTP ----------
-  const emailOtpBoxes = Array.from(document.querySelectorAll('.email-otp-box'));
-  const phoneOtpBoxes = Array.from(document.querySelectorAll('.phone-otp-box'));
-  const otpForm = document.getElementById('otpForm');
-  const verifyBtn = document.getElementById('verifyBtn');
-  const emailOtpError = document.getElementById('emailOtpError');
-  const phoneOtpError = document.getElementById('phoneOtpError');
-  const resendBtn = document.getElementById('resendBtn');
+  // ---------- OTP (OtpVerifier component: wobble + success-morph + resend timer + back nav) ----------
+  const emailOtpMount = document.getElementById('emailOtpMount');
+  const phoneOtpMount = document.getElementById('phoneOtpMount');
 
-  function setupOtpBoxes(boxes, nextBoxes) {
-    boxes.forEach((box, i) => {
-      box.addEventListener('input', () => {
-        box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
-        box.classList.toggle('filled', box.value !== '');
-        if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
-        if (box.value && i === boxes.length - 1 && nextBoxes && nextBoxes[0]) nextBoxes[0].focus();
-      });
-      box.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !box.value && i > 0) boxes[i - 1].focus();
-        if (e.key === 'ArrowLeft' && i > 0) boxes[i - 1].focus();
-        if (e.key === 'ArrowRight' && i < boxes.length - 1) boxes[i + 1].focus();
-      });
-      box.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const digits = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6).split('');
-        boxes.forEach((b, idx) => { b.value = digits[idx] || ''; b.classList.toggle('filled', !!digits[idx]); });
-        const next = boxes[Math.min(digits.length, boxes.length - 1)];
-        if (next) next.focus();
-      });
-    });
-  }
+  let emailOtpVerifier = null;
+  let phoneOtpVerifier = null;
 
-  function getOtpCode(boxes) {
-    return boxes.map((b) => b.value).join('');
-  }
+  // Both channels are verified together against one endpoint, so we buffer
+  // whichever code finishes first (it wobbles while it waits) and only call
+  // the API once both are complete.
+  const otpState = { emailCode: null, phoneCode: null, emailResolve: null, phoneResolve: null, verifying: false };
 
-  function clearOtpInputs(boxes) {
-    boxes.forEach((box) => {
-      box.value = '';
-      box.classList.remove('filled');
-    });
-  }
+  function tryVerifyOtp() {
+    if (otpState.emailCode == null || otpState.phoneCode == null) return;
+    if (otpState.emailCode.length < 6 || otpState.phoneCode.length < 6) return;
+    if (otpState.verifying) return;
+    otpState.verifying = true;
 
-  function showOtpError(errorEl, message) {
-    errorEl.textContent = message;
-    errorEl.classList.add('show');
-  }
+    const emailOtp = otpState.emailCode;
+    const phoneOtp = otpState.phoneCode;
+    const emailResolve = otpState.emailResolve;
+    const phoneResolve = otpState.phoneResolve;
 
-  function clearOtpErrors() {
-    emailOtpError.textContent = '';
-    phoneOtpError.textContent = '';
-    emailOtpError.classList.remove('show');
-    phoneOtpError.classList.remove('show');
-  }
+    (async () => {
+      try {
+        const response = await fetch(`${API_BASE}/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: currentEmail || regEmail.value.trim().toLowerCase(),
+            phone: currentPhone || `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`,
+            emailOtp,
+            phoneOtp,
+          }),
+        });
+        const data = await response.json();
 
-  setupOtpBoxes(emailOtpBoxes, phoneOtpBoxes);
-  setupOtpBoxes(phoneOtpBoxes);
+        if (!response.ok) {
+          // e.g. "Incorrect code." or "Code expired." — point the message at
+          // whichever box it refers to; the account still wasn't created,
+          // so both boxes shake and reset for re-entry.
+          const errLower = (data.error || '').toLowerCase();
+          let emailMsg = data.error || 'Verification failed.';
+          let phoneMsg = data.error || 'Verification failed.';
+          if (errLower.includes('email')) phoneMsg = 'Verification failed.';
+          else if (errLower.includes('mobile') || errLower.includes('phone')) emailMsg = 'Verification failed.';
 
-  otpForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const emailOtp = getOtpCode(emailOtpBoxes);
-    const phoneOtp = getOtpCode(phoneOtpBoxes);
-    clearOtpErrors();
-
-    let hasOtpError = false;
-    if (emailOtp.length < 6) {
-      showOtpError(emailOtpError, 'Enter all 6 email OTP digits.');
-      hasOtpError = true;
-    }
-    if (phoneOtp.length < 6) {
-      showOtpError(phoneOtpError, 'Enter all 6 mobile OTP digits.');
-      hasOtpError = true;
-    }
-    if (hasOtpError) {
-      showToast('Please complete both verification codes.', 'error');
-      return;
-    }
-
-    verifyBtn.classList.add('loading');
-    verifyBtn.disabled = true;
-
-    try {
-      const response = await fetch(`${API_BASE}/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: currentEmail || regEmail.value.trim().toLowerCase(),
-          phone: currentPhone || `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`,
-          emailOtp,
-          phoneOtp,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // e.g. "Incorrect code." or "Code expired."
-        if ((data.error || '').toLowerCase().includes('email')) {
-          showOtpError(emailOtpError, data.error || 'Email verification failed.');
-        } else if ((data.error || '').toLowerCase().includes('mobile')) {
-          showOtpError(phoneOtpError, data.error || 'Mobile verification failed.');
+          showToast(data.error || 'Verification failed.', 'error');
+          emailResolve({ success: false, message: emailMsg });
+          phoneResolve({ success: false, message: phoneMsg });
         } else {
-          showOtpError(emailOtpError, data.error || 'Verification failed.');
-          showOtpError(phoneOtpError, data.error || 'Verification failed.');
+          showToast('Welcome to Travel Buddy! Your account has been created.', 'success');
+          emailResolve({ success: true });
+          phoneResolve({ success: true });
         }
-        showToast(data.error || 'Verification failed.', 'error');
-        return;
+      } catch (err) {
+        showToast('Could not reach the server. Is it running?', 'error');
+        emailResolve({ success: false, message: 'Could not reach the server.' });
+        phoneResolve({ success: false, message: 'Could not reach the server.' });
+      } finally {
+        otpState.emailCode = null;
+        otpState.phoneCode = null;
+        otpState.emailResolve = null;
+        otpState.phoneResolve = null;
+        otpState.verifying = false;
       }
+    })();
+  }
 
-      showToast('Welcome to Travel Buddy! Your account has been created.', 'success');
+  function goBackFromOtp() {
+    destroyOtpVerifiers();
+    goToPanel('details');
+  }
 
-      setTimeout(() => {
-      window.location.href = "../login/login.html";
-      },1500);
-    } catch (err) {
-      showToast('Could not reach the server. Is it running?', 'error');
-    } finally {
-      verifyBtn.classList.remove('loading');
-      verifyBtn.disabled = false;
-    }
-  });
+  function destroyOtpVerifiers() {
+    if (emailOtpVerifier) { emailOtpVerifier.destroy(); emailOtpVerifier = null; }
+    if (phoneOtpVerifier) { phoneOtpVerifier.destroy(); phoneOtpVerifier = null; }
+    otpState.emailCode = null;
+    otpState.phoneCode = null;
+    otpState.emailResolve = null;
+    otpState.phoneResolve = null;
+    otpState.verifying = false;
+  }
 
-  document.getElementById('goBack2').addEventListener('click', () => goToPanel('details'));
+  function mountOtpVerifiers() {
+    destroyOtpVerifiers();
 
-  let resendTimer;
-  resendBtn.addEventListener('click', async () => {
-    resendBtn.disabled = true;
+    emailOtpVerifier = new OtpVerifier(emailOtpMount, {
+      length: 6,
+      resendSeconds: 120,
+      showResend: true,
+      interceptBackButton: true, // owns the single back-button interception for this step
+      onComplete: (code) => new Promise((resolve) => {
+        otpState.emailCode = code;
+        otpState.emailResolve = resolve;
+        if (otpState.phoneCode == null && phoneOtpVerifier) phoneOtpVerifier.focus();
+        tryVerifyOtp();
+      }),
+      onResend: async () => {
+        try {
+          const response = await fetch(`${API_BASE}/resend-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: currentEmail || regEmail.value.trim().toLowerCase(),
+              phone: currentPhone || `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`,
+            }),
+          });
+          const data = await response.json();
 
-    try {
-      const response = await fetch(`${API_BASE}/resend-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: currentEmail || regEmail.value.trim().toLowerCase(),
-          phone: currentPhone || `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`,
-        }),
-      });
-      const data = await response.json();
+          if (!response.ok) {
+            return { success: false, message: data.error || 'Could not resend code.' };
+          }
 
-      if (!response.ok) {
-        showToast(data.error || 'Could not resend code.', 'error');
-        resendBtn.disabled = false;
-        return;
-      }
+          if (data.emailOtp || data.phoneOtp) {
+            showToast(`Development OTPs — Email: ${data.emailOtp || 'sent'}, Mobile: ${data.phoneOtp || 'sent'}`, 'success');
+          } else {
+            showToast(data.message || 'New codes have been sent.', 'success');
+          }
 
-      clearOtpInputs(emailOtpBoxes);
-      clearOtpInputs(phoneOtpBoxes);
-      clearOtpErrors();
-      if (data.emailOtp || data.phoneOtp) {
-        showToast(`Development OTPs — Email: ${data.emailOtp || 'sent'}, Mobile: ${data.phoneOtp || 'sent'}`, 'success');
-      } else {
-        showToast(data.message || 'New codes have been sent.', 'success');
-      }
-    } catch (err) {
-      showToast('Could not reach the server. Is it running?', 'error');
-      resendBtn.disabled = false;
-      return;
-    }
+          // One resend covers both channels — mirror the reset/timer on the phone box too.
+          if (phoneOtpVerifier) {
+            phoneOtpVerifier.reset();
+            phoneOtpVerifier.startResendTimer();
+          }
+          return { success: true };
+        } catch (err) {
+          return { success: false, message: 'Could not reach the server. Is it running?' };
+        }
+      },
+      onBack: goBackFromOtp,
+      onVerified: () => {
+        setTimeout(() => {
+          window.location.href = '../login/login.html';
+        }, 1500);
+      },
+    });
 
-    let seconds = 30;
-    const original = 'Resend';
-    resendBtn.textContent = `Resend (${seconds}s)`;
-    clearInterval(resendTimer);
-    resendTimer = setInterval(() => {
-      seconds -= 1;
-      if (seconds <= 0) {
-        clearInterval(resendTimer);
-        resendBtn.disabled = false;
-        resendBtn.textContent = original;
-      } else {
-        resendBtn.textContent = `Resend (${seconds}s)`;
-      }
-    }, 1000);
-  });
+    phoneOtpVerifier = new OtpVerifier(phoneOtpMount, {
+      length: 6,
+      resendSeconds: 120,
+      showResend: false, // the email box's resend link above covers both channels
+      interceptBackButton: false,
+      onComplete: (code) => new Promise((resolve) => {
+        otpState.phoneCode = code;
+        otpState.phoneResolve = resolve;
+        tryVerifyOtp();
+      }),
+    });
+  }
+
+  document.getElementById('goBack2').addEventListener('click', goBackFromOtp);
 
   // ---------- Ripple effect ----------
   function attachRipple(button) {
@@ -348,5 +325,5 @@
       ripple.addEventListener('animationend', () => ripple.remove());
     });
   }
-  [continueBtn, verifyBtn].forEach(attachRipple);
+  [continueBtn].forEach(attachRipple);
 })();

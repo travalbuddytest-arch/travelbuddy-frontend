@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="register.css" />
+  <link rel="stylesheet" href="../shared/otp-verifier.css?v=1">
   <link rel="stylesheet" href="../shared/site-banner.css?v=3">
 </head>
 <body>
@@ -107,41 +108,19 @@
           <p class="panel-sub" id="verifySub">Enter both verification codes to create your account.</p>
         </header>
 
-        <form class="form" id="otpForm" novalidate>
+        <div class="form" id="otpForm">
           <div class="otp-group">
             <p class="otp-label" id="emailOtpLabel">Enter the 6-digit code we sent to your email.</p>
-            <div class="otp-row" id="emailOtpRow">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 1" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 2" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 3" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 4" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 5" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box email-otp-box" aria-label="Email OTP digit 6" />
-            </div>
-            <span class="error-msg error-msg--center" id="emailOtpError" role="alert"></span>
+            <div id="emailOtpMount"></div>
           </div>
 
           <div class="otp-group">
             <p class="otp-label" id="phoneOtpLabel">Enter the 6-digit code we sent to your mobile number.</p>
-            <div class="otp-row" id="phoneOtpRow">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 1" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 2" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 3" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 4" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 5" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box phone-otp-box" aria-label="Mobile OTP digit 6" />
-            </div>
-            <span class="error-msg error-msg--center" id="phoneOtpError" role="alert"></span>
+            <div id="phoneOtpMount"></div>
           </div>
 
-          <button type="submit" class="btn-primary" id="verifyBtn">
-            <span class="btn-label">Verify &amp; Create Account</span>
-            <span class="spinner" aria-hidden="true"></span>
-          </button>
-
-          <p class="resend-line">Didn't get a code? <button type="button" class="link-strong" id="resendBtn">Resend</button></p>
           <button type="button" class="link-back" id="goBack2">Go Back</button>
-        </form>
+        </div>
       </section>
 
       <p class="login-line">Already have an account? <a href="../login/login.html" class="link-strong">Log in</a></p>
@@ -153,6 +132,7 @@
     <script src="../shared/config.js?v=1"></script>
     <script src="../shared/auth-cookie-client.js?v=1"></script>
     <script src="../shared/analytics-client.js?v=1"></script>
+    <script src="../shared/otp-verifier.js?v=1"></script>
 <script src="register.js"></script>
   <script src="../shared/site-banner.js?v=3"></script>
 </body>
