@@ -42,14 +42,27 @@
         }
     }
 
-    // Only the navbar is injected here. The footer placeholder lives much
-    // further down the page and has not been parsed into the DOM yet at
-    // this point (this script tag sits right next to the navbar
-    // placeholder, near the top of <body>), so injecting it here would
-    // silently do nothing. window.TBInclude.injectFooter() is called
-    // separately from a tiny inline <script> placed exactly where the
-    // footer placeholder appears in each page.
     inject('tbNavbarInclude', '../shared/navbar.html');
+
+    // Load shared assets for Security & AI
+    function loadAsset(url, type) {
+        if (type === 'css') {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            document.head.appendChild(link);
+        } else {
+            var script = document.createElement('script');
+            script.src = url;
+            script.defer = true;
+            document.body.appendChild(script);
+        }
+    }
+
+    loadAsset('../shared/toast.css', 'css');
+    loadAsset('../shared/toast.js', 'js');
+    loadAsset('../shared/ai-assistant.css', 'css');
+    loadAsset('../shared/ai-assistant.js', 'js');
 
     window.TBInclude = {
         injectFooter: function () {

@@ -50,6 +50,24 @@
         }
     }
 
+    window.TravelBuddySanitizer = {
+        sanitize(str) {
+            if (typeof str !== 'string') return str;
+            return str.replace(/[\$.]/g, '');
+        },
+        sanitizeObject(obj) {
+            if (!obj || typeof obj !== 'object') return obj;
+            for (let key in obj) {
+                if (typeof obj[key] === 'string') {
+                    obj[key] = this.sanitize(obj[key]);
+                } else if (typeof obj[key] === 'object') {
+                    this.sanitizeObject(obj[key]);
+                }
+            }
+            return obj;
+        }
+    };
+
     if (hasSession()) return;
 
     // Not logged in: stop the browser from painting any protected markup

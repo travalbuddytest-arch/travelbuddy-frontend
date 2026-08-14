@@ -1,0 +1,135 @@
+.tb-ai-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 80px; /* Leave space for back-to-top or other buttons if any */
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+}
+
+.tb-ai-bubble {
+    width: 60px;
+    height: 60px;
+    background: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.tb-ai-bubble:hover {
+    transform: scale(1.1);
+    background: #0056b3;
+}
+
+.tb-ai-window {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 350px;
+    height: 500px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: tb-ai-slide-up 0.3s ease-out;
+}
+
+.tb-ai-window.active {
+    display: flex;
+}
+
+.tb-ai-header {
+    background: #007bff;
+    color: #fff;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tb-ai-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.tb-ai-close {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.tb-ai-close:hover { opacity: 1; }
+
+.tb-ai-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tb-ai-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.tb-ai-msg.user {
+    align-self: flex-end;
+    background: #007bff;
+    color: #fff;
+    border-bottom-right-radius: 2px;
+}
+
+.tb-ai-msg.bot {
+    align-self: flex-start;
+    background: #fff;
+    color: #333;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tb-ai-input-area {
+    padding: 15px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+.tb-ai-input-area input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    outline: none;
+}
+
+.tb-ai-send {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes tb-ai-slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
