@@ -81,63 +81,94 @@
     };
 
     form.onsubmit = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         const text = input.value.trim();
         if (!text) return;
 
         addMessage(text, 'user');
         input.value = '';
+
+        const startTime = Date.now();
         typingIndicator.classList.add('active');
         messages.scrollTop = messages.scrollHeight;
 
-        try {
-            const screen = document.body.getAttribute('data-page') || 'Unknown';
+        const sendRequest = async () => {
+            try {
+                const screen = document.body.getAttribute('data-page') || 'Unknown';
+                const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken');
 
-            // Get the appropriate token for authentication
-            const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken');
-
-            const apiBase = window.APP_CONFIG ? window.APP_CONFIG.API_BASE_URL : '';
-            if (!apiBase) throw new Error('API Configuration missing');
-
-            const res = await fetch(`${apiBase}/api/ai/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                },
-                body: JSON.stringify({ message: text, conversationId, screen })
-            });
-
-            typingIndicator.classList.remove('active');
-
-            if (!res.ok) {
-                if (res.status === 429) {
-                    addMessage("You're sending messages too fast. Please wait a bit.", 'bot');
+                // Robust config check
+                let apiBase = '';
+                if (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) {
+                    apiBase = window.APP_CONFIG.API_BASE_URL;
                 } else {
-                    throw new Error('Server error');
+                    // Fallback if config is missing
+                    apiBase = window.location.origin.includes('localhost') ? 'http://localhost:4000' : 'https://travelbuddy-backend-19l6.onrender.com';
                 }
-                return;
-            }
 
-            const data = await res.json();
-            if (data.success) {
-                addMessage(data.reply, 'bot');
-                if (data.action && data.action.type === 'NAVIGATE') {
-                    const target = NAV_MAP[data.action.target];
-                    if (target) {
-                        setTimeout(() => {
-                            window.location.href = target;
-                        }, 1800);
+                const res = await fetch(`${apiBase}/api/ai/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ message: text, conversationId, screen })
+                });
+
+                // Ensure typing indicator shows for at least 800ms
+                const elapsed = Date.now() - startTime;
+                if (elapsed < 800) await new Promise(r => setTimeout(r, 800 - elapsed));
+
+                typingIndicator.classList.remove('active');
+
+                if (!res.ok) {
+                    if (res.status === 429) {
+                        addMessage("Whoa! You're sending messages too fast. Please wait a minute.", 'bot');
+                    } else {
+                        throw new Error(`Server returned ${res.status}`);
                     }
+                    return;
                 }
-            } else {
-                addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+
+                const data = await res.json();
+                if (data.success) {
+                    addMessage(data.reply, 'bot');
+                    if (data.action && data.action.type === 'NAVIGATE') {
+                        const target = NAV_MAP[data.action.target];
+                        if (target) {
+                            setTimeout(() => {
+                                window.location.href = target;
+                            }, 2000);
+                        }
+                    }
+                } else {
+                    throw new Error('AI Error response');
+                }
+            } catch (err) {
+                typingIndicator.classList.remove('active');
+                console.error('AI Assistant Fetch Error:', err);
+
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'tb-ai-msg bot error-msg';
+                errorMsg.innerHTML = `
+                    Could not connect to the assistant.
+                    <a href="#" style="color: #007bff; text-decoration: underline; margin-left: 5px;" id="tbAiRetry">Try again</a>
+                `;
+                messages.appendChild(errorMsg);
+                const retryBtn = document.getElementById('tbAiRetry');
+                if (retryBtn) {
+                    retryBtn.onclick = (re) => {
+                        re.preventDefault();
+                        errorMsg.remove();
+                        input.value = text;
+                        form.onsubmit();
+                    };
+                }
+                messages.scrollTop = messages.scrollHeight;
             }
-        } catch (err) {
-            typingIndicator.classList.remove('active');
-            console.error('AI Assistant Fetch Error:', err);
-            addMessage('Could not connect to the assistant. Please check your internet.', 'bot');
-        }
+        };
+
+        sendRequest();
     };
 
     // Auto-open logic: 10 seconds on Home Page
