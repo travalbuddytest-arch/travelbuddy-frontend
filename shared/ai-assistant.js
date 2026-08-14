@@ -122,10 +122,13 @@
                 typingIndicator.classList.remove('active');
 
                 if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}));
+                    const serverMsg = errorData.error || `Server error (${res.status})`;
+
                     if (res.status === 429) {
                         addMessage("Whoa! You're sending messages too fast. Please wait a minute.", 'bot');
                     } else {
-                        throw new Error(`Server returned ${res.status}`);
+                        addMessage(`**Technical Error**: ${serverMsg}`, 'bot');
                     }
                     return;
                 }

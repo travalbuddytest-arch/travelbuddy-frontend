@@ -1,8 +1,8 @@
 .tb-ai-widget {
     position: fixed;
     bottom: 20px;
-    left: 20px; /* Moved to left to avoid cookie button overlap */
-    z-index: 9999;
+    left: 20px;
+    z-index: 100000; /* Higher than cookie button */
     font-family: 'Inter', 'Poppins', sans-serif;
 }
 
