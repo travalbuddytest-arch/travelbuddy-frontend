@@ -1,8 +1,8 @@
 .tb-ai-widget {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 100000; /* Higher than cookie button */
+    bottom: 80px; /* Elevated to clear the cookie button */
+    right: 20px;  /* Moved back to right */
+    z-index: 100000;
     font-family: 'Inter', 'Poppins', sans-serif;
 }
 
@@ -35,7 +35,7 @@
 .tb-ai-window {
     position: absolute;
     bottom: 75px;
-    left: 0; /* Align to left of widget */
+    right: 0; /* Align to right of widget */
     width: 350px;
     height: 520px;
     background: #fff;
@@ -44,7 +44,7 @@
     display: none;
     flex-direction: column;
     overflow: hidden;
-    transform-origin: bottom left;
+    transform-origin: bottom right;
     transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.3s;
 }
 
