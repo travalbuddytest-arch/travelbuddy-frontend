@@ -1,0 +1,172 @@
+/* ============================================================
+   TRAVELBUDDY PREMIUM 3D DESIGN SYSTEM
+   Standardized visuals for all public pages.
+   ============================================================ */
+
+:root {
+    /* Brand Colors */
+    --tb-primary: #0d6efd;
+    --tb-primary-dark: #0b5ed7;
+    --tb-primary-light: #eef5ff;
+    --tb-secondary: #7291d2;
+    --tb-accent: #3d8bff;
+
+    /* Semantic Colors */
+    --tb-success: #22c55e;
+    --tb-warning: #f5a524;
+    --tb-danger: #ef4056;
+    --tb-info: #4f8dff;
+
+    /* Neutral / Surfaces */
+    --tb-ink: #12203a;
+    --tb-ink-soft: #33415c;
+    --tb-muted: #667797;
+    --tb-border: #e6ecf9;
+    --tb-surface: #ffffff;
+    --tb-bg: #f7f9fc;
+    --tb-navy: #0b213f;
+
+    /* 3D Elevation Layers */
+    --tb-shadow-l1: 0 4px 12px rgba(18, 32, 58, 0.05);
+    --tb-shadow-l2: 0 12px 24px rgba(18, 32, 58, 0.08);
+    --tb-shadow-l3: 0 24px 48px rgba(18, 32, 58, 0.12);
+    --tb-shadow-l4: 0 40px 80px rgba(18, 32, 58, 0.18);
+
+    /* Perspective & Depth */
+    --tb-perspective: 1200px;
+    --tb-transition: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --tb-speed: 0.4s;
+
+    /* Border Radius */
+    --tb-radius-sm: 8px;
+    --tb-radius-md: 16px;
+    --tb-radius-lg: 24px;
+    --tb-radius-xl: 32px;
+    --tb-radius-full: 9999px;
+}
+
+/* 3D Container Primitives */
+.depth-container {
+    perspective: var(--tb-perspective);
+    transform-style: preserve-3d;
+}
+
+.depth-card {
+    background: var(--tb-surface);
+    border-radius: var(--tb-radius-md);
+    border: 1px solid var(--tb-border);
+    box-shadow: var(--tb-shadow-l1);
+    transition: transform var(--tb-speed) var(--tb-transition),
+                box-shadow var(--tb-speed) var(--tb-transition);
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+}
+
+.depth-card:hover {
+    transform: translateZ(10px) translateY(-5px);
+    box-shadow: var(--tb-shadow-l3);
+    border-color: rgba(13, 110, 253, 0.2);
+}
+
+/* Premium Buttons */
+.tb-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
+    color: #fff;
+    border: none;
+    border-radius: var(--tb-radius-full);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.25);
+    transition: all 0.3s var(--tb-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.tb-btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(13, 110, 253, 0.35);
+}
+
+.tb-btn-primary:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.tb-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: var(--tb-surface);
+    color: var(--tb-primary);
+    border: 2px solid var(--tb-primary-light);
+    border-radius: var(--tb-radius-full);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s var(--tb-transition);
+}
+
+.tb-btn-secondary:hover {
+    background: var(--tb-primary-light);
+    border-color: var(--tb-primary);
+    transform: translateY(-2px);
+}
+
+/* Glassmorphism Classes */
+.glass-surface {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark-glass {
+    background: rgba(11, 33, 63, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(13, 110, 253, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(13, 110, 253, 0.4); }
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* Typography Scale */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--tb-ink);
+    font-weight: 700;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

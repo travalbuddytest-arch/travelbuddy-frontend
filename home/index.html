@@ -73,45 +73,62 @@
 
 <!-- ================= HERO ================= -->
 
-<section class="hero">
+<section class="hero depth-container">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <h1 id="typing"></h1>
 
-    <h1 id="typing"></h1>
+            <div class="steps-3d">
+                <div class="step-3d depth-card">
+                    <div class="step-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h3>Search</h3>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-3d depth-card">
+                    <div class="step-icon"><i class="fa-solid fa-box"></i></div>
+                    <h3>Pick</h3>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-3d depth-card">
+                    <div class="step-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <h3>Deliver</h3>
+                </div>
+            </div>
 
-    <div class="steps">
+            <h2>Send It Today, Get It Today</h2>
+            <p>
+                Our platform streamlines logistics by connecting senders directly with registered local couriers.
+                Same-day delivery for urgent shipments with minimal fees.
+            </p>
 
-        <div class="step">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <h3>Search</h3>
+            <div class="hero-actions">
+                <a href="../login/login.html" class="tb-btn-primary">Post a Parcel</a>
+                <a href="../home/index.html#how-it-works" class="tb-btn-secondary">How It Works</a>
+            </div>
         </div>
 
-        <div class="arrow">
-            →
+        <div class="hero-visual">
+            <div class="parcel-3d-wrap">
+                <div class="parcel-3d" id="heroParcel">
+                    <div class="parcel-face front"></div>
+                    <div class="parcel-face back"></div>
+                    <div class="parcel-face right"></div>
+                    <div class="parcel-face left"></div>
+                    <div class="parcel-face top"></div>
+                    <div class="parcel-face bottom"></div>
+                    <div class="parcel-label"></div>
+                </div>
+                <div class="parcel-shadow"></div>
+                <div class="route-path-visual">
+                    <svg viewBox="0 0 200 100">
+                        <path d="M20,80 Q100,20 180,80" fill="none" stroke="rgba(13,110,253,0.2)" stroke-width="2" stroke-dasharray="4 4" />
+                        <circle cx="20" cy="80" r="4" fill="var(--tb-primary)" />
+                        <circle cx="180" cy="80" r="4" fill="var(--tb-accent)" />
+                    </svg>
+                </div>
+            </div>
         </div>
-
-        <div class="step">
-            <i class="fa-solid fa-box"></i>
-            <h3>Pick</h3>
-        </div>
-
-        <div class="arrow">
-            →
-        </div>
-
-        <div class="step">
-            <i class="fa-solid fa-truck-fast"></i>
-            <h3>Deliver</h3>
-        </div>
-
     </div>
-
-    <h2>
-        Send It Today, Get It Today
-    </h2>
-
-    <p>
-        Our platform streamlines logistics by connecting senders directly with registered local couriers. By eliminating middlemen, we ensure faster, more cost-effictive deliveries. Parcels are picked up and delivered within hours, offering businesses and individuals a reliable solution for urgent shipments at minimal fees. 
-    </p>
-
 </section>
 
 
@@ -355,6 +372,7 @@
         <article class="card why-card"><div class="why-icon why-check"><i class="fa-solid fa-shield-halved"></i></div><h3>Verified Community</h3><p>All users go through identity verification and background checks.</p></article>
         <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-lock"></i></div><h3>Secure Confirmation</h3><p>OTP-based delivery confirmation ensures both parties are protected.</p></article>
         <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-eye"></i></div><h3>Transparent Journey</h3><p>Real-time tracking and detailed records for complete transparency.</p></article>
+        <div class="why-hover-backdrop" aria-hidden="true"></div>
     </div></section>
 
 
@@ -437,78 +455,61 @@
 
 <!-- ================= HOW IT WORKS ================= -->
 
-<section class="workflow" id="how-it-works">
+<section class="workflow-3d section-Flow" id="how-it-works">
+    <div class="workflow-heading">
+        <span class="faq-eyebrow">The Journey</span>
+        <h2>How TravelBuddy Works</h2>
+        <p>Your parcel's lifecycle from posting to delivery in a verified, community-powered ecosystem.</p>
+    </div>
 
-<h2>How TravelBuddy Works</h2>
+    <div class="timeline-3d depth-container">
+        <div class="journey-track"></div>
 
-<div class="timeline">
+        <div class="flow-item depth-card" data-step="1">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+                <h4>Post a Parcel</h4>
+                <p>Share your parcel details and destination. Senders set the price.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-plus-circle"></i></div>
+        </div>
 
-<div class="flow">
+        <div class="flow-item depth-card" data-step="2">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+                <h4>Traveler Accepts</h4>
+                <p>Verified travelers heading your way browse and accept requests.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-user-check"></i></div>
+        </div>
 
-<div class="flow-num">1</div>
+        <div class="flow-item depth-card" data-step="3">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+                <h4>Pickup & QR Verify</h4>
+                <p>Traveler meets sender. Exchange verified via secure QR or OTP.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-qrcode"></i></div>
+        </div>
 
+        <div class="flow-item depth-card" data-step="4">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+                <h4>In Transit</h4>
+                <p>Parcel is on the move. Track the journey in real-time from your dashboard.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-truck-fast"></i></div>
+        </div>
 
-<h4>Post Parcel</h4>
-
-<p>Share your parcel details and destination</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">2</div>
-
-
-<h4>Find a Traveler</h4>
-
-<p>Browse verified travelers heading your way</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">3</div>
-
-
-<h4>Confirm &amp; Pay Securely</h4>
-
-<p>Secure payment protected until delivery</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">4</div>
-
-
-<h4>Track the Journey</h4>
-
-<p>Real-time tracking of your parcel</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">5</div>
-
-
-<h4>Verify Delivery with OTP</h4>
-
-<p>Confirm delivery and release payment</p>
-
-</div>
-
-
-</div>
-
+        <div class="flow-item depth-card" data-step="5">
+            <div class="flow-num">5</div>
+            <div class="flow-content">
+                <h4>Verified Delivery</h4>
+                <p>Delivery confirmed with receiver OTP. Payment released instantly.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+    </div>
 </section>
 
 
