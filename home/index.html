@@ -694,64 +694,6 @@
 
 
 
-<!-- ================= BUDDY AI CHATBOT ================= -->
-<div class="buddy-chatbot" id="buddyChatbot">
-    <button class="buddy-launcher" id="buddyLauncher" type="button"
-        aria-label="Open Buddy AI assistant" aria-expanded="false" aria-controls="buddyChatPanel">
-        <span class="buddy-launcher-pulse" aria-hidden="true"></span>
-        <span class="buddy-open-icon buddy-ai-mark" aria-hidden="true">
-            <span class="buddy-ai-core"><i class="fa-solid fa-sparkles"></i></span>
-            <span class="buddy-ai-orbit"></span>
-        </span>
-        <i class="fa-solid fa-xmark buddy-close-icon" aria-hidden="true"></i>
-        <span class="buddy-notification" id="buddyNotification">1</span>
-    </button>
-
-    <section class="buddy-panel" id="buddyChatPanel" aria-label="Buddy AI chat assistant" aria-hidden="true">
-        <header class="buddy-header">
-            <div class="buddy-avatar" aria-hidden="true">
-                <i class="fa-solid fa-sparkles"></i>
-                <span class="buddy-online-dot"></span>
-            </div>
-            <div class="buddy-header-copy">
-                <h3>Buddy AI</h3>
-                <p><span class="buddy-status-dot"></span> Online • TravelBuddy Assistant</p>
-            </div>
-            <button class="buddy-minimize" id="buddyMinimize" type="button" aria-label="Minimize chat">
-                <i class="fa-solid fa-minus"></i>
-            </button>
-        </header>
-
-        <div class="buddy-messages" id="buddyMessages" role="log" aria-live="polite">
-            <div class="buddy-message buddy-bot-message">
-                <div class="buddy-message-avatar"><i class="fa-solid fa-sparkles"></i></div>
-                <div class="buddy-bubble">
-                    <p>Hi 👋 I’m <strong>Buddy AI</strong>. Ask me any TravelBuddy question—parcel, traveler, tracking, payment, safety, account, cancellation, or delivery issue.</p>
-                    <span class="buddy-time">Now</span>
-                </div>
-            </div>
-
-            <div class="buddy-quick-actions" id="buddyQuickActions">
-                <button type="button" data-buddy-action="send"><i class="fa-solid fa-box"></i> Send a Parcel</button>
-                <button type="button" data-buddy-action="track"><i class="fa-solid fa-location-dot"></i> Track Parcel</button>
-                <button type="button" data-buddy-action="traveler"><i class="fa-solid fa-route"></i> Find a Traveler</button>
-                <button type="button" data-buddy-action="how"><i class="fa-solid fa-circle-question"></i> How It Works</button>
-            </div>
-        </div>
-
-        <div class="buddy-typing" id="buddyTyping" aria-hidden="true">
-            <span></span><span></span><span></span>
-        </div>
-
-        <form class="buddy-input-area" id="buddyChatForm">
-            <label class="sr-only" for="buddyInput">Ask Buddy AI a question</label>
-            <input id="buddyInput" type="text" placeholder="Ask any TravelBuddy question..." autocomplete="off" maxlength="300">
-            <button type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
-        </form>
-
-        <p class="buddy-powered">TravelBuddy smart assistant</p>
-    </section>
-</div>
 
 <script src="script.js?v=3"></script>
 

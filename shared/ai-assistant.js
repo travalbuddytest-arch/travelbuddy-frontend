@@ -37,6 +37,16 @@
     bubble.onclick = () => windowEl.classList.toggle('active');
     closeBtn.onclick = () => windowEl.classList.remove('active');
 
+    window.TBAiAssistant = {
+        open() {
+            windowEl.classList.add('active');
+            input.focus();
+        },
+        close() {
+            windowEl.classList.remove('active');
+        }
+    };
+
     function addMessage(text, role) {
         const msg = document.createElement('div');
         msg.className = `tb-ai-msg ${role}`;
