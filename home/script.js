@@ -547,6 +547,112 @@ if (smartMatchingSection) {
     });
 })();
 
+// =========================
+// Live Activity Ticker
+// =========================
+(function initTicker() {
+    const ticker = document.getElementById('liveTicker');
+    if (!ticker) return;
+
+    const activities = [
+        { icon: 'fa-box', text: 'New parcel posted: Mumbai → Pune', highlight: 'Just now' },
+        { icon: 'fa-user-check', text: 'Traveler matched: Delhi → Jaipur', highlight: '2 mins ago' },
+        { icon: 'fa-circle-check', text: 'Delivery confirmed: Bangalore → Chennai', highlight: 'Success' },
+        { icon: 'fa-shield-halved', text: 'Verified traveler joined in Kolkata', highlight: 'New' },
+        { icon: 'fa-route', text: 'Active journey: Hyderabad → Goa', highlight: 'Live' },
+        { icon: 'fa-sack-dollar', text: 'Traveler earned ₹450: Pune → Mumbai', highlight: 'Completed' }
+    ];
+
+    // Double the items for seamless loop
+    const content = [...activities, ...activities].map(item => `
+        <div class="ticker-item">
+            <i class="fa-solid ${item.icon}"></i>
+            ${item.text} <span>• ${item.highlight}</span>
+        </div>
+    `).join('');
+
+    ticker.innerHTML = content;
+})();
+
+// =========================
+// Price Estimator Logic
+// =========================
+(function initPriceEstimator() {
+    const fromInput = document.getElementById('fromInput');
+    const toInput = document.getElementById('toInput');
+    const estBox = document.getElementById('priceEstimator');
+    const estValue = document.getElementById('estPriceValue');
+
+    if (!fromInput || !toInput || !estBox) return;
+
+    const updateEstimate = () => {
+        const from = fromInput.value.trim();
+        const to = toInput.value.trim();
+
+        if (from.length > 2 && to.length > 2) {
+            // Simplified calculation: length of both names as a seed
+            const distanceFactor = (from.length + to.length) % 10;
+            const estimatedPrice = 150 + (distanceFactor * 45);
+
+            estValue.textContent = `₹${estimatedPrice}`;
+            estBox.classList.remove('hidden');
+        } else {
+            estBox.classList.add('hidden');
+        }
+    };
+
+    fromInput.addEventListener('input', updateEstimate);
+    toInput.addEventListener('input', updateEstimate);
+})();
+
+// =========================
+// Testimonials Slider
+// =========================
+(function initTestimonials() {
+    const track = document.getElementById('testimonialSlider');
+    const dots = document.querySelectorAll('#sliderDots .dot');
+    const cards = document.querySelectorAll('.testimonial-card');
+
+    if (!track || !cards.length) return;
+
+    let currentIndex = 0;
+
+    function goToSlide(index) {
+        currentIndex = index;
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        cards.forEach((card, i) => card.classList.toggle('active', i === index));
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => goToSlide(i));
+    });
+
+    // Auto slide
+    setInterval(() => {
+        let next = (currentIndex + 1) % cards.length;
+        goToSlide(next);
+    }, 5000);
+})();
+
+// =========================
+// Newsletter Form
+// =========================
+(function initNewsletter() {
+    const form = document.getElementById('newsletterForm');
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = form.querySelector('input').value;
+        if (email) {
+            window.showToast('Thank you for joining our community!', 'success');
+            form.reset();
+        }
+    });
+})();
+
 
 
 
