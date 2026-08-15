@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Buddy — Community-Driven Parcel Delivery</title>
-    <meta name="description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <title>TravelBuddy — Community-Driven Parcel Delivery</title>
+    <meta name="description" content="Send parcels faster and cheaper with TravelBuddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
     <link rel="canonical" href="https://travelbuddyweb1.netlify.app/">
-    <meta property="og:title" content="Travel Buddy — Community-Driven Parcel Delivery">
-    <meta property="og:description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <meta property="og:title" content="TravelBuddy — Community-Driven Parcel Delivery">
+    <meta property="og:description" content="Send parcels faster and cheaper with TravelBuddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://travelbuddyweb1.netlify.app/">
     <meta property="og:image" content="https://travelbuddyweb1.netlify.app/images/post-your-parcel.jpg">
     <meta property="og:site_name" content="TravelBuddy">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Travel Buddy — Community-Driven Parcel Delivery">
-    <meta name="twitter:description" content="Send parcels faster and cheaper with Travel Buddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
+    <meta name="twitter:title" content="TravelBuddy — Community-Driven Parcel Delivery">
+    <meta name="twitter:description" content="Send parcels faster and cheaper with TravelBuddy. We connect senders with local travellers already heading your way for same-day, affordable delivery.">
     <meta name="twitter:image" content="https://travelbuddyweb1.netlify.app/images/post-your-parcel.jpg">
     <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,6 +65,14 @@
 
 <body data-page="home">
 
+<!-- ================= PREMIUM BACKGROUND SYSTEM ================= -->
+<div class="tb-bg-system">
+    <div class="tb-bg-layer-base"></div>
+    <div class="tb-bg-orb tb-bg-orb-1"></div>
+    <div class="tb-bg-orb tb-bg-orb-2"></div>
+    <div class="tb-bg-orb tb-bg-orb-3"></div>
+</div>
+
 <!-- ================= NAVBAR (shared component, see Frontend/shared/navbar.html) ================= -->
 
 <div id="tbNavbarInclude"></div>
@@ -73,45 +81,62 @@
 
 <!-- ================= HERO ================= -->
 
-<section class="hero">
+<section class="hero depth-container">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <h1 id="typing"></h1>
 
-    <h1 id="typing"></h1>
+            <div class="steps-3d">
+                <div class="step-3d depth-card">
+                    <div class="step-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h3>Search</h3>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-3d depth-card">
+                    <div class="step-icon"><i class="fa-solid fa-box"></i></div>
+                    <h3>Pick</h3>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-3d depth-card">
+                    <div class="step-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <h3>Deliver</h3>
+                </div>
+            </div>
 
-    <div class="steps">
+            <h2>Send It Today, Get It Today</h2>
+            <p>
+                Our platform streamlines logistics by connecting senders directly with registered local couriers.
+                Same-day delivery for urgent shipments with minimal fees.
+            </p>
 
-        <div class="step">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <h3>Search</h3>
+            <div class="hero-actions">
+                <a href="../login/login.html" class="tb-btn-primary">Post a Parcel</a>
+                <a href="../home/index.html#how-it-works" class="tb-btn-secondary">How It Works</a>
+            </div>
         </div>
 
-        <div class="arrow">
-            →
+        <div class="hero-visual">
+            <div class="parcel-3d-wrap">
+                <div class="parcel-3d" id="heroParcel">
+                    <div class="parcel-face front"></div>
+                    <div class="parcel-face back"></div>
+                    <div class="parcel-face right"></div>
+                    <div class="parcel-face left"></div>
+                    <div class="parcel-face top"></div>
+                    <div class="parcel-face bottom"></div>
+                    <div class="parcel-label"></div>
+                </div>
+                <div class="parcel-shadow"></div>
+                <div class="route-path-visual">
+                    <svg viewBox="0 0 200 100">
+                        <path d="M20,80 Q100,20 180,80" fill="none" stroke="rgba(13,110,253,0.2)" stroke-width="2" stroke-dasharray="4 4" />
+                        <circle cx="20" cy="80" r="4" fill="var(--tb-primary)" />
+                        <circle cx="180" cy="80" r="4" fill="var(--tb-accent)" />
+                    </svg>
+                </div>
+            </div>
         </div>
-
-        <div class="step">
-            <i class="fa-solid fa-box"></i>
-            <h3>Pick</h3>
-        </div>
-
-        <div class="arrow">
-            →
-        </div>
-
-        <div class="step">
-            <i class="fa-solid fa-truck-fast"></i>
-            <h3>Deliver</h3>
-        </div>
-
     </div>
-
-    <h2>
-        Send It Today, Get It Today
-    </h2>
-
-    <p>
-        Our platform streamlines logistics by connecting senders directly with registered local couriers. By eliminating middlemen, we ensure faster, more cost-effictive deliveries. Parcels are picked up and delivered within hours, offering businesses and individuals a reliable solution for urgent shipments at minimal fees. 
-    </p>
-
 </section>
 
 
@@ -195,7 +220,7 @@
         </div>
         <div class="post-image">
             <img src="../images/post-your-parcel.jpg" width="1040" height="480" loading="lazy" decoding="async"
-                alt="Person posting a parcel for delivery through the Travel Buddy app" loading="lazy" decoding="async">
+                alt="Person posting a parcel for delivery through the TravelBuddy app" loading="lazy" decoding="async">
         </div>
     </section>
 
@@ -266,7 +291,7 @@
         </div>
         <div class="trusted-image">
             <img src="../images/trust-local-connection.png" width="1040" height="480" loading="lazy" decoding="async"
-                alt="Person posting a parcel for delivery through the Travel Buddy app" loading="lazy" decoding="async">
+                alt="Person posting a parcel for delivery through the TravelBuddy app" loading="lazy" decoding="async">
         </div>
     </section> 
 
@@ -355,6 +380,7 @@
         <article class="card why-card"><div class="why-icon why-check"><i class="fa-solid fa-shield-halved"></i></div><h3>Verified Community</h3><p>All users go through identity verification and background checks.</p></article>
         <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-lock"></i></div><h3>Secure Confirmation</h3><p>OTP-based delivery confirmation ensures both parties are protected.</p></article>
         <article class="card why-card"><div class="why-icon"><i class="fa-solid fa-eye"></i></div><h3>Transparent Journey</h3><p>Real-time tracking and detailed records for complete transparency.</p></article>
+        <div class="why-hover-backdrop" aria-hidden="true"></div>
     </div></section>
 
 
@@ -384,8 +410,6 @@
         </div>
 
         <div class="safety-content">
-            <h2>How We Keep You Safe</h2>
-
             <div class="safety-list">
                 <article class="safety-item">
                     <span class="safety-number">1</span>
@@ -437,78 +461,61 @@
 
 <!-- ================= HOW IT WORKS ================= -->
 
-<section class="workflow" id="how-it-works">
+<section class="workflow-3d section-Flow" id="how-it-works">
+    <div class="workflow-heading">
+        <span class="faq-eyebrow">The Journey</span>
+        <h2>How TravelBuddy Works</h2>
+        <p>Your parcel's lifecycle from posting to delivery in a verified, community-powered ecosystem.</p>
+    </div>
 
-<h2>How TravelBuddy Works</h2>
+    <div class="timeline-3d depth-container">
+        <div class="journey-track"></div>
 
-<div class="timeline">
+        <div class="flow-item depth-card" data-step="1">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+                <h4>Post a Parcel</h4>
+                <p>Share your parcel details and destination. Senders set the price.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-plus-circle"></i></div>
+        </div>
 
-<div class="flow">
+        <div class="flow-item depth-card" data-step="2">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+                <h4>Traveler Accepts</h4>
+                <p>Verified travelers heading your way browse and accept requests.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-user-check"></i></div>
+        </div>
 
-<div class="flow-num">1</div>
+        <div class="flow-item depth-card" data-step="3">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+                <h4>Pickup & QR Verify</h4>
+                <p>Traveler meets sender. Exchange verified via secure QR or OTP.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-qrcode"></i></div>
+        </div>
 
+        <div class="flow-item depth-card" data-step="4">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+                <h4>In Transit</h4>
+                <p>Parcel is on the move. Track the journey in real-time from your dashboard.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-truck-fast"></i></div>
+        </div>
 
-<h4>Post Parcel</h4>
-
-<p>Share your parcel details and destination</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">2</div>
-
-
-<h4>Find a Traveler</h4>
-
-<p>Browse verified travelers heading your way</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">3</div>
-
-
-<h4>Confirm &amp; Pay Securely</h4>
-
-<p>Secure payment protected until delivery</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">4</div>
-
-
-<h4>Track the Journey</h4>
-
-<p>Real-time tracking of your parcel</p>
-
-</div>
-
-<div class="line"><span class="line-fill"></span></div>
-
-<div class="flow">
-
-<div class="flow-num">5</div>
-
-
-<h4>Verify Delivery with OTP</h4>
-
-<p>Confirm delivery and release payment</p>
-
-</div>
-
-
-</div>
-
+        <div class="flow-item depth-card" data-step="5">
+            <div class="flow-num">5</div>
+            <div class="flow-content">
+                <h4>Verified Delivery</h4>
+                <p>Delivery confirmed with receiver OTP. Payment released instantly.</p>
+            </div>
+            <div class="flow-icon-3d"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+    </div>
 </section>
 
 

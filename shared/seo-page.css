@@ -13,7 +13,7 @@ img { height:auto; }
 .seo-hero{
     padding:clamp(48px, 8vw, 84px) clamp(18px, 6vw, 8%) clamp(36px, 6vw, 56px);
     text-align:center;
-    background:linear-gradient(155deg, #0b1b34 0%, #0d6efd 55%, #3d8bff 100%);
+    background: transparent;
 }
 .seo-hero h1{
     color:#fff;
@@ -64,7 +64,7 @@ img { height:auto; }
     max-width:1120px;
     margin:0 auto;
 }
-.seo-section.alt{ background:var(--soft-bg); max-width:none; }
+.seo-section.alt{ background: transparent; max-width:none; }
 .seo-section.alt > .seo-inner{ max-width:1120px; margin:0 auto; }
 
 .seo-section h2{
@@ -185,14 +185,24 @@ img { height:auto; }
     font-size:14.5px;
 }
 
-.seo-cta-band{
-    background:linear-gradient(135deg, var(--brand) 0%, #3d8bff 100%);
-    border-radius:24px;
-    padding:clamp(32px, 5vw, 52px);
-    text-align:center;
-    color:#fff;
-    margin:clamp(40px, 6vw, 60px) auto 0;
-    max-width:1120px;
+.seo-cta-band {
+    background: linear-gradient(135deg, #071A3D 0%, #0B2A63 50%, #061733 100%);
+    border-radius: 24px;
+    padding: clamp(32px, 5vw, 52px);
+    text-align: center;
+    color: #fff;
+    margin: clamp(40px, 6vw, 60px) auto 0;
+    max-width: 1120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.seo-cta-band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
 }
 .seo-cta-band h2{ color:#fff; margin-bottom:10px; }
 .seo-cta-band p{ color:#dce7ff; max-width:560px; margin:0 auto 22px; }

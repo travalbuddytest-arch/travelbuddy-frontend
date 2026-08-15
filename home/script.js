@@ -1,5 +1,5 @@
 // =========================
-// Travel Buddy Landing Page
+// TravelBuddy Landing Page
 // =========================
 
 // =========================
@@ -235,6 +235,36 @@ document.querySelectorAll("nav a").forEach(link => {
 
     });
 
+})();
+
+// =========================
+// 3D Hero Interaction
+// =========================
+(function initHero3D() {
+    const heroVisual = document.querySelector('.hero-visual');
+    const parcel = document.getElementById('heroParcel');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    if (!heroVisual || !parcel || window.innerWidth < 992 || !hasFinePointer || prefersReducedMotion) return;
+
+    heroVisual.addEventListener('mousemove', (e) => {
+        const rect = heroVisual.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+
+        parcel.style.transform = `rotateX(${rotateX - 20}deg) rotateY(${rotateY + 25}deg)`;
+    });
+
+    heroVisual.addEventListener('mouseleave', () => {
+        parcel.style.transform = `rotateX(-20deg) rotateY(25deg)`;
+    });
 })();
 
 // =========================
@@ -541,7 +571,7 @@ if (smartMatchingSection) {
         catch (_) { return {}; }
     }
     function fullName(user) {
-        return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'Travel Buddy';
+        return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'TravelBuddy';
     }
     function initials(name) {
         return name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join('') || 'TB';
@@ -726,7 +756,7 @@ if (smartMatchingSection) {
     const getUser = () => { try { return JSON.parse(localStorage.getItem('travelBuddyUser') || '{}'); } catch { return {}; } };
     const getAdmin = () => { try { return JSON.parse(localStorage.getItem('travelBuddyAdmin') || '{}'); } catch { return {}; } };
     const getProfile = () => isAdminLoggedIn ? getAdmin() : getUser();
-    const getName = (u) => `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.name || 'Travel Buddy';
+    const getName = (u) => `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.name || 'TravelBuddy';
     const initials = (name) => name.split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0].toUpperCase()).join('') || 'TB';
     const authHeaders = () => ({ 'Content-Type':'application/json', Authorization:`Bearer ${localStorage.getItem(isAdminLoggedIn ? 'travelBuddyAdminToken' : 'travelBuddyToken') || ''}` });
 

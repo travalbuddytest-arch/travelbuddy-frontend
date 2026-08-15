@@ -193,8 +193,8 @@
         key: order.keyId, // Razorpay Test Key ID, returned by the backend (never the key secret)
         amount: order.amount, // amount in paise, as returned by the backend
         currency: order.currency || 'INR',
-        name: 'Travel Buddy',
-        description: 'Travel Buddy Razorpay test payment',
+        name: 'TravelBuddy',
+        description: 'TravelBuddy Razorpay test payment',
         order_id: order.orderId,
         handler: function (response) {
           resolve(response);
@@ -232,7 +232,7 @@
           headers: authHeaders(),
           body: JSON.stringify({
             amount,
-            description: 'Travel Buddy Razorpay test payment',
+            description: 'TravelBuddy Razorpay test payment',
           }),
         });
         const data = await res.json();

@@ -26,7 +26,7 @@ if (config.apiKey) {
   const messaging = firebase.messaging();
 
   messaging.onBackgroundMessage((payload) => {
-    const title = payload.notification?.title || 'Travel Buddy';
+    const title = payload.notification?.title || 'TravelBuddy';
     const body = payload.notification?.body || '';
     self.registration.showNotification(title, {
       body,
@@ -35,7 +35,7 @@ if (config.apiKey) {
     });
   });
 
-  // Clicking the OS notification focuses an existing Travel Buddy tab if one
+  // Clicking the OS notification focuses an existing TravelBuddy tab if one
   // is open, otherwise opens the notifications page.
   self.addEventListener('notificationclick', (event) => {
     event.notification.close();

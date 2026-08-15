@@ -44,6 +44,42 @@
 
     inject('tbNavbarInclude', '../shared/navbar.html');
 
+    // Premium Background Injection
+    (function injectBackground() {
+        if (document.querySelector('.tb-bg-system')) return;
+
+        const bgEl = document.createElement('div');
+        bgEl.className = 'tb-bg-system';
+        bgEl.innerHTML = `
+            <div class="tb-bg-layer-base"></div>
+            <div class="tb-bg-orb tb-bg-orb-1"></div>
+            <div class="tb-bg-orb tb-bg-orb-2"></div>
+            <div class="tb-bg-orb tb-bg-orb-3"></div>
+            <svg class="tb-bg-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M-10,50 Q25,20 50,50 T110,50" fill="none" stroke-width="0.05" />
+                <path d="M-10,30 Q30,60 60,30 T110,30" fill="none" stroke-width="0.03" />
+            </svg>
+            <div class="tb-bg-shape" style="width:100px; height:100px; top:20%; left:10%; border-width:0.5px;"></div>
+            <div class="tb-bg-shape" style="width:150px; height:150px; bottom:15%; right:20%; border-width:0.3px; border-style:dashed;"></div>
+        `;
+
+        document.body.prepend(bgEl);
+
+        // Suble Parallax Effect (Desktop only)
+        if (window.innerWidth > 1024 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            window.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 10;
+                const y = (e.clientY / window.innerHeight - 0.5) * 10;
+
+                const orbs = bgEl.querySelectorAll('.tb-bg-orb');
+                orbs.forEach((orb, i) => {
+                    const factor = (i + 1) * 0.3;
+                    orb.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+                });
+            });
+        }
+    })();
+
     // Load shared assets for Security & AI
     function loadAsset(url, type) {
         if (type === 'css') {

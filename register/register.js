@@ -209,7 +209,7 @@
           emailResolve({ success: false, message: emailMsg });
           phoneResolve({ success: false, message: phoneMsg });
         } else {
-          showToast('Welcome to Travel Buddy! Your account has been created.', 'success');
+          showToast('Welcome to TravelBuddy! Your account has been created.', 'success');
           emailResolve({ success: true });
           phoneResolve({ success: true });
         }

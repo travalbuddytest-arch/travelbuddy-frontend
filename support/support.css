@@ -28,7 +28,7 @@ img { height:auto; }
     overflow:hidden;
     text-align:center;
     padding:clamp(56px, 9vw, 96px) clamp(18px, 6vw, 8%) clamp(46px, 7vw, 70px);
-    background:linear-gradient(180deg, #f4f8ff 0%, #ffffff 100%);
+    background: transparent;
 }
 
 .sp-hero-blob{
@@ -124,7 +124,7 @@ img { height:auto; }
 .sp-stat span{ font-size:12.5px; color:#9fb1cf; margin-top:2px; }
 
 /* ---------- TOPICS (reuses .features / .cards / .card from home/style.css) ---------- */
-.sp-topics{ background:#fff; padding-top:clamp(70px, 10vw, 100px); }
+.sp-topics{ background: transparent; padding-top:clamp(70px, 10vw, 100px); }
 .sp-topics h2{ color:#12203a; }
 .sp-topics .card{
     text-align:left; cursor:pointer; border:1px solid #eef1f8;

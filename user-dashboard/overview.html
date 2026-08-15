@@ -5,7 +5,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Travel Buddy - Overview</title>
+<title>TravelBuddy - Overview</title>
 <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
       <div class="sidebar-top">
         <a href="../home/index.html" class="brand">
           <img src="../images/logo.jpeg" alt="" width="32" height="32" />
-          <img src="../images/name.png" alt="Travel Buddy" class="brand-word" />
+          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
         </a>
         <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
           <i class="fa-solid fa-xmark"></i>
@@ -91,7 +91,7 @@
           <div class="user-chip" id="userChip">
             <div class="avatar">TB</div>
             <div class="user-meta">
-              <span class="user-name">Travel Buddy</span>
+              <span class="user-name">TravelBuddy</span>
               <span class="user-role">Sender &amp; Traveler</span>
             </div>
             <i class="fa-solid fa-chevron-down"></i>
@@ -163,6 +163,16 @@
             </div>
 
             <div class="panel">
+              <div class="panel-head panel-head--row">
+                <h2>Recent Messages</h2>
+                <a class="link-btn" href="messages.html">Chat</a>
+              </div>
+              <div class="recent-messages" id="recentMessages"></div>
+            </div>
+          </div>
+
+          <div class="panel-grid panel-grid--split">
+            <div class="panel">
               <div class="panel-head">
                 <h2>Quick Actions</h2>
               </div>
@@ -175,19 +185,13 @@
                   <i class="fa-solid fa-route"></i>
                   <span>Find Parcels on my Route</span>
                 </a>
-                <a class="quick-btn" href="messages.html">
-                  <i class="fa-solid fa-message"></i>
-                  <span>Check Messages</span>
-                </a>
                 <a class="quick-btn" href="payments.html">
                   <i class="fa-solid fa-wallet"></i>
                   <span>View Payments</span>
                 </a>
               </div>
             </div>
-          </div>
 
-          <div class="panel-grid panel-grid--split">
             <div class="panel">
               <div class="panel-head">
                 <h2>Wallet Snapshot</h2>
@@ -212,18 +216,18 @@
                 <i class="fa-solid fa-plus"></i> Add money to wallet
               </a>
             </div>
+          </div>
 
-            <div class="panel">
-              <div class="panel-head">
-                <h2>Experience Tips</h2>
-                <p class="panel-sub">Small steps that reduce delivery confusion.</p>
-              </div>
-              <ul class="tip-list">
-                <li><i class="fa-solid fa-circle-info"></i><span>Add parcel size, weight, and fragile details before posting.</span></li>
-                <li><i class="fa-solid fa-shield-halved"></i><span>Confirm pickup and drop timing in messages before handoff.</span></li>
-                <li><i class="fa-solid fa-receipt"></i><span>Keep payment inside the platform for a clear transaction record.</span></li>
-              </ul>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Experience Tips</h2>
+              <p class="panel-sub">Small steps that reduce delivery confusion.</p>
             </div>
+            <ul class="tip-list">
+              <li><i class="fa-solid fa-circle-info"></i><span>Add parcel size, weight, and fragile details before posting.</span></li>
+              <li><i class="fa-solid fa-shield-halved"></i><span>Confirm pickup and drop timing in messages before handoff.</span></li>
+              <li><i class="fa-solid fa-receipt"></i><span>Keep payment inside the platform for a clear transaction record.</span></li>
+            </ul>
           </div>
         </section>
       </main>

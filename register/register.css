@@ -131,34 +131,19 @@ body {
   .back-btn { background: rgba(255,255,255,0.05); }
 }
 
-/* ---------- Logo (Role step only) ---------- */
-.reg-logo {
+.reg-logo-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  max-height: 60px;
-  margin-bottom: clamp(10px, 2vh, 16px);
-  opacity: 1;
-  overflow: hidden;
-  transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.35s ease;
+  margin-bottom: clamp(14px, 2.5vh, 24px);
+  animation: fade-in 0.6s ease 0.05s both;
 }
-.reg-logo img { display: block; }
-.reg-logo img[width="40"] {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 14px rgba(13, 110, 253, 0.25));
-}
-.reg-wordmark {
-  height: 20px;
+
+.reg-logo-wrap img {
   width: auto;
-}
-.reg-logo.hidden {
-  max-height: 0;
-  opacity: 0;
-  margin-bottom: 0;
-  pointer-events: none;
+  max-width: 160px;
+  height: auto;
+  object-fit: contain;
 }
 
 /* ---------- Panels ---------- */

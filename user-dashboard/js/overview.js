@@ -146,9 +146,58 @@
     }
   }
 
+  function formatTime(iso) {
+    if (!iso) return '';
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return '';
+    const today = new Date();
+    if (date.toDateString() === today.toDateString()) {
+      return date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+    }
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+
+  function initials(name) {
+    return (name || 'User').split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
+  }
+
+  async function loadRecentMessages() {
+    const container = document.getElementById('recentMessages');
+    if (!container) return;
+
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/messages/conversations?limit=3`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!res.ok) return;
+
+      const conversations = data.conversations || [];
+      if (!conversations.length) {
+        container.innerHTML = `<p class="empty-state"><i class="fa-solid fa-comments-slash"></i>No messages yet.</p>`;
+        return;
+      }
+
+      container.innerHTML = conversations.slice(0, 3).map((c) => `
+        <a href="messages.html?conversation=${encodeURIComponent(c.id)}" class="msg-thread-item">
+          <div class="avatar avatar--sm">${escapeHTML(initials(c.other.label))}</div>
+          <div class="msg-thread-info">
+            <div class="msg-thread-name">
+              <strong>${escapeHTML(c.other.label)}</strong>
+              <span class="msg-thread-date">${escapeHTML(formatTime(c.lastMessageAt))}</span>
+            </div>
+            <span class="msg-thread-snippet">${escapeHTML(c.lastMessage || 'Start a conversation')}</span>
+          </div>
+          ${c.unreadCount ? `<span class="msg-unread-dot"></span>` : ''}
+        </a>
+      `).join('');
+    } catch (err) {
+      console.error('load recent messages failed:', err);
+    }
+  }
+
   loadActivity();
   loadStats();
   loadWallet();
+  loadRecentMessages();
 
 
   const orderSearch = document.getElementById('globalSearch');

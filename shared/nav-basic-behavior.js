@@ -90,7 +90,7 @@
         catch (e) { return {}; }
     }
     function fullName(user) {
-        return (((user.firstName || '') + ' ' + (user.lastName || '')).trim()) || user.name || 'Travel Buddy';
+        return (((user.firstName || '') + ' ' + (user.lastName || '')).trim()) || user.name || 'TravelBuddy';
     }
     function initials(name) {
         return name.split(/\s+/).filter(Boolean).slice(0, 2).map(function (p) { return p[0].toUpperCase(); }).join('') || 'TB';

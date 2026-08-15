@@ -32,7 +32,7 @@ img { height:auto; }
 /* ---------- HERO ---------- */
 .ab-hero{
     padding:clamp(48px, 8vw, 80px) clamp(18px, 8vw, 8%);
-    background:linear-gradient(180deg, #f4f8ff 0%, #ffffff 100%);
+    background: transparent;
 }
 
 .ab-hero-inner{

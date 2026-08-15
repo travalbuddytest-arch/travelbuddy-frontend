@@ -132,7 +132,7 @@
     const first = (user.firstName || '').trim();
     const last = (user.lastName || '').trim();
     const full = `${first} ${last}`.trim();
-    return full || user.name || 'Travel Buddy';
+    return full || user.name || 'TravelBuddy';
   }
 
   function getInitials(name) {
@@ -454,7 +454,7 @@
       <div class="tb-call-popup-card">
         <div class="tb-call-popup-ring"><div class="tb-call-popup-avatar" id="tbCallPopupAvatar">TB</div></div>
         <div class="tb-call-popup-info">
-          <strong id="tbCallPopupName">Travel Buddy user</strong>
+          <strong id="tbCallPopupName">TravelBuddy user</strong>
           <span id="tbCallPopupSub"><i class="fa-solid fa-phone-volume"></i> Incoming audio call...</span>
         </div>
         <div class="tb-call-popup-actions">
@@ -477,7 +477,7 @@
     activeIncomingCall = { callId, conversationId, caller };
     const el = ensureIncomingCallPopup();
     document.getElementById('tbCallPopupAvatar').textContent = caller?.role === 'sender' ? 'VS' : 'VT';
-    document.getElementById('tbCallPopupName').textContent = caller?.label || 'Travel Buddy user';
+    document.getElementById('tbCallPopupName').textContent = caller?.label || 'TravelBuddy user';
     el.classList.remove('hidden');
     // Restart the ring/pop animation even if a popup is already visible.
     el.classList.remove('show');
