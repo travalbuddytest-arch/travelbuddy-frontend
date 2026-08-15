@@ -43,7 +43,6 @@
     --tb-radius-lg: 24px;
     --tb-radius-xl: 32px;
     --tb-radius-full: 9999px;
-
     /* Background System Variables */
     --tb-bg-base: #F8FCFF;
     --tb-bg-cyan: #BFEFF1;
@@ -170,6 +169,7 @@ body[data-page="faq"] .tb-bg-system { --tb-bg-base: #ffffff; --tb-orb-opacity: 0
     inset: 0;
     background: radial-gradient(circle at 20% 30%, rgba(13, 110, 253, 0.15) 0%, transparent 50%);
     pointer-events: none;
+}
 }
 
 /* 3D Container Primitives */
