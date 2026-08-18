@@ -565,7 +565,7 @@ function renderOverviewTab(data) {
       <div class="us-info-item"><label>Full Name</label><div>${esc(u.firstName)} ${esc(u.lastName)}</div></div>
       <div class="us-info-item"><label>Email</label><div>${esc(u.email)}</div></div>
       <div class="us-info-item"><label>Phone</label><div>${esc(u.phone || '—')}</div></div>
-      <div class="us-info-item"><label>Registered Via</label><div>${cap(u.authProvider || 'local')}</div></div>
+      <div class="us-info-item"><label>Registered Via</label><div>${esc(cap(u.authProvider || 'local'))}</div></div>
       <div class="us-info-item"><label>Registration Date</label><div>${fmtDate(u.createdAt)}</div></div>
       <div class="us-info-item"><label>Last Active</label><div>${timeAgo(u.lastSeenAt)}</div></div>
     </div>
@@ -575,7 +575,7 @@ function renderOverviewTab(data) {
       <div class="us-info-item"><label>User ID</label><div class="us-mono">${esc(u.travelerPublicId || u.senderPublicId || String(u._id))}</div></div>
       <div class="us-info-item"><label>Sender ID</label><div class="us-mono">${esc(u.senderPublicId || '—')}</div></div>
       <div class="us-info-item"><label>Traveler ID</label><div class="us-mono">${esc(u.travelerPublicId || '—')}</div></div>
-      <div class="us-info-item"><label>Account Status</label><div>${cap(u.status)}</div></div>
+      <div class="us-info-item"><label>Account Status</label><div>${esc(cap(u.status))}</div></div>
       ${u.statusReason ? `<div class="us-info-item"><label>Status Reason</label><div>${esc(u.statusReason)}</div></div>` : ''}
     </div>
 

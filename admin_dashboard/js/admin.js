@@ -349,12 +349,12 @@ function renderStatisticCards(data) {
   const items = data || statisticCards;
   kpisContainer.innerHTML = items
     .map(([icon, label, value, detail, page]) => `
-      <article class="kpi${page ? ' kpi-clickable' : ''}"${page ? ` data-page-link="${page}" role="button" tabindex="0" title="View ${label}"` : ''}>
+      <article class="kpi${page ? ' kpi-clickable' : ''}"${page ? ` data-page-link="${page}" role="button" tabindex="0" title="View ${escHtml(label)}"` : ''}>
         <i class="ki fa-solid ${icon}"></i>
         <div>
-          <span>${label}</span>
-          <strong>${value}</strong>
-          <small>${detail}</small>
+          <span>${escHtml(label)}</span>
+          <strong>${escHtml(value)}</strong>
+          <small>${escHtml(detail)}</small>
         </div>
       </article>
     `)
@@ -383,10 +383,10 @@ function renderActivityFeed(data) {
       <div class="activity">
         <i class="fa-solid ${icon}"></i>
         <div>
-          <b>${title}</b>
-          <p>${desc}</p>
+          <b>${escHtml(title)}</b>
+          <p>${escHtml(desc)}</p>
         </div>
-        <time>${timeLabel}</time>
+        <time>${escHtml(timeLabel)}</time>
       </div>
     `)
     .join('');
@@ -401,10 +401,10 @@ function renderRiskCards(data) {
       <div class="risk"${orderId ? ` data-order-id="${escHtml(orderId)}" title="View ${escHtml(orderId)} in Parcels" style="cursor:pointer"` : ''}>
         <i class="fa-solid ${icon}"></i>
         <div>
-          <b>${title}</b>
-          <p>${desc}</p>
+          <b>${escHtml(title)}</b>
+          <p>${escHtml(desc)}</p>
         </div>
-        <em class="sev-${sev ? sev.toLowerCase() : 'medium'}">${sev || 'Medium'}</em>
+        <em class="sev-${sev ? escHtml(sev.toLowerCase()) : 'medium'}">${escHtml(sev || 'Medium')}</em>
       </div>
     `)
     .join('');
@@ -465,8 +465,8 @@ function renderActiveJourneys(data) {
   activeJourneysContainer.innerHTML = items
     .map(([id, route, prog]) => `
       <div class="jr">
-        <b>${id}</b>
-        <p>${route} • Live journey</p>
+        <b>${escHtml(id)}</b>
+        <p>${escHtml(route)} • Live journey</p>
         <div class="progress"><i style="width:${Math.min(prog, 100)}%"></i></div>
       </div>
     `)
