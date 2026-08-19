@@ -43,6 +43,9 @@ window.TravelBuddyAuth={
     localStorage.removeItem('travelBuddyToken');
     localStorage.removeItem('travelBuddyUser');
     localStorage.removeItem('travelBuddyFcmToken');
+    if (window.TravelBuddy && window.TravelBuddy.clearClientCache) {
+      window.TravelBuddy.clearClientCache();
+    }
   }
   ,
   // Admin helpers: admin sessions are stored separately to avoid colliding with user sessions

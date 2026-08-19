@@ -302,8 +302,13 @@
         console.error('Could not persist login session:', storageErr);
       }
 
-      showToast(data.role === 'admin' ? 'Admin login successful. Redirecting…' : 'Logged in successfully. Welcome back!', 'success');
-      goToRoleDashboard(data.role, data.role === 'admin' ? 800 : 1000);
+      window.TravelBuddy.showLoginSuccess({
+        user: data.role === 'admin' ? data.admin : data.user,
+        method: 'EMAIL',
+        onComplete: () => {
+          goToRoleDashboard(data.role, 0);
+        }
+      });
     } catch (err) {
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
@@ -332,8 +337,13 @@
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
       }
-      showToast('Google login successful.', 'success');
-      goToDashboard(700);
+      window.TravelBuddy.showLoginSuccess({
+        user: data.user,
+        method: 'GOOGLE',
+        onComplete: () => {
+          goToDashboard(0);
+        }
+      });
     } catch (err) {
       showToast('Could not reach the server. Is it running?', 'error');
     }
@@ -523,8 +533,10 @@
         console.error('Could not persist login session:', storageErr);
       }
 
-      showToast('Verified successfully. Redirecting...', 'success');
-      return { success: true };
+      return {
+        success: true,
+        user: data.user // Pass user data back to the verifier's success handler if needed
+      };
     } catch (err) {
       console.error('verifyOtp failed:', err);
       const message = `Could not reach the server. Is it running? ${err.message || ''}`.trim();
@@ -564,7 +576,15 @@
           return { success: false, message };
         }
       },
-      onVerified: () => goToDashboard(0),
+      onVerified: (result) => {
+        window.TravelBuddy.showLoginSuccess({
+          user: result.user || JSON.parse(localStorage.getItem('travelBuddyUser')),
+          method: 'OTP',
+          onComplete: () => {
+            goToDashboard(0);
+          }
+        });
+      },
     });
   }
 

@@ -82,6 +82,58 @@
     formatDate,
   };
 
+  const fetchCache = new Map();
+  const inFlightRequests = new Map();
+
+  /**
+   * Enhanced fetch with memory caching and request deduplication.
+   * @param {string} url
+   * @param {Object} options
+   * @param {number} ttl - Cache TTL in milliseconds (default 0, no cache)
+   */
+  async function fetchWithCache(url, options = {}, ttl = 0) {
+    const method = options.method || 'GET';
+    const isCacheable = method === 'GET' && ttl > 0;
+    const cacheKey = `${url}:${JSON.stringify(options.headers || {})}`;
+
+    if (isCacheable) {
+      const cached = fetchCache.get(cacheKey);
+      if (cached && (Date.now() - cached.timestamp) < ttl) {
+        return Promise.resolve(cached.data.clone());
+      }
+    }
+
+    // Request Deduplication
+    if (inFlightRequests.has(cacheKey)) {
+      const pending = await inFlightRequests.get(cacheKey);
+      return pending.clone();
+    }
+
+    const requestPromise = fetch(url, options);
+    inFlightRequests.set(cacheKey, requestPromise);
+
+    try {
+      const response = await requestPromise;
+      if (response.ok && isCacheable) {
+        fetchCache.set(cacheKey, {
+          timestamp: Date.now(),
+          data: response.clone()
+        });
+      }
+      return response;
+    } finally {
+      inFlightRequests.delete(cacheKey);
+    }
+  }
+
+  function clearClientCache() {
+    fetchCache.clear();
+    inFlightRequests.clear();
+  }
+
+  window.TravelBuddy.fetchWithCache = fetchWithCache;
+  window.TravelBuddy.clearClientCache = clearClientCache;
+
   async function parseJsonSafe(res) {
     try {
       return await res.json();
@@ -158,15 +210,9 @@
 
   personalizeUser();
 
-  let currentUserRequest = null;
   async function refreshCurrentUser() {
-    // Multiple dashboard modules need the current user (header, wallet,
-    // overview). Reuse the in-flight request so page startup never sends the
-    // same /auth/me request two or three times.
-    if (currentUserRequest) return currentUserRequest;
-    currentUserRequest = (async () => {
     try {
-      const res = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
+      const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() }, 30000); // 30s cache
       const data = await res.json();
       if (!res.ok) {
         if (res.status === 401) {
@@ -183,22 +229,16 @@
     } catch (err) {
       console.error('Profile refresh failed:', err);
       return null;
-    } finally {
-      currentUserRequest = null;
     }
-    })();
-    return currentUserRequest;
   }
   window.TravelBuddy.getCurrentUser = refreshCurrentUser;
 
   async function refreshMessageBadge() {
     const badge = document.getElementById('navMsgBadge');
-    // messages.js derives this from the conversation response it already
-    // needs, so avoid a redundant unread-count request on that heavy page.
     if (!badge || document.getElementById('conversationSearch')) return;
 
     try {
-      const res = await fetch(`${API_ORIGIN}/api/messages/unread-count`, { headers: authHeaders() });
+      const res = await fetchWithCache(`${API_ORIGIN}/api/messages/unread-count`, { headers: authHeaders() }, 15000); // 15s cache
       const data = await res.json();
       if (!res.ok) return;
       const count = Number(data.count || 0);
@@ -299,7 +339,7 @@
 
   async function refreshNotifBadge() {
     try {
-      const res = await fetch(`${API_ORIGIN}/api/notifications/unread-count`, { headers: authHeaders() });
+      const res = await fetchWithCache(`${API_ORIGIN}/api/notifications/unread-count`, { headers: authHeaders() }, 15000);
       const data = await res.json();
       if (!res.ok) return;
       setNotifBadge(Number(data.count || 0));
@@ -872,6 +912,7 @@
   async function logoutNow(){
     try{await window.TravelBuddyAuth?.logout();}catch{}
     localStorage.removeItem('travelBuddyUser');
+    clearClientCache();
     showToast('Logged out successfully.','success');
     setTimeout(()=>{window.location.href='../login/login.html';},500);
   }
