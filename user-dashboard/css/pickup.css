@@ -29,7 +29,41 @@
 
 .parcel-body { flex: 1; min-width: 0; }
 .parcel-title { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; }
-.parcel-meta { font-size: 11.5px; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap; }
+.parcel-meta { font-size: 11.5px; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+
+.price-highlight {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.earning-info {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(23, 166, 115, 0.08);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.earning-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.earning-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--success);
+}
+
+.earning-info small {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-style: italic;
+}
 
 .tag {
   font-size: 10.5px;

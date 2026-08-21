@@ -1,15 +1,17 @@
 # Tasks
 
-- [ ] Update Navbar for Glass Effect
-    - [ ] [MODIFY] `shared/navbar.css`
-- [ ] Add New Home Page Sections
-    - [ ] [MODIFY] `home/index.html`
-- [ ] Style New Home Page Components
-    - [ ] [MODIFY] `home/style.css`
-- [ ] Implement Interactive Logic
-    - [ ] [MODIFY] `home/script.js`
-- [ ] Verification
-    - [ ] Manual check of glass navbar on scroll
-    - [ ] Test price estimator dynamic updates
-    - [ ] Verify ticker scrolling
-    - [ ] Test testimonials slider navigation
+- [x] Update Navbar for Glass Effect
+    - [x] [MODIFY] `shared/navbar.css`
+- [x] Add New Home Page Sections
+    - [x] [MODIFY] `home/index.html`
+- [x] Style New Home Page Components
+    - [x] [MODIFY] `home/style.css`
+- [x] Implement Interactive Logic
+    - [x] [MODIFY] `home/script.js`
+- [x] Push code to GitHub
+    - [x] Commit and push to `origin main`
+- [x] Verification
+    - [x] Manual check of glass navbar on scroll
+    - [x] Test price estimator dynamic updates
+    - [x] Verify ticker scrolling
+    - [x] Test testimonials slider navigation

@@ -67,7 +67,9 @@
           <span class="route-pill">${escapeHTML(p.from)} <i class="fa-solid fa-arrow-right-long"></i> ${escapeHTML(p.to)}</span>
           <div class="parcel-body"><p class="parcel-title">${escapeHTML(p.desc)}</p><div class="parcel-meta">
             <span><i class="fa-solid fa-weight-hanging"></i> ${escapeHTML(p.weight)}kg</span><span><i class="fa-solid fa-indian-rupee-sign"></i>${escapeHTML(p.price)}</span><span><i class="fa-regular fa-calendar"></i> ${formatDate(p.date)}</span>
-          </div></div><span class="tag tag--${escapeHTML(p.status || 'pending')}">${statusLabel(p.status)}</span>
+          </div>
+          <div class="fee-note">₹${escapeHTML(p.price)} Total <span class="fee-inc">· Platform fee included</span></div>
+          </div><span class="tag tag--${escapeHTML(p.status || 'pending')}">${statusLabel(p.status)}</span>
         </div>
         ${accepted ? `<button class="accepted-user-btn" data-profile-id="${escapeHTML(p.id)}"><i class="fa-solid fa-circle-user"></i><span>Accepted by <strong>${escapeHTML(accepted.fullName)}</strong></span><i class="fa-solid fa-chevron-right"></i></button>` : ''}
         ${canDelete ? `<div class="delete-window"><span><i class="fa-solid fa-ban"></i> ${p.status === 'accepted' ? '10% cancellation fee applies' : 'Free cancellation before acceptance'}</span><button class="quick-delete-btn" data-delete-id="${escapeHTML(p.id)}"><i class="fa-solid fa-ban"></i> Cancel Parcel</button></div>` : ''}

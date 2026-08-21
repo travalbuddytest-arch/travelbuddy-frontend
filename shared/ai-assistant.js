@@ -53,12 +53,19 @@
         }
     };
 
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
     function addMessage(text, role) {
         const msg = document.createElement('div');
         msg.className = `tb-ai-msg ${role}`;
 
-        // Simple markdown: bold (**text**) and newlines (\n)
-        let formatted = text
+        // Sanitize raw text first to prevent XSS injection, then parse safe markdown
+        const escaped = escapeHtml(String(text || ''));
+        const formatted = escaped
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br>');
 

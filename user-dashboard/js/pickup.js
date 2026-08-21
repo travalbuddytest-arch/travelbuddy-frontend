@@ -37,8 +37,13 @@
           <div class="parcel-meta">
             <span><i class="fa-solid fa-user"></i> ${escapeHTML(p.sender)}</span>
             <span><i class="fa-solid fa-weight-hanging"></i> ${escapeHTML(p.weight)}kg</span>
-            <span><i class="fa-solid fa-indian-rupee-sign"></i>${escapeHTML(p.price)}</span>
+            <span class="price-highlight"><i class="fa-solid fa-indian-rupee-sign"></i>${escapeHTML(p.price)}</span>
             <span><i class="fa-regular fa-calendar"></i> ${formatDate(p.date)}</span>
+          </div>
+          <div class="earning-info">
+            <span class="earning-label">Expected Earning:</span>
+            <span class="earning-value">₹${escapeHTML(Number(p.price * 0.9).toFixed(0))}</span>
+            <small>(after 10% TravelBuddy fee)</small>
           </div>
         </div>
         <button class="accept-btn" data-id="${escapeHTML(p.id)}">Accept</button>
