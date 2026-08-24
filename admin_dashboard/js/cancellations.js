@@ -75,7 +75,7 @@ async function loadCancellations() {
       const rateColor = rate == null ? '' : rate >= 80 ? 'metric-good' : rate >= 50 ? 'metric-warn' : 'metric-bad';
 
       const deliveredCard = `<div class="metric-card"><span>Delivered (30d)</span><strong>${pat.delivered30d || 0}</strong></div>`;
-      const deliveredRevenueCard = `<div class="metric-card"><span>Delivered Revenue (30d)</span><strong>₹${(pat.deliveredRevenue30d || 0).toLocaleString()}</strong></div>`;
+      const deliveredRevenueCard = `<div class="metric-card"><span>Delivered Revenue (30d)</span><strong>₹${((pat.deliveredRevenue30d || 0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></div>`;
       const cancelledCard = `<div class="metric-card"><span>Cancelled (30d)</span><strong>${pat.total30d || 0}</strong></div>`;
       const bySenderCard = `<div class="metric-card"><span>By Sender</span><strong>${pat.bySender || 0}</strong></div>`;
       const byTravelerCard = `<div class="metric-card"><span>By Traveler</span><strong>${pat.byTraveler || 0}</strong></div>`;
@@ -145,8 +145,8 @@ function renderRow(o) {
     : (o.cancelledBy ? `${o.cancelledBy.firstName || ''} ${o.cancelledBy.lastName || ''}`.trim() : '—');
 
   const amount = isDelivered
-    ? `₹${(o.chargedAmount || 0).toLocaleString()}`
-    : `-₹${(o.cancellationFee || 0).toLocaleString()}`;
+    ? `₹${((o.chargedAmount || 0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+    : `-₹${((o.cancellationFee || 0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
   const amountClass = isDelivered ? 'amount-positive' : 'amount-negative';
 
   const reason = isDelivered

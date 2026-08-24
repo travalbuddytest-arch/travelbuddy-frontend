@@ -67,14 +67,14 @@ const statisticCards = [
 const activityFeed = [
   ['fa-box', 'New parcel posted', 'TB-48291 • Pune → Mumbai', 'Just now'],
   ['fa-person-walking-luggage', 'Traveler accepted parcel', 'TB-48274 • Traveler #TR-9201', '1 min'],
-  ['fa-wallet', 'Wallet payment secured', '₹850 • Parcel TB-48266', '3 min'],
+  ['fa-wallet', 'Wallet payment secured', `${fmtMoney(85000)} • Parcel TB-48266`, '3 min'],
   ['fa-key', 'Pickup OTP verified', 'TB-48240 • Pickup confirmed', '5 min'],
   ['fa-truck-fast', 'Parcel entered transit', 'TB-48231 • Nashik → Pune', '8 min'],
-  ['fa-circle-check', 'Delivery completed', 'TB-48198 • ₹1,240 settled', '12 min'],
+  ['fa-circle-check', 'Delivery completed', `TB-48198 • ${fmtMoney(124000)} settled`, '12 min'],
 ];
 
 const riskItems = [
-  ['fa-wallet', 'Wallet settlement mismatch', 'Parcel TB-48291 • ₹1,250', 'Critical'],
+  ['fa-wallet', 'Wallet settlement mismatch', `Parcel TB-48291 • ${fmtMoney(125000)}`, 'Critical'],
   ['fa-clock', 'Delivery overdue by 4h', 'TB-38420 • Pune → Mumbai', 'High'],
   ['fa-key', '5 failed OTP attempts', 'User #US-9021 • 8 min ago', 'High'],
   ['fa-ban', 'Unusual cancellation pattern', '4 cancellations in 7 days', 'Medium'],
@@ -106,6 +106,8 @@ const searchData = [
 ];
 
 /* ---------- API Helpers ---------- */
+const fmtMoney = n => '₹' + ((n||0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
@@ -649,7 +651,7 @@ function renderUserDetail(data) {
         <strong>${escHtml(name)}</strong>
         <span>${escHtml(u.email || '')}${u.phone ? ` • ${escHtml(u.phone)}` : ''}</span>
         <div class="dp-meta">
-          <div class="dp-meta-item"><span>Wallet</span><strong>₹${(u.walletBalance || 0).toLocaleString()}</strong></div>
+          <div class="dp-meta-item"><span>Wallet</span><strong>${fmtMoney(u.walletBalance || 0)}</strong></div>
           <div class="dp-meta-item"><span>Rating</span><strong>${(u.rating || 0).toFixed(1)}</strong></div>
           <div class="dp-meta-item"><span>Status</span><strong style="color:${statusColor}">${u.isOnline ? 'Online' : 'Offline'}</strong></div>
           <div class="dp-meta-item"><span>Auth</span><strong>${escHtml(u.authProvider || 'local')}</strong></div>
@@ -676,7 +678,7 @@ function renderUserDetail(data) {
         <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
         <td>${escHtml(p.fromCity || '')} → ${escHtml(p.toCity || '')}</td>
         <td><span class="status-tag ${p.status === 'delivered' ? 'success' : p.status === 'cancelled' ? 'danger' : 'muted'}">${escHtml(p.status)}</span></td>
-        <td class="cell-mono">₹${(p.price || 0).toLocaleString()}</td>
+        <td class="cell-mono">${fmtMoney(p.price || 0)}</td>
       </tr>
     `).join('');
     html += '</tbody></table>';
@@ -694,7 +696,7 @@ function renderUserDetail(data) {
         <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
         <td>${escHtml(p.fromCity || '')} → ${escHtml(p.toCity || '')}</td>
         <td><span class="status-tag ${p.status === 'delivered' ? 'success' : p.status === 'cancelled' ? 'danger' : 'muted'}">${escHtml(p.status)}</span></td>
-        <td class="cell-mono">₹${(p.travelerEarning || 0).toLocaleString()}</td>
+        <td class="cell-mono">${fmtMoney(p.travelerEarning || 0)}</td>
       </tr>
     `).join('');
     html += '</tbody></table>';
@@ -709,8 +711,8 @@ function renderUserDetail(data) {
   html += `<div class="drawer-section">
     <h3>Wallet Activity</h3>
     <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <div class="dp-meta-item"><span>Credits</span><strong style="color:#12b76a">₹${(summ.totalCredits || 0).toLocaleString()}</strong></div>
-      <div class="dp-meta-item"><span>Debits</span><strong style="color:#f04438">₹${(summ.totalDebits || 0).toLocaleString()}</strong></div>
+      <div class="dp-meta-item"><span>Credits</span><strong style="color:#12b76a">${fmtMoney(summ.totalCredits || 0)}</strong></div>
+      <div class="dp-meta-item"><span>Debits</span><strong style="color:#f04438">${fmtMoney(summ.totalDebits || 0)}</strong></div>
       <div class="dp-meta-item"><span>Transactions</span><strong>${summ.txCount || 0}</strong></div>
     </div>`;
   if (wallet.transactions && wallet.transactions.length) {
@@ -720,7 +722,7 @@ function renderUserDetail(data) {
         <td style="font-size:8px;color:#98a2b3">${new Date(tx.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</td>
         <td style="font-size:8px">${escHtml(tx.type || '')}</td>
         <td><span class="status-tag ${tx.direction === 'credit' ? 'success' : tx.direction === 'debit' ? 'danger' : 'muted'}" style="font-size:7px;padding:1px 5px">${escHtml(tx.direction || '')}</span></td>
-        <td class="cell-mono" style="color:${tx.direction === 'credit' ? '#12b76a' : tx.direction === 'debit' ? '#f04438' : 'inherit'}">₹${(tx.amount || 0).toLocaleString()}</td>
+        <td class="cell-mono" style="color:${tx.direction === 'credit' ? '#12b76a' : tx.direction === 'debit' ? '#f04438' : 'inherit'}">${fmtMoney(tx.amount || 0)}</td>
       </tr>
     `).join('');
     html += '</tbody></table>';
@@ -834,7 +836,7 @@ function renderRealDashboardData(data) {
   // Update the revenue total in the panel header
   const moneySpan = document.querySelector('.lower .money');
   if (moneySpan && stats) {
-    moneySpan.textContent = `₹${(stats.platformRevenue || 0).toLocaleString()}`;
+    moneySpan.textContent = fmtMoney(stats.platformRevenue || 0);
   }
 
   // Build KPI card data

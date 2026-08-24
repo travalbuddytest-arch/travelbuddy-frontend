@@ -142,6 +142,8 @@ function wireFilterControls() {
   $('#wlClearFilters')?.addEventListener('click', clearAllFilters);
 }
 
+const fmtMoney = n => '₹' + ((n||0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 async function loadWallet() {
   const ledger = document.getElementById('walletLedger');
   const summary = document.getElementById('walletSummary');
@@ -164,22 +166,22 @@ async function loadWallet() {
         <div class="metric-card">
           <span class="metric-icon green"><i class="fa-solid fa-arrow-down"></i></span>
           <span class="metric-label">Total Credits</span>
-          <strong class="green">₹${(summ.totalCredits || 0).toLocaleString()}</strong>
+          <strong class="green">${fmtMoney(summ.totalCredits || 0)}</strong>
         </div>
         <div class="metric-card">
           <span class="metric-icon red"><i class="fa-solid fa-arrow-up"></i></span>
           <span class="metric-label">Total Debits</span>
-          <strong class="red">₹${(summ.totalDebits || 0).toLocaleString()}</strong>
+          <strong class="red">${fmtMoney(summ.totalDebits || 0)}</strong>
         </div>
         <div class="metric-card">
           <span class="metric-icon orange"><i class="fa-solid fa-clock"></i></span>
           <span class="metric-label">Pending Holds</span>
-          <strong class="orange">₹${(summ.pendingHolds || 0).toLocaleString()}</strong>
+          <strong class="orange">${fmtMoney(summ.pendingHolds || 0)}</strong>
         </div>
         <div class="metric-card metric-card-commission">
           <span class="metric-icon blue"><i class="fa-solid fa-sack-dollar"></i></span>
           <span class="metric-label">Admin Commission${filtered ? ' (filtered)' : ''}</span>
-          <strong class="blue">₹${(summ.totalCommission || 0).toLocaleString()}</strong>
+          <strong class="blue">${fmtMoney(summ.totalCommission || 0)}</strong>
           <span class="metric-note">Company earnings on completed deliveries</span>
         </div>
         <div class="metric-card">
@@ -203,7 +205,7 @@ async function loadWallet() {
             <span class="wr-avatar">${escHtml(initials)}</span>
             <span class="wr-user">${escHtml(userName)}</span>
             <span class="wr-type">${escHtml(TYPE_LABELS[tx.type] || tx.type || '—')}</span>
-            <span class="wr-amount ${dirColors[tx.direction] || 'muted'}">${tx.direction === 'debit' ? '-' : '+'}₹${(tx.amount || 0).toLocaleString()}</span>
+            <span class="wr-amount ${dirColors[tx.direction] || 'muted'}">${tx.direction === 'debit' ? '-' : '+'}${fmtMoney(tx.amount || 0)}</span>
             <span class="wr-date">${formatDate(tx.createdAt)}</span>
           </div>`;
         }).join('');
@@ -226,8 +228,8 @@ async function loadWallet() {
         <td>${escHtml(userName)}</td>
         <td><span class="cell-sub">${escHtml(TYPE_LABELS[tx.type] || tx.type || '—')}</span></td>
         <td><span class="status-tag ${dirColors[tx.direction] || 'muted'}">${tx.direction || '—'}</span></td>
-        <td><span class="cell-mono">₹${(tx.amount || 0).toLocaleString()}</span></td>
-        <td>${tx.balanceAfter != null ? `<span class="cell-mono">₹${tx.balanceAfter.toLocaleString()}</span>` : '—'}</td>
+        <td><span class="cell-mono">${fmtMoney(tx.amount || 0)}</span></td>
+        <td>${tx.balanceAfter != null ? `<span class="cell-mono">${fmtMoney(tx.balanceAfter)}</span>` : '—'}</td>
         <td><span class="status-tag ${statusColors[tx.status] || 'muted'}">${tx.status || '—'}</span></td>
         <td><span class="cell-sub">${escHtml(tx.referenceId || '—')}</span></td>
       </tr>`;

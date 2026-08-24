@@ -598,7 +598,7 @@ function openJourneyModal(key) {
       <h2>${escHtml(j.orderId || '—')}</h2>
       <span class="ops-status" style="background:${color}15;color:${color}">${STATUS_LABELS[j.status] || j.status}</span>
     </div>
-    <div class="om-route"><i class="fa-solid fa-location-dot"></i>${escHtml(j.fromCity || '')} → ${escHtml(j.toCity || '')} ${j.price ? `· ₹${escHtml(j.price)}` : ''}${j.weight ? ` · ${escHtml(j.weight)}kg` : ''}</div>
+    <div class="om-route"><i class="fa-solid fa-location-dot"></i>${escHtml(j.fromCity || '')} → ${escHtml(j.toCity || '')} ${j.price ? `· ₹${(escHtml(j.price)/100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : ''}${j.weight ? ` · ${escHtml(j.weight)}kg` : ''}</div>
     ${d.delayed ? `<div class="om-delay-banner"><i class="fa-solid fa-triangle-exclamation"></i> Running ${d.minutesLate} minute${d.minutesLate === 1 ? '' : 's'} behind expected schedule</div>` : ''}
 
     <!-- Quick action buttons -->

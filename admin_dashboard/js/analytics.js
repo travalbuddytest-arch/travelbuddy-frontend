@@ -31,7 +31,7 @@ async function loadAnalytics() {
     const totalParcels = Object.values(data.statusDistribution || {}).reduce((a, b) => a + b, 0);
     if (metrics) {
       metrics.innerHTML = `
-        <div class="metric-card"><span>Revenue (30d)</span><strong>₹${(r.total || 0).toLocaleString()}</strong></div>
+        <div class="metric-card"><span>Revenue (30d)</span><strong>₹${((r.total || 0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></div>
         <div class="metric-card"><span>Deliveries (30d)</span><strong>${r.count || 0}</strong></div>
         <div class="metric-card"><span>Total Parcels</span><strong>${totalParcels}</strong></div>
         <div class="metric-card"><span>Active Routes</span><strong>${(data.topRoutes || []).length}</strong></div>
@@ -61,7 +61,7 @@ async function loadAnalytics() {
         topRoutes.innerHTML = routes.map(r => {
           const routeName = `${capitalize(r._id?.from || '')} → ${capitalize(r._id?.to || '')}`;
           const pct = Math.round((r.count / maxCount) * 100);
-          return `<div class="route-row"><span>${escHtml(routeName)}</span><b>${r.count}</b><span class="cell-mono">₹${(r.revenue || 0).toLocaleString()}</span><i><u style="width:${pct}%"></u></i></div>`;
+          return `<div class="route-row"><span>${escHtml(routeName)}</span><b>${r.count}</b><span class="cell-mono">₹${((r.revenue || 0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span><i><u style="width:${pct}%"></u></i></div>`;
         }).join('');
       }
     }

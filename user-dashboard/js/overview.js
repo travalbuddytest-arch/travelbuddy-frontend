@@ -95,8 +95,8 @@
     function tick(now) {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      const value = Math.round(safeTarget * eased);
-      el.textContent = labelPrefix + value.toLocaleString('en-IN');
+      const value = (safeTarget * eased) / 100;
+      el.textContent = labelPrefix + value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       if (progress < 1) requestAnimationFrame(tick);
     }
 
@@ -121,7 +121,7 @@
       animateCount(document.getElementById('statTotalEarnings'), data.totalEarnings, 'Rs. ');
 
       const earningsEl = document.getElementById('walletEarningsValue');
-      if (earningsEl) earningsEl.textContent = `Rs. ${Number(data.totalEarnings || 0).toLocaleString('en-IN')}`;
+      if (earningsEl) earningsEl.textContent = `Rs. ${(Number(data.totalEarnings || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     } catch (err) {
       console.error(err);
       window.showToast('Could not reach the server.', 'error');
@@ -138,7 +138,8 @@
     try {
       const user = await window.TravelBuddy.getCurrentUser();
       if (!user) return;
-      const balance = `Rs. ${Number(user.walletBalance || 0).toLocaleString('en-IN')}`;
+      const balanceValueRaw = Number(user.walletBalance || 0);
+      const balance = `Rs. ${(balanceValueRaw / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       if (heroValue) heroValue.textContent = balance;
       if (balanceValue) balanceValue.textContent = balance;
     } catch (err) {
