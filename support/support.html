@@ -51,8 +51,8 @@
 
         <form class="sp-search" id="spSearchForm" role="search">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input type="text" id="spSearchInput" placeholder="Try “track my parcel” or “refund status”…" autocomplete="off">
-            <button type="submit" class="primary-btn">Search</button>
+            <input type="text" id="spSearchInput" placeholder="Try “track my parcel” or “refund status”…" autocomplete="off" aria-label="Search help articles">
+            <button type="submit" class="btn btn-primary">Search</button>
         </form>
 
         <div class="sp-chips" id="spChips">
@@ -132,16 +132,16 @@
             <div class="sp-route-card sp-reveal">
                 <div class="sp-route-row">
                     <div class="sp-route-point">
-                        <span class="sp-route-icon"><i class="fa-solid fa-user"></i></span>
+                        <span class="sp-route-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
                         <h3>You</h3>
                         <p>Sender or traveler</p>
                     </div>
                     <div class="sp-route-line-wrap">
-                        <span class="sp-route-line"><span class="sp-route-progress" id="spRouteProgress"></span></span>
-                        <span class="sp-route-mover" id="spRouteMover"><i class="fa-solid fa-paper-plane"></i></span>
+                        <span class="sp-route-line" aria-hidden="true"></span>
+                        <span class="sp-route-mover" id="spRouteMover" aria-hidden="true"><i class="fa-solid fa-paper-plane"></i></span>
                     </div>
                     <div class="sp-route-point">
-                        <span class="sp-route-icon sp-route-icon-alt"><i class="fa-solid fa-headset"></i></span>
+                        <span class="sp-route-icon sp-route-icon-alt"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
                         <h3>Support</h3>
                         <p>Real humans, 24/7</p>
                     </div>
@@ -150,20 +150,20 @@
                 <form id="spTicketForm" novalidate>
                     <div class="sp-field-row">
                         <div class="form-group sp-field" id="fName">
-                            <label for="tfName">Full name</label>
-                            <input type="text" id="tfName" placeholder="Jordan Rivera">
+                            <label for="tfName">Full name <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+                            <input type="text" id="tfName" placeholder="Jordan Rivera" required>
                             <span class="sp-field-msg"></span>
                         </div>
                         <div class="form-group sp-field" id="fEmail">
-                            <label for="tfEmail">Email</label>
-                            <input type="email" id="tfEmail" placeholder="you@example.com">
+                            <label for="tfEmail">Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+                            <input type="email" id="tfEmail" placeholder="you@example.com" required>
                             <span class="sp-field-msg"></span>
                         </div>
                     </div>
                     <div class="sp-field-row">
                         <div class="form-group sp-field" id="fTopic">
-                            <label for="tfTopic">Topic</label>
-                            <select id="tfTopic">
+                            <label for="tfTopic">Topic <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+                            <select id="tfTopic" required>
                                 <option value="">Select a topic…</option>
                                 <option>Sending a Parcel</option>
                                 <option>Travelers &amp; Tracking</option>
@@ -176,19 +176,19 @@
                             <span class="sp-field-msg"></span>
                         </div>
                         <div class="form-group sp-field" id="fRef">
-                            <label for="tfRef">Parcel / booking ID <span class="sp-optional">(optional)</span></label>
+                            <label for="tfRef">Parcel / booking ID <span class="field-optional">(optional)</span></label>
                             <input type="text" id="tfRef" placeholder="TB-482910">
                             <span class="sp-field-msg"></span>
                         </div>
                     </div>
                     <div class="form-group sp-field" id="fMsg">
-                        <label for="tfMsg">What's going on?</label>
-                        <textarea id="tfMsg" placeholder="Tell us what happened and what you'd expect instead…"></textarea>
+                        <label for="tfMsg">What's going on? <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+                        <textarea id="tfMsg" placeholder="Tell us what happened and what you'd expect instead…" required></textarea>
                         <span class="sp-field-msg"></span>
                     </div>
 
-                    <button type="submit" class="primary-btn sp-submit-btn" id="spSubmitBtn">
-                        <span class="sp-btn-text">Send to support <i class="fa-solid fa-arrow-right arrow-icon"></i></span>
+                    <button type="submit" class="btn btn-primary sp-submit-btn" id="spSubmitBtn">
+                        <span class="sp-btn-text">Send to support <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></span>
                         <span class="sp-spinner"></span>
                     </button>
 
@@ -200,25 +200,25 @@
             </div>
 
             <aside class="sp-channels sp-reveal">
-                <span class="sp-channels-title">Direct channels</span>
+                <h2 class="sp-channels-title">Direct channels</h2>
 
                 <button type="button" class="sp-channel" id="spLiveChatBtn">
-                    <span class="sp-channel-icon"><i class="fa-solid fa-comment-dots"></i></span>
+                    <span class="sp-channel-icon"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i></span>
                     <span class="sp-channel-text"><b>Chat with TravelBuddy AI</b><small>Instant answers, smart navigation</small></span>
                 </button>
 
                 <a class="sp-channel" id="spEmailChannel" href="mailto:support@travelbuddy.com">
-                    <span class="sp-channel-icon"><i class="fa-solid fa-envelope"></i></span>
+                    <span class="sp-channel-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span class="sp-channel-text"><b>support@travelbuddy.com</b><small>Click to copy</small></span>
                 </a>
 
                 <a class="sp-channel" href="tel:+18005550142">
-                    <span class="sp-channel-icon"><i class="fa-solid fa-phone"></i></span>
+                    <span class="sp-channel-icon"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
                     <span class="sp-channel-text"><b>+1 (800) 555-0142</b><small>Mon–Sun, 24/7</small></span>
                 </a>
 
                 <div class="sp-channel-note">
-                    <i class="fa-solid fa-shield-halved"></i>
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
                     <p>Never share your delivery OTP with support agents — we'll never ask for it.</p>
                 </div>
             </aside>

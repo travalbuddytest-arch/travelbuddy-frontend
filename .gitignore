@@ -1,0 +1,9 @@
+node_modules/
+.artifacts/
+.firebase/
+.vscode/
+tmp_migrate_*.py
+*.py
+CODE_CHANGES_REFERENCE.md
+FRONTEND_IMPROVEMENTS_REPORT.md
+README_IMPLEMENTATION_SUMMARY.md

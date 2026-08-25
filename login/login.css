@@ -2,27 +2,29 @@
    On mobile browsers the actual scrollable area is html's scrollWidth,
    so horizontal overflow from any element could still create stray
    blank space / rubber-band scroll beyond the page content. */
+@import url('../shared/design-system.css');
+
 html{overflow-x:hidden;}
 
 :root {
-  --primary: #0D6EFD;
-  --secondary: #4F8DFF;
+  --primary: var(--tb-primary, #0D6EFD);
+  --secondary: var(--tb-accent, #3d8bff);
   --bg: #EEF6FF;
   --bg-2: #E3EFFF;
   --card-bg: rgba(255, 255, 255, 0.72);
-  --card-border: rgba(255, 255, 255, 0.6);
-  --text-main: #142642;
-  --text-muted: #64748B;
-  --text-faint: #94A3B8;
+  --card-border: var(--border-color, rgba(255, 255, 255, 0.6));
+  --text-main: var(--text-primary, #142642);
+  --text-muted: var(--text-secondary, #64748B);
+  --text-faint: var(--text-muted, #94A3B8);
   --input-bg: rgba(255, 255, 255, 0.65);
-  --input-border: #D7E4F7;
-  --error: #E0374A;
-  --success: #17A673;
-  --radius-card: 24px;
-  --radius-input: 14px;
-  --radius-btn: 14px;
+  --input-border: var(--border-color, #D7E4F7);
+  --error: var(--text-danger, #E0374A);
+  --success: var(--text-success, #17A673);
+  --radius-card: var(--radius-xl, 32px);
+  --radius-input: var(--radius-md, 16px);
+  --radius-btn: var(--radius-md, 16px);
   --shadow-card: 0 24px 60px -18px rgba(13, 110, 253, 0.28), 0 4px 14px rgba(20, 38, 66, 0.06);
-  --shadow-btn: 0 10px 24px -8px rgba(13, 110, 253, 0.55);
+  --shadow-btn: 0 8px 18px -4px rgba(13, 110, 253, 0.25);
   --font: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --card-w: 430px;
@@ -175,12 +177,21 @@ body {
 .card::-webkit-scrollbar { width: 6px; }
 .card::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 10px; }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.header-spacer { width: 38px; }
+
 .back-btn {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 34px;
-  height: 34px;
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -233,8 +244,8 @@ body {
 }
 
 .welcome {
-  font-size: clamp(17px, 2.1vh, 20px);
-  font-weight: 700;
+  font-size: clamp(20px, 2.4vh, 24px);
+  font-weight: 800;
   margin: 0 0 4px;
   color: var(--text-main);
   animation: fade-in 0.6s ease 0.15s both;
@@ -257,7 +268,7 @@ body {
 .form {
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 1.6vh, 14px);
+  gap: 1.25rem;
 }
 
 @keyframes form-field-in {
@@ -280,7 +291,7 @@ body {
   .form > * { animation: none; }
 }
 
-.field { display: flex; flex-direction: column; gap: 6px; }
+.field { display: flex; flex-direction: column; gap: 8px; }
 
 .field label {
   font-size: 12.5px;
@@ -423,7 +434,7 @@ body {
 .btn-primary {
   position: relative;
   overflow: hidden;
-  height: 50px;
+  height: 48px;
   border: none;
   border-radius: var(--radius-btn);
   background: linear-gradient(120deg, var(--primary), var(--secondary));
@@ -436,11 +447,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: var(--shadow-btn);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.18);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-  margin-top: 2px;
+  margin-top: 4px;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -10px rgba(13,110,253,0.6); filter: brightness(1.04); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(13, 110, 253, 0.35); filter: brightness(1.04); }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 
@@ -482,11 +493,12 @@ body {
   background: var(--input-border);
 }
 .divider span {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--text-faint);
   white-space: nowrap;
+  text-transform: none;
 }
 
 .social-row {
@@ -497,22 +509,22 @@ body {
 
 .btn-social {
   flex: 1 1 150px;
-  height: 44px;
+  height: 48px;
   border-radius: var(--radius-btn);
   border: 1.5px solid var(--input-border);
   background: #fff;
   color: var(--text-main);
   font-family: var(--font);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  gap: 10px;
+  transition: all 0.2s ease;
 }
-.btn-social:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(20,38,66,0.25); border-color: var(--secondary); }
+.btn-social:hover { transform: translateY(-2px); box-shadow: 0 6px 15px -4px rgba(20,38,66,0.12); border-color: var(--primary); }
 .btn-social:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 @media (prefers-color-scheme: dark) {
@@ -520,11 +532,11 @@ body {
 }
 
 .btn-social--otp {
-  background: rgba(13, 110, 253, 0.08);
-  border-color: rgba(13, 110, 253, 0.2);
-  color: var(--primary);
+  background: #fff;
+  border-color: var(--input-border);
+  color: var(--text-main);
 }
-.btn-social--otp:hover { border-color: var(--primary); }
+.btn-social--otp:hover { border-color: var(--primary); color: var(--primary); }
 
 .signup-line {
   text-align: center;
@@ -540,7 +552,7 @@ body {
 .country-select {
   width: 100%;
   height: 46px;
-  padding: 0 14px;
+  padding: 0 40px 0 14px;
   border-radius: var(--radius-input);
   border: 1.5px solid var(--input-border);
   background: var(--input-bg);
@@ -549,6 +561,27 @@ body {
   font-size: 14px;
   outline: none;
   appearance: none;
+}
+
+.select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-chevron {
+  position: absolute;
+  right: 14px;
+  pointer-events: none;
+  color: var(--text-faint);
+}
+
+.otp-help {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 4px;
+  line-height: 1.5;
 }
 
 .country-select:focus {

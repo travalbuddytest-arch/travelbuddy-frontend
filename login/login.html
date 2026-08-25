@@ -37,17 +37,22 @@
   <main class="stage">
     <section class="card" role="main" aria-labelledby="welcomeTitle">
 
-      <a id="backBtn" href="../home/index.html" class="back-btn" aria-label="Back to home">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-
       <header class="card-header">
-        <div class="logo-wrap" aria-hidden="true">
-          <img src="../images/logo-horizontal.png" alt="TravelBuddy logo" width="200" height="45" />
+        <div class="header-top">
+          <a id="backBtn" href="../home/index.html" class="back-btn" aria-label="Back to home">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
+          <div class="logo-wrap" aria-hidden="true">
+            <img src="../images/logo-horizontal.png" alt="TravelBuddy logo" width="180" height="40" />
+          </div>
+
+          <div class="header-spacer" aria-hidden="true"></div>
         </div>
-        <h2 id="welcomeTitle" class="welcome">Welcome Back</h2>
+
+        <h1 id="welcomeTitle" class="welcome">Welcome Back</h1>
         <p class="subtitle">Log in to manage your shipments and trips.</p>
       </header>
 
@@ -102,7 +107,7 @@
           <span class="spinner" aria-hidden="true"></span>
         </button>
 
-        <div class="divider"><span>OR CONTINUE WITH</span></div>
+        <div class="divider"><span>Or continue with</span></div>
 
         <div class="social-row">
           <button type="button" class="btn-social" id="googleBtn">Google</button>
@@ -121,15 +126,22 @@
       </form>
 
       <form id="otpPhoneForm" class="form hidden" novalidate>
+        <p class="otp-help">Enter the mobile number linked to your TravelBuddy account.</p>
+
         <div class="field">
           <label for="countryCode">Country code</label>
-          <select id="countryCode" name="countryCode" class="country-select" aria-label="Choose country calling code">
-            <option value="+1">🇺🇸 +1</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+91" selected>🇮🇳 +91</option>
-            <option value="+61">🇦🇺 +61</option>
-            <option value="+49">🇩🇪 +49</option>
-          </select>
+          <div class="select-wrap">
+            <select id="countryCode" name="countryCode" class="country-select" aria-label="Choose country calling code">
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+91" selected>🇮🇳 +91</option>
+              <option value="+61">🇦🇺 +61</option>
+              <option value="+49">🇩🇪 +49</option>
+            </select>
+            <svg class="select-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
 
         <div class="field">
@@ -149,7 +161,6 @@
           <span class="btn-label">Send OTP</span>
           <span class="spinner" aria-hidden="true"></span>
         </button>
-        <p class="signup-line">Enter the mobile number linked to your TravelBuddy account.</p>
       </form>
 
       <form id="otpVerifyForm" class="form hidden" novalidate>

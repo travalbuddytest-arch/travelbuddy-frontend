@@ -61,7 +61,7 @@ if (topicsGrid) {
             <i class="fa-solid ${SP_CATS[t.cat].icon}" aria-hidden="true"></i>
             <h3>${t.title}</h3>
             <p>${t.desc}</p>
-            <span class="sp-card-count">${t.count} articles <i class="fa-solid fa-arrow-right"></i></span>
+            <span class="sp-card-count">${t.count} articles <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
         `;
         el.addEventListener('click', () => { setActiveTab(t.cat); scrollToFaq(); });
         topicsGrid.appendChild(el);
@@ -73,7 +73,8 @@ const faqList = document.getElementById('spFaqList');
 function renderFaqs() {
     if (!faqList) return;
     faqList.innerHTML = '';
-    SP_FAQS.forEach(f => {
+
+    const renderItem = (f) => {
         const item = document.createElement('div');
         item.className = 'faq-item';
         item.dataset.cat = f.cat;
@@ -98,8 +99,36 @@ function renderFaqs() {
                 btn.setAttribute('aria-expanded', 'true');
             }
         });
-        faqList.appendChild(item);
-    });
+        return item;
+    };
+
+    if (spCurrentCat === 'all' && !spCurrentQuery) {
+        // Group by category (Issue 17 & 19)
+        const cats = [...new Set(SP_FAQS.map(f => f.cat))];
+        cats.forEach(catKey => {
+            const catFaqs = SP_FAQS.filter(f => f.cat === catKey);
+            if (catFaqs.length === 0) return;
+
+            const header = document.createElement('h3');
+            header.className = 'faq-category-header';
+            header.textContent = SP_CATS[catKey]?.label || catKey;
+            faqList.appendChild(header);
+
+            catFaqs.forEach(f => faqList.appendChild(renderItem(f)));
+        });
+    } else {
+        // Flat list for filtered results
+        SP_FAQS.forEach(f => {
+            const matchesCat = spCurrentCat === 'all' || f.cat === spCurrentCat;
+            const matchesQuery = !spCurrentQuery || f.q.toLowerCase().includes(spCurrentQuery) || f.a.toLowerCase().includes(spCurrentQuery);
+            if (matchesCat && matchesQuery) {
+                faqList.appendChild(renderItem(f));
+            }
+        });
+    }
+
+    const visibleCount = faqList.querySelectorAll('.faq-item').length;
+    document.getElementById('spFaqEmpty')?.classList.toggle('show', visibleCount === 0);
 }
 renderFaqs();
 
@@ -108,15 +137,7 @@ let spCurrentCat = 'all';
 let spCurrentQuery = '';
 
 function applyFilters() {
-    let visible = 0;
-    document.querySelectorAll('.faq-item').forEach(item => {
-        const matchesCat = spCurrentCat === 'all' || item.dataset.cat === spCurrentCat;
-        const matchesQuery = !spCurrentQuery || item.dataset.q.includes(spCurrentQuery) || item.dataset.a.includes(spCurrentQuery);
-        const show = matchesCat && matchesQuery;
-        item.classList.toggle('sp-hidden', !show);
-        if (show) visible++;
-    });
-    document.getElementById('spFaqEmpty')?.classList.toggle('show', visible === 0);
+    renderFaqs();
 }
 
 function setActiveTab(cat) {

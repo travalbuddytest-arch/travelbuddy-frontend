@@ -566,7 +566,7 @@ if (smartMatchingSection) {
     // Double the items for seamless loop
     const content = [...activities, ...activities].map(item => `
         <div class="ticker-item">
-            <i class="fa-solid ${item.icon}"></i>
+            <i class="fa-solid ${item.icon}" aria-hidden="true"></i>
             ${item.text} <span>• ${item.highlight}</span>
         </div>
     `).join('');

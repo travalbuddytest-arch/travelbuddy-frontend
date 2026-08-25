@@ -43,6 +43,31 @@
     --tb-radius-lg: 24px;
     --tb-radius-xl: 32px;
     --tb-radius-full: 9999px;
+
+    /* Heuristic Fixes - Standardized Tokens */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-md: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+    --text-3xl: 3rem;
+
+    --text-primary: #172033;
+    --text-secondary: #5f6b7a;
+    --text-muted: #7b8794;
+    --text-inverse: #ffffff;
+    --text-brand: #2563eb;
+    --text-success: #16803c;
+    --text-danger: #dc2626;
+    --border-color: #e5e7eb;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 9999px;
+
     /* Background System Variables */
     --tb-bg-base: #F8FCFF;
     --tb-bg-cyan: #BFEFF1;
@@ -195,7 +220,62 @@ body[data-page="faq"] .tb-bg-system { --tb-bg-base: #ffffff; --tb-orb-opacity: 0
     border-color: rgba(13, 110, 253, 0.2);
 }
 
-/* Premium Buttons */
+/* Base Button System */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s var(--tb-transition);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.3);
+}
+
+.btn-secondary {
+    background: var(--tb-surface);
+    color: var(--tb-primary);
+    border-color: var(--tb-primary-light);
+}
+
+.btn-secondary:hover {
+    background: var(--tb-primary-light);
+    border-color: var(--tb-primary);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+    background: var(--tb-bg);
+    color: var(--tb-primary);
+}
+
+.btn-danger {
+    background: var(--tb-danger);
+    color: #ffffff;
+}
+
+/* Premium Buttons (keeping existing for backward compatibility but mapping to system) */
 .tb-btn-primary {
     display: inline-flex;
     align-items: center;

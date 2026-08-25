@@ -42,7 +42,7 @@ function build(){
     <div class="tb-notice-modal-actions"><button class="tb-banner-btn tb-banner-ghost" data-banner-action="reject">Reject non-essential</button><button class="tb-banner-btn tb-banner-primary" data-banner-action="save">Save preferences</button></div>
   </section>
   <button class="tb-banner-reopen" id="tbBannerReopen" type="button" aria-label="Manage cookie preferences">
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9" fill="#e9c46a"/><circle cx="9" cy="9.5" r="1.1" fill="#7a4a1e"/><circle cx="14" cy="8.6" r="0.9" fill="#7a4a1e"/><circle cx="14.6" cy="13.3" r="1" fill="#7a4a1e"/><circle cx="9.6" cy="14.6" r="0.8" fill="#7a4a1e"/></svg>
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.1"/><circle cx="9" cy="9.5" r="1.1" fill="currentColor"/><circle cx="14" cy="8.6" r="0.9" fill="currentColor"/><circle cx="14.6" cy="13.3" r="1" fill="currentColor"/><circle cx="9.6" cy="14.6" r="0.8" fill="currentColor"/></svg>
     <span>Manage Cookies</span>
   </button>`);
 }
@@ -60,7 +60,7 @@ function init(){
     clearTimeout(hideTimer);
     banner.classList.remove('tb-banner-leave');
     banner.classList.add('show');
-    backdrop.classList.add('show','tb-backdrop-behind-banner');
+    // Heuristic fix: Do not show backdrop for the initial banner to avoid blocking hero/CTA
   }
   function hideBanner(){
     if(!banner.classList.contains('show'))return;

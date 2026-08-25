@@ -117,7 +117,9 @@
 }
 
 #mainNav a.active::after{
-    width: 24px;
+    width: 100%;
+    max-width: 24px;
+    height: 2px;
 }
 
 .login-btn,
@@ -127,9 +129,9 @@
     justify-content: center;
     text-decoration: none;
     padding: 10px 24px;
-    border-radius: 100px;
+    border-radius: var(--radius-pill);
     cursor:pointer;
-    font-size: 14px;
+    font-size: var(--text-sm);
     font-weight: 700;
     transition: all 0.3s ease;
     min-height:44px;
@@ -137,19 +139,19 @@
 
 .login-btn {
     background: transparent;
-    color: var(--tb-primary, #0d6efd);
-    border: 1px solid var(--tb-border, #e6ecf9);
+    color: var(--tb-primary);
+    border: 1px solid var(--border-color);
     margin-right: 8px;
 }
 
 .login-btn:hover{
-    background: var(--tb-primary-light, #eef5ff);
-    border-color: var(--tb-primary, #0d6efd);
+    background: var(--tb-primary-light);
+    border-color: var(--tb-primary);
     transform: translateY(-2px);
 }
 
 .register-btn {
-    background: linear-gradient(135deg, var(--tb-primary, #0d6efd), var(--tb-accent, #3d8bff));
+    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
     color: #fff;
     box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
 }

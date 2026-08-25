@@ -2,27 +2,29 @@
    On mobile browsers the actual scrollable area is html's scrollWidth,
    so horizontal overflow from any element could still create stray
    blank space / rubber-band scroll beyond the page content. */
+@import url('../shared/design-system.css');
+
 html{overflow-x:hidden;}
 
 :root {
-  --primary: #0D6EFD;
-  --secondary: #4F8DFF;
+  --primary: var(--tb-primary, #0D6EFD);
+  --secondary: var(--tb-secondary, #4F8DFF);
   --bg: #EEF6FF;
   --bg-2: #E3EFFF;
   --card-bg: rgba(255, 255, 255, 0.72);
-  --card-border: rgba(255, 255, 255, 0.6);
-  --text-main: #142642;
-  --text-muted: #64748B;
-  --text-faint: #94A3B8;
+  --card-border: var(--border-color, rgba(255, 255, 255, 0.6));
+  --text-main: var(--text-primary, #142642);
+  --text-muted: var(--text-secondary, #64748B);
+  --text-faint: var(--text-muted, #94A3B8);
   --input-bg: rgba(255, 255, 255, 0.65);
-  --input-border: #D7E4F7;
-  --error: #E0374A;
-  --success: #17A673;
-  --radius-card: 24px;
-  --radius-input: 14px;
-  --radius-btn: 14px;
+  --input-border: var(--border-color, #D7E4F7);
+  --error: var(--text-danger, #E0374A);
+  --success: var(--text-success, #17A673);
+  --radius-card: var(--radius-lg, 24px);
+  --radius-input: var(--radius-md, 14px);
+  --radius-btn: var(--radius-md, 14px);
   --shadow-card: 0 24px 60px -18px rgba(13, 110, 253, 0.28), 0 4px 14px rgba(20, 38, 66, 0.06);
-  --shadow-btn: 0 10px 24px -8px rgba(13, 110, 253, 0.55);
+  --shadow-btn: 0 8px 18px -4px rgba(13, 110, 253, 0.25);
   --font: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --card-w: 520px;
@@ -104,10 +106,10 @@ body {
 
 .back-btn {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 34px;
-  height: 34px;
+  top: var(--card-pad);
+  left: var(--card-pad);
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -157,7 +159,7 @@ body {
 .panel-sub { font-size: 13px; color: var(--text-muted); margin: 0; }
 
 /* ---------- Form ---------- */
-.form { display: flex; flex-direction: column; gap: clamp(10px, 1.8vh, 14px); }
+.form { display: flex; flex-direction: column; gap: 1.25rem; }
 
 @keyframes form-field-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -179,7 +181,8 @@ body {
 }
 
 .field-row { display: flex; gap: 10px; }
-.field { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.field { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.field label { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
 .field--grow { flex: 1; }
 
 .field input, .code-select {
@@ -211,7 +214,8 @@ body {
 .error-msg--center { text-align: center; display: none; margin-top: -4px; }
 .error-msg--center.show { display: block; }
 
-.field-row--phone .code-select { width: 78px; flex-shrink: 0; cursor: pointer; }
+.field-row--phone { align-items: flex-end; }
+.field-row--phone .code-select { width: 90px; flex-shrink: 0; cursor: pointer; }
 
 /* ---------- Password toggle ---------- */
 .input-wrap { position: relative; display: flex; align-items: center; }
@@ -238,7 +242,7 @@ body {
 .btn-primary {
   position: relative;
   overflow: hidden;
-  height: 50px;
+  height: 48px;
   border: none;
   border-radius: var(--radius-btn);
   background: linear-gradient(120deg, var(--primary), var(--secondary));
@@ -251,11 +255,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: var(--shadow-btn);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.18);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-  margin-top: 2px;
+  margin-top: 4px;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -10px rgba(13,110,253,0.6); filter: brightness(1.04); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(13, 110, 253, 0.35); filter: brightness(1.04); }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 
@@ -270,17 +274,17 @@ body {
 
 .link-back {
   display: block;
-  margin: 2px auto 0;
+  margin: 1rem auto 0;
   background: none;
   border: none;
   font-family: var(--font);
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 }
-.link-back:hover { color: var(--primary); text-decoration: underline; }
+.link-back:hover { color: var(--primary); transform: translateX(-2px); }
 
 /* ---------- OTP ---------- */
 .otp-group {
@@ -303,9 +307,9 @@ body {
 
 .login-line {
   text-align: center;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-muted);
-  margin: clamp(14px, 2.5vh, 20px) 0 0;
+  margin: 2rem 0 0;
 }
 .login-line .link-strong { font-size: 12.5px; text-decoration: none; }
 .login-line .link-strong:hover { text-decoration: underline; }
