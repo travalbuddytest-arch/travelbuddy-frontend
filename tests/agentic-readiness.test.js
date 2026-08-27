@@ -101,7 +101,6 @@ test('P5: OpenAPI specifications and Developer Portal exist', () => {
 test('P6: Canonical domain https://travalbuddy.web.app used across public pages with zero legacy domain references', () => {
   const htmlFiles = [
     'index.html',
-    'home/index.html',
     'about/about.html',
     'contact/contact.html',
     'support/support.html',
@@ -157,7 +156,6 @@ test('P8: llms.txt and llms-full.txt exist with required sections', () => {
 test('P9: Metadata completeness across HTML documents', () => {
   const htmlFiles = [
     'index.html',
-    'home/index.html',
     'about/about.html',
     'contact/contact.html',
     'support/support.html',

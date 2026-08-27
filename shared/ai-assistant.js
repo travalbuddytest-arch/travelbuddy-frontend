@@ -75,7 +75,7 @@
     }
 
     const NAV_MAP = {
-        'HOME': '../home/index.html',
+        'HOME': '/',
         'POST_PARCEL': '../post-parcel/post.html',
         'PICKUP_PARCEL': '../carry-parcel/search.html',
         'TRACK_PARCEL': '../parcel-delivery/tracking.html',

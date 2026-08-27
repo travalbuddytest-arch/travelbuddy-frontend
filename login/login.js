@@ -409,7 +409,7 @@
     if (view === 'login') {
       pageTitle.textContent = 'Welcome Back';
       subtitle.textContent = 'Log in to manage your shipments and trips.';
-      backBtn.href = '../home/index.html';
+      backBtn.href = '/';
       backBtn.setAttribute('aria-label', 'Back to home');
     } else {
       backBtn.href = '#';

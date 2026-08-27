@@ -187,16 +187,16 @@
     logoutBtn && logoutBtn.addEventListener('click', function () {
         if (localStorage.getItem('travelBuddyAdmin')) {
             if (window.TravelBuddyAuth && typeof window.TravelBuddyAuth.logoutAdmin === 'function') {
-                window.TravelBuddyAuth.logoutAdmin().finally(function () { window.location.href = '../home/index.html'; });
+                window.TravelBuddyAuth.logoutAdmin().finally(function () { window.location.href = '/'; });
             } else {
                 localStorage.removeItem('travelBuddyAdmin');
                 localStorage.removeItem('travelBuddyAdminToken');
-                window.location.href = '../home/index.html';
+                window.location.href = '/';
             }
             return;
         }
         localStorage.removeItem('travelBuddyUser');
-        window.location.href = '../home/index.html';
+        window.location.href = '/';
     });
 
     // This page has no profile/settings modal (unlike Home), so send the

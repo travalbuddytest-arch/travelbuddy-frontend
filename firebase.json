@@ -2,6 +2,13 @@
   "hosting": {
     "public": ".",
     "cleanUrls": true,
+    "redirects": [
+      {
+        "source": "/home",
+        "destination": "/",
+        "type": 301
+      }
+    ],
     "ignore": [
       "firebase.json",
       ".firebaserc",
