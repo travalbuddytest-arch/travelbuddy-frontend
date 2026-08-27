@@ -7,6 +7,16 @@
         "source": "/home",
         "destination": "/",
         "type": 301
+      },
+      {
+        "source": "/home/",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/home/index.html",
+        "destination": "/",
+        "type": 301
       }
     ],
     "ignore": [
