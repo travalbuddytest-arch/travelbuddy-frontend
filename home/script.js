@@ -548,33 +548,6 @@ if (smartMatchingSection) {
 })();
 
 // =========================
-// Live Activity Ticker
-// =========================
-(function initTicker() {
-    const ticker = document.getElementById('liveTicker');
-    if (!ticker) return;
-
-    const activities = [
-        { icon: 'fa-box', text: 'New parcel posted: Mumbai → Pune', highlight: 'Just now' },
-        { icon: 'fa-user-check', text: 'Traveler matched: Delhi → Jaipur', highlight: '2 mins ago' },
-        { icon: 'fa-circle-check', text: 'Delivery confirmed: Bangalore → Chennai', highlight: 'Success' },
-        { icon: 'fa-shield-halved', text: 'Verified traveler joined in Kolkata', highlight: 'New' },
-        { icon: 'fa-route', text: 'Active journey: Hyderabad → Goa', highlight: 'Live' },
-        { icon: 'fa-sack-dollar', text: 'Traveler earned ₹450: Pune → Mumbai', highlight: 'Completed' }
-    ];
-
-    // Double the items for seamless loop
-    const content = [...activities, ...activities].map(item => `
-        <div class="ticker-item">
-            <i class="fa-solid ${item.icon}" aria-hidden="true"></i>
-            ${item.text} <span>• ${item.highlight}</span>
-        </div>
-    `).join('');
-
-    ticker.innerHTML = content;
-})();
-
-// =========================
 // Price Estimator Logic
 // =========================
 (function initPriceEstimator() {
