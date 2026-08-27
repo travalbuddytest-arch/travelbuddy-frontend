@@ -19,26 +19,41 @@
 (function () {
     'use strict';
 
-    function fetchSync(url) {
+    async function inject(placeholderId, url) {
+        var el = document.getElementById(placeholderId);
+        if (!el) return;
+
         try {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, false); // synchronous by design — see note above
-            xhr.send(null);
-            if (xhr.status === 200 || xhr.status === 0) return xhr.responseText;
+            const response = await fetch(url);
+            if (response.ok) {
+                const html = await response.text();
+                el.outerHTML = html;
+
+                // If this is the footer, we need to trigger any post-injection logic
+                if (placeholderId === 'tbFooterInclude') {
+                    // Re-apply fixes if needed
+                    if (typeof applyHomeFooterAnchorFix === 'function') {
+                        applyHomeFooterAnchorFix();
+                    }
+                }
+
+                // Re-highlight active link after injection
+                highlightActiveLink();
+            }
         } catch (e) {
             console.error('[nav-include] failed to load', url, e);
         }
-        return '';
     }
 
-    function inject(placeholderId, url) {
-        var el = document.getElementById(placeholderId);
-        if (!el) return;
-        var html = fetchSync(url);
-        if (html) {
-            el.outerHTML = html;
-        } else {
-            console.error('[nav-include] empty response for', url, '— navbar/footer will be missing. Are you running this via a local web server (not file://)?');
+    function highlightActiveLink() {
+        var currentPage = document.body.getAttribute('data-page');
+        if (currentPage) {
+            var links = document.querySelectorAll('#mainNav a[data-page]');
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].getAttribute('data-page') === currentPage) {
+                    links[i].classList.add('active');
+                }
+            }
         }
     }
 
@@ -58,8 +73,8 @@
     var v = '4'; // Cache-buster version
     inject('tbNavbarInclude', basePath + 'navbar.html?v=' + v);
 
-    // Premium Background Injection
-    (function injectBackground() {
+    // Premium Background Injection (Non-blocking)
+    setTimeout(function injectBackground() {
         if (document.querySelector('.tb-bg-system')) return;
 
         const bgEl = document.createElement('div');
@@ -92,7 +107,7 @@
                 });
             });
         }
-    })();
+    }, 0);
 
     // Load shared assets for Security & AI
     function loadAsset(url, type) {
@@ -117,34 +132,26 @@
     window.TBInclude = {
         injectFooter: function () {
             inject('tbFooterInclude', basePath + 'footer.html?v=' + v);
-            applyHomeFooterAnchorFix();
         }
     };
-
-    var currentPage = document.body.getAttribute('data-page');
-
-    // Highlight the active nav link for the current page
-    if (currentPage) {
-        var links = document.querySelectorAll('#mainNav a[data-page]');
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].getAttribute('data-page') === currentPage) {
-                links[i].classList.add('active');
-            }
-        }
-    }
 
     // On the Home page itself, keep the footer's "How It Works"/"Safety"
     // links as same-page anchor jumps (no full reload), exactly like the
     // original Home footer behaved. On every other page they stay as
     // cross-page links into the Home page's sections.
     function applyHomeFooterAnchorFix() {
+        var currentPage = document.body.getAttribute('data-page');
         if (currentPage !== 'home') return;
         var homeFooterLinks = document.querySelectorAll(
             '.footer-column a[href$="index.html#how-it-works"], .footer-column a[href$="index.html#safety"]'
         );
         for (var j = 0; j < homeFooterLinks.length; j++) {
-            var hash = homeFooterLinks[j].getAttribute('href').split('#')[1];
-            homeFooterLinks[j].setAttribute('href', '#' + hash);
+            var href = homeFooterLinks[j].getAttribute('href');
+            if (href.indexOf('#') !== -1) {
+                var hash = href.split('#')[1];
+                homeFooterLinks[j].setAttribute('href', '#' + hash);
+            }
         }
     }
+})();
 })();
