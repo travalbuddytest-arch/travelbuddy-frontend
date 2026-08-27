@@ -103,6 +103,7 @@
   }
 
   function formatTime(value) {
+    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(value);
     if (!value) return '';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '';

@@ -42,7 +42,7 @@ async function loadSystem() {
         <i class="fa-solid ${overallHealthy ? 'fa-circle-check' : 'fa-triangle-exclamation'}"></i>
         <div>
           <strong>System ${overallHealthy ? 'Healthy' : 'Degraded'}</strong>
-          <span>${data.timestamp ? new Date(data.timestamp).toLocaleString('en-IN') : ''}</span>
+          <span>${data.timestamp ? (window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(data.timestamp) : new Date(data.timestamp).toLocaleString('en-IN')) : ''}</span>
         </div>
       </div>
       <div class="sys-card">

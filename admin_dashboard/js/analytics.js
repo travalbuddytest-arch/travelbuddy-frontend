@@ -83,7 +83,14 @@ function renderBarChart(container, data, valueKey, label) {
   const maxVal = Math.max(...data.map(d => d[valueKey] || 0), 1);
   container.innerHTML = data.map(d => {
     const pct = Math.round(((d[valueKey] || 0) / maxVal) * 100);
-    const dayLabel = d._id ? new Date(d._id + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' }) : '';
+    let dayLabel = '';
+    if (d._id) {
+      if (window.TravelBuddyDate) {
+        dayLabel = window.TravelBuddyDate.formatDate(d._id + 'T00:00:00');
+      } else {
+        dayLabel = new Date(d._id + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' });
+      }
+    }
     return `<div class="chart-col"><i class="bar" style="height:${pct}%"></i><span>${dayLabel}</span></div>`;
   }).join('');
 }
