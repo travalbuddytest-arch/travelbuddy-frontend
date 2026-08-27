@@ -1,0 +1,121 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema.json",
+  "mcpVersion": "2024-11-05",
+  "name": "TravelBuddy MCP Server",
+  "description": "Official Model Context Protocol server for TravelBuddy peer-to-peer delivery platform",
+  "version": "1.0.0",
+  "servers": [
+    {
+      "transport": "sse",
+      "url": "https://travelbuddy-backend-19l6.onrender.com/mcp/sse",
+      "description": "Production Server-Sent Events (SSE) Streamable Transport"
+    },
+    {
+      "transport": "http",
+      "url": "https://travelbuddy-backend-19l6.onrender.com/mcp",
+      "description": "Production Streamable HTTP JSON-RPC 2.0 Transport"
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": true
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "estimate_delivery_fee",
+      "description": "Calculates estimated delivery fee between origin and destination cities based on weight and urgency",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fromCity": {
+            "type": "string",
+            "description": "Origin city"
+          },
+          "toCity": {
+            "type": "string",
+            "description": "Destination city"
+          },
+          "weightKg": {
+            "type": "number",
+            "description": "Weight in kilograms (default 1)"
+          },
+          "urgency": {
+            "type": "string",
+            "enum": ["standard", "same-day", "express"],
+            "description": "Urgency tier"
+          }
+        },
+        "required": ["fromCity", "toCity"]
+      }
+    },
+    {
+      "name": "search_travel_routes",
+      "description": "Searches for registered travelers traveling between specified cities",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fromCity": {
+            "type": "string",
+            "description": "Origin city"
+          },
+          "toCity": {
+            "type": "string",
+            "description": "Destination city"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date of travel (YYYY-MM-DD)"
+          }
+        },
+        "required": ["fromCity", "toCity"]
+      }
+    },
+    {
+      "name": "get_parcel_status",
+      "description": "Retrieves public milestone delivery status for a specific parcel order ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order ID of the parcel"
+          }
+        },
+        "required": ["orderId"]
+      }
+    },
+    {
+      "name": "list_prohibited_items",
+      "description": "Returns list of items prohibited from being transported on TravelBuddy",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_platform_info",
+      "description": "Returns general platform facts, coverage areas, trust & safety guarantees, and contact information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "authentication": {
+    "type": "bearer",
+    "tokenUrl": "https://travalbuddy.web.app/login/login.html"
+  },
+  "links": {
+    "documentation": "https://travalbuddy.web.app/developers/index.html",
+    "openApi": "https://travalbuddy.web.app/openapi.json",
+    "llmsTxt": "https://travalbuddy.web.app/llms.txt"
+  }
+}

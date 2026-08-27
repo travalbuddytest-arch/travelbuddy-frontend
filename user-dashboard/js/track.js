@@ -66,6 +66,7 @@
   }
 
   function formatDateTime(value, prefix) {
+    if (window.TravelBuddyDate) return `${prefix || ''}${window.TravelBuddyDate.formatDateTime(value)}` || 'Pending';
     if (!value) return 'Pending';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return 'Time unavailable';

@@ -1,0 +1,124 @@
+# TravelBuddy — Comprehensive Agent Reference Manual
+
+> Version: 1.0.0
+> Canonical URL: https://travalbuddy.web.app/
+> Last Updated: 2026-08-27
+
+---
+
+## 1. System Architecture & Model
+
+TravelBuddy is a community peer-to-peer delivery platform consisting of:
+1. **Web Application**: Static progressive web app hosted on Firebase Hosting (`https://travalbuddy.web.app`).
+2. **Android Application**: Native Jetpack Compose Android client with Google Maps, biometrics, and real-time Socket.IO tracking.
+3. **Backend API Server**: Node.js Express server on Render (`https://travelbuddy-backend-19l6.onrender.com`) with MongoDB database, Twilio SMS verification, Razorpay escrow payments, and Gemini AI RAG assistant.
+4. **Model Context Protocol (MCP) Server**: First-party MCP discovery endpoint at `/.well-known/mcp` and live JSON-RPC/SSE endpoint at `/mcp`.
+
+---
+
+## 2. Parcel Lifecycle State Machine
+
+A parcel post transitions through the following statuses:
+
+1. `PENDING` / `POSTED`:
+   - Sender submits parcel details (origin, destination, weight, dimensions, category, proposed price).
+   - Parcel is listed in public search for travelers heading that route.
+   - Sender may cancel at this stage without penalty.
+
+2. `ACCEPTED`:
+   - Verified traveler accepts the parcel delivery request.
+   - Sender receives real-time notification with traveler details.
+   - Escrow payment is initiated.
+
+3. `PAID` / `ESCROW_LOCKED`:
+   - Sender funds the delivery payment via Razorpay.
+   - Money is held in platform escrow.
+   - Direct encrypted in-app chat opens between sender and traveler.
+
+4. `PICKED_UP` / `IN_TRANSIT`:
+   - Traveler meets sender at pickup location.
+   - Exchange is verified using sender's pickup OTP or secure QR scan.
+   - Real-time GPS journey tracking begins.
+
+5. `DELIVERED`:
+   - Traveler reaches the recipient at destination.
+   - Recipient inspects the parcel and provides the secret delivery OTP.
+   - Traveler submits OTP to API/app.
+   - Escrow funds are immediately transferred to traveler's wallet.
+
+6. `COMPLETED`:
+   - Both parties rate each other (1-5 stars with feedback tags).
+   - Order archive and digital receipt generated.
+
+7. `CANCELLED` / `DISPUTED`:
+   - If canceled before pickup, escrow is refunded in full to sender.
+   - If a dispute arises in transit, support intervention is flagged (`/api/support/report`).
+
+---
+
+## 3. Allowed vs Prohibited Categories
+
+### Allowed
+- Documents, business files, legal papers
+- Electronics, mobile devices, chargers, cables
+- Clothes, accessories, apparel
+- Packaged dry groceries, sealed non-perishables
+- Books, stationery, toys, gifts
+- Personal household items within luggage limits
+
+### Strictly Prohibited
+- Explosives, fireworks, flammable liquids, pressurized gas cylinders
+- Illegal drugs, narcotics, unprescribed pharmaceuticals
+- Weapons, firearms, knives, ammunition
+- Live animals or biological specimens
+- Perishable foods subject to spoilage
+- Unprocessed precious stones, bulk cash, bearer instruments
+- Any item violating local, state, or federal laws
+
+---
+
+## 4. API Endpoints Reference
+
+### Authentication
+- `POST /api/auth/register`: `{ email, phone, password, firstName, lastName, role }` -> `{ token, user }`
+- `POST /api/auth/login`: `{ emailOrPhone, password }` -> `{ token, user }`
+- `POST /api/auth/request-otp`: `{ phone, type }` -> `{ success, message }`
+- `POST /api/auth/verify-otp`: `{ phone, otp, type }` -> `{ success, verified }`
+- `GET /api/auth/me`: Headers `Authorization: Bearer <jwt>` -> `{ user }`
+
+### Parcels
+- `POST /api/postparcel/create`: `{ fromCity, toCity, pickupAddress, deliveryAddress, parcelType, weightKg, price, urgency, receiverName, receiverPhone }`
+- `GET /api/postparcel/search?from=City&to=City&category=Type`: Search available parcel posts
+- `GET /api/postparcel/:id`: Fetch parcel details
+- `PUT /api/postparcel/:id/accept`: Traveler accepts parcel
+- `POST /api/postparcel/:id/verify-otp`: Submits receiver OTP to complete delivery
+
+### Traveler Routes
+- `POST /api/travelroutes/create`: `{ fromCity, toCity, travelDate, travelTime, vehicleType, capacityKg, maxPrice }`
+- `GET /api/travelroutes/search?from=City&to=City&date=YYYY-MM-DD`: Search traveler routes
+
+### Payments & Wallet
+- `POST /api/payments/create-order`: `{ parcelId, amount }` -> `{ orderId, razorpayKey }`
+- `POST /api/payments/verify`: `{ parcelId, paymentId, orderId, signature }`
+- `POST /api/withdraw/request`: `{ amount, upiId }` -> `{ requestId, otpSent }`
+- `POST /api/withdraw/verify-otp`: `{ requestId, otp }` -> `{ status: "PROCESSED" }`
+
+### AI & Support
+- `POST /api/ai/chat`: `{ message, conversationId, screen }` -> `{ reply, action }`
+- `POST /api/support/contact`: `{ name, email, subject, message }`
+
+---
+
+## 5. Model Context Protocol (MCP) Integration
+
+TravelBuddy implements a Model Context Protocol server exposing:
+- Discovery: `https://travalbuddy.web.app/.well-known/mcp`
+- Transport: Server-Sent Events (SSE) / Streamable HTTP POST at `https://travelbuddy-backend-19l6.onrender.com/mcp`
+- Tools:
+  - `estimate_delivery_fee(fromCity, toCity, weightKg, urgency)`
+  - `search_travel_routes(fromCity, toCity, travelDate)`
+  - `get_parcel_status(orderId)`
+  - `list_prohibited_items()`
+  - `get_platform_info()`
+
+Authentication uses Bearer tokens in the `Authorization` header for user-specific tools.

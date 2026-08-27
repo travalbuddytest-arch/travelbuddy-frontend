@@ -42,7 +42,20 @@
         }
     }
 
-    inject('tbNavbarInclude', '../shared/navbar.html');
+    function getBasePath() {
+        var scripts = document.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            var src = scripts[i].getAttribute('src') || '';
+            if (src.indexOf('nav-include.js') !== -1) {
+                var prefix = src.substring(0, src.indexOf('nav-include.js'));
+                return prefix || './';
+            }
+        }
+        return '../shared/';
+    }
+
+    var basePath = getBasePath();
+    inject('tbNavbarInclude', basePath + 'navbar.html');
 
     // Premium Background Injection
     (function injectBackground() {
@@ -95,14 +108,14 @@
         }
     }
 
-    loadAsset('../shared/toast.css', 'css');
-    loadAsset('../shared/toast.js', 'js');
-    loadAsset('../shared/ai-assistant.css', 'css');
-    loadAsset('../shared/ai-assistant.js', 'js');
+    loadAsset(basePath + 'toast.css', 'css');
+    loadAsset(basePath + 'toast.js', 'js');
+    loadAsset(basePath + 'ai-assistant.css', 'css');
+    loadAsset(basePath + 'ai-assistant.js', 'js');
 
     window.TBInclude = {
         injectFooter: function () {
-            inject('tbFooterInclude', '../shared/footer.html');
+            inject('tbFooterInclude', basePath + 'footer.html');
             applyHomeFooterAnchorFix();
         }
     };

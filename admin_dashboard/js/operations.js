@@ -13,6 +13,7 @@ async function apiGet(url) {
 }
 
 function timeAgo(date) {
+  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatRelative(date);
   if (!date) return '';
   const diffMs = +new Date() - +new Date(date);
   const mins = Math.floor(diffMs / 60000);
@@ -24,6 +25,7 @@ function timeAgo(date) {
 }
 
 function fullTime(date) {
+  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(date);
   if (!date) return '';
   try {
     return new Date(date).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });

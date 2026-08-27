@@ -22,6 +22,7 @@
   let activity = [];
 
   function timeAgo(iso) {
+    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatRelative(iso);
     const then = new Date(iso).getTime();
     if (Number.isNaN(then)) return '';
     const diffMs = Date.now() - then;
@@ -148,6 +149,7 @@
   }
 
   function formatTime(iso) {
+    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(iso);
     if (!iso) return '';
     const date = new Date(iso);
     if (Number.isNaN(date.getTime())) return '';

@@ -35,6 +35,7 @@
   let activeFilter = 'all';
 
   function formatDateTime(value) {
+    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(value) || 'Not recorded';
     if (!value) return 'Not recorded';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return 'Not recorded';
@@ -48,6 +49,7 @@
   }
 
   function formatShortDate(value) {
+    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDate(value) || 'Date unavailable';
     if (!value) return 'Date unavailable';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return 'Date unavailable';

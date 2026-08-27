@@ -1,0 +1,381 @@
+openapi: 3.0.3
+info:
+  title: TravelBuddy API
+  description: Official REST API for TravelBuddy peer-to-peer parcel delivery platform connecting senders and verified travelers.
+  version: 1.0.0
+  contact:
+    name: TravelBuddy Support
+    email: hello@travelbuddy.com
+    url: https://travalbuddy.web.app/contact/contact.html
+servers:
+  - url: https://travelbuddy-backend-19l6.onrender.com
+    description: Production Backend Server
+  - url: http://localhost:4000
+    description: Local Development Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your JWT token obtained from /api/auth/login or /api/auth/register
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [sender, traveler, both]
+        isVerified:
+          type: boolean
+        walletBalance:
+          type: number
+        rating:
+          type: number
+        ratingCount:
+          type: integer
+    Parcel:
+      type: object
+      properties:
+        _id:
+          type: string
+        orderId:
+          type: string
+        sender:
+          type: string
+        acceptedBy:
+          type: string
+        fromCity:
+          type: string
+        toCity:
+          type: string
+        pickupAddress:
+          type: string
+        deliveryAddress:
+          type: string
+        parcelType:
+          type: string
+        weightKg:
+          type: number
+        price:
+          type: number
+        status:
+          type: string
+          enum: [POSTED, ACCEPTED, PAID, PICKED_UP, IN_TRANSIT, DELIVERED, CANCELLED]
+        receiverName:
+          type: string
+        receiverPhone:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    TravelerRoute:
+      type: object
+      properties:
+        _id:
+          type: string
+        travelerId:
+          type: string
+        fromCity:
+          type: string
+        toCity:
+          type: string
+        travelDate:
+          type: string
+          format: date
+        travelTime:
+          type: string
+        vehicleType:
+          type: string
+        capacityKg:
+          type: number
+        status:
+          type: string
+          enum: [ACTIVE, COMPLETED, CANCELLED]
+paths:
+  /health:
+    get:
+      summary: Service health check
+      responses:
+        '200':
+          description: Backend is operational
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: string
+                  service:
+                    type: string
+                  timestamp:
+                    type: string
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, phone, password, firstName, lastName]
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+                role:
+                  type: string
+                  enum: [sender, traveler, both]
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Validation error or user already exists
+  /api/auth/login:
+    post:
+      summary: Log in with email or phone and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login, password]
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful, returns JWT token
+        '401':
+          description: Invalid credentials
+  /api/auth/me:
+    get:
+      summary: Get currently authenticated user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+  /api/postparcel/create:
+    post:
+      summary: Post a new parcel delivery request
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromCity, toCity, pickupAddress, deliveryAddress, parcelType, weightKg, price]
+              properties:
+                fromCity:
+                  type: string
+                toCity:
+                  type: string
+                pickupAddress:
+                  type: string
+                deliveryAddress:
+                  type: string
+                parcelType:
+                  type: string
+                weightKg:
+                  type: number
+                price:
+                  type: number
+                receiverName:
+                  type: string
+                receiverPhone:
+                  type: string
+      responses:
+        '201':
+          description: Parcel posted successfully
+  /api/postparcel/search:
+    get:
+      summary: Search active parcels
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of available parcels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Parcel'
+  /api/travelroutes/create:
+    post:
+      summary: Post an upcoming travel route
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromCity, toCity, travelDate]
+              properties:
+                fromCity:
+                  type: string
+                toCity:
+                  type: string
+                travelDate:
+                  type: string
+                  format: date
+                travelTime:
+                  type: string
+                vehicleType:
+                  type: string
+                capacityKg:
+                  type: number
+      responses:
+        '201':
+          description: Route created successfully
+  /api/travelroutes/search:
+    get:
+      summary: Search matching traveler routes
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of traveler routes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TravelerRoute'
+  /api/payments/create-order:
+    post:
+      summary: Create Razorpay escrow payment order
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [parcelId, amount]
+              properties:
+                parcelId:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        '200':
+          description: Order created
+  /api/ai/chat:
+    post:
+      summary: Context-aware Gemini AI assistant chat endpoint
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                conversationId:
+                  type: string
+                screen:
+                  type: string
+      responses:
+        '200':
+          description: AI reply with contextual action
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  reply:
+                    type: string
+                  action:
+                    type: object
+                  conversationId:
+                    type: string
+  /api/support/contact:
+    post:
+      summary: Submit a customer support contact ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, message]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                subject:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Support message received

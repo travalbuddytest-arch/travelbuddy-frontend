@@ -167,7 +167,10 @@ function renderRow(o) {
 
 function truncate(s, max) { return s && s.length > max ? s.slice(0, max) + '…' : s; }
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'; }
+function formatDate(d) {
+  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(d);
+  return d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+}
 function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 try { initCancellations(); } catch (e) { console.warn('cancellations init failed', e); }

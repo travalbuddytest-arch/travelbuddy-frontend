@@ -9,6 +9,12 @@
 /contact/         /contact/contact.html                      200
 /support          /support/support.html                      200
 /support/         /support/support.html                      200
+/developers       /developers/index.html                     200
+/developers/      /developers/index.html                     200
+/docs             /developers/index.html                     200
+/docs/            /developers/index.html                     200
+/api-docs         /developers/index.html                     200
+/api-docs/        /developers/index.html                     200
 /legal/privacy               /legal/privacy.html               200
 /legal/privacy/              /legal/privacy.html               200
 /legal/terms                 /legal/terms.html                 200

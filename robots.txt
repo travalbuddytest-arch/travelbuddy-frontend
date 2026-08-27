@@ -8,4 +8,4 @@ Disallow: /login/
 Disallow: /register/
 Disallow: /forgot-password/
 
-Sitemap: https://travelbuddyweb1.netlify.app/sitemap.xml
+Sitemap: https://travalbuddy.web.app/sitemap.xml

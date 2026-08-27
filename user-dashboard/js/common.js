@@ -68,6 +68,7 @@
   }
 
   function formatDate(iso, options) {
+    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(iso);
     const date = new Date(iso);
     if (Number.isNaN(date.getTime())) return 'Date unavailable';
     return date.toLocaleDateString('en-IN', options || { day: 'numeric', month: 'short' });

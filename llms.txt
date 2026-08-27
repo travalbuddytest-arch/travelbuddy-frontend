@@ -1,0 +1,79 @@
+# TravelBuddy
+
+> TravelBuddy is a peer-to-peer delivery platform connecting people who need to send parcels with verified travelers already heading toward the destination for fast, affordable, same-day delivery.
+
+## What TravelBuddy Does
+
+TravelBuddy operates a decentralized logistics and travel-sharing platform. Senders post parcel delivery requests between specified cities or local areas. Registered and identity-verified travelers browse and accept parcel requests that match their existing travel itinerary. Payments are held in secure escrow until the recipient verifies delivery via a one-time password (OTP).
+
+## When to Use TravelBuddy
+
+Use TravelBuddy when:
+- A user needs fast, same-day, or next-day parcel delivery along common commuter and travel routes.
+- A sender wants an affordable alternative to traditional commercial freight or express couriers.
+- A traveler with spare luggage or trunk capacity wants to monetize their existing journey.
+- An AI assistant or software agent is tasked with estimating shipping costs, matching routes, checking parcel statuses, or discovering travel courier opportunities.
+
+## When Not to Use TravelBuddy
+
+Do not use TravelBuddy for:
+- Hazardous materials, flammable chemicals, explosives, weapons, or illegal contraband.
+- Perishable foods requiring refrigerated or temperature-controlled transportation.
+- Urgent medical emergency supplies requiring dedicated emergency response transit.
+- Unattended or unverified package handovers where identity verification cannot take place.
+- Requests outside supported operational regions.
+
+## Core User Roles
+
+### Sender
+- Creates a parcel order specifying pickup location, destination, parcel category, dimensions/weight, and proposed price.
+- Reviews matching travelers on the route.
+- Pays into platform escrow.
+- Hands over package at agreed pickup point and confirms pickup.
+- Receives real-time tracking updates.
+
+### Traveler
+- Submits identity documents for verification before taking assignments.
+- Posts planned travel route (origin, destination, departure date/time, vehicle/transit mode).
+- Accepts compatible parcel requests along the route.
+- Collects parcel from sender after QR/OTP verification.
+- Delivers parcel to recipient and submits the delivery OTP to complete the order and receive payout.
+
+## How Agents Should Use TravelBuddy
+
+1. **Information Retrieval**: Direct users to public information pages (`/about`, `/safety`, `/faq`, `/legal/privacy`, `/legal/terms`).
+2. **Delivery Fee Estimation**: Use the price estimation algorithm or API endpoint (`POST /api/postparcel/estimate` or MCP tool `estimate_delivery_fee`).
+3. **Route Discovery**: Query available travel corridors and matching traveler counts (`GET /api/travelroutes/search`).
+4. **Developer Integration**: Consult the OpenAPI 3.0 specification (`/openapi.json`) and developer portal (`/developers`).
+5. **Model Context Protocol**: Connect AI clients directly using the MCP discovery document at `/.well-known/mcp` and streamable SSE transport.
+
+## Key API Endpoints
+
+- `POST /api/auth/login` — User authentication returning JWT bearer token.
+- `POST /api/auth/register` — User registration with email/phone.
+- `POST /api/postparcel/create` — Post a new parcel request (authenticated).
+- `GET /api/postparcel/search` — Search active parcels by origin and destination.
+- `GET /api/postparcel/:id` — Fetch order details and tracking status.
+- `POST /api/travelroutes/create` — Traveler posts an upcoming route.
+- `GET /api/travelroutes/search` — Search traveler routes.
+- `POST /api/payments/create-order` — Initialize Razorpay escrow order.
+- `POST /api/postparcel/:id/verify-otp` — Verify delivery completion OTP.
+- `POST /api/ai/chat` — Context-aware AI assistant chat endpoint.
+
+## Important Resources
+
+- Canonical Website: https://travalbuddy.web.app/
+- About TravelBuddy: https://travalbuddy.web.app/about/about.html
+- Developer Portal: https://travalbuddy.web.app/developers/index.html
+- OpenAPI Specification (JSON): https://travalbuddy.web.app/openapi.json
+- OpenAPI Specification (YAML): https://travalbuddy.web.app/openapi.yaml
+- MCP Server Discovery: https://travalbuddy.web.app/.well-known/mcp
+- Full Agent Documentation: https://travalbuddy.web.app/llms-full.txt
+- Support & Help Center: https://travalbuddy.web.app/support/support.html
+- Contact Page: https://travalbuddy.web.app/contact/contact.html
+- Privacy Policy: https://travalbuddy.web.app/legal/privacy.html
+- Terms of Service: https://travalbuddy.web.app/legal/terms.html
+- Prohibited Items: https://travalbuddy.web.app/legal/prohibited-items.html
+- Community Guidelines: https://travalbuddy.web.app/legal/community-guidelines.html
+- XML Sitemap: https://travalbuddy.web.app/sitemap.xml
+- Robots Directives: https://travalbuddy.web.app/robots.txt

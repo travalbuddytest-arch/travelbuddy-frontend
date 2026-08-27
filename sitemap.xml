@@ -2,43 +2,105 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/</loc>
+    <loc>https://travalbuddy.web.app/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/about/</loc>
+    <loc>https://travalbuddy.web.app/about/about.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/post-parcel/</loc>
+    <loc>https://travalbuddy.web.app/post-parcel/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/send-parcel/</loc>
+    <loc>https://travalbuddy.web.app/send-parcel/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/carry-parcel/</loc>
+    <loc>https://travalbuddy.web.app/carry-parcel/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/how-travelbuddy-works/</loc>
+    <loc>https://travalbuddy.web.app/parcel-delivery/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/safety/</loc>
+    <loc>https://travalbuddy.web.app/how-travelbuddy-works/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/faq/</loc>
+    <loc>https://travalbuddy.web.app/safety/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/contact/</loc>
+    <loc>https://travalbuddy.web.app/faq/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://travelbuddyweb1.netlify.app/support/</loc>
+    <loc>https://travalbuddy.web.app/contact/contact.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/support/support.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/developers/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/legal/privacy.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/legal/terms.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/legal/prohibited-items.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/legal/community-guidelines.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/llms.txt</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
 </urlset>

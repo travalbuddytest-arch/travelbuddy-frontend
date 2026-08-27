@@ -643,6 +643,7 @@ function renderUserDetail(data) {
   const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Unknown';
   const initials = (u.firstName?.[0] || '') + (u.lastName?.[0] || '');
   const statusColor = u.isOnline ? '#12b76a' : '#d0d5dd';
+  const formatDateStr = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(d) : formatDate(d);
 
   let html = `
     <div class="dp-card">
@@ -663,8 +664,8 @@ function renderUserDetail(data) {
       <div class="detail-row"><span>User ID</span><span class="cell-mono">${escHtml(u._id || '')}</span></div>
       ${u.senderPublicId ? `<div class="detail-row"><span>Sender ID</span><span class="cell-mono">${escHtml(u.senderPublicId)}</span></div>` : ''}
       ${u.travelerPublicId ? `<div class="detail-row"><span>Traveler ID</span><span class="cell-mono">${escHtml(u.travelerPublicId)}</span></div>` : ''}
-      <div class="detail-row"><span>Joined</span><span>${formatDate(u.createdAt)}</span></div>
-      <div class="detail-row"><span>Last Seen</span><span>${u.lastSeenAt ? formatDate(u.lastSeenAt) : '—'}</span></div>
+      <div class="detail-row"><span>Joined</span><span>${formatDateStr(u.createdAt)}</span></div>
+      <div class="detail-row"><span>Last Seen</span><span>${u.lastSeenAt ? formatDateStr(u.lastSeenAt) : '—'}</span></div>
       <div class="detail-row"><span>Verified</span><span>${u.isVerified ? 'Yes' : 'No'}</span></div>
     </div>
   `;
@@ -735,13 +736,18 @@ function renderUserDetail(data) {
 }
 
 function formatDate(d) {
+  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(d);
   if (!d) return '—';
   return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 function updateDateLabel() {
   const dateLabel = getEl('date');
   if (dateLabel) {
-    dateLabel.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    if (window.TravelBuddyDate) {
+      dateLabel.textContent = window.TravelBuddyDate.formatDate(new Date());
+    } else {
+      dateLabel.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
   }
 }
 
@@ -1280,6 +1286,7 @@ const bellAlerts = [];
 const BELL_MAX = 20;
 
 function timeAgoShort(iso) {
+  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatRelative(iso);
   if (!iso) return '';
   const diffMs = Date.now() - +new Date(iso);
   const mins = Math.floor(diffMs / 60000);

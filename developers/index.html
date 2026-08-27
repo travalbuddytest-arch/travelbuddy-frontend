@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelBuddy Developer Documentation | API &amp; MCP Integration</title>
+    <meta name="description" content="Official TravelBuddy developer documentation. Integrate peer-to-peer parcel delivery with our REST API, OpenAPI 3.0 specification, and Model Context Protocol (MCP) server.">
+    <link rel="canonical" href="https://travalbuddy.web.app/developers/index.html">
+    <link rel="icon" type="image/jpeg" href="/images/logo.jpeg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TravelBuddy Developer Documentation">
+    <meta property="og:description" content="Build and integrate with the TravelBuddy logistics platform using our REST API, OpenAPI specification, and MCP AI agent server.">
+    <meta property="og:url" content="https://travalbuddy.web.app/developers/index.html">
+    <meta property="og:image" content="https://travalbuddy.web.app/images/post-your-parcel.jpg">
+    <meta property="og:site_name" content="TravelBuddy">
+
+    <link rel="stylesheet" href="/home/style.css">
+    <link rel="stylesheet" href="/shared/design-system.css">
+    <link rel="stylesheet" href="/shared/navbar.css">
+    <link rel="stylesheet" href="/shared/footer.css">
+    <link rel="stylesheet" href="/shared/seo-page.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        .dev-container {
+            max-width: 1100px;
+            margin: 100px auto 60px;
+            padding: 0 24px;
+        }
+        .dev-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 48px 36px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        .dev-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+        .dev-hero p {
+            font-size: 1.15rem;
+            color: #94a3b8;
+            max-width: 750px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .dev-quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dev-badge-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .dev-badge-link:hover {
+            background: rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+        .dev-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 36px;
+        }
+        @media (max-width: 850px) {
+            .dev-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .dev-sidebar {
+            position: sticky;
+            top: 90px;
+            align-self: start;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .dev-sidebar h3 {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+        .dev-sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .dev-sidebar nav a {
+            color: #334155;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.2s ease;
+        }
+        .dev-sidebar nav a:hover {
+            background: #f1f5f9;
+            color: var(--tb-primary, #0d6efd);
+        }
+        .dev-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+        .dev-section h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+        .dev-section p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            overflow-x: auto;
+            margin: 16px 0;
+            border: 1px solid #1e293b;
+        }
+        .endpoint-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        .endpoint-header {
+            background: #f8fafc;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .method-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'Fira Code', monospace;
+        }
+        .method-get { background: #e0f2fe; color: #0284c7; }
+        .method-post { background: #dcfce7; color: #16a34a; }
+        .method-put { background: #fef3c7; color: #d97706; }
+        .method-delete { background: #fee2e2; color: #dc2626; }
+        .endpoint-path {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.95rem;
+        }
+        .endpoint-body {
+            padding: 16px;
+            color: #475569;
+            font-size: 0.92rem;
+        }
+    </style>
+</head>
+<body data-page="developers">
+
+<div id="tbNavbarInclude"></div>
+<script src="/shared/nav-include.js"></script>
+
+<div class="dev-container">
+    <header class="dev-hero">
+        <h1>TravelBuddy Developer Documentation</h1>
+        <p>
+            Build next-generation peer-to-peer delivery integrations, query real-time travel routes, calculate instant shipping estimates, or connect autonomous AI agents with the official TravelBuddy API and Model Context Protocol (MCP) server.
+        </p>
+        <div class="dev-quick-links">
+            <a href="/openapi.json" class="dev-badge-link" download><i class="fa-solid fa-file-code"></i> OpenAPI 3.0 (JSON)</a>
+            <a href="/openapi.yaml" class="dev-badge-link" download><i class="fa-solid fa-file-lines"></i> OpenAPI 3.0 (YAML)</a>
+            <a href="/.well-known/mcp" class="dev-badge-link"><i class="fa-solid fa-robot"></i> MCP Discovery Manifest</a>
+            <a href="/llms.txt" class="dev-badge-link"><i class="fa-solid fa-brain"></i> LLM Agent Guidelines</a>
+        </div>
+    </header>
+
+    <div class="dev-grid">
+        <aside class="dev-sidebar">
+            <h3>Navigation</h3>
+            <nav>
+                <ul>
+                    <li><a href="#overview">Architecture Overview</a></li>
+                    <li><a href="#authentication">Authentication (JWT)</a></li>
+                    <li><a href="#endpoints">REST API Endpoints</a></li>
+                    <li><a href="#mcp">Model Context Protocol</a></li>
+                    <li><a href="#rate-limits">Rate Limits &amp; Security</a></li>
+                    <li><a href="#support">Developer Support</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="dev-content">
+            <section id="overview" class="dev-section">
+                <h2><i class="fa-solid fa-network-wired text-blue"></i> Architecture Overview</h2>
+                <p>
+                    The TravelBuddy platform exposes a RESTful JSON API for mobile and web clients, automated workflows, and partner systems. All production API traffic is served over HTTPS with support for standard HTTP verbs, CORS authentication, and structured error responses.
+                </p>
+                <div class="code-block">
+Base URL: https://travelbuddy-backend-19l6.onrender.com
+Local Dev: http://localhost:4000
+Content-Type: application/json
+                </div>
+            </section>
+
+            <section id="authentication" class="dev-section">
+                <h2><i class="fa-solid fa-key text-blue"></i> Authentication</h2>
+                <p>
+                    Protected endpoints require a JSON Web Token (JWT) provided in the HTTP <code>Authorization</code> header using the Bearer schema:
+                </p>
+                <div class="code-block">
+Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
+                </div>
+                <p>
+                    Obtain a valid token by sending credentials to <code>POST /api/auth/login</code> or <code>POST /api/auth/register</code>. Tokens are cryptographically signed and encode the user's role and verified status.
+                </p>
+            </section>
+
+            <section id="endpoints" class="dev-section">
+                <h2><i class="fa-solid fa-layer-group text-blue"></i> Key REST Endpoints</h2>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-path">/api/auth/login</span>
+                    </div>
+                    <div class="endpoint-body">
+                        Authenticates a user via email/phone and password. Returns JWT token, user roles, and profile information.
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-path">/api/postparcel/create</span>
+                    </div>
+                    <div class="endpoint-body">
+                        Creates a new parcel delivery order with origin, destination, parcel specifications, and proposed delivery fee. Requires Bearer authentication.
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-path">/api/postparcel/search</span>
+                    </div>
+                    <div class="endpoint-body">
+                        Searches public active parcel requests filtered by query parameters: <code>from</code>, <code>to</code>, and <code>category</code>.
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-path">/api/travelroutes/create</span>
+                    </div>
+                    <div class="endpoint-body">
+                        Travelers post their travel itinerary (origin, destination, departure date, luggage capacity).
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-path">/api/postparcel/:id/verify-otp</span>
+                    </div>
+                    <div class="endpoint-body">
+                        Validates the final delivery OTP provided by the receiver upon handover, instantly releasing escrow funds to the traveler's wallet.
+                    </div>
+                </div>
+            </section>
+
+            <section id="mcp" class="dev-section">
+                <h2><i class="fa-solid fa-robot text-blue"></i> Model Context Protocol (MCP)</h2>
+                <p>
+                    TravelBuddy provides first-party Model Context Protocol (MCP) server support, allowing autonomous AI agents to query routes, calculate price estimates, and inspect platform status safely.
+                </p>
+                <p>
+                    <strong>Discovery Endpoint:</strong> <code>https://travalbuddy.web.app/.well-known/mcp</code><br>
+                    <strong>Transport Protocol:</strong> Server-Sent Events (SSE) &amp; Streamable HTTP POST at <code>https://travelbuddy-backend-19l6.onrender.com/mcp</code>
+                </p>
+                <h3>Available MCP Tools</h3>
+                <ul>
+                    <li><code>estimate_delivery_fee</code>: Computes estimated fee based on distance, parcel weight, and delivery urgency.</li>
+                    <li><code>search_travel_routes</code>: Finds verified travelers traveling along specific routes.</li>
+                    <li><code>get_parcel_status</code>: Retrieves public tracking milestones for a specific order ID.</li>
+                    <li><code>list_prohibited_items</code>: Returns categories of prohibited and restricted cargo.</li>
+                    <li><code>get_platform_info</code>: Returns verified system operational status and capabilities.</li>
+                </ul>
+            </section>
+
+            <section id="rate-limits" class="dev-section">
+                <h2><i class="fa-solid fa-shield-halved text-blue"></i> Rate Limits &amp; Security</h2>
+                <p>
+                    All API endpoints enforce IP-based rate limiting to protect platform infrastructure:
+                </p>
+                <ul>
+                    <li><strong>Auth endpoints:</strong> 100 requests per 15-minute window.</li>
+                    <li><strong>Parcel &amp; Route creation:</strong> 50 actions per 10-minute window.</li>
+                    <li><strong>Global API limit:</strong> 5,000 requests per 10-minute window.</li>
+                </ul>
+            </section>
+
+            <section id="support" class="dev-section">
+                <h2><i class="fa-solid fa-headset text-blue"></i> Developer Support</h2>
+                <p>
+                    For questions, bug reports, or enterprise partnership inquiries:
+                </p>
+                <p>
+                    Email: <a href="mailto:hello@travelbuddy.com">hello@travelbuddy.com</a><br>
+                    Help Center: <a href="/support/support.html">TravelBuddy Support</a>
+                </p>
+            </section>
+        </main>
+    </div>
+</div>
+
+<div id="tbFooterInclude"></div>
+<script>window.TBInclude.injectFooter();</script>
+
+<script src="/shared/config.js?v=1"></script>
+<script src="/shared/auth-cookie-client.js?v=1"></script>
+<script src="/shared/analytics-client.js?v=1"></script>
+<script src="/shared/nav-basic-behavior.js"></script>
+</body>
+</html>
