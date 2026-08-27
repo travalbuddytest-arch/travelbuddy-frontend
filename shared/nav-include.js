@@ -55,7 +55,8 @@
     }
 
     var basePath = getBasePath();
-    inject('tbNavbarInclude', basePath + 'navbar.html');
+    var v = '4'; // Cache-buster version
+    inject('tbNavbarInclude', basePath + 'navbar.html?v=' + v);
 
     // Premium Background Injection
     (function injectBackground() {
@@ -115,7 +116,7 @@
 
     window.TBInclude = {
         injectFooter: function () {
-            inject('tbFooterInclude', basePath + 'footer.html');
+            inject('tbFooterInclude', basePath + 'footer.html?v=' + v);
             applyHomeFooterAnchorFix();
         }
     };

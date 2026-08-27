@@ -776,16 +776,16 @@ if (smartMatchingSection) {
         if (localStorage.getItem('travelBuddyAdmin')) {
             // admin logout
             if (window.TravelBuddyAuth && typeof window.TravelBuddyAuth.logoutAdmin === 'function') {
-                window.TravelBuddyAuth.logoutAdmin().finally(()=>{ window.location.href = 'index.html'; });
+                window.TravelBuddyAuth.logoutAdmin().finally(()=>{ window.location.href = '/'; });
             } else {
                 localStorage.removeItem('travelBuddyAdmin');
                 localStorage.removeItem('travelBuddyAdminToken');
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
             return;
         }
         localStorage.removeItem('travelBuddyUser');
-        window.location.href = 'index.html';
+        window.location.href = '/';
     });
 
     // Refresh the name from the backend when possible, while keeping the home page usable offline.
