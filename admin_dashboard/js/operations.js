@@ -581,7 +581,7 @@ function contactCardHtml(role, name, email, phone) {
       <div class="om-contact-role">${role}</div>
       <div class="om-contact-name">${escHtml(name)}</div>
       ${email ? `<div class="om-contact-line"><i class="fa-solid fa-envelope"></i>${escHtml(email)}</div>` : ''}
-      ${phone ? `<div class="om-contact-line"><i class="fa-solid fa-phone"></i>${escHtml(phone)}</div>` : '<div class="om-contact-line" style="color:#d0d5dd;">No phone on file</div>'}
+      ${phone ? `<div class="om-contact-line"><i class="fa-solid fa-mobile-screen-button"></i>${escHtml(phone)}</div>` : '<div class="om-contact-line" style="color:#d0d5dd;">No phone on file</div>'}
     </div>`;
 }
 
@@ -773,7 +773,7 @@ function wireToolbar() {
   if (soundBtn) {
     const applySoundBtnState = () => {
       soundBtn.classList.toggle('muted', soundMuted);
-      soundBtn.innerHTML = `<i class="fa-solid ${soundMuted ? 'fa-volume-xmark' : 'fa-volume-high'}"></i>`;
+      soundBtn.innerHTML = `<i class="fa-solid ${soundMuted ? 'fa-volume-xmark' : 'fa-volume-low'}"></i>`;
     };
     applySoundBtnState();
     soundBtn.addEventListener('click', () => {

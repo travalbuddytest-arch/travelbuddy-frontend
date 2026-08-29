@@ -10,7 +10,7 @@
 
 TravelBuddy is a community peer-to-peer delivery platform consisting of:
 1. **Web Application**: Static progressive web app hosted on Firebase Hosting (`https://travalbuddy.web.app`).
-2. **Android Application**: Native Jetpack Compose Android client with Google Maps, biometrics, and real-time Socket.IO tracking.
+2. **Android Application**: Native Jetpack Compose Android client with Google Maps and real-time Socket.IO tracking.
 3. **Backend API Server**: Node.js Express server on Render (`https://travelbuddy-backend-19l6.onrender.com`) with MongoDB database, Twilio SMS verification, Razorpay escrow payments, and Gemini AI RAG assistant.
 4. **Model Context Protocol (MCP) Server**: First-party MCP discovery endpoint at `/.well-known/mcp` and live JSON-RPC/SSE endpoint at `/mcp`.
 

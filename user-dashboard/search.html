@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Search - TravelBuddy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .search-container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .search-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .search-bar-wrap { flex: 1; position: relative; }
+        .search-bar-wrap i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #667085; }
+        .search-bar-wrap input { width: 100%; padding: 12px 12px 12px 45px; border: 1px solid #d0d5dd; border-radius: 12px; outline: none; font-size: 16px; }
+        .search-bar-wrap input:focus { border-color: #1769ff; box-shadow: 0 0 0 4px rgba(23, 105, 255, 0.1); }
+
+        .recent-section { margin-top: 30px; }
+        .recent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .recent-list { display: flex; flex-direction: column; gap: 5px; }
+        .recent-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .recent-item:hover { background: #f9fafb; }
+        .recent-item i { color: #98a2b3; }
+        .recent-item span { flex: 1; color: #344054; }
+        .recent-item button { background: none; border: none; color: #98a2b3; cursor: pointer; padding: 5px; }
+        .recent-item button:hover { color: #f04438; }
+
+        .results-section { margin-top: 30px; }
+        .result-card { background: #fff; border: 1px solid #eaecf0; border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; }
+        .result-card:hover { transform: translateY(-2px); border-color: #1769ff; }
+        .result-type { font-size: 11px; font-weight: 700; color: #1769ff; text-transform: uppercase; margin-bottom: 5px; }
+        .result-title { font-weight: 600; font-size: 16px; color: #101828; }
+        .result-subtitle { color: #667085; font-size: 13px; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <div class="search-header">
+            <a href="overview.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="search-bar-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search city, route or parcel..." autocomplete="off">
+            </div>
+        </div>
+
+        <div id="initialContent">
+            <div class="recent-section" id="recentSearchesSection" style="display: none;">
+                <div class="recent-header">
+                    <h3>Recent Searches</h3>
+                    <button id="clearAllBtn" style="color: #1769ff; background: none; border: none; cursor: pointer; font-weight: 600;">Clear All</button>
+                </div>
+                <div class="recent-list" id="recentList">
+                    <!-- Recent searches here -->
+                </div>
+            </div>
+
+            <div class="popular-section">
+                <h3>Popular Cities</h3>
+                <div class="popular-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px;">
+                    <button class="pop-chip">Mumbai</button>
+                    <button class="pop-chip">Pune</button>
+                    <button class="pop-chip">Delhi</button>
+                    <button class="pop-chip">Bangalore</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsContent" style="display: none;">
+            <div class="results-section" id="resultsList">
+                <!-- Search results here -->
+            </div>
+        </div>
+
+        <div id="loadingState" style="display: none; text-align: center; margin-top: 50px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: #1769ff;"></i>
+            <p style="margin-top: 10px; color: #667085;">Searching platform...</p>
+        </div>
+
+        <div id="emptyState" style="display: none; text-align: center; margin-top: 50px;">
+            <i class="fa-solid fa-search" style="font-size: 40px; color: #d0d5dd;"></i>
+            <h3>No results found</h3>
+            <p>Try searching for a different city or parcel ID.</p>
+        </div>
+    </div>
+
+    <script src="../../shared/config.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

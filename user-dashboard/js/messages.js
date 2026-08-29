@@ -266,7 +266,7 @@
       return `
         <div class="call-log-row">
           <span class="call-log-pill">
-            <i class="fa-solid ${missed ? 'fa-phone-slash' : 'fa-phone'}"></i>
+            <i class="fa-solid ${missed ? 'fa-phone-slash' : 'fa-mobile-screen-button'}"></i>
             ${escapeHTML(message.content)}
             <span class="call-log-time">${escapeHTML(formatTime(message.createdAt))}</span>
           </span>

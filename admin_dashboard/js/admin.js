@@ -12,6 +12,7 @@ const dashboardInfo = {
   cancellations: ['Parcel Outcomes', 'Deliveries and cancellations side by side — success rate, fees, revenue and reasons'],
   wallet: ['Wallet & Payments', 'Financial ledger, settlements and refunds'],
   messages: ['Users Activity', 'Every conversation on the platform — messages, calls and activity'],
+  'support-reports': ['Support & Reports', 'Manage user reports and support tickets'],
   analytics: ['Analytics', 'Platform growth, performance and behavioral insights'],
   system: ['System Health', 'API, database, email and OTP monitoring'],
 };
@@ -19,7 +20,7 @@ const dashboardInfo = {
 const infoCards = {
   parcels: [
     ['fa-box-open', 'Parcel 360°', 'Inspect the complete journey, users, payment, OTP events and timeline.'],
-    ['fa-filter', 'Smart Filters', 'Filter by status, city, date, risk and payment type.'],
+    ['fa-sliders', 'Smart Filters', 'Filter by status, city, date, risk and payment type.'],
     ['fa-clock-rotate-left', 'Full Timeline', 'See every action and status change with exact timestamps.'],
   ],
   users: [
@@ -124,6 +125,16 @@ async function apiPut(url, body) {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PUT', headers, credentials: 'include', body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, data };
+  return data;
+}
+
+async function apiPatch(url, body) {
+  const token = localStorage.getItem('admin_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PATCH', headers, credentials: 'include', body: JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };
   return data;

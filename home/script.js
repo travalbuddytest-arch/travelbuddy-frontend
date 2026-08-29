@@ -946,7 +946,7 @@ if (smartMatchingSection) {
                 <div class="home-profile-row"><div class="home-profile-field"><label for="homeFirstName">First Name</label><input id="homeFirstName" required></div><div class="home-profile-field"><label for="homeLastName">Last Name</label><input id="homeLastName" required></div></div>
                 <div class="home-profile-field"><label for="homeProfileEmail">Email</label><input id="homeProfileEmail" type="email" disabled></div>
                 <div class="home-profile-field" id="homeProfilePhoneField"><label for="homeProfilePhone">Mobile Number</label><input id="homeProfilePhone" type="tel"></div>
-                <button class="home-profile-save" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+                <button class="home-profile-save" type="submit"><i class="fa-solid fa-bookmark"></i> Save Profile</button>
               </form>
             </section>
             <section class="home-profile-panel hidden" id="homeSettingsPanel">

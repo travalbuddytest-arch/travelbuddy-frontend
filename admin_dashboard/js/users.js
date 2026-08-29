@@ -519,7 +519,7 @@ function renderModal(data, initialTab = 'overview') {
       ${u.status !== 'blocked' ? `<button class="us-btn us-btn-sm us-btn-danger" data-qa="block"><i class="fa-solid fa-user-slash"></i> Block</button>` : ''}
       <button class="us-btn us-btn-sm us-btn-danger" data-qa="delete"><i class="fa-solid fa-trash"></i> Delete</button>
       <a class="us-btn us-btn-sm" href="mailto:${esc(u.email)}"><i class="fa-solid fa-envelope"></i> Email User</a>
-      ${u.phone ? `<a class="us-btn us-btn-sm" href="tel:${esc(u.phone)}"><i class="fa-solid fa-phone"></i> Call User</a>` : ''}
+      ${u.phone ? `<a class="us-btn us-btn-sm" href="tel:${esc(u.phone)}"><i class="fa-solid fa-mobile-screen-button"></i> Call User</a>` : ''}
     </div>
 
     <div class="us-tabs">
@@ -657,7 +657,7 @@ function renderVerificationTab(data) {
   return `
     <div class="us-verify-list">
       ${row('fa-envelope', 'Email Verification', 'email', 'verified', false)}
-      ${row('fa-phone', 'Phone Verification', 'phone', 'verified', false)}
+      ${row('fa-mobile-screen-button', 'Phone Verification', 'phone', 'verified', false)}
       ${row('fa-id-card', 'Government ID', 'governmentId', v.governmentId, true)}
       ${row('fa-face-smile', 'Selfie Verification', 'selfie', v.selfie, true)}
       ${row('fa-location-dot', 'Address Verification', 'address', v.address, true)}

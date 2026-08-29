@@ -496,14 +496,14 @@
         <div class="tb-call-popup-ring"><div class="tb-call-popup-avatar" id="tbCallPopupAvatar">TB</div></div>
         <div class="tb-call-popup-info">
           <strong id="tbCallPopupName">TravelBuddy user</strong>
-          <span id="tbCallPopupSub"><i class="fa-solid fa-phone-volume"></i> Incoming audio call...</span>
+          <span id="tbCallPopupSub"><i class="fa-solid fa-mobile-screen-button"></i> Incoming audio call...</span>
         </div>
         <div class="tb-call-popup-actions">
           <button type="button" class="tb-call-popup-btn tb-call-popup-reject" id="tbCallPopupReject" aria-label="Reject call">
             <i class="fa-solid fa-phone-slash"></i><span>Reject</span>
           </button>
           <button type="button" class="tb-call-popup-btn tb-call-popup-accept" id="tbCallPopupAccept" aria-label="Answer call">
-            <i class="fa-solid fa-phone"></i><span>Answer</span>
+            <i class="fa-solid fa-mobile-screen-button"></i><span>Answer</span>
           </button>
         </div>
       </div>
@@ -763,7 +763,7 @@
             </div>
             <div class="field"><label for="profileEmail">Email</label><input type="email" id="profileEmail" disabled /></div>
             <div class="field"><label for="profilePhone">Mobile Number</label><input type="tel" id="profilePhone" placeholder="+919876543210" /></div>
-            <button type="submit" class="btn-primary"><span class="btn-label"><i class="fa-solid fa-floppy-disk"></i> Save Profile</span><span class="spinner" aria-hidden="true"></span></button>
+            <button type="submit" class="btn-primary"><span class="btn-label"><i class="fa-solid fa-bookmark"></i> Save Profile</span><span class="spinner" aria-hidden="true"></span></button>
           </form>
         </section>
 
@@ -1038,26 +1038,12 @@
 
   const globalSearch = document.getElementById('globalSearch');
   if (globalSearch) {
-    const searchableSelector = [
-      '.parcel-card',
-      '.thread-item',
-      '.notif-item',
-      '.activity-item',
-      '.quick-btn',
-      '.timeline-item',
-      '.traveler-card',
-      '#txTableBody tr',
-    ].join(',');
-
+    globalSearch.addEventListener('click', () => {
+      window.location.href = 'search.html';
+    });
+    // Also handle typing if they start typing directly
     globalSearch.addEventListener('input', () => {
-      const query = globalSearch.value.trim().toLowerCase();
-      let matches = 0;
-      document.querySelectorAll(searchableSelector).forEach((item) => {
-        const isMatch = !query || item.textContent.toLowerCase().includes(query);
-        item.classList.toggle('is-search-hidden', !isMatch);
-        if (isMatch) matches += 1;
-      });
-      if (query && matches === 0) showToast('No visible dashboard items match that search.', 'error');
+      window.location.href = `search.html?q=${encodeURIComponent(globalSearch.value)}`;
     });
   }
 

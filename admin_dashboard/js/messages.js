@@ -206,7 +206,7 @@ function renderSummary(summ) {
       <strong class="green">${(summ.totalMessages || 0).toLocaleString()}</strong>
     </div>
     <div class="metric-card">
-      <span class="metric-icon orange"><i class="fa-solid fa-phone"></i></span>
+      <span class="metric-icon orange"><i class="fa-solid fa-mobile-screen-button"></i></span>
       <span class="metric-label">Total Calls</span>
       <strong class="orange">${(summ.totalCalls || 0).toLocaleString()}</strong>
     </div>
@@ -233,7 +233,7 @@ function renderRecentList(recent, { highlightFirst = false } = {}) {
     return `<div class="wallet-recent-item msg-recent-item${liveClass}">
       <span class="wr-avatar">${escHtml(initials)}</span>
       <span class="wr-user">${escHtml(name)}</span>
-      <span class="wr-type"><i class="fa-solid ${isCall ? 'fa-phone' : 'fa-message'}"></i> ${escHtml(item.content || (isCall ? 'Call' : 'Message'))}</span>
+      <span class="wr-type"><i class="fa-solid ${isCall ? 'fa-mobile-screen-button' : 'fa-message'}"></i> ${escHtml(item.content || (isCall ? 'Call' : 'Message'))}</span>
       <span class="wr-date">${formatDate(item.createdAt)}</span>
     </div>`;
   }).join('');
@@ -400,7 +400,7 @@ async function openThread(conversationId) {
         const missed = /missed|declined|busy/i.test(m.content || '');
         return `<div class="msg-thread-call-row">
           <span class="msg-thread-call-pill">
-            <i class="fa-solid ${missed ? 'fa-phone-slash' : 'fa-phone'}"></i>
+            <i class="fa-solid ${missed ? 'fa-phone-slash' : 'fa-mobile-screen-button'}"></i>
             ${escHtml(m.content)}
             <span class="msg-thread-call-time">${formatDate(m.createdAt)}</span>
           </span>
