@@ -267,6 +267,8 @@
     cash_payment_due: { icon: 'fa-money-bill-wave', color: '#F5A524' },
     earning_added: { icon: 'fa-sack-dollar', color: '#17A673' },
     reward_added: { icon: 'fa-gift', color: '#17A673' },
+    rating_received: { icon: 'fa-star', color: '#F5A524' },
+    rating_request: { icon: 'fa-comment-dots', color: '#0D6EFD' },
   };
   const NOTIF_DEFAULT_META = { icon: 'fa-bell', color: '#0D6EFD' };
 
@@ -279,7 +281,7 @@
   // track live, so History (the archive) is the right destination.
   const HISTORY_NOTIF_TYPES = new Set(['parcel_deleted', 'parcel_cancelled']);
   // Types for a parcel that's still an active, trackable journey.
-  const TRACK_NOTIF_TYPES = new Set(['parcel_posted', 'parcel_accepted', 'parcel_status']);
+  const TRACK_NOTIF_TYPES = new Set(['parcel_posted', 'parcel_accepted', 'parcel_status', 'rating_request', 'rating_received']);
 
   // Every dashboard page lives in this same folder, so plain relative paths
   // (no ../user-dashboard/ prefix) work from any of them.

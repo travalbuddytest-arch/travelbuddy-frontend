@@ -14,7 +14,7 @@ TravelBuddy is a peer-to-peer logistics platform that transforms everyday person
 - **Up to 40% Lower Costs**: Senders save significantly compared to traditional express couriers.
 - **Monetize Extra Space**: Travelers earn extra income to offset fuel and travel costs by carrying small parcels in their luggage or vehicle.
 - **Trust & Verification**: 100% government-ID verified members with background checks and rating histories.
-- **Escrow Protected Payments**: Delivery fees are held safely in escrow until successful delivery.
+- **Payment Protection**: Delivery fees are held safely until successful delivery.
 - **OTP Verification**: Handover and delivery require cryptographic One-Time Password (OTP) or QR confirmation between parties.
 
 ---
@@ -24,7 +24,7 @@ TravelBuddy is a peer-to-peer logistics platform that transforms everyday person
 ### 1. For Senders (Send a Parcel)
 1. **Post Parcel Details**: Enter pickup location, destination city/address, parcel category (documents, electronics, personal items, gifts), size/weight, and your target price.
 2. **Review & Compare Travelers**: Browse verified travelers heading your way, check ratings, past trip counts, and travel times.
-3. **Fund Escrow**: Pay securely via card, UPI, or wallet. Funds are locked safely until you confirm delivery.
+3. **Fund Securely**: Pay securely via card, UPI, or wallet. Funds are locked safely until you confirm delivery.
 4. **Handoff & Track**: Meet the traveler or courier for pickup, verify with QR/OTP, and follow real-time progress.
 5. **Confirm Delivery**: Receiver provides final OTP upon handover to release traveler payment.
 

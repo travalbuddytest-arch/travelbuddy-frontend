@@ -13,6 +13,8 @@
     message: { icon: 'fa-message', color: '#7C5CFC' },
     wallet_added: { icon: 'fa-indian-rupee-sign', color: '#17A673' },
     reward_added: { icon: 'fa-gift', color: '#17A673' },
+    rating_received: { icon: 'fa-star', color: '#F5A524' },
+    rating_request: { icon: 'fa-comment-dots', color: '#0D6EFD' },
   };
   const DEFAULT_META = { icon: 'fa-bell', color: '#0D6EFD' };
 

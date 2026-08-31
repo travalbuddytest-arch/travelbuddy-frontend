@@ -119,8 +119,18 @@
           <div class="panel-grid panel-grid--split">
             <div class="panel wallet-panel">
               <div class="wallet-top">
-                <span class="wallet-label">Wallet Balance</span>
-                <span class="wallet-value" id="walletBalanceValue">Rs. 0.00</span>
+                <span class="wallet-label">Total Balance</span>
+                <span class="wallet-value" id="walletTotalValue">Rs. 0.00</span>
+              </div>
+              <div class="wallet-breakdown">
+                <div class="breakdown-item">
+                  <span class="label">Available to Use</span>
+                  <span class="value" id="walletAvailableValue">Rs. 0.00</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="label">Locked for Parcels</span>
+                  <span class="value" id="walletLockedValue">Rs. 0.00</span>
+                </div>
               </div>
               <div class="wallet-actions">
                 <button class="btn-primary btn-primary--inline" id="withdrawBtn">

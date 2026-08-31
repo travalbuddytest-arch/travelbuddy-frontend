@@ -19,7 +19,7 @@ const SP_CATS = {
 const SP_TOPICS = [
     { cat: 'parcels',  title: 'Sending a parcel',            desc: 'Posting a parcel, choosing a category, and editing details before a traveler accepts.', count: 9 },
     { cat: 'trips',    title: 'Travelers & live tracking',    desc: 'Adding a trip, matching with parcels, and watching a delivery move in real time.', count: 11 },
-    { cat: 'payments', title: 'Payments & wallet',            desc: 'Accepted methods, escrow holds, receipts, and where your balance lives.', count: 8 },
+    { cat: 'payments', title: 'Payments & wallet',            desc: 'Accepted methods, payment holds, receipts, and where your balance lives.', count: 8 },
     { cat: 'account',  title: 'Account & verification',       desc: 'Login issues, ID verification, and keeping your profile up to date.', count: 7 },
     { cat: 'safety',   title: 'Safety & trust',                desc: 'How travelers are verified, OTP handovers, and reporting a problem.', count: 6 },
     { cat: 'refunds',  title: 'Refunds & cancellations',      desc: 'Cancellation rules by stage, and how long refunds take to land.', count: 9 }
@@ -39,7 +39,7 @@ const SP_FAQS = [
     { cat:'account', q:'How do I verify my profile?', a:'Upload a government ID during registration, or from Profile → Verification if you skipped it. A verified badge appears on your profile once it\u2019s approved, which builds trust with the other side of the match.' },
     { cat:'account', q:'Can I switch between sender and traveler roles?', a:'Yes — every TravelBuddy account can post parcels and add trips. Your profile shows both histories, so there\u2019s no separate account needed to switch roles.' },
     { cat:'payments', q:'What payment methods does TravelBuddy accept?', a:'Cards, UPI, net banking, and your TravelBuddy wallet balance, depending on your region. You\u2019ll see exactly what\u2019s available at checkout.' },
-    { cat:'payments', q:'Why was I charged before my parcel was delivered?', a:'Payment is held securely (escrow-style) when you confirm a match, and only released to the traveler once the receiver confirms delivery with their OTP. This protects both sides of the transaction.' },
+    { cat:'payments', q:'Why was I charged before my parcel was delivered?', a:'Payment is held securely when you confirm a match, and only released to the traveler once the receiver confirms delivery with their OTP. This protects both sides of the transaction.' },
     { cat:'payments', q:'Where can I find a receipt or my wallet history?', a:'Open Dashboard → Wallet to see your balance and every transaction, or Dashboard → Payments for itemized receipts you can export.' },
     { cat:'safety', q:'How are travelers verified?', a:'Every traveler completes ID verification, and their trip history and ratings from past deliveries are visible on their profile before you match with them.' },
     { cat:'safety', q:'What if my parcel arrives lost or damaged?', a:'Keep photos of the parcel and any tracking or chat records. Report it through “Raise a ticket” below with your parcel ID — our team reviews the trip and delivery records to resolve it.' },

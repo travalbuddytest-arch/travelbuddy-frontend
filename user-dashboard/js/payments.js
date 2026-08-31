@@ -26,8 +26,16 @@
     try {
       const user = await window.TravelBuddy.getCurrentUser();
       if (!user) return;
-      const walletValue = document.getElementById('walletBalanceValue');
-      if (walletValue) walletValue.textContent = formatRupees(user.walletBalance || 0);
+      const total = document.getElementById('walletTotalValue');
+      const avail = document.getElementById('walletAvailableValue');
+      const locked = document.getElementById('walletLockedValue');
+
+      const balance = Number(user.walletBalance || 0);
+      const held = Number(user.lockedBalance || 0);
+
+      if (total) total.textContent = formatRupees(balance + held);
+      if (avail) avail.textContent = formatRupees(balance);
+      if (locked) locked.textContent = formatRupees(held);
     } catch (err) {
       console.error('Wallet refresh failed:', err);
     }

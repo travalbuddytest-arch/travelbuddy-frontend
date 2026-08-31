@@ -11,7 +11,7 @@ TravelBuddy was founded to transform underutilized travel capacity into an effic
 - **Community-Powered**: Direct human-to-human collaboration reducing carbon footprints.
 - **Safety First**: Every user is identity-verified before transacting.
 - **Fair Pricing**: Transparent pricing negotiated directly or calculated algorithmically, saving senders up to 40%.
-- **Zero Friction**: Digital escrow and OTP exchange verification eliminate fraud and delivery disputes.
+- **Zero Friction**: Digital payment protection and OTP exchange verification eliminate fraud and delivery disputes.
 
 ## Contact & Information
 
