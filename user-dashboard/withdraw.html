@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Withdraw Funds</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .withdraw-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 22px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .withdraw-grid { grid-template-columns: 1fr; }
+    }
+    .payout-type-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .payout-type-card {
+      flex: 1;
+      padding: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      transition: all 0.18s ease;
+    }
+    .payout-type-card.active {
+      border-color: var(--primary);
+      background: rgba(13, 110, 253, 0.05);
+      color: var(--primary);
+    }
+    .quick-amount-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .quick-amount-pill {
+      font-size: 12px;
+      font-weight: 700;
+      background: #F1F5F9;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+    .quick-amount-pill:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="/" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item active" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn" type="button">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title">Withdraw Funds</h1>
+
+        <div class="topbar-actions">
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot hidden" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">TravelBuddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <!-- Verification Banner (Hidden if verified) -->
+        <div id="unverifiedNotice" class="journey-action-box is-warning hidden">
+          <div>
+            <h4 style="margin:0 0 4px; color:var(--text-main);"><i class="fa-solid fa-shield-exclamation"></i> Account Verification Required</h4>
+            <p style="margin:0; font-size:13px; color:var(--text-muted);">As per RBI compliance, user identity verification is required before initiating withdrawals.</p>
+          </div>
+          <a href="profile.html" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-id-card"></i> Verify Account</a>
+        </div>
+
+        <div class="withdraw-grid">
+          <!-- Left: Withdrawal Form -->
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Request Bank / UPI Withdrawal</h2>
+              <p class="panel-sub">Withdraw your available earnings directly to your bank account or UPI ID.</p>
+            </div>
+
+            <!-- STEP 1: Enter Amount & Destination -->
+            <form id="withdrawRequestForm">
+              <div class="field" style="margin-bottom:14px;">
+                <label for="withdrawAmount">Amount to Withdraw (in ₹) *</label>
+                <input type="number" id="withdrawAmount" min="100" max="50000" placeholder="Min ₹100, Max ₹50,000" style="font-size:18px; font-weight:700; height:48px;" required />
+                <div class="quick-amount-row">
+                  <button type="button" class="quick-amount-pill" id="quickAllBtn">All Available</button>
+                  <button type="button" class="quick-amount-pill" data-amount="500">₹500</button>
+                  <button type="button" class="quick-amount-pill" data-amount="1000">₹1,000</button>
+                  <button type="button" class="quick-amount-pill" data-amount="2000">₹2,000</button>
+                  <button type="button" class="quick-amount-pill" data-amount="5000">₹5,000</button>
+                </div>
+              </div>
+
+              <div class="field" style="margin-bottom:14px;">
+                <label>Payout Method</label>
+                <div class="payout-type-selector">
+                  <div class="payout-type-card active" id="typeUpiCard" data-type="upi">
+                    <i class="fa-solid fa-mobile-screen-button"></i> UPI ID
+                  </div>
+                  <div class="payout-type-card" id="typeBankCard" data-type="bank">
+                    <i class="fa-solid fa-building-columns"></i> Bank Account
+                  </div>
+                </div>
+              </div>
+
+              <!-- Saved Methods Dropdown (if available) -->
+              <div class="field hidden" id="savedMethodsWrap" style="margin-bottom:14px;">
+                <label for="savedPayoutSelect">Saved Payout Destination</label>
+                <select id="savedPayoutSelect" class="role-select" style="width:100%;">
+                  <option value="new">+ Use a new payout method</option>
+                </select>
+              </div>
+
+              <!-- UPI Fields -->
+              <div id="upiFieldsWrap" class="stack-form">
+                <div class="field">
+                  <label for="upiIdInput">UPI ID (e.g. mobile@upi, name@okhdfcbank) *</label>
+                  <input type="text" id="upiIdInput" placeholder="yourname@bank" />
+                </div>
+              </div>
+
+              <!-- Bank Fields -->
+              <div id="bankFieldsWrap" class="stack-form hidden">
+                <div class="field">
+                  <label for="bankHolderName">Account Holder Name *</label>
+                  <input type="text" id="bankHolderName" placeholder="Name as per bank records" />
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="bankAccountNumber">Account Number *</label>
+                    <input type="password" id="bankAccountNumber" placeholder="Account Number" />
+                  </div>
+                  <div class="field">
+                    <label for="bankAccountNumberConfirm">Confirm Account Number *</label>
+                    <input type="text" id="bankAccountNumberConfirm" placeholder="Re-enter Account Number" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="bankIfsc">IFSC Code *</label>
+                    <input type="text" id="bankIfsc" placeholder="e.g. HDFC0000128" style="text-transform:uppercase;" />
+                  </div>
+                  <div class="field">
+                    <label for="bankName">Bank Name (Optional)</label>
+                    <input type="text" id="bankName" placeholder="e.g. HDFC Bank" />
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top:20px;">
+                <button type="submit" class="btn-primary" id="requestOtpBtn" style="width:100%;">
+                  <span class="btn-label"><i class="fa-solid fa-envelope"></i> Send Email OTP to Continue</span>
+                  <span class="spinner"></span>
+                </button>
+              </div>
+            </form>
+
+            <!-- STEP 2: Verify OTP (Initially hidden) -->
+            <form id="withdrawVerifyForm" class="stack-form hidden" style="margin-top:20px; padding-top:20px; border-top:1.5px dashed var(--border);">
+              <div style="background:#EFF6FF; padding:14px; border-radius:var(--radius-md); border:1px solid rgba(13,110,253,0.2); margin-bottom:16px;">
+                <h4 style="margin:0 0 4px; font-size:14px; color:var(--primary);"><i class="fa-solid fa-shield-halved"></i> 2-Step Email Verification</h4>
+                <p style="margin:0; font-size:12.5px; color:var(--text-muted);">
+                  A 6-digit verification code has been sent to your registered email address. Enter it below to authorize this withdrawal.
+                </p>
+              </div>
+
+              <div class="field">
+                <label for="withdrawOtpInput">Enter 6-Digit Email OTP *</label>
+                <input type="text" id="withdrawOtpInput" maxlength="6" placeholder="• • • • • •" style="font-size:24px; letter-spacing:8px; text-align:center; font-weight:800; height:52px;" autocomplete="one-time-code" required />
+              </div>
+
+              <div style="display:flex; gap:10px; margin-top:8px;">
+                <button type="button" class="btn-ghost" id="cancelStep2Btn">Back</button>
+                <button type="submit" class="btn-primary" id="confirmWithdrawBtn" style="flex:1;">
+                  <span class="btn-label"><i class="fa-solid fa-check"></i> Authorize &amp; Withdraw</span>
+                  <span class="spinner"></span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right: Summary & Terms -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            <div class="panel" style="background:#F8FAFC;">
+              <div class="panel-head">
+                <h3>Balance Available</h3>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                  <span style="font-size:12px; color:var(--text-faint);">Withdrawable Balance</span>
+                  <div style="font-size:26px; font-weight:800; color:var(--text-main);" id="availBalanceValue">₹0.00</div>
+                </div>
+                <div style="padding-top:10px; border-top:1px solid var(--border);">
+                  <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted);">
+                    <span>Locked Escrow Balance</span>
+                    <strong id="lockedBalanceValue" style="color:var(--warning);">₹0.00</strong>
+                  </div>
+                  <small style="color:var(--text-faint); font-size:11.5px; display:block; margin-top:4px;">
+                    * Locked funds become withdrawable once deliveries are marked completed.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head" style="margin-bottom:8px;">
+                <h4 style="margin:0; font-size:14px; font-weight:700;"><i class="fa-solid fa-circle-info" style="color:var(--primary); margin-right:6px;"></i>Withdrawal Terms</h4>
+              </div>
+              <ul style="margin:0; padding-left:18px; font-size:12.5px; color:var(--text-muted); line-height:1.6;">
+                <li>Minimum withdrawal amount: ₹100</li>
+                <li>Maximum daily limit: ₹50,000</li>
+                <li>Zero processing fee charged by TravelBuddy.</li>
+                <li>Transfers are processed within 1–2 business hours via IMPS / UPI.</li>
+                <li>You can cancel a pending withdrawal request before processing starts.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Withdrawal History Table -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Withdrawal History</h2>
+            <p class="panel-sub">Real-time status of all your payout requests.</p>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="withdrawalsTable">
+              <thead>
+                <tr>
+                  <th>Requested Date</th>
+                  <th>Withdrawal ID</th>
+                  <th>Method &amp; Destination</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="withdrawalsTableBody">
+                <tr>
+                  <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i> Loading withdrawal history...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/withdraw.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

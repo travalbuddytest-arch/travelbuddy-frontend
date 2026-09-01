@@ -31,37 +31,86 @@
         </button>
       </div>
 
-      <nav class="nav-list" id="navList">
-        <a href="overview.html" class="nav-item active" data-section="overview">
-          <i class="fa-solid fa-gauge"></i><span>Overview</span>
-        </a>
-        <a href="post.html" class="nav-item" data-section="post">
-          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
-        </a>
-        <a href="pickup.html" class="nav-item" data-section="pickup">
-          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
-        </a>
-        <a href="track.html" class="nav-item" data-section="track">
-          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
-        </a>
-        <a href="messages.html" class="nav-item" data-section="messages">
-          <i class="fa-solid fa-message"></i><span>Messages</span>
-          <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
-        </a>
-        <a href="notifications.html" class="nav-item" data-section="notifications">
-          <i class="fa-solid fa-bell"></i><span>Notifications</span>
-          <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
-        </a>
-        <a href="payments.html" class="nav-item" data-section="payments">
-          <i class="fa-solid fa-wallet"></i><span>Payments</span>
-        </a>
-        <a href="history.html" class="nav-item" data-section="history">
-          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
-        </a>
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item active" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
       </nav>
 
       <div class="sidebar-bottom">
-        <button class="nav-item" id="logoutBtn">
+        <button class="nav-item" id="logoutBtn" type="button">
           <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
         </button>
       </div>
@@ -97,8 +146,11 @@
             <i class="fa-solid fa-chevron-down"></i>
 
             <div class="user-menu" id="userMenu">
-              <a href="" data-profile-action="profile"><i class="fa-solid fa-user"></i> My Profile</a>
-              <a href="" data-profile-action="settings"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
               <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
             </div>
           </div>
@@ -178,16 +230,24 @@
               </div>
               <div class="quick-actions">
                 <a class="quick-btn" href="post.html">
-                  <i class="fa-solid fa-box"></i>
+                  <i class="fa-solid fa-paper-plane"></i>
                   <span>Post a Parcel</span>
                 </a>
-                <a class="quick-btn" href="search.html">
-                  <i class="fa-solid fa-route"></i>
-                  <span>Find Parcels on my Route</span>
+                <a class="quick-btn" href="parcels.html">
+                  <i class="fa-solid fa-boxes-stacked"></i>
+                  <span>My Parcels</span>
                 </a>
-                <a class="quick-btn" href="payments.html">
+                <a class="quick-btn" href="pickup.html">
+                  <i class="fa-solid fa-truck-ramp-box"></i>
+                  <span>Pickup &amp; Delivery</span>
+                </a>
+                <a class="quick-btn" href="wallet.html">
                   <i class="fa-solid fa-wallet"></i>
-                  <span>View Payments</span>
+                  <span>Manage Wallet</span>
+                </a>
+                <a class="quick-btn" href="withdraw.html">
+                  <i class="fa-solid fa-money-bill-transfer"></i>
+                  <span>Withdraw</span>
                 </a>
               </div>
             </div>
@@ -200,21 +260,33 @@
                 <div class="wallet-metric">
                   <span class="wallet-metric-icon wallet-metric-icon--blue"><i class="fa-solid fa-wallet"></i></span>
                   <div>
-                    <span class="wallet-metric-value" id="walletBalanceValue">Rs. 0</span>
+                    <span class="wallet-metric-value" id="walletBalanceValue">₹0.00</span>
                     <span class="wallet-metric-label">Available balance</span>
                   </div>
                 </div>
                 <div class="wallet-metric">
-                  <span class="wallet-metric-icon wallet-metric-icon--green"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+                  <span class="wallet-metric-icon wallet-metric-icon--gold" style="background:#FEF3DD;color:#B25E09;"><i class="fa-solid fa-lock"></i></span>
                   <div>
-                    <span class="wallet-metric-value" id="walletEarningsValue">Rs. 0</span>
-                    <span class="wallet-metric-label">Earned as a traveler</span>
+                    <span class="wallet-metric-value" id="walletLockedValue">₹0.00</span>
+                    <span class="wallet-metric-label">Locked / In Escrow</span>
+                  </div>
+                </div>
+                <div class="wallet-metric">
+                  <span class="wallet-metric-icon wallet-metric-icon--green"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+                  <div>
+                    <span class="wallet-metric-value" id="walletEarningsValue">₹0.00</span>
+                    <span class="wallet-metric-label">Total traveler earnings</span>
                   </div>
                 </div>
               </div>
-              <a class="btn-ghost wallet-cta" href="payments.html">
-                <i class="fa-solid fa-plus"></i> Add money to wallet
-              </a>
+              <div style="display:flex; gap:10px; margin-top:14px;">
+                <a class="btn-primary btn-primary--inline" href="wallet.html" style="text-decoration:none; flex:1; text-align:center; display:inline-flex; align-items:center; justify-content:center;">
+                  <i class="fa-solid fa-plus"></i> Add Money
+                </a>
+                <a class="btn-ghost" href="withdraw.html" style="text-decoration:none; flex:1; text-align:center; display:inline-flex; align-items:center; justify-content:center;">
+                  <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
+                </a>
+              </div>
             </div>
           </div>
 

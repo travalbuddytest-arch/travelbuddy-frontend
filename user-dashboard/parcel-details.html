@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy - Parcel Details</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .details-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .details-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .details-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+    .details-back-link:hover {
+      color: var(--primary);
+    }
+    .details-header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .details-order-tag {
+      font-family: monospace;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .details-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 22px;
+    }
+    @media (max-width: 960px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Timeline Stepper */
+    .timeline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+    }
+    .timeline-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+    .timeline-steps::before {
+      content: '';
+      position: absolute;
+      left: 31px;
+      top: 10px;
+      bottom: 20px;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .timeline-step-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .timeline-step-item.is-done .timeline-step-icon {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+    .timeline-step-item.is-current .timeline-step-icon {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+    }
+    .timeline-step-body {
+      flex: 1;
+    }
+    .timeline-step-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .timeline-step-time {
+      font-size: 11.5px;
+      color: var(--text-faint);
+      margin-top: 2px;
+    }
+
+    /* Counterpart Card */
+    .profile-summary-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: #F8FAFC;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+    }
+    .profile-summary-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    /* Verification Box */
+    .journey-action-box {
+      background: #F0FDF4;
+      border: 1.5px solid rgba(22, 163, 74, 0.3);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .journey-action-box.is-warning {
+      background: #FFFBEB;
+      border-color: rgba(217, 119, 6, 0.3);
+    }
+    .journey-action-box.is-info {
+      background: #EFF6FF;
+      border-color: rgba(37, 99, 235, 0.3);
+    }
+
+    .rating-stars {
+      display: flex;
+      gap: 6px;
+      font-size: 24px;
+      color: #CBD5E1;
+      cursor: pointer;
+      margin: 12px 0;
+    }
+    .rating-stars i.active {
+      color: #F59E0B;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="/" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item active" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn" type="button">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title">Parcel Details</h1>
+
+        <div class="topbar-actions">
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot hidden" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">TravelBuddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <!-- Loading State -->
+        <div id="detailsLoading" style="text-align:center; padding: 60px 20px;">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:var(--primary);"></i>
+          <p style="margin-top:14px; font-size:14px; color:var(--text-muted);">Fetching parcel details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="detailsError" class="tb-empty-state hidden">
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--error);"></i>
+          <h3 id="detailsErrorTitle">Unable to Load Parcel</h3>
+          <p id="detailsErrorMessage">You are not authorized to view this parcel or it does not exist.</p>
+          <a href="parcels.html" class="btn-ghost" style="margin: 0 auto; display:inline-flex;">
+            <i class="fa-solid fa-arrow-left"></i> Back to My Parcels
+          </a>
+        </div>
+
+        <!-- Loaded Content Shell -->
+        <div id="detailsShell" class="details-shell hidden">
+          <div class="details-topbar">
+            <div>
+              <a href="parcels.html" class="details-back-link">
+                <i class="fa-solid fa-arrow-left"></i> All Parcels
+              </a>
+              <div class="details-header-title" style="margin-top: 8px;">
+                <span class="details-order-tag" id="orderIdText">TB-0000</span>
+                <span id="statusBadgeWrap"></span>
+                <span id="userRoleBadge"></span>
+              </div>
+            </div>
+
+            <div class="details-actions" id="headerActions">
+              <button type="button" class="btn-ghost" id="chatCounterpartBtn">
+                <i class="fa-solid fa-comment-dots"></i> <span id="chatBtnLabel">Message</span>
+              </button>
+              <button type="button" class="btn-ghost" id="reportIssueBtn" style="color:var(--error); border-color:rgba(220,38,38,0.2);">
+                <i class="fa-solid fa-flag"></i> Report
+              </button>
+              <button type="button" class="btn-ghost" id="cancelParcelBtn" style="color:var(--error);">
+                <i class="fa-solid fa-ban"></i> Cancel
+              </button>
+              <button type="button" class="btn-primary" id="reviewBtn" style="display:none;">
+                <i class="fa-solid fa-star"></i> Leave Review
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Action Banner (OTP / QR / Journey Progress) -->
+          <div id="actionBanner" class="journey-action-box hidden">
+            <div>
+              <h4 id="actionBannerTitle" style="margin:0 0 4px; font-size:14.5px; font-weight:700; color:var(--text-main);">Action Required</h4>
+              <p id="actionBannerDesc" style="margin:0; font-size:13px; color:var(--text-muted);">Please complete the verification step to advance this delivery.</p>
+            </div>
+            <div id="actionBannerButtons" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+          </div>
+
+          <div class="details-grid">
+            <!-- Left Column: Timeline, Specs, Route -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <!-- Timeline Card -->
+              <div class="timeline-card">
+                <div class="panel-head panel-head--row" style="margin-bottom:12px;">
+                  <h3 style="font-size:16px; margin:0;"><i class="fa-solid fa-route" style="color:var(--primary); margin-right:8px;"></i>Journey Tracking</h3>
+                  <a href="" id="liveTrackLink" class="link-btn"><i class="fa-solid fa-location-crosshairs"></i> Live View</a>
+                </div>
+
+                <div class="timeline-steps" id="timelineStepsList"></div>
+              </div>
+
+              <!-- Route Card -->
+              <div class="panel">
+                <div class="panel-head">
+                  <h3>Route &amp; Meeting Points</h3>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                  <div style="background:#F8FAFC; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+                    <span style="font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:4px;">
+                      <i class="fa-solid fa-circle-dot" style="color:var(--primary);"></i> Pickup Point
+                    </span>
+                    <strong id="pickupCityText" style="font-size:15px; display:block; margin-bottom:4px;">City</strong>
+                    <p id="pickupPointText" style="font-size:12.5px; color:var(--text-muted); margin:0;">Point details pending</p>
+                  </div>
+                  <div style="background:#F8FAFC; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+                    <span style="font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:4px;">
+                      <i class="fa-solid fa-location-dot" style="color:var(--success);"></i> Delivery Point
+                    </span>
+                    <strong id="deliveryCityText" style="font-size:15px; display:block; margin-bottom:4px;">City</strong>
+                    <p id="deliveryPointText" style="font-size:12.5px; color:var(--text-muted); margin:0;">Point details pending</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Parcel Specs Card -->
+              <div class="panel">
+                <div class="panel-head">
+                  <h3>Parcel Information</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <div>
+                    <span style="font-size:12px; color:var(--text-faint); display:block;">Description</span>
+                    <p id="parcelDescText" style="margin:2px 0 0; font-size:14px; color:var(--text-main); font-weight:500;">-</p>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:14px; padding-top:8px; border-top:1px solid var(--border);">
+                    <div>
+                      <span style="font-size:11.5px; color:var(--text-faint); display:block;">Weight</span>
+                      <strong id="parcelWeightText" style="font-size:14px; color:var(--text-main);">-</strong>
+                    </div>
+                    <div>
+                      <span style="font-size:11.5px; color:var(--text-faint); display:block;">Pickup Date</span>
+                      <strong id="parcelDateText" style="font-size:14px; color:var(--text-main);">-</strong>
+                    </div>
+                    <div>
+                      <span style="font-size:11.5px; color:var(--text-faint); display:block;">Created At</span>
+                      <strong id="parcelCreatedText" style="font-size:14px; color:var(--text-main);">-</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Counterpart & Financials -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <!-- Counterpart Profile -->
+              <div class="panel">
+                <div class="panel-head">
+                  <h3 id="counterpartTitle">Counterpart</h3>
+                </div>
+                <div class="profile-summary-box" id="counterpartBox">
+                  <div class="profile-summary-avatar" id="counterpartAvatar">TR</div>
+                  <div style="min-width:0; flex:1;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <strong id="counterpartName" style="font-size:15px; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Traveler Name</strong>
+                      <i class="fa-solid fa-circle-check" id="counterpartVerified" style="color:var(--primary); font-size:13px;" title="Verified User"></i>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-muted); margin-top:2px;">
+                      <span id="counterpartRating"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> 0.0</span>
+                      <span id="counterpartDeliveries"><i class="fa-solid fa-truck-fast"></i> 0 trips</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn-primary" id="counterpartChatBtn" style="width:100%;">
+                  <i class="fa-solid fa-message"></i> Chat Now
+                </button>
+              </div>
+
+              <!-- Financial Breakdown -->
+              <div class="panel">
+                <div class="panel-head">
+                  <h3>Financial Breakdown</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px;">
+                  <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
+                    <span>Offered Parcel Amount</span>
+                    <strong id="finGrossPrice" style="color:var(--text-main);">₹0.00</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
+                    <span>TravelBuddy Service Fee (10%)</span>
+                    <span id="finPlatformFee">₹0.00</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
+                    <span>Traveler Net Earnings (90%)</span>
+                    <strong id="finTravelerEarning" style="color:var(--success);">₹0.00</strong>
+                  </div>
+                  <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; color:var(--text-main);">Payment Status</span>
+                    <span id="finPaymentStatusTag" class="tag tag--delivered">Paid</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Safety & Cancellation Terms -->
+              <div class="panel" style="background:#F8FAFC;">
+                <div class="panel-head" style="margin-bottom:8px;">
+                  <h4 style="margin:0; font-size:13.5px; font-weight:700;"><i class="fa-solid fa-shield-halved" style="color:var(--primary); margin-right:6px;"></i>Protection Policy</h4>
+                </div>
+                <p style="font-size:12px; color:var(--text-muted); margin:0; line-height:1.5;">
+                  All funds remain securely held in escrow until pickup and final delivery OTP or QR verification. Free cancellation applies before parcel handover.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Cancel Modal -->
+  <div class="modal-overlay hidden" id="cancelModal">
+    <div class="modal-card">
+      <button class="modal-close" id="cancelModalClose">&times;</button>
+      <h3 class="modal-title" style="color:var(--error);"><i class="fa-solid fa-triangle-exclamation"></i> Cancel Parcel</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+        Are you sure you want to cancel this parcel shipment? If the parcel has already been accepted, cancellation compensation policies may apply.
+      </p>
+      <div class="field" style="margin-bottom:18px;">
+        <label for="cancelReason">Reason for cancellation</label>
+        <select id="cancelReason" class="role-select" style="width:100%;">
+          <option value="Travel plans changed">Travel plans changed</option>
+          <option value="Found alternative transport">Found alternative transport</option>
+          <option value="Unable to contact counterpart">Unable to contact counterpart</option>
+          <option value="Item no longer available">Item no longer available</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn-ghost" id="cancelModalDismiss">Keep Parcel</button>
+        <button type="button" class="btn-primary" id="confirmCancelBtn" style="background:var(--error); border-color:var(--error);">
+          Confirm Cancellation
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTP Modal -->
+  <div class="modal-overlay hidden" id="otpModal">
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <button class="modal-close" id="otpModalClose">&times;</button>
+      <div style="width:50px; height:50px; border-radius:50%; background:#EFF6FF; color:var(--primary); display:grid; place-items:center; font-size:22px; margin:0 auto 12px;">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <h3 class="modal-title" id="otpModalTitle">Enter Verification PIN</h3>
+      <p id="otpModalSub" style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">Enter the 6-digit OTP provided by the counterpart.</p>
+      
+      <div class="field" style="margin-bottom:18px;">
+        <input type="text" id="otpInput" maxlength="6" placeholder="• • • • • •" style="text-align:center; font-size:24px; letter-spacing:8px; font-weight:800; height:52px;" autocomplete="one-time-code" />
+      </div>
+
+      <button type="button" class="btn-primary" id="submitOtpBtn" style="width:100%;">
+        <span class="btn-label">Verify &amp; Confirm</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal-overlay hidden" id="reviewModal">
+    <div class="modal-card" style="max-width:440px;">
+      <button class="modal-close" id="reviewModalClose">&times;</button>
+      <h3 class="modal-title"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> Rate Your Experience</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">How was your experience with <span id="reviewTargetName">the user</span>?</p>
+
+      <div style="text-align:center; margin-bottom:16px;">
+        <div class="rating-stars" id="starRatingBox">
+          <i class="fa-solid fa-star" data-rating="1"></i>
+          <i class="fa-solid fa-star" data-rating="2"></i>
+          <i class="fa-solid fa-star" data-rating="3"></i>
+          <i class="fa-solid fa-star" data-rating="4"></i>
+          <i class="fa-solid fa-star" data-rating="5"></i>
+        </div>
+        <span id="starRatingLabel" style="font-size:13px; font-weight:700; color:var(--primary);">Select a rating</span>
+      </div>
+
+      <div class="field" style="margin-bottom:18px;">
+        <label for="reviewComment">Review Comments</label>
+        <textarea id="reviewComment" rows="3" placeholder="Share details about punctuality, care of items, and communication..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;"></textarea>
+      </div>
+
+      <button type="button" class="btn-primary" id="submitReviewBtn" style="width:100%;">
+        <span class="btn-label">Submit Review</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Report Issue Modal -->
+  <div class="modal-overlay hidden" id="reportModal">
+    <div class="modal-card">
+      <button class="modal-close" id="reportModalClose">&times;</button>
+      <h3 class="modal-title" style="color:var(--error);"><i class="fa-solid fa-flag"></i> Report Parcel Issue</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Report a dispute or policy violation to the TravelBuddy safety team.</p>
+
+      <div class="field" style="margin-bottom:14px;">
+        <label for="reportReason">Reason</label>
+        <select id="reportReason" class="role-select" style="width:100%;">
+          <option value="Damaged Item">Damaged Item</option>
+          <option value="Counterpart Unresponsive">Counterpart Unresponsive</option>
+          <option value="Inappropriate Behavior">Inappropriate Behavior</option>
+          <option value="Payment Dispute">Payment Dispute</option>
+          <option value="Suspicious Activity">Suspicious Activity</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="field" style="margin-bottom:18px;">
+        <label for="reportDescription">Description</label>
+        <textarea id="reportDescription" rows="4" placeholder="Describe what happened in detail..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;"></textarea>
+      </div>
+
+      <button type="button" class="btn-primary" id="submitReportBtn" style="width:100%; background:var(--error); border-color:var(--error);">
+        <span class="btn-label">Submit Report to Support</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/parcel-details.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

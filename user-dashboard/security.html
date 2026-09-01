@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Security</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .security-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 22px;
+    }
+    @media (max-width: 900px) {
+      .security-grid { grid-template-columns: 1fr; }
+    }
+    .toggle-switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .switch-label-text {
+      flex: 1;
+    }
+    .switch-label-text strong {
+      display: block;
+      font-size: 14px;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .switch-label-text p {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #CBD5E1;
+      transition: 0.2s;
+      border-radius: 34px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.2s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background-color: var(--primary);
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="/" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item active" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn" type="button">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title">Security &amp; Password</h1>
+
+        <div class="topbar-actions">
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot hidden" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">TravelBuddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <div class="security-grid">
+          <!-- Left: Change Password Form -->
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Change Account Password</h2>
+              <p class="panel-sub">Ensure your account is using a strong, unique password.</p>
+            </div>
+
+            <form id="changePasswordForm" class="stack-form">
+              <div class="field">
+                <label for="currentPasswordInput">Current Password *</label>
+                <input type="password" id="currentPasswordInput" placeholder="Enter current password" required />
+              </div>
+
+              <div class="field">
+                <label for="newPasswordInput">New Password *</label>
+                <input type="password" id="newPasswordInput" placeholder="Minimum 8 characters" minlength="8" required />
+              </div>
+
+              <div class="field">
+                <label for="confirmPasswordInput">Confirm New Password *</label>
+                <input type="password" id="confirmPasswordInput" placeholder="Re-enter new password" minlength="8" required />
+              </div>
+
+              <button type="submit" class="btn-primary" id="savePasswordBtn" style="align-self:flex-start; margin-top:8px;">
+                <span class="btn-label"><i class="fa-solid fa-key"></i> Update Password</span>
+                <span class="spinner"></span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Two-Step & Recovery Email -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            <!-- Two-Step Verification -->
+            <div class="panel">
+              <div class="panel-head" style="margin-bottom:12px;">
+                <h3>Two-Step Authentication (2FA)</h3>
+              </div>
+
+              <div class="toggle-switch-row">
+                <div class="switch-label-text">
+                  <strong>Email Verification at Login</strong>
+                  <p>Require an email OTP whenever logging in from a new device.</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle2faCheck" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Recovery Email -->
+            <div class="panel">
+              <div class="panel-head" style="margin-bottom:8px;">
+                <h3>Secondary Recovery Email</h3>
+                <p class="panel-sub">Used for account recovery if you lose access to your primary email.</p>
+              </div>
+
+              <form id="recoveryEmailForm" class="stack-form">
+                <div class="field">
+                  <input type="email" id="recoveryEmailInput" placeholder="backup@example.com" required />
+                </div>
+                <button type="submit" class="btn-primary btn-primary--inline" id="saveRecoveryBtn">
+                  <span class="btn-label">Save Recovery Email</span>
+                  <span class="spinner"></span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Logged Devices Shortcut -->
+            <div class="panel" style="background:#F8FAFC;">
+              <div class="panel-head" style="margin-bottom:8px;">
+                <h4 style="margin:0; font-size:14px; font-weight:700;"><i class="fa-solid fa-laptop-file" style="color:var(--primary); margin-right:6px;"></i>Active Logged Devices</h4>
+              </div>
+              <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
+                View all web browsers and mobile phones where your TravelBuddy account is currently signed in.
+              </p>
+              <a href="devices.html" class="btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">
+                Manage Active Devices <i class="fa-solid fa-arrow-right" style="margin-left:6px;"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/security.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

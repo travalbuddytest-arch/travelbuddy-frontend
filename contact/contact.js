@@ -46,14 +46,32 @@ ctForm?.addEventListener('submit', e => {
     ctSubmitBtn.classList.add('ct-loading');
     ctSubmitBtn.disabled = true;
 
-    setTimeout(() => {
+    // Make API call to backend
+    const apiUrl = (window.APP_CONFIG?.API_BASE_URL || '') + '/api/contact/submit';
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message })
+    })
+    .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
+    .then(({ status, ok, data }) => {
         ctSubmitBtn.classList.remove('ct-loading');
         ctSubmitBtn.disabled = false;
-        document.getElementById('ctSuccessName').textContent = name.split(' ')[0] || 'there';
-        document.getElementById('ctSuccess').classList.add('ct-show');
-        ctForm.reset();
-        ctShowToast('Message sent — thanks for reaching out!');
-    }, 1100);
+        if (ok || data.success) {
+            document.getElementById('ctSuccessName').textContent = name.split(' ')[0] || 'there';
+            document.getElementById('ctSuccess').classList.add('ct-show');
+            ctForm.reset();
+            ctShowToast(data.message || 'Message sent — thanks for reaching out!');
+        } else {
+            ctShowToast(data.error || 'Failed to send message. Please try again.');
+        }
+    })
+    .catch(err => {
+        ctSubmitBtn.classList.remove('ct-loading');
+        ctSubmitBtn.disabled = false;
+        console.error('Contact form error:', err);
+        ctShowToast('Failed to send message. Please check your connection and try again.');
+    });
 });
 
 /* ============ TOAST ============ */

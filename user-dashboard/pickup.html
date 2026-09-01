@@ -1,28 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="../shared/auth-guard.js" data-guard="user"></script>
-<meta name="robots" content="noindex, nofollow">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>TravelBuddy — Pick Up a Parcel</title>
-<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="css/common.css" />
-<link rel="stylesheet" href="css/pickup.css" />
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Pickup &amp; Delivery</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="css/pickup.css" />
   <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .pickup-task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pickup-task-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+    .pickup-task-card.is-urgent {
+      border-color: rgba(245, 165, 36, 0.4);
+      background: #FFFDF8;
+    }
+    .pickup-task-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pickup-task-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .main-tab-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+      overflow-x: auto;
+    }
+    .main-tab-btn {
+      background: none;
+      border: none;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .main-tab-btn.active {
+      color: var(--primary);
+      background: rgba(13, 110, 253, 0.08);
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <div class="app-shell">
-
-    <!-- ================= SIDEBAR ================= -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <a href="/" class="brand">
@@ -34,37 +94,86 @@
         </button>
       </div>
 
-      <nav class="nav-list" id="navList">
-        <a href="overview.html" class="nav-item" data-section="overview">
-          <i class="fa-solid fa-gauge"></i><span>Overview</span>
-        </a>
-        <a href="post.html" class="nav-item" data-section="post">
-          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
-        </a>
-        <a href="pickup.html" class="nav-item active" data-section="pickup">
-          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
-        </a>
-        <a href="track.html" class="nav-item" data-section="track">
-          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
-        </a>
-        <a href="messages.html" class="nav-item" data-section="messages">
-          <i class="fa-solid fa-message"></i><span>Messages</span>
-          <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
-        </a>
-        <a href="notifications.html" class="nav-item" data-section="notifications">
-          <i class="fa-solid fa-bell"></i><span>Notifications</span>
-          <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
-        </a>
-        <a href="payments.html" class="nav-item" data-section="payments">
-          <i class="fa-solid fa-wallet"></i><span>Payments</span>
-        </a>
-        <a href="history.html" class="nav-item" data-section="history">
-          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
-        </a>
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item active" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
       </nav>
 
       <div class="sidebar-bottom">
-        <button class="nav-item" id="logoutBtn">
+        <button class="nav-item" id="logoutBtn" type="button">
           <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
         </button>
       </div>
@@ -72,67 +181,101 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ================= MAIN ================= -->
     <div class="main">
-
-      <!-- Topbar -->
       <header class="topbar">
         <button class="menu-btn" id="menuBtn" aria-label="Open menu">
           <i class="fa-solid fa-bars"></i>
         </button>
 
-        <h1 class="page-title" id="pageTitle">Pick Up a Parcel</h1>
+        <h1 class="page-title">Pickup &amp; Delivery</h1>
 
         <div class="topbar-actions">
-          <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
-          </div>
-
           <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
             <i class="fa-solid fa-bell"></i>
-            <span class="dot" id="bellDot"></span>
+            <span class="dot hidden" id="bellDot"></span>
           </a>
 
           <div class="user-chip" id="userChip">
-            <div class="avatar">BS</div>
+            <div class="avatar">TB</div>
             <div class="user-meta">
-              <span class="user-name">Bhushan</span>
+              <span class="user-name">TravelBuddy</span>
               <span class="user-role">Sender &amp; Traveler</span>
             </div>
             <i class="fa-solid fa-chevron-down"></i>
 
             <div class="user-menu" id="userMenu">
-              <a href="" data-profile-action="profile"><i class="fa-solid fa-user"></i> My Profile</a>
-              <a href="" data-profile-action="settings"><i class="fa-solid fa-gear"></i> Settings</a>
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
               <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- Content -->
       <main class="content" id="content">
+        <div class="main-tab-bar">
+          <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries">
+            <i class="fa-solid fa-truck-ramp-box"></i> Active Deliveries (<span id="activeDeliveriesBadge">0</span>)
+          </button>
+          <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind">
+            <i class="fa-solid fa-magnifying-glass"></i> Find Parcels on Route
+          </button>
+          <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes">
+            <i class="fa-solid fa-route"></i> My Travel Routes
+          </button>
+        </div>
 
-        <section class="view active" id="view-pickup">
+        <!-- SECTION 1: ACTIVE DELIVERIES WORKFLOW -->
+        <div id="sectionDeliveries">
+          <div class="panel-head panel-head--row" style="margin-bottom:16px;">
+            <div>
+              <h2 style="font-size:18px; margin:0 0 4px;">My Transport Tasks</h2>
+              <p class="panel-sub">Complete pickup verification, in-transit handover, and delivery confirmations.</p>
+            </div>
+            <button type="button" class="btn-ghost" id="refreshDeliveriesBtn">
+              <i class="fa-solid fa-rotate-right"></i> Refresh
+            </button>
+          </div>
 
+          <div id="deliveriesLoadingState" style="text-align:center; padding:40px 20px;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:28px; color:var(--primary);"></i>
+            <p style="margin-top:10px; font-size:13.5px; color:var(--text-muted);">Loading active tasks...</p>
+          </div>
+
+          <div id="deliveriesEmptyState" class="tb-empty-state hidden">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>No Active Delivery Tasks</h3>
+            <p>You have no parcels currently assigned for transport. Search matching parcels along your travel routes to start earning!</p>
+            <button type="button" class="btn-primary" id="emptyFindParcelsBtn" style="margin:0 auto;">
+              <i class="fa-solid fa-magnifying-glass"></i> Find Parcels to Carry
+            </button>
+          </div>
+
+          <div id="deliveriesList"></div>
+        </div>
+
+        <!-- SECTION 2: FIND PARCELS ON ROUTE -->
+        <div id="sectionFind" class="hidden">
           <div class="panel">
             <div class="panel-head">
-              <h2>Find Parcels on Your Route</h2>
-              <p class="panel-sub">Enter the route you're travelling — we'll match parcels going the same way.</p>
+              <h2>Find Parcels on Your Travel Route</h2>
+              <p class="panel-sub">Enter your starting point and destination to find available parcels.</p>
             </div>
 
             <form class="search-row" id="routeSearchForm">
               <div class="field">
-                <label>From</label>
+                <label for="routeFrom">Starting City</label>
                 <input type="text" id="routeFrom" placeholder="e.g. Mumbai" required />
               </div>
               <div class="field">
-                <label>To</label>
+                <label for="routeTo">Destination City</label>
                 <input type="text" id="routeTo" placeholder="e.g. Pune" required />
               </div>
               <button type="submit" class="btn-primary btn-primary--inline" id="routeSearchBtn">
-                <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
+                <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search Route</span>
                 <span class="spinner" aria-hidden="true"></span>
               </button>
             </form>
@@ -140,47 +283,50 @@
 
           <div class="panel">
             <div class="panel-head">
-              <h2>Matching Parcels</h2>
+              <h2>Matching Parcels Available</h2>
               <span class="result-count" id="resultCount"></span>
             </div>
             <ul class="parcel-list parcel-list--pickup" id="pickupResults"></ul>
-            <p class="empty-state hidden" id="pickupEmpty">
+            <p class="empty-state" id="pickupEmpty">
               <i class="fa-solid fa-box-open"></i>
-              Enter a route above to see parcels heading your way.
+              Enter a route above to see parcels waiting for transport.
             </p>
           </div>
+        </div>
 
+        <!-- SECTION 3: MY TRAVEL ROUTES -->
+        <div id="sectionRoutes" class="hidden">
           <div class="panel-grid panel-grid--split">
             <div class="panel">
               <div class="panel-head">
-                <h2>Post Your Travel Route</h2>
-                <p class="panel-sub">Save the route you're travelling — senders posting a parcel on the same route will see you as a recommended traveler.</p>
+                <h2>Post an Upcoming Travel Route</h2>
+                <p class="panel-sub">Publish your upcoming travel plans so senders can match with you directly.</p>
               </div>
 
               <form class="stack-form" id="postRouteForm">
                 <div class="form-row">
                   <div class="field">
-                    <label>From</label>
+                    <label for="routePostFrom">From City</label>
                     <input type="text" id="routePostFrom" placeholder="e.g. Pune" required />
                   </div>
                   <div class="field">
-                    <label>To</label>
+                    <label for="routePostTo">To City</label>
                     <input type="text" id="routePostTo" placeholder="e.g. Delhi" required />
                   </div>
                 </div>
 
                 <div class="field">
-                  <label>Travel Date</label>
+                  <label for="routePostDate">Travel Date</label>
                   <input type="date" id="routePostDate" required />
                 </div>
 
                 <div class="field">
-                  <label>Notes (optional)</label>
-                  <input type="text" id="routePostNotes" placeholder="e.g. Travelling by train, can pickup small parcels" maxlength="200" />
+                  <label for="routePostNotes">Notes (Transport method, luggage space, etc.)</label>
+                  <input type="text" id="routePostNotes" placeholder="e.g. Travelling by flight, can carry up to 5kg" maxlength="200" />
                 </div>
 
                 <button type="submit" class="btn-primary" id="routePostBtn">
-                  <span class="btn-label"><i class="fa-solid fa-route"></i> Post Route</span>
+                  <span class="btn-label"><i class="fa-solid fa-route"></i> Post Travel Route</span>
                   <span class="spinner" aria-hidden="true"></span>
                 </button>
               </form>
@@ -188,28 +334,45 @@
 
             <div class="panel">
               <div class="panel-head">
-                <h2>My Posted Routes</h2>
+                <h2>My Active Travel Routes</h2>
               </div>
               <ul class="parcel-list" id="myRouteList"></ul>
             </div>
           </div>
-        </section>
-
+        </div>
       </main>
     </div>
   </div>
 
-    <script defer src="../shared/config.js?v=1"></script>
-    <script defer src="../shared/auth-cookie-client.js?v=1"></script>
-    <script defer src="../shared/analytics-client.js?v=1"></script>
-    <script defer src="../shared/date-utils.js"></script>
-<script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <!-- Verification OTP Modal -->
+  <div class="modal-overlay hidden" id="taskOtpModal">
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <button class="modal-close" id="taskOtpModalClose">&times;</button>
+      <div style="width:50px; height:50px; border-radius:50%; background:#EFF6FF; color:var(--primary); display:grid; place-items:center; font-size:22px; margin:0 auto 12px;">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h3 class="modal-title" id="taskOtpTitle">Enter Verification PIN</h3>
+      <p id="taskOtpSub" style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">Enter the 6-digit PIN shared by the counterpart.</p>
+      
+      <div class="field" style="margin-bottom:18px;">
+        <input type="text" id="taskOtpInput" maxlength="6" placeholder="• • • • • •" style="text-align:center; font-size:24px; letter-spacing:8px; font-weight:800; height:52px;" autocomplete="one-time-code" />
+      </div>
+
+      <button type="button" class="btn-primary" id="taskSubmitOtpBtn" style="width:100%;">
+        <span class="btn-label">Verify &amp; Confirm Handover</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>
   <script defer src="js/pickup.js"></script>
   <script defer src="js/pickup-route.js"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>
-  <script defer src="../shared/firebase-config.js?v=1"></script>
-  <script defer src="../shared/push-client.js?v=1"></script>
 </body>
 </html>
-

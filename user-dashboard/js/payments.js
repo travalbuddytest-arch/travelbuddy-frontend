@@ -291,13 +291,13 @@
 
   if (withdrawBtn) {
     withdrawBtn.addEventListener('click', () => {
-      window.showToast('Withdrawal request submitted. Funds arrive in 1-2 business days.', 'success');
+      window.location.href = 'withdraw.html';
     });
   }
 
   if (addMethodBtn) {
     addMethodBtn.addEventListener('click', () => {
-      window.showToast('Payment method setup would open here.', 'success');
+      window.location.href = 'payment-methods.html';
     });
   }
 

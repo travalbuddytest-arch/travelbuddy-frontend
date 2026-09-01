@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Help &amp; Support</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .support-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .faq-accordion-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .faq-accordion-item.active {
+      border-color: var(--primary);
+    }
+    .faq-question-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-family: var(--font);
+    }
+    .faq-answer-pane {
+      padding: 0 20px 16px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: none;
+    }
+    .faq-accordion-item.active .faq-answer-pane {
+      display: block;
+    }
+    .faq-accordion-item.active .faq-question-btn i {
+      transform: rotate(180deg);
+      color: var(--primary);
+    }
+    .faq-question-btn i {
+      transition: transform 0.2s ease;
+      color: var(--text-faint);
+    }
+
+    .ticket-chat-thread {
+      max-height: 380px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      background: #F8FAFC;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+    }
+    .ticket-msg-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .ticket-msg-bubble.is-user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: 2px;
+    }
+    .ticket-msg-bubble.is-support {
+      align-self: flex-start;
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-bottom-left-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="/" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item active" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn" type="button">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title">Help &amp; Support</h1>
+
+        <div class="topbar-actions">
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot hidden" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">TravelBuddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <div class="support-head">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">TravelBuddy Support Center</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Find answers to common questions or submit a ticket to our 24/7 support team.</p>
+          </div>
+          <button type="button" class="btn-primary" id="openCreateTicketBtn">
+            <i class="fa-solid fa-plus"></i> Open Support Ticket
+          </button>
+        </div>
+
+        <div class="filter-bar" style="margin-bottom:20px;">
+          <button type="button" class="filter-pill active" id="tabFaqBtn">Frequently Asked Questions</button>
+          <button type="button" class="filter-pill" id="tabTicketsBtn">My Support Tickets (<span id="ticketCountBadge">0</span>)</button>
+        </div>
+
+        <!-- TAB 1: FAQS & ARTICLES -->
+        <div id="sectionFaq">
+          <div class="search-row" style="margin-bottom:18px;">
+            <input type="text" id="faqSearchInput" class="parcels-search-input" placeholder="Search questions, policies, or topics..." />
+          </div>
+
+          <div id="faqLoading" style="text-align:center; padding:30px;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading FAQs...</p>
+          </div>
+
+          <div id="faqList"></div>
+        </div>
+
+        <!-- TAB 2: MY TICKETS -->
+        <div id="sectionTickets" class="hidden">
+          <div id="ticketsLoading" style="text-align:center; padding:30px;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading tickets...</p>
+          </div>
+
+          <div id="ticketsEmpty" class="tb-empty-state hidden">
+            <i class="fa-solid fa-headset"></i>
+            <h3>No Support Tickets</h3>
+            <p>You haven't opened any support requests yet. If you need help with a parcel, trip, or payment, open a ticket!</p>
+            <button type="button" class="btn-primary" id="emptyOpenTicketBtn" style="margin: 0 auto;">
+              <i class="fa-solid fa-plus"></i> Create New Ticket
+            </button>
+          </div>
+
+          <div class="table-container" id="ticketsTableWrap">
+            <table class="data-table" id="ticketsTable">
+              <thead>
+                <tr>
+                  <th>Ticket ID / Created</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ticketsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Create Ticket Modal -->
+  <div class="modal-overlay hidden" id="createTicketModal">
+    <div class="modal-card">
+      <button class="modal-close" id="createTicketClose">&times;</button>
+      <h3 class="modal-title"><i class="fa-solid fa-headset" style="color:var(--primary);"></i> Open Support Ticket</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+        Describe your inquiry and our support team will respond directly in your ticket thread.
+      </p>
+
+      <form id="createTicketForm" class="stack-form">
+        <div class="field">
+          <label for="ticketSubject">Subject *</label>
+          <input type="text" id="ticketSubject" placeholder="e.g. Issue with parcel pickup handover" required />
+        </div>
+
+        <div class="field">
+          <label for="ticketCategory">Category *</label>
+          <select id="ticketCategory" class="role-select" style="width:100%;">
+            <option value="Delivery Issue">Delivery / Pickup Issue</option>
+            <option value="Payment & Wallet">Payment &amp; Wallet</option>
+            <option value="Account & Security">Account &amp; Security</option>
+            <option value="Dispute & Safety">Dispute &amp; Safety</option>
+            <option value="General Inquiry" selected>General Inquiry</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="ticketParcelId">Related Parcel ID (Optional)</label>
+          <input type="text" id="ticketParcelId" placeholder="e.g. TB-20260709-A7K2P" />
+        </div>
+
+        <div class="field">
+          <label for="ticketDescription">Description *</label>
+          <textarea id="ticketDescription" rows="4" placeholder="Please describe what happened and how we can assist you..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitTicketBtn" style="width:100%;">
+          <span class="btn-label">Submit Ticket</span>
+          <span class="spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ticket Conversation Modal -->
+  <div class="modal-overlay hidden" id="ticketThreadModal">
+    <div class="modal-card" style="max-width:540px;">
+      <button class="modal-close" id="ticketThreadClose">&times;</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-right:24px;">
+        <h3 class="modal-title" id="threadSubject" style="margin:0; font-size:16px;">Support Ticket</h3>
+        <span id="threadStatusBadge"></span>
+      </div>
+
+      <div class="ticket-chat-thread" id="ticketMessagesContainer"></div>
+
+      <form id="replyTicketForm" style="display:flex; gap:8px;">
+        <input type="text" id="replyTicketInput" placeholder="Type your reply to support..." style="flex:1; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:0 14px; font-family:var(--font); font-size:13.5px; height:42px; outline:none;" required />
+        <button type="submit" class="btn-primary btn-primary--inline" id="sendReplyBtn" style="height:42px; padding:0 16px;">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/support.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

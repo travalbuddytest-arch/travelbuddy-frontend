@@ -1,4 +1,4 @@
-﻿/* RESPONSIVE FIX: overflow-x:hidden was only set on body, not html.
+/* RESPONSIVE FIX: overflow-x:hidden was only set on body, not html.
    On mobile browsers the actual scrollable area is html's scrollWidth,
    so horizontal overflow from any element could still create stray
    blank space / rubber-band scroll beyond the page content. */
@@ -121,11 +121,21 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
   cursor: pointer;
 }
 
-.nav-list {
+.nav-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.nav-group-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 6px 14px 2px;
+  user-select: none;
 }
 
 .nav-item {
@@ -137,9 +147,9 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
   width: 100%;
   border: none;
   background: none;
-  padding: 12px 14px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
@@ -677,20 +687,222 @@ input:focus-visible {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- Tabs ---------- */
-.tab-btn {
+/* ---------- Tabs & Filters ---------- */
+.tab-btn, .filter-pill {
   border: 1.5px solid var(--border);
   background: var(--surface);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
-  padding: 7px 14px;
+  padding: 7px 16px;
   border-radius: 999px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
-.tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-.tab-btn:not(.active):hover { border-color: var(--primary); color: var(--primary); }
+.tab-btn.active, .filter-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px -2px rgba(13,110,253,0.35); }
+.tab-btn:not(.active):hover, .filter-pill:not(.active):hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+/* ---------- Status Tags & Badges ---------- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  line-height: 1;
+}
+.tag i { font-size: 10px; }
+
+.tag--pending, .tag--requested, .tag--pickup_point_pending { background: #FEF3DD; color: #B25E09; border: 1px solid rgba(245,165,36,0.3); }
+.tag--accepted, .tag--pickup_point_selected { background: #EFF6FF; color: #1D4ED8; border: 1px solid rgba(37,99,235,0.25); }
+.tag--pickup_confirmed, .tag--in_transit, .tag--delivery_point_pending, .tag--delivery_point_selected, .tag--processing { background: #F3E8FF; color: #7E22CE; border: 1px solid rgba(126,34,206,0.25); }
+.tag--delivered, .tag--completed, .tag--paid, .tag--released, .tag--approved { background: #DCFCE7; color: #15803D; border: 1px solid rgba(22,163,74,0.25); }
+.tag--cancelled, .tag--cancelled_by_sender, .tag--cancelled_by_traveler, .tag--cancelled_by_system, .tag--failed, .tag--rejected { background: #FEE2E2; color: #B91C1C; border: 1px solid rgba(220,38,38,0.25); }
+.tag--held, .tag--disputed { background: #FEF9C3; color: #A16207; border: 1px solid rgba(202,138,4,0.25); }
+
+/* ---------- Data Table ---------- */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  text-align: left;
+}
+
+.data-table th {
+  background: #F8FAFC;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: #F8FAFC; }
+
+/* ---------- Multi-Step Wizard ---------- */
+.wizard-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 28px;
+  padding: 0 10px;
+}
+
+.wizard-stepper::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: var(--border);
+  z-index: 1;
+}
+
+.wizard-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.wizard-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.wizard-step.active .wizard-step-circle {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(13,110,253,0.18);
+}
+
+.wizard-step.completed .wizard-step-circle {
+  border-color: var(--success);
+  background: var(--success);
+  color: #fff;
+}
+
+.wizard-step-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+.wizard-step.active .wizard-step-title { color: var(--primary); font-weight: 700; }
+
+/* ---------- Metric Cards Grid ---------- */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.metric-box:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+.metric-icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.metric-icon-wrap--blue { background: #EFF6FF; color: #2563EB; }
+.metric-icon-wrap--green { background: #DCFCE7; color: #16A34A; }
+.metric-icon-wrap--purple { background: #F3E8FF; color: #9333EA; }
+.metric-icon-wrap--amber { background: #FEF3C7; color: #D97706; }
+.metric-icon-wrap--red { background: #FEE2E2; color: #DC2626; }
+
+.metric-info { display: flex; flex-direction: column; gap: 2px; }
+.metric-val { font-size: 20px; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+.metric-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+/* ---------- Empty & Error States ---------- */
+.tb-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+}
+.tb-empty-state i {
+  font-size: 42px;
+  color: var(--text-faint);
+  margin-bottom: 14px;
+  display: block;
+}
+.tb-empty-state h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 6px;
+}
+.tb-empty-state p {
+  font-size: 13px;
+  max-width: 380px;
+  margin: 0 auto 18px;
+}
 
 /* ============================================================
    MODALS (shared)

@@ -86,7 +86,7 @@
     }
   });
 
-  function animateCount(el, target, prefix) {
+  function animateCount(el, target, isCurrency, prefix) {
     if (!el) return;
     const duration = 900;
     const start = performance.now();
@@ -96,8 +96,13 @@
     function tick(now) {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      const value = (safeTarget * eased) / 100;
-      el.textContent = labelPrefix + value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (isCurrency) {
+        const value = (safeTarget * eased) / 100;
+        el.textContent = labelPrefix + value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      } else {
+        const value = Math.round(safeTarget * eased);
+        el.textContent = labelPrefix + value.toLocaleString('en-IN');
+      }
       if (progress < 1) requestAnimationFrame(tick);
     }
 
@@ -116,13 +121,13 @@
         return;
       }
 
-      animateCount(document.getElementById('statActiveParcels'), data.activeParcels);
-      animateCount(document.getElementById('statCompletedDeliveries'), data.completedDeliveries);
-      animateCount(document.getElementById('statTripsPosted'), data.tripsPosted);
-      animateCount(document.getElementById('statTotalEarnings'), data.totalEarnings, 'Rs. ');
+      animateCount(document.getElementById('statActiveParcels'), data.activeParcels, false);
+      animateCount(document.getElementById('statCompletedDeliveries'), data.completedDeliveries, false);
+      animateCount(document.getElementById('statTripsPosted'), data.tripsPosted, false);
+      animateCount(document.getElementById('statTotalEarnings'), data.totalEarnings, true, '₹');
 
       const earningsEl = document.getElementById('walletEarningsValue');
-      if (earningsEl) earningsEl.textContent = `Rs. ${(Number(data.totalEarnings || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (earningsEl) earningsEl.textContent = window.TravelBuddy.formatPaise(data.totalEarnings || 0);
     } catch (err) {
       console.error(err);
       window.showToast('Could not reach the server.', 'error');
@@ -134,15 +139,31 @@
   async function loadWallet() {
     const heroValue = document.getElementById('heroWalletValue');
     const balanceValue = document.getElementById('walletBalanceValue');
-    if (!heroValue && !balanceValue) return;
+    const lockedValue = document.getElementById('walletLockedValue');
+    const earningsValue = document.getElementById('walletEarningsValue');
+
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        if (heroValue) heroValue.textContent = window.TravelBuddy.formatPaise(data.walletBalance || 0);
+        if (balanceValue) balanceValue.textContent = window.TravelBuddy.formatPaise(data.walletBalance || 0);
+        if (lockedValue) lockedValue.textContent = window.TravelBuddy.formatPaise(data.lockedBalance || 0);
+        if (earningsValue) earningsValue.textContent = window.TravelBuddy.formatPaise(data.totalEarnings || 0);
+        return;
+      }
+    } catch (e) {
+      console.warn('wallet-summary fetch failed, falling back to profile', e);
+    }
 
     try {
       const user = await window.TravelBuddy.getCurrentUser();
       if (!user) return;
-      const balanceValueRaw = Number(user.walletBalance || 0);
-      const balance = `Rs. ${(balanceValueRaw / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      const balance = window.TravelBuddy.formatPaise(user.walletBalance || 0);
+      const locked = window.TravelBuddy.formatPaise(user.lockedBalance || 0);
       if (heroValue) heroValue.textContent = balance;
       if (balanceValue) balanceValue.textContent = balance;
+      if (lockedValue) lockedValue.textContent = locked;
     } catch (err) {
       console.error('load wallet failed:', err);
     }

@@ -1,537 +1,387 @@
 (function () {
   'use strict';
 
-  const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/postparcel`;
-  const { authHeaders, escapeHTML, formatDate, setButtonLoading } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, escapeHTML, formatPaise, setButtonLoading, formatDate } = window.TravelBuddy;
+  const API_BASE = `${API_ORIGIN}/api/postparcel`;
 
-  let myParcelsCache = [];
+  let currentStep = 1;
+  const totalSteps = 6;
 
-  const postForm = document.getElementById('postParcelForm');
-  const postSubmitBtn = document.getElementById('postSubmitBtn');
-  const modalOverlay = document.getElementById('parcelModalOverlay');
-  const modalClose = document.getElementById('parcelModalClose');
-  const editForm = document.getElementById('editParcelForm');
-  const saveParcelBtn = document.getElementById('saveParcelBtn');
-  const deleteParcelBtn = document.getElementById('deleteParcelBtn');
+  // Form Step Panes
+  const panes = {
+    1: document.getElementById('stepPane1'),
+    2: document.getElementById('stepPane2'),
+    3: document.getElementById('stepPane3'),
+    4: document.getElementById('stepPane4'),
+    5: document.getElementById('stepPane5'),
+    6: document.getElementById('stepPane6'),
+  };
+
+  // Step Inputs
+  const stepDesc = document.getElementById('stepDesc');
+  const stepCategory = document.getElementById('stepCategory');
+  const stepWeight = document.getElementById('stepWeight');
+  const stepFromCity = document.getElementById('stepFromCity');
+  const stepPickupAddress = document.getElementById('stepPickupAddress');
+  const stepPickupNotes = document.getElementById('stepPickupNotes');
+  const stepToCity = document.getElementById('stepToCity');
+  const stepDeliveryAddress = document.getElementById('stepDeliveryAddress');
+  const stepRecipientName = document.getElementById('stepRecipientName');
+  const stepRecipientPhone = document.getElementById('stepRecipientPhone');
+  const stepDate = document.getElementById('stepDate');
+  const stepTimePreference = document.getElementById('stepTimePreference');
+  const stepPrice = document.getElementById('stepPrice');
+  const termsAgreeCheck = document.getElementById('termsAgreeCheck');
+
+  // Wallet and Fee elements
+  const freePostNotice = document.getElementById('freePostNotice');
+  const walletEscrowStatus = document.getElementById('walletEscrowStatus');
+  const postWalletBalance = document.getElementById('postWalletBalance');
+  const postRequiredEscrow = document.getElementById('postRequiredEscrow');
+  const walletShortageWarning = document.getElementById('walletShortageWarning');
+  const postShortageText = document.getElementById('postShortageText');
+
+  // Review Elements
+  const revRoute = document.getElementById('revRoute');
+  const revItem = document.getElementById('revItem');
+  const revWeight = document.getElementById('revWeight');
+  const revDate = document.getElementById('revDate');
+  const revPrice = document.getElementById('revPrice');
+  const revPayment = document.getElementById('revPayment');
+
+  // Topup Modal Elements
   const walletTopupOverlay = document.getElementById('walletTopupOverlay');
   const walletTopupClose = document.getElementById('walletTopupClose');
   const walletTopupCancel = document.getElementById('walletTopupCancel');
-  const walletTopupProceed = document.getElementById('walletTopupProceed');
-  let pendingTopupAmount = 0;
+  const walletShortageAmount = document.getElementById('walletShortageAmount');
+  const walletCurrentBalance = document.getElementById('walletCurrentBalance');
 
-  function statusLabel(status) {
-    const labels = {
-      pending: 'Pending',
-      accepted: 'Request Accepted',
-      pickup_verification: 'Pickup Verification',
-      pickup_confirmed: 'Pickup Confirmed',
-      in_transit: 'In Transit',
-      delivery_verification: 'Delivery Verification',
-      delivered: 'Delivered',
-      cancelled: 'Cancelled',
-    };
-    return escapeHTML(labels[status] || status || 'Pending');
+  // Stepper UI
+  const stepperContainer = document.getElementById('wizardStepper');
+  const postSubmitFinalBtn = document.getElementById('postSubmitFinalBtn');
+
+  // Route recommendations
+  const routeRecPanel = document.getElementById('routeRecommendationsPanel');
+  const routeRecList = document.getElementById('routeRecommendationsList');
+
+  // State
+  let userWalletData = null;
+  let isFreePostEligible = false;
+
+  // Set minimum date to today
+  if (stepDate) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    stepDate.setAttribute('min', todayStr);
+    stepDate.value = todayStr;
   }
 
-  const DELETE_WINDOW_MS = 2 * 60 * 60 * 1000;
-  let timerTicker = null;
+  function goToStep(step) {
+    if (step < 1 || step > totalSteps) return;
 
-  function deleteTimeLeft(parcel) {
-    return Math.max(0, new Date(parcel.createdAt).getTime() + DELETE_WINDOW_MS - Date.now());
-  }
+    Object.keys(panes).forEach(k => {
+      panes[k]?.classList.toggle('active', Number(k) === step);
+    });
 
-  function formatCountdown(ms) {
-    const total = Math.ceil(ms / 1000);
-    const h = Math.floor(total / 3600);
-    const m = Math.floor((total % 3600) / 60);
-    const sec = total % 60;
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-  }
-
-  function renderMyParcels(parcels) {
-    myParcelsCache = parcels;
-    const list = document.getElementById('myParcelList');
-    if (!list) return;
-    if (timerTicker) clearInterval(timerTicker);
-
-    if (!parcels.length) {
-      list.innerHTML = `<p class="empty-state"><i class="fa-solid fa-box-open"></i>You haven't posted any parcels yet.</p>`;
-      return;
-    }
-
-    list.innerHTML = parcels.map((p, i) => {
-      const canDelete = p.status === 'pending' || p.status === 'accepted';
-      const accepted = p.acceptedBy;
-      return `<li class="parcel-card ${accepted ? 'is-accepted' : ''}" tabindex="0" style="animation-delay:${i * 0.05}s" data-id="${escapeHTML(p.id)}">
-        <div class="parcel-card-main">
-          <span class="route-pill">${escapeHTML(p.from)} <i class="fa-solid fa-arrow-right-long"></i> ${escapeHTML(p.to)}</span>
-          <div class="parcel-body"><p class="parcel-title">${escapeHTML(p.desc)}</p><div class="parcel-meta">
-            <span><i class="fa-solid fa-weight-hanging"></i> ${escapeHTML(p.weight)}kg</span><span><i class="fa-solid fa-indian-rupee-sign"></i>${escapeHTML(p.price)}</span><span><i class="fa-regular fa-calendar"></i> ${formatDate(p.date)}</span>
-          </div>
-          <div class="fee-note">₹${escapeHTML(p.price)} Total <span class="fee-inc">· Platform fee included</span></div>
-          </div><span class="tag tag--${escapeHTML(p.status || 'pending')}">${statusLabel(p.status)}</span>
-        </div>
-        ${accepted ? `<button class="accepted-user-btn" data-profile-id="${escapeHTML(p.id)}"><i class="fa-solid fa-circle-user"></i><span>Accepted by <strong>${escapeHTML(accepted.fullName)}</strong></span><i class="fa-solid fa-chevron-right"></i></button>` : ''}
-        ${canDelete ? `<div class="delete-window"><span><i class="fa-solid fa-ban"></i> ${p.status === 'accepted' ? '10% cancellation fee applies' : 'Free cancellation before acceptance'}</span><button class="quick-delete-btn" data-delete-id="${escapeHTML(p.id)}"><i class="fa-solid fa-ban"></i> Cancel Parcel</button></div>` : ''}
-      </li>`;
-    }).join('');
-
-    list.querySelectorAll('.parcel-card').forEach((card) => card.addEventListener('click', (e) => { if (!e.target.closest('button')) openParcelModal(card.dataset.id); }));
-    list.querySelectorAll('.quick-delete-btn').forEach((btn) => btn.addEventListener('click', () => deleteParcel(btn.dataset.deleteId)));
-    list.querySelectorAll('.accepted-user-btn').forEach((btn) => btn.addEventListener('click', () => showTravelerProfile(btn.dataset.profileId, btn.closest('.parcel-card'))));
-    timerTicker = setInterval(() => {
-      let expired = false;
-      list.querySelectorAll('.delete-countdown').forEach((el) => {
-        const left = Math.max(0, new Date(el.dataset.created).getTime() + DELETE_WINDOW_MS - Date.now());
-        el.textContent = formatCountdown(left);
-        if (!left) expired = true;
+    if (stepperContainer) {
+      stepperContainer.querySelectorAll('.wizard-step').forEach(el => {
+        const s = Number(el.dataset.step);
+        el.classList.toggle('active', s === step);
+        el.classList.toggle('completed', s < step);
       });
-      if (expired) loadMyParcels();
-    }, 1000);
+    }
+
+    currentStep = step;
+    window.scrollTo({ top: 100, behavior: 'smooth' });
+
+    if (step === 5) {
+      checkWalletStatus();
+    } else if (step === 6) {
+      populateReviewSummary();
+    }
   }
 
-  async function deleteParcel(id) {
-    const parcel = myParcelsCache.find((p) => String(p.id) === String(id));
-    if (!parcel) return;
-    if (!['pending','accepted'].includes(parcel.status)) {
-      return window.showToast('Cancellation is not allowed after pickup.', 'error');
+  function validateStep(step) {
+    if (step === 1) {
+      const desc = stepDesc.value.trim();
+      const weight = Number(stepWeight.value);
+      if (!desc) {
+        window.showToast('Please describe the parcel.', 'warning');
+        stepDesc.focus();
+        return false;
+      }
+      if (!Number.isFinite(weight) || weight < 0.1) {
+        window.showToast('Please enter a valid weight of at least 0.1 kg.', 'warning');
+        stepWeight.focus();
+        return false;
+      }
+      return true;
     }
-    const fee = parcel.status === 'accepted' ? Number(parcel.price || 0) * 0.10 : 0;
-    const message = parcel.status === 'accepted'
-      ? `A traveler has accepted this parcel. Cancelling now will charge 10% (Rs. ${fee.toFixed(2)}). Continue?`
-      : 'Cancel this parcel? No fee will be charged before traveler acceptance.';
-    if (!confirm(message)) return;
-    const cancelButtons = document.querySelectorAll(`[data-delete-id="${CSS.escape(String(id))}"]`);
-    cancelButtons.forEach((button) => { button.disabled = true; button.dataset.oldHtml = button.innerHTML; button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cancelling…'; });
+
+    if (step === 2) {
+      const from = stepFromCity.value.trim();
+      if (!from) {
+        window.showToast('Please enter the pickup city.', 'warning');
+        stepFromCity.focus();
+        return false;
+      }
+      return true;
+    }
+
+    if (step === 3) {
+      const from = stepFromCity.value.trim().toLowerCase();
+      const to = stepToCity.value.trim().toLowerCase();
+      if (!to) {
+        window.showToast('Please enter the destination city.', 'warning');
+        stepToCity.focus();
+        return false;
+      }
+      if (from === to) {
+        window.showToast('Pickup and destination cities cannot be the same.', 'warning');
+        stepToCity.focus();
+        return false;
+      }
+      return true;
+    }
+
+    if (step === 4) {
+      const d = stepDate.value;
+      if (!d) {
+        window.showToast('Please select a pickup date.', 'warning');
+        stepDate.focus();
+        return false;
+      }
+      const selected = new Date(`${d}T00:00:00`);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      if (Number.isNaN(selected.getTime()) || selected < today) {
+        window.showToast('Pickup date cannot be in the past.', 'warning');
+        stepDate.focus();
+        return false;
+      }
+      return true;
+    }
+
+    if (step === 5) {
+      const price = Number(stepPrice.value);
+      if (!Number.isFinite(price) || price < 50) {
+        window.showToast('Please enter an offered amount of at least ₹50.', 'warning');
+        stepPrice.focus();
+        return false;
+      }
+      return true;
+    }
+
+    return true;
+  }
+
+  async function checkWalletStatus() {
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE', headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return window.showToast(data.error || 'Could not delete parcel.', 'error');
-      window.showToast(data.message || 'Parcel cancelled.', 'success'); closeParcelModal(); loadMyParcels();
-    } catch (err) { console.error(err); window.showToast('Could not reach the server.', 'error'); }
-    finally {
-      cancelButtons.forEach((button) => { button.disabled = false; button.innerHTML = button.dataset.oldHtml || 'Cancel Parcel'; delete button.dataset.oldHtml; });
+      const [walletRes, statsRes] = await Promise.allSettled([
+        fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() }).then(r => r.json()),
+        fetch(`${API_BASE}/stats`, { headers: authHeaders() }).then(r => r.json())
+      ]);
+
+      userWalletData = walletRes.status === 'fulfilled' ? walletRes.value : { walletBalance: 0 };
+      const stats = statsRes.status === 'fulfilled' ? statsRes.value : { activeParcels: 0 };
+
+      // Backend rule: Free posts for the first 2 parcels across the platform
+      const totalPosts = Number(stats.tripsPosted || 0) + Number(stats.activeParcels || 0);
+      isFreePostEligible = totalPosts < 2;
+
+      if (isFreePostEligible) {
+        freePostNotice.classList.remove('hidden');
+        walletEscrowStatus.classList.add('hidden');
+      } else {
+        freePostNotice.classList.add('hidden');
+        walletEscrowStatus.classList.remove('hidden');
+        updateWalletEscrowDisplay();
+      }
+    } catch (err) {
+      console.error('Wallet check failed:', err);
     }
   }
 
-  async function showTravelerProfile(parcelId, parcelCard) {
-    try {
-      const res = await fetch(`${API_BASE}/${parcelId}/accepted-traveler-profile`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return window.showToast(data.error || 'Could not load traveler profile.', 'error');
-      const t = data.traveler;
+  function updateWalletEscrowDisplay() {
+    if (isFreePostEligible || !userWalletData) return;
 
-      document.querySelector('.traveler-profile-overlay')?.remove();
-      const panel = document.createElement('div');
-      panel.className = 'traveler-profile-overlay';
-      panel.setAttribute('role', 'dialog');
-      panel.setAttribute('aria-modal', 'true');
-      panel.setAttribute('aria-label', 'Accepted traveler profile');
-      panel.innerHTML = `<div class="traveler-profile-card"><button class="traveler-profile-close" aria-label="Close traveler profile">−</button><div class="traveler-avatar">${escapeHTML(t.fullName.split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase())}</div><h2>${escapeHTML(t.fullName)}</h2>${t.isVerified ? '<span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified traveler</span>' : ''}<div class="profile-stats"><div><strong>${Number(t.rating).toFixed(1)} ★</strong><span>Rating</span></div><div><strong>${escapeHTML(t.accuracy)}%</strong><span>Accuracy</span></div><div><strong>${escapeHTML(t.parcelsPostedAsSender)}</strong><span>Parcels posted</span></div><div><strong>${escapeHTML(t.parcelsDeliveredAsTraveler)}</strong><span>Parcels delivered</span></div></div></div>`;
+    const priceRupees = Number(stepPrice.value || 0);
+    const requiredPaise = Math.round(priceRupees * 100);
+    const availablePaise = Number(userWalletData.walletBalance || 0);
 
-      document.body.appendChild(panel);
-      document.body.classList.add('traveler-profile-open');
-      const closeProfile = () => { panel.remove(); document.body.classList.remove('traveler-profile-open'); document.removeEventListener('keydown', onEscape); };
-      const onEscape = (event) => { if (event.key === 'Escape') closeProfile(); };
-      panel.querySelector('.traveler-profile-close').addEventListener('click', closeProfile);
-      panel.addEventListener('click', (event) => { if (event.target === panel) closeProfile(); });
-      document.addEventListener('keydown', onEscape);
-      panel.querySelector('.traveler-profile-close').focus();
-    } catch (err) { console.error(err); window.showToast('Could not reach the server.', 'error'); }
-  }
+    postWalletBalance.textContent = formatPaise(availablePaise);
+    postRequiredEscrow.textContent = formatPaise(requiredPaise);
 
-  function formatRupees(value) {
-    return `Rs. ${Number(value || 0).toFixed(2)}`;
-  }
-
-  function showWalletTopup(data) {
-    pendingTopupAmount = Number(data.shortage || 0);
-    document.getElementById('walletTopupMessage').textContent =
-      data.error || `Add ${formatRupees(pendingTopupAmount)} to your wallet before posting this parcel.`;
-    document.getElementById('walletCurrentBalance').textContent = formatRupees(data.walletBalance);
-    document.getElementById('walletShortageAmount').textContent = formatRupees(pendingTopupAmount);
-    walletTopupOverlay?.classList.remove('hidden');
-  }
-
-  function closeWalletTopup() {
-    walletTopupOverlay?.classList.add('hidden');
-  }
-
-  function handlePostError(data) {
-    if (data && data.code === 'INSUFFICIENT_WALLET') {
-      showWalletTopup(data);
-      return;
+    if (requiredPaise > availablePaise) {
+      const shortagePaise = requiredPaise - availablePaise;
+      walletEscrowStatus.className = 'wallet-status-box is-insufficient';
+      walletShortageWarning.classList.remove('hidden');
+      postShortageText.textContent = formatPaise(shortagePaise);
+    } else {
+      walletEscrowStatus.className = 'wallet-status-box is-sufficient';
+      walletShortageWarning.classList.add('hidden');
     }
-    window.showToast(data.error || 'Could not post parcel.', 'error');
   }
 
-
-  function showOrderSuccess(parcel) {
-    const orderId = parcel?.orderId;
-    if (!orderId) return;
-    document.querySelector('.order-success-overlay')?.remove();
-    const overlay = document.createElement('div');
-    overlay.className = 'order-success-overlay';
-    overlay.innerHTML = `<div class="order-success-card" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle">
-      <div class="order-success-icon"><i class="fa-solid fa-check"></i></div>
-      <h2 id="orderSuccessTitle">Parcel Posted Successfully</h2>
-      <p>Your parcel is live. We are now searching for a traveler heading toward your destination.</p>
-      <div class="order-id-box"><small>Your Order ID</small><strong>${escapeHTML(orderId)}</strong></div>
-      <span class="order-success-status">Searching for Traveler</span>
-      <div class="order-success-actions">
-        <button class="order-secondary" id="copyOrderIdBtn"><i class="fa-regular fa-copy"></i> Copy Order ID</button>
-        <a class="order-primary" href="track.html?orderId=${encodeURIComponent(orderId)}">Track Parcel</a>
-        <button class="order-secondary" id="viewMyParcelsBtn">View My Parcels</button>
-        <a class="order-secondary" href="overview.html">Dashboard</a>
-      </div>
-    </div>`;
-    document.body.appendChild(overlay);
-    document.getElementById('copyOrderIdBtn')?.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(orderId); window.showToast('Order ID copied.', 'success'); }
-      catch { window.prompt('Copy your Order ID:', orderId); }
-    });
-    document.getElementById('viewMyParcelsBtn')?.addEventListener('click', () => {
-      overlay.remove(); document.getElementById('myParcelList')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+  if (stepPrice) {
+    stepPrice.addEventListener('input', updateWalletEscrowDisplay);
   }
 
-  function renderRouteRecommendations(recommendations) {
-    const panel = document.getElementById('routeRecommendationsPanel');
-    const list = document.getElementById('routeRecommendationsList');
-    if (!panel || !list) return;
+  function populateReviewSummary() {
+    const from = stepFromCity.value.trim();
+    const to = stepToCity.value.trim();
+    const desc = stepDesc.value.trim();
+    const category = stepCategory.value;
+    const weight = stepWeight.value;
+    const date = stepDate.value;
+    const timePref = stepTimePreference.value;
+    const price = Number(stepPrice.value || 0);
 
-    // Persistent panel: reloaded from the server on every page load, and
-    // stays visible for as long as a match exists - not just once, right
-    // after posting - until the traveler's travel date passes.
-    if (!recommendations || !recommendations.length) {
-      panel.classList.add('hidden');
-      list.innerHTML = '';
-      return;
-    }
+    revRoute.textContent = `${from} → ${to}`;
+    revItem.textContent = `${desc} (${category})`;
+    revWeight.textContent = `${weight} kg`;
+    revDate.textContent = `${formatDate(date)} · ${timePref}`;
+    revPrice.textContent = `₹${price.toLocaleString('en-IN')}`;
+    revPayment.textContent = isFreePostEligible ? 'Free Post (Cash on Delivery)' : 'Wallet Escrow (Held safely)';
+  }
 
-    list.innerHTML = recommendations.map((r, i) => `
-      <li class="route-match-card" style="animation-delay:${i * 0.05}s" data-route-id="${escapeHTML(r.id)}" data-traveler-id="${escapeHTML(r.travelerId)}" data-parcel-id="${escapeHTML(r.parcelId)}" tabindex="0" role="button" aria-label="View ${escapeHTML(r.travelerName)}'s traveler profile">
-        <div class="route-match-info">
-          <span class="route-pill">${escapeHTML(r.from)} <i class="fa-solid fa-arrow-right-long"></i> ${escapeHTML(r.to)}</span>
-          <p class="parcel-title">${escapeHTML(r.travelerName)}</p>
-          <div class="parcel-meta">
-            <span><i class="fa-regular fa-calendar"></i> ${formatDate(r.date)}</span>
-            ${r.notes ? `<span><i class="fa-regular fa-note-sticky"></i> ${escapeHTML(r.notes)}</span>` : ''}
-          </div>
-        </div>
-        <button class="accept-btn message-traveler-btn" data-traveler-id="${escapeHTML(r.travelerId)}" data-parcel-id="${escapeHTML(r.parcelId)}">
-          <i class="fa-solid fa-message"></i> Message
-        </button>
-      </li>
-    `).join('');
+  // Navigation Button Handlers
+  document.getElementById('step1NextBtn')?.addEventListener('click', () => { if (validateStep(1)) goToStep(2); });
+  document.getElementById('step2PrevBtn')?.addEventListener('click', () => goToStep(1));
+  document.getElementById('step2NextBtn')?.addEventListener('click', () => { if (validateStep(2)) goToStep(3); });
+  document.getElementById('step3PrevBtn')?.addEventListener('click', () => goToStep(2));
+  document.getElementById('step3NextBtn')?.addEventListener('click', () => { if (validateStep(3)) goToStep(4); });
+  document.getElementById('step4PrevBtn')?.addEventListener('click', () => goToStep(3));
+  document.getElementById('step4NextBtn')?.addEventListener('click', () => { if (validateStep(4)) goToStep(5); });
+  document.getElementById('step5PrevBtn')?.addEventListener('click', () => goToStep(4));
+  document.getElementById('step5NextBtn')?.addEventListener('click', () => { if (validateStep(5)) goToStep(6); });
+  document.getElementById('step6PrevBtn')?.addEventListener('click', () => goToStep(5));
 
-    list.querySelectorAll('.message-traveler-btn').forEach((btn) => {
-      btn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        messageTraveler(btn, btn.dataset.parcelId);
-      });
-    });
-
-    list.querySelectorAll('.route-match-card').forEach((card) => {
-      card.addEventListener('click', () => showRouteTravelerProfile(card.dataset.routeId));
-      card.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          showRouteTravelerProfile(card.dataset.routeId);
+  // Stepper Header Direct Click
+  if (stepperContainer) {
+    stepperContainer.querySelectorAll('.wizard-step').forEach(st => {
+      st.addEventListener('click', () => {
+        const targetStep = Number(st.dataset.step);
+        if (targetStep < currentStep) {
+          goToStep(targetStep);
+        } else if (targetStep === currentStep + 1 && validateStep(currentStep)) {
+          goToStep(targetStep);
         }
       });
     });
-
-    panel.classList.remove('hidden');
   }
 
-  async function showRouteTravelerProfile(routeId) {
-    if (!routeId) return;
-    try {
-      const res = await fetch(`${API_BASE}/recommendations/${routeId}/profile`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return window.showToast(data.error || 'Could not load traveler profile.', 'error');
-      const t = data.traveler;
-      const r = data.route;
-
-      document.querySelector('.traveler-profile-overlay')?.remove();
-      const panel = document.createElement('div');
-      panel.className = 'traveler-profile-overlay';
-      panel.setAttribute('role', 'dialog');
-      panel.setAttribute('aria-modal', 'true');
-      panel.setAttribute('aria-label', 'Traveler profile');
-      panel.innerHTML = `<div class="traveler-profile-card">
-        <button class="traveler-profile-close" aria-label="Close traveler profile">−</button>
-        <div class="traveler-avatar">${escapeHTML(t.fullName.split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase())}</div>
-        <h2>${escapeHTML(t.fullName)}</h2>
-        ${t.isVerified ? '<span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified traveler</span>' : ''}
-        <div class="route-pill route-pill--modal">${escapeHTML(r.from)} <i class="fa-solid fa-arrow-right-long"></i> ${escapeHTML(r.to)}</div>
-        <div class="parcel-meta parcel-meta--modal">
-          <span><i class="fa-regular fa-calendar"></i> ${formatDate(r.date)}</span>
-          ${r.notes ? `<span><i class="fa-regular fa-note-sticky"></i> ${escapeHTML(r.notes)}</span>` : ''}
-        </div>
-        <div class="profile-stats">
-          <div><strong>${Number(t.rating).toFixed(1)} ★</strong><span>Rating</span></div>
-          <div><strong>${escapeHTML(t.accuracy)}%</strong><span>Accuracy</span></div>
-          <div><strong>${escapeHTML(t.parcelsPostedAsSender)}</strong><span>Parcels posted</span></div>
-          <div><strong>${escapeHTML(t.parcelsDeliveredAsTraveler)}</strong><span>Parcels delivered</span></div>
-        </div>
-        <button class="accept-btn message-traveler-btn traveler-profile-message-btn" data-traveler-id="${escapeHTML(t.id)}">
-          <i class="fa-solid fa-message"></i> Message
-        </button>
-      </div>`;
-
-      document.body.appendChild(panel);
-      document.body.classList.add('traveler-profile-open');
-      const closeProfile = () => { panel.remove(); document.body.classList.remove('traveler-profile-open'); document.removeEventListener('keydown', onEscape); };
-      const onEscape = (event) => { if (event.key === 'Escape') closeProfile(); };
-      panel.querySelector('.traveler-profile-close').addEventListener('click', closeProfile);
-      panel.addEventListener('click', (event) => { if (event.target === panel) closeProfile(); });
-      document.addEventListener('keydown', onEscape);
-      const messageBtn = panel.querySelector('.traveler-profile-message-btn');
-      const originalCard = document.querySelector(`.route-match-card[data-route-id="${CSS.escape(routeId)}"]`);
-      messageBtn?.addEventListener('click', () => {
-        messageTraveler(messageBtn, originalCard?.dataset.parcelId);
-      });
-      panel.querySelector('.traveler-profile-close').focus();
-    } catch (err) {
-      console.error(err);
-      window.showToast('Could not reach the server.', 'error');
-    }
-  }
-
-  async function messageTraveler(btn, parcelId) {
-    const travelerId = btn.dataset.travelerId;
-    if (!parcelId || !travelerId) return;
-    btn.disabled = true;
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Opening...';
-
-    try {
-      const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/messages/start`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify({ parcelId, travelerId }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        window.showToast(data.error || 'Could not start conversation.', 'error');
-        btn.disabled = false;
-        btn.innerHTML = oldHtml;
-        return;
-      }
-
-      window.location.href = `messages.html?parcel=${encodeURIComponent(parcelId)}`;
-    } catch (err) {
-      console.error(err);
-      window.showToast('Could not reach the server.', 'error');
-      btn.disabled = false;
-      btn.innerHTML = oldHtml;
-    }
-  }
-
-  async function loadRouteRecommendations() {
-    try {
-      const res = await fetch(`${API_BASE}/recommendations`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return;
-      renderRouteRecommendations(data.recommendations || []);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function loadMyParcels() {
-    const list = document.getElementById('myParcelList');
-    if (list) {
-      list.innerHTML = `
-        <li class="skeleton-row"></li>
-        <li class="skeleton-row"></li>
-        <li class="skeleton-row"></li>
-      `;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE}/my-parcels`, { headers: authHeaders() });
-      const data = await res.json();
-
-      if (!res.ok) {
-        window.showToast(data.error || 'Could not load your parcels.', 'error');
-        renderMyParcels([]);
-        return;
-      }
-
-      renderMyParcels(data.parcels || []);
-    } catch (err) {
-      console.error(err);
-      window.showToast('Could not reach the server.', 'error');
-      renderMyParcels([]);
-    }
-  }
-
-  if (postForm) {
-    postForm.addEventListener('submit', async (e) => {
+  // Final Form Submission
+  const form = document.getElementById('multiStepPostForm');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const from = document.getElementById('postFrom').value.trim();
-      const to = document.getElementById('postTo').value.trim();
-      const desc = document.getElementById('postDesc').value.trim();
-      const weight = document.getElementById('postWeight').value;
-      const price = document.getElementById('postPrice').value;
-      const date = document.getElementById('postDate').value;
 
-      const weightNumber = Number(weight);
-      const priceNumber = Number(price);
-      const selectedDate = new Date(`${date}T00:00:00`);
-      const today = new Date(); today.setHours(0,0,0,0);
-
-      if (!from || !to || !desc || !weight || !price || !date) {
-        window.showToast('Please fill in all fields.', 'error');
-        return;
-      }
-      if (from.toLowerCase() === to.toLowerCase()) {
-        window.showToast('Pickup and destination locations cannot be the same.', 'error');
-        return;
-      }
-      if (!Number.isFinite(weightNumber) || weightNumber < 0.1 || !Number.isFinite(priceNumber) || priceNumber <= 0) {
-        window.showToast('Enter a valid weight and price greater than zero.', 'error');
-        return;
-      }
-      if (Number.isNaN(selectedDate.getTime()) || selectedDate < today) {
-        window.showToast('Pickup date cannot be in the past.', 'error');
+      if (!termsAgreeCheck.checked) {
+        window.showToast('Please certify that the parcel contains no prohibited items.', 'warning');
+        termsAgreeCheck.focus();
         return;
       }
 
-      setButtonLoading(postSubmitBtn, true);
-      renderRouteRecommendations([]);
+      setButtonLoading(postSubmitFinalBtn, true, 'Publishing...');
+
+      const from = stepFromCity.value.trim();
+      const to = stepToCity.value.trim();
+      const desc = `${stepDesc.value.trim()} [${stepCategory.value}]`;
+      const weight = Number(stepWeight.value);
+      const priceRupees = Number(stepPrice.value);
+      const pricePaise = Math.round(priceRupees * 100); // Send in PAISE to match backend & Android parity!
+      const date = stepDate.value;
 
       try {
         const res = await fetch(`${API_BASE}/post`, {
           method: 'POST',
           headers: authHeaders(),
-          body: JSON.stringify({ from, to, desc, weight, price, date }),
+          body: JSON.stringify({
+            from,
+            to,
+            desc,
+            weight,
+            price: pricePaise, // EXACT PAISE
+            date,
+            pickupAddress: stepPickupAddress?.value.trim() || '',
+            pickupNotes: stepPickupNotes?.value.trim() || '',
+            deliveryAddress: stepDeliveryAddress?.value.trim() || '',
+            recipientName: stepRecipientName?.value.trim() || '',
+            recipientPhone: stepRecipientPhone?.value.trim() || '',
+          })
         });
+
         const data = await res.json();
 
         if (!res.ok) {
-          handlePostError(data);
+          if (res.status === 402 || data.code === 'INSUFFICIENT_WALLET') {
+            showWalletTopupModal(data);
+            return;
+          }
+          window.showToast(data.error || 'Could not post parcel.', 'error');
           return;
         }
 
-        postForm.reset();
-        window.showToast(data.message || 'Parcel posted! Travelers on this route will be notified.', 'success');
-        showOrderSuccess(data.parcel);
-        loadRouteRecommendations();
-        loadMyParcels();
-      } catch (err) {
-        console.error(err);
-        window.showToast('Could not reach the server.', 'error');
-      } finally {
-        setButtonLoading(postSubmitBtn, false);
-      }
-    });
-  }
+        window.showToast(data.message || 'Parcel posted successfully! Redirecting to tracking...', 'success');
 
-  function openParcelModal(id) {
-    const parcel = myParcelsCache.find((p) => String(p.id) === String(id));
-    if (!parcel || !modalOverlay) return;
-
-    const editable = parcel.status === 'pending';
-    editForm.querySelectorAll('input:not([type=hidden])').forEach((input) => { input.disabled = !editable; });
-    saveParcelBtn.style.display = editable ? '' : 'none';
-    deleteParcelBtn.style.display = ['pending','accepted'].includes(parcel.status) ? '' : 'none';
-
-    document.getElementById('editParcelId').value = parcel.id;
-    document.getElementById('editFrom').value = parcel.from;
-    document.getElementById('editTo').value = parcel.to;
-    document.getElementById('editDesc').value = parcel.desc;
-    document.getElementById('editWeight').value = parcel.weight;
-    document.getElementById('editPrice').value = parcel.price;
-    const parsedDate = new Date(parcel.date);
-    document.getElementById('editDate').value = Number.isNaN(parsedDate.getTime())
-      ? ''
-      : parsedDate.toISOString().slice(0, 10);
-
-    modalOverlay.classList.remove('hidden');
-    document.getElementById('editFrom').focus();
-  }
-
-  function closeParcelModal() {
-    if (modalOverlay) modalOverlay.classList.add('hidden');
-  }
-
-  if (modalClose) modalClose.addEventListener('click', closeParcelModal);
-  if (modalOverlay) {
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) closeParcelModal();
-    });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeParcelModal();
-  });
-
-  if (editForm) {
-    editForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('editParcelId').value;
-      const from = document.getElementById('editFrom').value.trim();
-      const to = document.getElementById('editTo').value.trim();
-      const desc = document.getElementById('editDesc').value.trim();
-      const weight = document.getElementById('editWeight').value;
-      const price = document.getElementById('editPrice').value;
-      const date = document.getElementById('editDate').value;
-
-      if (!from || !to || !desc || !weight || !price || !date) {
-        window.showToast('Please fill in all fields.', 'error');
-        return;
-      }
-
-      setButtonLoading(saveParcelBtn, true);
-
-      try {
-        const res = await fetch(`${API_BASE}/${id}`, {
-          method: 'PUT',
-          headers: authHeaders(),
-          body: JSON.stringify({ from, to, desc, weight, price, date }),
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          handlePostError(data);
-          return;
+        const newId = data.parcel?._id || data.parcel?.id;
+        if (data.recommendations && data.recommendations.length > 0) {
+          renderRecommendations(data.recommendations);
         }
 
-        window.showToast('Parcel updated.', 'success');
-        closeParcelModal();
-        loadMyParcels();
+        setTimeout(() => {
+          if (newId) {
+            window.location.href = `parcel-details.html?id=${encodeURIComponent(newId)}`;
+          } else {
+            window.location.href = 'parcels.html';
+          }
+        }, 1200);
+
       } catch (err) {
         console.error(err);
-        window.showToast('Could not reach the server.', 'error');
+        window.showToast('Network error while posting parcel.', 'error');
       } finally {
-        setButtonLoading(saveParcelBtn, false);
+        setButtonLoading(postSubmitFinalBtn, false);
       }
     });
   }
 
-  if (deleteParcelBtn) {
-    deleteParcelBtn.addEventListener('click', () => deleteParcel(document.getElementById('editParcelId').value));
+  function showWalletTopupModal(errData) {
+    const shortagePaise = Number(errData.shortage || 0);
+    const balancePaise = Number(errData.walletBalance || 0);
+
+    walletShortageAmount.textContent = formatPaise(shortagePaise);
+    walletCurrentBalance.textContent = formatPaise(balancePaise);
+    walletTopupOverlay.classList.remove('hidden');
   }
 
-  [walletTopupClose, walletTopupCancel].forEach((button) => {
-    button?.addEventListener('click', closeWalletTopup);
+  [walletTopupClose, walletTopupCancel].forEach(btn => {
+    btn?.addEventListener('click', () => walletTopupOverlay.classList.add('hidden'));
   });
-  walletTopupOverlay?.addEventListener('click', (e) => {
-    if (e.target === walletTopupOverlay) closeWalletTopup();
-  });
-  walletTopupProceed?.addEventListener('click', () => {
-    if (pendingTopupAmount > 0) {
-      sessionStorage.setItem('travelBuddyTopupAmount', String(pendingTopupAmount));
+
+  function renderRecommendations(recs) {
+    if (!routeRecPanel || !routeRecList) return;
+    if (!recs || recs.length === 0) {
+      routeRecPanel.classList.add('hidden');
+      return;
     }
-    window.location.href = `payments.html${pendingTopupAmount > 0 ? `?topup=${encodeURIComponent(pendingTopupAmount)}` : ''}`;
-  });
 
-  loadMyParcels();
-  loadRouteRecommendations();
+    routeRecList.innerHTML = recs.map(r => `
+      <li class="parcel-card" style="margin-bottom:12px;">
+        <div class="parcel-body">
+          <p class="parcel-title">${escapeHTML(r.travelerName)}</p>
+          <div class="parcel-meta">
+            <span><i class="fa-solid fa-route"></i> ${escapeHTML(r.from)} → ${escapeHTML(r.to)}</span>
+            <span><i class="fa-regular fa-calendar"></i> ${formatDate(r.date)}</span>
+          </div>
+        </div>
+        <button class="btn-primary btn-primary--inline" onclick="window.location.href='messages.html'">
+          <i class="fa-solid fa-message"></i> Message
+        </button>
+      </li>
+    `).join('');
+
+    routeRecPanel.classList.remove('hidden');
+  }
+
+  checkWalletStatus();
 })();

@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="../shared/auth-guard.js" data-guard="user"></script>
-<meta name="robots" content="noindex, nofollow">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>TravelBuddy — Notifications</title>
-<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="css/common.css" />
-<link rel="stylesheet" href="css/notifications.css" />
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — My Reports</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
   <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .reports-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <div class="app-shell">
-
-    <!-- ================= SIDEBAR ================= -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <a href="/" class="brand">
@@ -79,7 +85,7 @@
             <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
             <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
           </a>
-          <a href="notifications.html" class="nav-item active" data-section="notifications">
+          <a href="notifications.html" class="nav-item" data-section="notifications">
             <i class="fa-solid fa-bell"></i><span>Notifications</span>
             <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
           </a>
@@ -90,7 +96,7 @@
           <a href="support.html" class="nav-item" data-section="support">
             <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
           </a>
-          <a href="reports.html" class="nav-item" data-section="reports">
+          <a href="reports.html" class="nav-item active" data-section="reports">
             <i class="fa-solid fa-flag"></i><span>My Reports</span>
           </a>
         </div>
@@ -121,21 +127,15 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ================= MAIN ================= -->
     <div class="main">
       <header class="topbar">
         <button class="menu-btn" id="menuBtn" aria-label="Open menu">
           <i class="fa-solid fa-bars"></i>
         </button>
 
-        <h1 class="page-title" id="pageTitle">Notifications</h1>
+        <h1 class="page-title">My Reports</h1>
 
         <div class="topbar-actions">
-          <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
-          </div>
-
           <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
             <i class="fa-solid fa-bell"></i>
             <span class="dot hidden" id="bellDot"></span>
@@ -161,37 +161,109 @@
         </div>
       </header>
 
-      <!-- Content -->
       <main class="content" id="content">
-
-        <section class="view active" id="view-notifications">
-          <div class="panel">
-            <div class="panel-head panel-head--row">
-              <h2>Notifications</h2>
-              <div class="tab-row" id="notifTabs">
-                <button class="tab-btn active" data-filter="all">All</button>
-                <button class="tab-btn" data-filter="unread">Unread</button>
-              </div>
-              <button class="link-btn" id="markAllReadBtn">Mark all as read</button>
-            </div>
-            <ul class="notif-list" id="notifList"></ul>
+        <div class="reports-head">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Trust &amp; Safety Reports</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Track the status of violation reports and safety disputes submitted to our team.</p>
           </div>
-        </section>
+          <button type="button" class="btn-primary" id="openSubmitReportBtn" style="background:var(--error); border-color:var(--error);">
+            <i class="fa-solid fa-flag"></i> Submit New Report
+          </button>
+        </div>
 
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Submitted Reports</h2>
+          </div>
+
+          <div id="reportsLoading" style="text-align:center; padding:30px;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading your reports...</p>
+          </div>
+
+          <div id="reportsEmpty" class="tb-empty-state hidden">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>No Reports Filed</h3>
+            <p>You have not submitted any dispute or safety reports. If you encounter any fraudulent or inappropriate activity, please report it immediately.</p>
+          </div>
+
+          <div class="table-container" id="reportsTableWrap">
+            <table class="data-table" id="reportsTable">
+              <thead>
+                <tr>
+                  <th>Date Filed</th>
+                  <th>Target</th>
+                  <th>Reason</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="reportsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
       </main>
     </div>
   </div>
 
-    <script defer src="../shared/config.js?v=1"></script>
-    <script defer src="../shared/auth-cookie-client.js?v=1"></script>
-    <script defer src="../shared/analytics-client.js?v=1"></script>
-    <script defer src="../shared/date-utils.js"></script>
-<script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <!-- Submit Report Modal -->
+  <div class="modal-overlay hidden" id="submitReportModal">
+    <div class="modal-card">
+      <button class="modal-close" id="submitReportClose">&times;</button>
+      <h3 class="modal-title" style="color:var(--error);"><i class="fa-solid fa-flag"></i> Submit Safety Report</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+        All reports are investigated confidentially by the TravelBuddy Trust &amp; Safety team.
+      </p>
+
+      <form id="submitReportForm" class="stack-form">
+        <div class="field">
+          <label for="reportTargetType">What are you reporting?</label>
+          <select id="reportTargetType" class="role-select" style="width:100%;">
+            <option value="parcel">Parcel / Shipment Dispute</option>
+            <option value="user">User Conduct / Fraud</option>
+            <option value="other">Platform / Other Issue</option>
+          </select>
+        </div>
+
+        <div class="field" id="reportParcelIdWrap">
+          <label for="reportParcelId">Parcel Order ID (e.g. TB-20260709-A7K2P)</label>
+          <input type="text" id="reportParcelId" placeholder="Order ID" />
+        </div>
+
+        <div class="field">
+          <label for="reportReasonSelect">Reason *</label>
+          <select id="reportReasonSelect" class="role-select" style="width:100%;">
+            <option value="Damaged Goods">Damaged Goods</option>
+            <option value="Prohibited or Illegal Item">Prohibited or Illegal Item</option>
+            <option value="Unresponsive Counterpart">Unresponsive Counterpart</option>
+            <option value="Payment Dispute">Payment Dispute</option>
+            <option value="Harassment or Inappropriate Behavior">Harassment or Inappropriate Behavior</option>
+            <option value="Suspicious / Fraudulent Activity">Suspicious / Fraudulent Activity</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="reportDetails">Detailed Description *</label>
+          <textarea id="reportDetails" rows="4" placeholder="Provide as much context and detail as possible..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" id="sendReportBtn" style="width:100%; background:var(--error); border-color:var(--error); margin-top:8px;">
+          <span class="btn-label">Submit Report to Trust &amp; Safety</span>
+          <span class="spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>
-  <script defer src="js/notifications.js?v=2"></script>
+  <script defer src="js/reports.js"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>
-  <script defer src="../shared/firebase-config.js?v=1"></script>
-  <script defer src="../shared/push-client.js?v=1"></script>
 </body>
 </html>
-

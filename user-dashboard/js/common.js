@@ -74,6 +74,47 @@
     return date.toLocaleDateString('en-IN', options || { day: 'numeric', month: 'short' });
   }
 
+  function formatPaise(paise) {
+    const p = Number(paise) || 0;
+    return '₹' + (p / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function toPaise(rupees) {
+    return Math.round(Number(rupees || 0) * 100);
+  }
+
+  function statusBadge(status) {
+    const s = String(status || '').toLowerCase();
+    const label = s.replace(/_/g, ' ');
+    let tagClass = 'tag--pending';
+    let icon = 'fa-clock';
+    if (['accepted', 'pickup_point_selected'].includes(s)) {
+      tagClass = 'tag--accepted'; icon = 'fa-check';
+    } else if (['pickup_confirmed', 'in_transit', 'delivery_point_pending', 'delivery_point_selected', 'processing'].includes(s)) {
+      tagClass = 'tag--in_transit'; icon = 'fa-truck-fast';
+    } else if (['delivered', 'completed', 'paid', 'released', 'approved'].includes(s)) {
+      tagClass = 'tag--delivered'; icon = 'fa-circle-check';
+    } else if (s.includes('cancel') || ['failed', 'rejected'].includes(s)) {
+      tagClass = 'tag--cancelled'; icon = 'fa-circle-xmark';
+    } else if (['held', 'disputed'].includes(s)) {
+      tagClass = 'tag--held'; icon = 'fa-shield-halved';
+    }
+    return `<span class="tag ${tagClass}"><i class="fa-solid ${icon}"></i> ${escapeHTML(label)}</span>`;
+  }
+
+  function highlightActiveNav() {
+    const currentPath = window.location.pathname.split('/').pop() || 'overview.html';
+    document.querySelectorAll('.sidebar .nav-item').forEach((item) => {
+      const href = item.getAttribute('href') || '';
+      const targetFile = href.split('/').pop().split('?')[0];
+      if (targetFile && currentPath.toLowerCase() === targetFile.toLowerCase()) {
+        item.classList.add('active');
+      } else if (targetFile && !item.hasAttribute('data-keep-active')) {
+        item.classList.remove('active');
+      }
+    });
+  }
+
   window.TravelBuddy = {
     API_ORIGIN,
     escapeHTML,
@@ -81,6 +122,11 @@
     getAuthToken,
     setButtonLoading,
     formatDate,
+    formatPaise,
+    formatRupees: formatPaise,
+    toPaise,
+    statusBadge,
+    highlightActiveNav,
   };
 
   const fetchCache = new Map();
@@ -1062,6 +1108,7 @@
     logoutBtn.addEventListener('click', logoutNow);
   }
 
+  highlightActiveNav();
   refreshCurrentUser();
   refreshMessageBadge();
   refreshNotifBadge();

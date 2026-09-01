@@ -245,6 +245,116 @@ body.nav-open{
 button[hidden]{ display:none !important; }
 @keyframes homeMenuIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
 
+/* Help Dropdown Menu */
+.nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-dropdown-trigger {
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--tb-ink-soft, #33415c);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.nav-dropdown-trigger::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 4px;
+    width: 0;
+    height: 3px;
+    background: var(--tb-primary, #0d6efd);
+    border-radius: 4px;
+    transition: all 0.3s var(--tb-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
+    transform: translateX(-50%);
+}
+
+.nav-dropdown-trigger:hover {
+    color: var(--tb-primary, #0d6efd);
+    transform: translateY(-1px);
+}
+
+.nav-dropdown-trigger:hover::after {
+    width: 20px;
+}
+
+.nav-dropdown-trigger[aria-expanded="true"]::after {
+    width: 100%;
+    max-width: 24px;
+    height: 2px;
+}
+
+.nav-dropdown-trigger i {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.nav-dropdown-trigger[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid #e3eaf5;
+    border-radius: 12px;
+    padding: 8px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    transform: translateX(-50%) translateY(-8px);
+    z-index: 1001;
+}
+
+.nav-dropdown-trigger[aria-expanded="true"] ~ .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.nav-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--tb-ink-soft, #33415c);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover {
+    background: #f0f5ff;
+    color: var(--tb-primary, #0d6efd);
+    padding-left: 20px;
+}
+
+.nav-dropdown-menu a i {
+    width: 16px;
+    text-align: center;
+    font-size: 14px;
+}
+
 @media(min-width:769px){
     #mainNav{
         gap:20px;
@@ -283,6 +393,61 @@ button[hidden]{ display:none !important; }
         transition:clip-path .4s ease;
         z-index:1050;
         overflow-y:auto;
+    }
+
+    .nav-dropdown {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-dropdown-trigger {
+        width: 100%;
+        justify-content: space-between;
+        padding: 12px 0;
+        font-size: 17px;
+        min-height: auto;
+    }
+
+    .nav-dropdown-trigger::after {
+        display: none;
+    }
+
+    .nav-dropdown-menu {
+        position: static;
+        min-width: auto;
+        width: 100%;
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0;
+        overflow: hidden;
+        background: #f8f9ff;
+        border: none;
+        box-shadow: none;
+        transform: none;
+        transition: all 0.3s ease;
+        padding: 0;
+        margin-top: 0;
+        border-radius: 0;
+    }
+
+    .nav-dropdown-trigger[aria-expanded="true"] ~ .nav-dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        max-height: 200px;
+        padding: 8px 0;
+        transform: none;
+    }
+
+    .nav-dropdown-menu a {
+        padding-left: 20px;
+        padding-right: 0;
+        font-size: 15px;
+    }
+
+    .nav-dropdown-menu a:hover {
+        padding-left: 24px;
+        background: #eef4ff;
     }
 
     .home-user-chip { width:100%; margin:8px 0 0; }

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy - My Parcels</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .parcels-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .parcels-head-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .parcels-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .parcels-search-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .parcels-search-input {
+      flex: 1;
+      min-width: 220px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      padding: 0 14px 0 38px;
+      font-family: var(--font);
+      font-size: 13.5px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .parcels-search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(13,110,253,0.12);
+    }
+    .parcels-search-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .parcels-search-wrap i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      font-size: 14px;
+    }
+    .role-select {
+      height: 42px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      padding: 0 14px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      outline: none;
+    }
+    .role-select:focus {
+      border-color: var(--primary);
+    }
+    .parcel-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+    .parcel-card-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .parcel-card-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(13, 110, 253, 0.4);
+    }
+    .parcel-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .parcel-order-id {
+      font-family: monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(13, 110, 253, 0.08);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .parcel-route {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-main);
+    }
+    .parcel-route i {
+      font-size: 12px;
+      color: var(--primary);
+    }
+    .parcel-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .parcel-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+    .parcel-price {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text-main);
+    }
+    .parcel-role-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #F1F5F9;
+      color: #475569;
+    }
+    .parcel-role-badge.is-sender {
+      background: #EFF6FF;
+      color: #2563EB;
+    }
+    .parcel-role-badge.is-traveler {
+      background: #F3E8FF;
+      color: #7E22CE;
+    }
+    .parcel-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-faint);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="/" class="brand">
+          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
+          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
+        </a>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="nav-list" id="navList" style="overflow-y:auto; max-height:calc(100vh - 140px); padding-right:4px;">
+        <div class="nav-group">
+          <a href="overview.html" class="nav-item" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Parcels</span>
+          <a href="parcels.html" class="nav-item active" data-section="parcels">
+            <i class="fa-solid fa-boxes-stacked"></i><span>My Parcels</span>
+          </a>
+          <a href="post.html" class="nav-item" data-section="post">
+            <i class="fa-solid fa-paper-plane"></i><span>Post Parcel</span>
+          </a>
+          <a href="track.html" class="nav-item" data-section="track">
+            <i class="fa-solid fa-location-crosshairs"></i><span>Track Parcel</span>
+          </a>
+          <a href="pickup.html" class="nav-item" data-section="pickup">
+            <i class="fa-solid fa-truck-ramp-box"></i><span>Pickup &amp; Delivery</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Money</span>
+          <a href="wallet.html" class="nav-item" data-section="wallet">
+            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+          </a>
+          <a href="withdraw.html" class="nav-item" data-section="withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i><span>Withdraw</span>
+          </a>
+          <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
+            <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
+          </a>
+          <a href="earnings.html" class="nav-item" data-section="earnings">
+            <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Communication</span>
+          <a href="messages.html" class="nav-item" data-section="messages">
+            <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
+            <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
+          </a>
+          <a href="notifications.html" class="nav-item" data-section="notifications">
+            <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Support</span>
+          <a href="support.html" class="nav-item" data-section="support">
+            <i class="fa-solid fa-headset"></i><span>Help &amp; Support</span>
+          </a>
+          <a href="reports.html" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-flag"></i><span>My Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-title">Account</span>
+          <a href="profile.html" class="nav-item" data-section="profile">
+            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
+          </a>
+          <a href="settings.html" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-sliders"></i><span>Settings</span>
+          </a>
+          <a href="security.html" class="nav-item" data-section="security">
+            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
+          </a>
+          <a href="devices.html" class="nav-item" data-section="devices">
+            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="logoutBtn" type="button">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <h1 class="page-title" id="pageTitle">My Parcels</h1>
+
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Enter Order ID, e.g. TB-..." id="globalSearch" />
+          </div>
+
+          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="dot hidden" id="bellDot"></span>
+          </a>
+
+          <div class="user-chip" id="userChip">
+            <div class="avatar">TB</div>
+            <div class="user-meta">
+              <span class="user-name">TravelBuddy</span>
+              <span class="user-role">Sender &amp; Traveler</span>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+
+            <div class="user-menu" id="userMenu">
+              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
+              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <div class="parcels-head">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Parcel Shipments &amp; Deliveries</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Real-time overview of all parcels you've posted or accepted to transport.</p>
+          </div>
+          <div class="parcels-head-actions">
+            <a href="post.html" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; padding: 0 18px;">
+              <i class="fa-solid fa-plus"></i> Post a Parcel
+            </a>
+            <a href="pickup.html" class="btn-ghost" style="text-decoration:none;">
+              <i class="fa-solid fa-route"></i> Carry a Parcel
+            </a>
+          </div>
+        </div>
+
+        <div class="parcels-controls">
+          <div class="filter-bar" id="statusFilterTabs" style="margin-bottom:0; overflow-x:auto; padding-bottom:4px;">
+            <button class="filter-pill active" data-status="all" type="button">All Parcels</button>
+            <button class="filter-pill" data-status="active" type="button">Active</button>
+            <button class="filter-pill" data-status="pending" type="button">Pending</button>
+            <button class="filter-pill" data-status="accepted" type="button">Accepted</button>
+            <button class="filter-pill" data-status="awaiting_pickup" type="button">Awaiting Pickup</button>
+            <button class="filter-pill" data-status="in_transit" type="button">In Transit</button>
+            <button class="filter-pill" data-status="delivered" type="button">Delivered</button>
+            <button class="filter-pill" data-status="cancelled" type="button">Cancelled</button>
+          </div>
+
+          <div class="parcels-search-row">
+            <div class="parcels-search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="parcelSearchInput" class="parcels-search-input" placeholder="Search by Order ID, description, or city..." />
+            </div>
+
+            <select id="roleFilterSelect" class="role-select" aria-label="Filter by role">
+              <option value="all">Role: All Roles</option>
+              <option value="sender">Role: As Sender</option>
+              <option value="traveler">Role: As Traveler</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cards List Container -->
+        <div id="parcelsLoadingState" style="text-align:center; padding:60px 20px;">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:var(--primary);"></i>
+          <p style="margin-top:14px; font-size:14px; color:var(--text-muted);">Loading your parcels...</p>
+        </div>
+
+        <div id="parcelsEmptyState" class="tb-empty-state hidden">
+          <i class="fa-solid fa-boxes-packing"></i>
+          <h3 id="emptyStateTitle">No Parcels Found</h3>
+          <p id="emptyStateMessage">You haven't posted or accepted any parcels matching the current filters.</p>
+          <a href="post.html" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; margin: 0 auto;">
+            <i class="fa-solid fa-plus"></i> Post Your First Parcel
+          </a>
+        </div>
+
+        <div class="parcel-cards-grid" id="parcelsGrid"></div>
+      </main>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/parcels.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

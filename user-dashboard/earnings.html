@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="../shared/auth-guard.js" data-guard="user"></script>
-<meta name="robots" content="noindex, nofollow">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>TravelBuddy — Notifications</title>
-<link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="css/common.css" />
-<link rel="stylesheet" href="css/notifications.css" />
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Traveler Earnings</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
   <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .earnings-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <div class="app-shell">
-
-    <!-- ================= SIDEBAR ================= -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <a href="/" class="brand">
@@ -68,7 +74,7 @@
           <a href="payment-methods.html" class="nav-item" data-section="payment-methods">
             <i class="fa-solid fa-credit-card"></i><span>Payment Methods</span>
           </a>
-          <a href="earnings.html" class="nav-item" data-section="earnings">
+          <a href="earnings.html" class="nav-item active" data-section="earnings">
             <i class="fa-solid fa-hand-holding-dollar"></i><span>Earnings</span>
           </a>
         </div>
@@ -79,7 +85,7 @@
             <i class="fa-solid fa-comment-dots"></i><span>Messages</span>
             <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
           </a>
-          <a href="notifications.html" class="nav-item active" data-section="notifications">
+          <a href="notifications.html" class="nav-item" data-section="notifications">
             <i class="fa-solid fa-bell"></i><span>Notifications</span>
             <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
           </a>
@@ -121,21 +127,15 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ================= MAIN ================= -->
     <div class="main">
       <header class="topbar">
         <button class="menu-btn" id="menuBtn" aria-label="Open menu">
           <i class="fa-solid fa-bars"></i>
         </button>
 
-        <h1 class="page-title" id="pageTitle">Notifications</h1>
+        <h1 class="page-title">Traveler Earnings</h1>
 
         <div class="topbar-actions">
-          <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
-          </div>
-
           <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
             <i class="fa-solid fa-bell"></i>
             <span class="dot hidden" id="bellDot"></span>
@@ -161,37 +161,91 @@
         </div>
       </header>
 
-      <!-- Content -->
       <main class="content" id="content">
-
-        <section class="view active" id="view-notifications">
-          <div class="panel">
-            <div class="panel-head panel-head--row">
-              <h2>Notifications</h2>
-              <div class="tab-row" id="notifTabs">
-                <button class="tab-btn active" data-filter="all">All</button>
-                <button class="tab-btn" data-filter="unread">Unread</button>
-              </div>
-              <button class="link-btn" id="markAllReadBtn">Mark all as read</button>
-            </div>
-            <ul class="notif-list" id="notifList"></ul>
+        <div class="earnings-head">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">My Delivery Earnings</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Earnings earned by carrying parcels on your planned journeys.</p>
           </div>
-        </section>
+          <div style="display:flex; gap:10px;">
+            <a href="withdraw.html" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center;">
+              <i class="fa-solid fa-money-bill-transfer"></i> Withdraw Earnings
+            </a>
+            <a href="pickup.html" class="btn-ghost" style="text-decoration:none;">
+              <i class="fa-solid fa-route"></i> Carry More Parcels
+            </a>
+          </div>
+        </div>
 
+        <!-- Metric Grid -->
+        <div class="metric-grid" style="margin-bottom:24px;">
+          <div class="metric-box metric-box--success">
+            <span class="metric-label">Total Lifetime Earnings</span>
+            <div class="metric-value" id="earnTotalLifetime">₹0.00</div>
+            <span class="metric-sub">Earned across all completed journeys</span>
+          </div>
+          <div class="metric-box metric-box--primary">
+            <span class="metric-label">Withdrawable Available Balance</span>
+            <div class="metric-value" id="earnWithdrawable">₹0.00</div>
+            <span class="metric-sub">Available for payout to Bank/UPI</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Completed Deliveries</span>
+            <div class="metric-value" id="earnCompletedTrips">0</div>
+            <span class="metric-sub">Verified delivered shipments</span>
+          </div>
+          <div class="metric-box metric-box--warning">
+            <span class="metric-label">Active Transits</span>
+            <div class="metric-value" id="earnActiveTransits">0</div>
+            <span class="metric-sub">Deliveries currently in progress</span>
+          </div>
+        </div>
+
+        <!-- Earnings Ledger -->
+        <div class="panel">
+          <div class="panel-head panel-head--row">
+            <div>
+              <h2>Earnings Ledger</h2>
+              <p class="panel-sub">Itemized record of delivery fees credited to your account.</p>
+            </div>
+            <button type="button" class="btn-ghost" id="exportEarningsBtn">
+              <i class="fa-solid fa-download"></i> Export CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="earningsTable">
+              <thead>
+                <tr>
+                  <th>Credited Date</th>
+                  <th>Order Reference</th>
+                  <th>Description</th>
+                  <th>Net Earning</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="earningsTableBody">
+                <tr>
+                  <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i> Loading earnings...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </main>
     </div>
   </div>
 
-    <script defer src="../shared/config.js?v=1"></script>
-    <script defer src="../shared/auth-cookie-client.js?v=1"></script>
-    <script defer src="../shared/analytics-client.js?v=1"></script>
-    <script defer src="../shared/date-utils.js"></script>
-<script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>
-  <script defer src="js/notifications.js?v=2"></script>
+  <script defer src="js/earnings.js"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>
-  <script defer src="../shared/firebase-config.js?v=1"></script>
-  <script defer src="../shared/push-client.js?v=1"></script>
 </body>
 </html>
-
