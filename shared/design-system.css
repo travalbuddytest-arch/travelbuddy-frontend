@@ -77,6 +77,16 @@
     --tb-orb-opacity: 0.08;
     --tb-route-opacity: 0.03;
     --tb-shape-opacity: 0.06;
+
+    /* Responsive Spacing Tokens */
+    --spacing-xs: clamp(0.25rem, 1vw, 0.5rem);
+    --spacing-sm: clamp(0.5rem, 2vw, 1rem);
+    --spacing-md: clamp(1rem, 4vw, 2rem);
+    --spacing-lg: clamp(2rem, 6vw, 4rem);
+    --spacing-xl: clamp(4rem, 10vw, 8rem);
+
+    --section-padding: clamp(3rem, 10vw, 8rem);
+    --container-px: clamp(1rem, 5vw, 2.5rem);
 }
 
 /* ============================================================
@@ -195,7 +205,96 @@ body[data-page="faq"] .tb-bg-system { --tb-bg-base: #ffffff; --tb-orb-opacity: 0
     background: radial-gradient(circle at 20% 30%, rgba(13, 110, 253, 0.15) 0%, transparent 50%);
     pointer-events: none;
 }
+
+/* ============================================================
+   RESPONSIVE UTILITIES
+   ============================================================ */
+
+.container {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--container-px);
 }
+
+.stack-mobile {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 769px) {
+    .stack-mobile {
+        flex-direction: row;
+    }
+}
+
+.hide-mobile {
+    display: none !important;
+}
+
+@media (min-width: 769px) {
+    .hide-mobile {
+        display: block !important;
+    }
+}
+
+.show-mobile {
+    display: block !important;
+}
+
+@media (min-width: 769px) {
+    .show-mobile {
+        display: none !important;
+    }
+}
+
+.text-center-mobile {
+    text-align: center;
+}
+
+@media (min-width: 769px) {
+    .text-center-mobile {
+        text-align: inherit;
+    }
+}
+
+/* Fluid Typography */
+.text-fluid-xs { font-size: clamp(0.7rem, 0.6rem + 0.5vw, 0.75rem); }
+.text-fluid-sm { font-size: clamp(0.8rem, 0.75rem + 0.5vw, 0.85rem); }
+.text-fluid-base { font-size: clamp(0.875rem, 0.8rem + 0.5vw, 1rem); }
+.text-fluid-lg { font-size: clamp(1rem, 0.9rem + 1vw, 1.25rem); }
+.text-fluid-xl { font-size: clamp(1.25rem, 1rem + 2vw, 1.75rem); }
+.text-fluid-2xl { font-size: clamp(1.5rem, 1.25rem + 3vw, 2.5rem); }
+.text-fluid-3xl { font-size: clamp(1.75rem, 1.5rem + 5vw, 4rem); }
+
+/* Absolute Text Utilities */
+.tb-text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tb-text-break {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.tb-force-wrap {
+    white-space: normal !important;
+}
+
+.tb-no-wrap {
+    white-space: nowrap !important;
+}
+
+/* Section Spacing Logic */
+.section-p {
+    padding-block: var(--section-padding);
+}
+
+.section-pt { padding-top: var(--section-padding); }
+.section-pb { padding-bottom: var(--section-padding); }
 
 /* 3D Container Primitives */
 .depth-container {

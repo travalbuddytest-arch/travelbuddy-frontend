@@ -41,7 +41,7 @@ html{overflow-x:hidden;}
 /* ── KPI Grid ─────────────────────────────── */
 .pc-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -1000,7 +1000,8 @@ html{overflow-x:hidden;}
 @media (max-width: 768px) {
   .pc-kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .pc-toolbar { flex-direction: column; align-items: stretch; }
-  .pc-toolbar-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .pc-toolbar-actions { flex-wrap: wrap; justify-content: flex-start; }
+  .pc-btn { flex: 1 1 auto; justify-content: center; }
   .pc-drawer-overlay { padding: 10px; }
   .pc-drawer { width: 100%; max-height: 92vh; border-radius: 14px; }
   .pc-drawer-kpis { grid-template-columns: repeat(2, 1fr); }

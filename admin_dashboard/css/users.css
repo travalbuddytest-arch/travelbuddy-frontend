@@ -235,8 +235,14 @@ html{overflow-x:hidden;}
 .us-bulk-bar .us-btn:hover { background: rgba(255,255,255,.18); color: #fff; }
 
 /* ── Table ────────────────────────────────── */
-.us-table-wrap { background: var(--us-card); border: 1px solid var(--us-border); border-radius: var(--us-radius); overflow-x: auto; }
-.us-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 1200px; }
+.us-table-wrap {
+  background: var(--us-card);
+  border: 1px solid var(--us-border);
+  border-radius: var(--us-radius);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.us-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 1000px; }
 .us-table thead th {
   text-align: left; padding: 12px 14px; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
   letter-spacing: .03em; color: var(--us-text-muted); border-bottom: 1px solid var(--us-border);
@@ -340,7 +346,11 @@ html{overflow-x:hidden;}
 /* ── Profile Header (compact, everything in one band) ── */
 .us-profile-header {
   background: linear-gradient(135deg, var(--us-primary-light), var(--us-purple-light));
-  padding: 18px 56px 16px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
   flex-shrink: 0;
 }
 .us-profile-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: var(--us-shadow); flex-shrink: 0; }
@@ -450,10 +460,14 @@ html{overflow-x:hidden;}
 
 /* ── Responsive ───────────────────────────── */
 @media (max-width: 768px) {
-  .us-header { flex-direction: column; }
-  .us-profile-stats { margin-left: 0; }
+  .us-header { flex-direction: column; align-items: stretch; }
+  .us-header-actions { justify-content: flex-start; flex-wrap: wrap; }
+  .us-btn { flex: 1 1 auto; justify-content: center; }
+  .us-profile-stats { margin-left: 0; width: 100%; justify-content: space-between; margin-top: 10px; }
   .us-tab-content { padding: 16px; }
-  .us-profile-header { padding: 16px 44px 14px 16px; }
-  .us-quick-actions { padding: 10px 16px; }
+  .us-profile-header { padding: 20px 16px; flex-direction: column; text-align: center; }
+  .us-profile-avatar { width: 72px; height: 72px; }
+  .us-profile-meta { justify-content: center; }
+  .us-quick-actions { padding: 10px 16px; justify-content: center; }
   .us-tabs { padding: 0 16px; }
 }

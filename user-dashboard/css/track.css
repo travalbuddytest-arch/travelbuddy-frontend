@@ -610,7 +610,7 @@
 .route-line-base{border-top-style:solid;border-top-color:rgba(13,110,253,.18)}
 .route-line-progress{border-top-style:solid;box-shadow:0 0 14px rgba(13,110,253,.24)}
 .route-point{gap:8px;max-width:42%;z-index:3;padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.76);backdrop-filter:blur(6px);box-shadow:0 8px 22px rgba(31,76,135,.08)}
-.route-point strong{font-size:clamp(14px,1.5vw,19px);line-height:1.2;overflow-wrap:anywhere;word-break:normal}
+.route-point strong{font-size:clamp(12px, 1.5vw, 19px);line-height:1.2;overflow-wrap:anywhere;word-break:normal}
 .route-point--origin{left:2%;bottom:12%}
 .route-point--destination{right:2%;top:10%}
 .point-dot{width:20px;height:20px;border-width:4px;box-shadow:0 0 0 5px rgba(13,110,253,.08),0 6px 16px rgba(20,38,66,.18)}
@@ -683,10 +683,10 @@
 
   .track-view .track-heading h2 {
     margin: 0;
-    font-size: clamp(2.25rem, 3.35vw, 4rem);
+    font-size: clamp(1.8rem, 3.35vw, 4rem);
     line-height: 1.02;
     letter-spacing: -0.045em;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .track-view .track-heading p {

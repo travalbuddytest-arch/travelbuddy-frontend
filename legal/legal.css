@@ -16,7 +16,7 @@ img, video, svg, canvas { max-width:100%; }
 img { height:auto; }
 
 .legal-hero{
-    padding:clamp(48px, 8vw, 84px) clamp(18px, 6vw, 8%) clamp(36px, 6vw, 56px);
+    padding: var(--section-padding) var(--container-px);
     text-align:center;
     background: transparent;
 }
@@ -50,16 +50,21 @@ img { height:auto; }
 
 .legal-wrap{
     background: transparent;
-    padding:clamp(36px, 6vw, 60px) clamp(18px, 6vw, 8%) clamp(60px, 8vw, 96px);
+    padding: var(--section-padding) var(--container-px);
 }
 
 .legal-layout{
     max-width:1120px;
     margin:0 auto;
     display:grid;
-    grid-template-columns:240px 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
     gap:clamp(28px, 4vw, 48px);
     align-items:start;
+}
+@media (min-width: 861px) {
+    .legal-layout {
+        grid-template-columns: 240px 1fr;
+    }
 }
 
 .legal-nav{

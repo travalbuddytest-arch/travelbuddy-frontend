@@ -8,7 +8,7 @@
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 18px;
   margin-bottom: 24px;
 }
@@ -162,13 +162,14 @@
   gap: 24px;
   min-height: 188px;
   margin-bottom: 24px;
-  padding: 28px;
+  padding: clamp(20px, 4vw, 32px);
   border: 1px solid rgba(13, 110, 253, 0.14);
   border-radius: var(--radius-lg);
   background:
     linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(23, 166, 115, 0.10)),
     var(--surface);
   box-shadow: var(--shadow-card);
+  flex-wrap: wrap;
 }
 
 .overview-hero::after {

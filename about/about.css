@@ -32,7 +32,7 @@ img { height:auto; }
 
 /* ---------- HERO ---------- */
 .ab-hero{
-    padding:clamp(48px, 8vw, 80px) clamp(18px, 8vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: transparent;
 }
 
@@ -116,14 +116,15 @@ img { height:auto; }
 }
 
 /* ---------- STATS ---------- */
-.ab-stats-wrap{ padding:0 clamp(18px, 6vw, 8%); margin-top:-28px; position:relative; z-index:2; }
+.ab-stats-wrap{ padding:0 var(--container-px); margin-top:-28px; position:relative; z-index:2; }
 .ab-stats{
     max-width:1100px; margin:0 auto;
-    display:grid; grid-template-columns:repeat(4, 1fr); gap:2px;
-    background: var(--text-primary); border-radius: var(--radius-lg); padding:6px;
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+    background: var(--text-primary); border-radius: var(--radius-lg); padding:4px;
     box-shadow:0 24px 55px rgba(13,32,58,.2);
 }
-@media(max-width:760px){ .ab-stats{ grid-template-columns:1fr 1fr; } }
+@media(max-width:768px){ .ab-stats{ grid-template-columns:repeat(2, 1fr); gap:1px; } }
+@media(max-width:480px){ .ab-stats{ grid-template-columns:1fr; } }
 .ab-stat{
     background:#16294a; border-radius: var(--radius-md); padding:24px 18px;
     display:flex; flex-direction:column; align-items:center; text-align:center;
@@ -132,7 +133,7 @@ img { height:auto; }
 .ab-stat span{ font-size: var(--text-xs); color:#9fb1cf; margin-top:6px; }
 
 /* ---------- STORY ---------- */
-.ab-story{ padding:clamp(80px, 10vw, 110px) clamp(18px, 8vw, 8%) clamp(56px, 8vw, 90px); }
+.ab-story{ padding: var(--section-padding) var(--container-px); }
 .ab-story-inner{
     max-width:1180px; margin:0 auto;
     display:flex; align-items:center; gap:clamp(32px, 6vw, 64px); flex-wrap:wrap;
@@ -154,10 +155,10 @@ img { height:auto; }
 .ab-check-list i{ color: var(--text-success); margin-top:2px; }
 
 /* ---------- VALUES (reuses .features / .cards / .card) ---------- */
-.ab-values{ background:#f7f9fc; padding-bottom: 80px; }
+.ab-values{ background:#f7f9fc; padding: var(--section-padding) var(--container-px); }
 .ab-values h2{ color: var(--text-primary); text-align: left; max-width: 1100px; margin: 12px auto 48px; }
 .ab-values .ab-eyebrow-center { display: block; max-width: 1100px; margin: 0 auto 16px; text-align: left; }
-.ab-values .cards { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+.ab-values .cards { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; }
 .ab-values .card{
     text-align:left;
     background: #fff;
@@ -172,7 +173,7 @@ img { height:auto; }
 
 /* ---------- CTA BANNER ---------- */
 .ab-cta{
-    padding:clamp(60px, 8vw, 90px) clamp(18px, 8vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: var(--text-primary);
     position:relative;
     overflow:hidden;

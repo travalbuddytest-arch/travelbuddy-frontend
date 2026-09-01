@@ -77,7 +77,7 @@ img{
 ========================== */
 
 .hero{
-    padding: 120px clamp(18px, 5vw, 5%) 80px;
+    padding: 120px var(--container-px) 80px;
     background: radial-gradient(circle at top right, #eef5ff 0%, #f7f9fc 100%);
     min-height: 100vh;
     display: flex;
@@ -100,11 +100,12 @@ img{
 }
 
 #typing {
-    font-size: clamp(38px, 5vw, 64px);
+    font-size: clamp(32px, 5vw, 64px);
     line-height: 1.1;
     margin-bottom: 24px;
     color: var(--tb-ink);
     min-height: 1.2em;
+    word-wrap: break-word;
 }
 
 #typing span{
@@ -127,15 +128,20 @@ img{
 .steps-3d {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 48px;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
 }
 
 .step-3d {
-    padding: 14px 20px;
+    padding: 10px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--tb-shadow-l1);
+    flex: 1 1 200px;
 }
 
 .step-icon {
@@ -184,7 +190,7 @@ img{
 /* 3D Parcel Visual */
 .hero-visual {
     position: relative;
-    height: 500px;
+    height: clamp(300px, 50vh, 500px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -193,8 +199,8 @@ img{
 
 .parcel-3d-wrap {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: clamp(140px, 30vw, 200px);
+    height: clamp(140px, 30vw, 200px);
     transform-style: preserve-3d;
     animation: float 6s ease-in-out infinite;
 }
@@ -210,19 +216,19 @@ img{
 
 .parcel-face {
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
     background: #e3bc9a; /* Cardboard color */
     border: 2px solid #c99a74;
     box-shadow: inset 0 0 40px rgba(0,0,0,0.05);
 }
 
-.front  { transform: rotateY(0deg) translateZ(100px); }
-.back   { transform: rotateY(180deg) translateZ(100px); }
-.right  { transform: rotateY(90deg) translateZ(100px); background: #d4a77d; }
-.left   { transform: rotateY(-90deg) translateZ(100px); background: #d4a77d; }
-.top    { transform: rotateX(90deg) translateZ(100px); background: #ecd0b4; }
-.bottom { transform: rotateX(-90deg) translateZ(100px); background: #b88b5d; }
+.front  { transform: rotateY(0deg) translateZ(calc(clamp(140px, 30vw, 200px) / 2)); }
+.back   { transform: rotateY(180deg) translateZ(calc(clamp(140px, 30vw, 200px) / 2)); }
+.right  { transform: rotateY(90deg) translateZ(calc(clamp(140px, 30vw, 200px) / 2)); background: #d4a77d; }
+.left   { transform: rotateY(-90deg) translateZ(calc(clamp(140px, 30vw, 200px) / 2)); background: #d4a77d; }
+.top    { transform: rotateX(90deg) translateZ(calc(clamp(140px, 30vw, 200px) / 2)); background: #ecd0b4; }
+.bottom { transform: rotateX(-90deg) translateZ(calc(clamp(140px, 30vw, 200px) / 2)); background: #b88b5d; }
 
 .parcel-label {
     position: absolute;
@@ -485,8 +491,8 @@ body.nav-open{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:clamp(30px, 6vw, 80px);
-    padding: 100px clamp(18px, 6vw, 8%);
+    gap: 3rem;
+    padding: var(--section-padding) var(--container-px);
     background: var(--tb-bg);
     flex-wrap:wrap;
     position: relative;
@@ -657,7 +663,7 @@ body.nav-open{
 
 .timeline-3d {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 24px;
     position: relative;
     max-width: 1400px;
@@ -765,7 +771,7 @@ body.nav-open{
 
 .ways-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
     gap: 32px;
     max-width: 1100px;
     margin: 0 auto;
@@ -881,7 +887,7 @@ body.nav-open{
 ========================== */
 
 .smart-matching {
-    padding: 100px clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: var(--tb-bg);
 }
 
@@ -1066,7 +1072,7 @@ body.nav-open{
 ========================== */
 
 .why-choose-section {
-    padding: 100px clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: var(--tb-bg);
 }
 
@@ -1182,7 +1188,7 @@ body.nav-open{
 ========================== */
 
 .trust-safety-layout {
-    padding: 100px clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: var(--tb-navy);
     color: #fff;
 }
@@ -1298,8 +1304,8 @@ body.nav-open{
 .section-Flow {
     display: flex;
     flex-direction: column;
-    gap: clamp(60px, 8vw, 120px);
-    padding: clamp(60px, 8vw, 110px) clamp(18px, 6vw, 8%);
+    gap: clamp(4rem, 10vw, 8rem);
+    padding: var(--section-padding) var(--container-px);
     max-width: 1320px;
     margin: 0 auto;
 }
@@ -1379,7 +1385,7 @@ body.nav-open{
 ========================== */
 
 .trust-orbit {
-    padding: clamp(70px, 9vw, 120px) clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
 }
 
 .trust-safety-inner {
@@ -1588,7 +1594,7 @@ body.nav-open{
 ========================== */
 
 .faq-section {
-    padding: clamp(70px, 9vw, 110px) clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: var(--tb-bg);
 }
 
@@ -1827,7 +1833,7 @@ body.nav-open{
    NEWSLETTER
 ========================== */
 .newsletter-section {
-    padding: 0 clamp(18px, 6vw, 8%) 80px;
+    padding: 0 var(--container-px) var(--section-padding);
 }
 
 .newsletter-card {
@@ -1901,9 +1907,19 @@ body.nav-open{
 }
 
 @media(max-width: 768px) {
-    .hero { padding-top: 100px; }
-    .parcel-search-section { padding: 60px 20px; }
-    .hero-actions { flex-direction: column; width: 100%; }
+    .hero { padding-top: 100px; padding-bottom: 40px; min-height: auto; }
+    .parcel-search-section { padding: 4rem var(--container-px); }
+    .hero-actions { flex-direction: column; width: 100%; gap: 12px; }
     .hero-actions .tb-btn-primary,
-    .hero-actions .tb-btn-secondary { width: 100%; }
+    .hero-actions .tb-btn-secondary { width: 100%; padding: 12px 20px; }
+    .section-Flow { gap: 4rem; }
+    .ways-cards { grid-template-columns: 1fr; }
+    .trust-badges { justify-content: center; gap: 10px; }
+    .trust-badges span { width: 100%; justify-content: center; }
+}
+
+@media(max-width: 480px) {
+    #typing { font-size: 32px; }
+    .parcel-search-card { padding: 24px 20px; }
+    .news-content h2 { font-size: 24px; }
 }

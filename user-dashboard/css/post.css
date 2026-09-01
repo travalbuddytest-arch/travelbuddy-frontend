@@ -197,15 +197,24 @@
   border-color: rgba(23, 166, 115, 0.45);
   background: var(--success-bg);
 }
-@media (max-width: 720px) {
+@media (max-width: 600px) {
   .parcel-card {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .parcel-card-main {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .parcel-card .tag,
   .parcel-card .accept-btn {
-    align-self: flex-start;
+    align-self: stretch;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 }
 
