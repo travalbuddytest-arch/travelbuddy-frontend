@@ -626,7 +626,8 @@ if (smartMatchingSection) {
 
     // Main action buttons on the public home page become session-aware.
     // Logged in -> dashboard. Logged out -> login.
-    document.querySelectorAll('a.primary-btn').forEach((link) => {
+    // Added :not([data-auth-routing="false"]) to avoid overwriting informational links.
+    document.querySelectorAll('a.primary-btn:not([data-auth-routing="false"])').forEach((link) => {
         link.href = isLoggedIn ? dashboardUrl : loginUrl;
     });
 
