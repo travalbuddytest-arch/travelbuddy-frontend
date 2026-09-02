@@ -1357,6 +1357,8 @@ body.nav-open{
 .post-image img, .get-image img, .delivered-image img,
 .reach-image img, .trusted-image img, .affordable-image img {
     width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
     border-radius: var(--tb-radius-lg);
     box-shadow: var(--tb-shadow-l3);
     transition: transform 0.5s var(--tb-transition);
