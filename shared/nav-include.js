@@ -1,43 +1,51 @@
 // =========================================================
-// Shared Navbar/Footer include loader
+// Shared Navbar/Footer include loader (Hybrid Version)
 // -----------------------------------------------------------------------
-// Injects shared/navbar.html and shared/footer.html into every page so the
-// markup lives in ONE place instead of being copy-pasted per page.
-//
-// IMPORTANT: this file must be included with a plain <script src="...">
-// tag placed exactly where the old inline navbar/footer markup used to be
-// (i.e. BEFORE the page's own script.js / support.js tag), and it must run
-// synchronously so that by the time the page's own script runs,
-// #mainNav / #menuToggle / #homeUserChip etc. already exist in the DOM
-// (several existing scripts read these elements at top-level, not just
-// inside DOMContentLoaded).
-//
-// Requires the page to be served over http(s):// (e.g. VS Code Live
-// Server) — synchronous XHR to local files does not work from a
-// file:// URL.
+// This script handles the "Hybrid" approach:
+// 1. If the page already has hardcoded HTML with data-v="6", it SKIPS injection
+//    to avoid layout shift and wasted network requests.
+// 2. It then ensures the behavior (JS) is initialized.
+// 3. If HTML is missing or outdated, it fetches and injects it.
 // =========================================================
 (function () {
     'use strict';
 
-    async function inject(placeholderId, url) {
+    var CURRENT_V = '6';
+    var basePath = '/shared/';
+
+    async function inject(placeholderId, url, type) {
         var el = document.getElementById(placeholderId);
         if (!el) return;
 
+        // Check if already hardcoded with correct version
+        var existing = el.nextElementSibling;
+        if (existing && existing.getAttribute('data-v') === CURRENT_V) {
+            // console.log('[nav-include] skipping injection for', type, '- version match');
+            if (type === 'navbar' && window.TBNav && typeof window.TBNav.init === 'function') {
+                window.TBNav.init();
+            }
+            highlightActiveLink();
+            return;
+        }
+
         try {
-            const response = await fetch(url);
+            const response = await fetch(url + '?v=' + CURRENT_V);
             if (response.ok) {
                 const html = await response.text();
                 el.outerHTML = html;
 
-                // If this is the footer, we need to trigger any post-injection logic
-                if (placeholderId === 'tbFooterInclude') {
-                    // Re-apply fixes if needed
+                if (type === 'navbar') {
+                    if (window.TBNav && typeof window.TBNav.init === 'function') {
+                        window.TBNav.init();
+                    }
+                }
+
+                if (type === 'footer') {
                     if (typeof applyHomeFooterAnchorFix === 'function') {
                         applyHomeFooterAnchorFix();
                     }
                 }
 
-                // Re-highlight active link after injection
                 highlightActiveLink();
             }
         } catch (e) {
@@ -57,26 +65,31 @@
         }
     }
 
-    function getBasePath() {
-        var scripts = document.getElementsByTagName('script');
-        for (var i = 0; i < scripts.length; i++) {
-            var src = scripts[i].getAttribute('src') || '';
-            if (src.indexOf('nav-include.js') !== -1) {
-                var prefix = src.substring(0, src.indexOf('nav-include.js'));
-                return prefix || './';
+    // Load shared assets for Security & AI
+    function loadAsset(url, type) {
+        if (type === 'css') {
+            if (!document.querySelector(`link[href="${url}"]`)) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = url;
+                document.head.appendChild(link);
+            }
+        } else {
+            if (!document.querySelector(`script[src="${url}"]`)) {
+                var script = document.createElement('script');
+                script.src = url;
+                script.defer = true;
+                document.body.appendChild(script);
             }
         }
-        return '../shared/';
     }
 
-    var basePath = '/shared/';
-    var v = '5'; // Cache-buster version
-    inject('tbNavbarInclude', basePath + 'public-navbar.html?v=' + v);
+    // Initialize Navbar
+    inject('tbNavbarInclude', basePath + 'public-navbar.html', 'navbar');
 
-    // Premium Background Injection (Non-blocking)
+    // Premium Background Injection
     setTimeout(function injectBackground() {
         if (document.querySelector('.tb-bg-system')) return;
-
         const bgEl = document.createElement('div');
         bgEl.className = 'tb-bg-system';
         bgEl.innerHTML = `
@@ -91,38 +104,8 @@
             <div class="tb-bg-shape" style="width:100px; height:100px; top:20%; left:10%; border-width:0.5px;"></div>
             <div class="tb-bg-shape" style="width:150px; height:150px; bottom:15%; right:20%; border-width:0.3px; border-style:dashed;"></div>
         `;
-
         document.body.prepend(bgEl);
-
-        // Suble Parallax Effect (Desktop only)
-        if (window.innerWidth > 1024 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            window.addEventListener('mousemove', (e) => {
-                const x = (e.clientX / window.innerWidth - 0.5) * 10;
-                const y = (e.clientY / window.innerHeight - 0.5) * 10;
-
-                const orbs = bgEl.querySelectorAll('.tb-bg-orb');
-                orbs.forEach((orb, i) => {
-                    const factor = (i + 1) * 0.3;
-                    orb.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
-                });
-            });
-        }
     }, 0);
-
-    // Load shared assets for Security & AI
-    function loadAsset(url, type) {
-        if (type === 'css') {
-            var link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = url;
-            document.head.appendChild(link);
-        } else {
-            var script = document.createElement('script');
-            script.src = url;
-            script.defer = true;
-            document.body.appendChild(script);
-        }
-    }
 
     loadAsset(basePath + 'toast.css', 'css');
     loadAsset(basePath + 'toast.js', 'js');
@@ -133,14 +116,10 @@
 
     window.TBInclude = {
         injectFooter: function () {
-            inject('tbFooterInclude', basePath + 'footer.html?v=' + v);
+            inject('tbFooterInclude', basePath + 'footer.html', 'footer');
         }
     };
 
-    // On the Home page itself, keep the footer's "How It Works"/"Safety"
-    // links as same-page anchor jumps (no full reload), exactly like the
-    // original Home footer behaved. On every other page they stay as
-    // cross-page links into the Home page's sections.
     function applyHomeFooterAnchorFix() {
         var currentPage = document.body.getAttribute('data-page');
         if (currentPage !== 'home') return;
@@ -155,5 +134,4 @@
             }
         }
     }
-})();
 })();
