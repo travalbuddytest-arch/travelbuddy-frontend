@@ -1,0 +1,38 @@
+<!-- ================= CANONICAL APP TOPBAR (Source of Truth) ================= -->
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <h1 class="page-title" id="pageTitle">...</h1>
+
+  <div class="topbar-actions">
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
+    </div>
+
+    <a class="icon-btn" id="bellBtn" href="/user-dashboard/notifications.html" aria-label="Notifications">
+      <i class="fa-solid fa-bell"></i>
+      <span class="dot" id="bellDot"></span>
+    </a>
+
+    <div class="user-chip" id="userChip">
+      <div class="avatar">TB</div>
+      <div class="user-meta">
+        <span class="user-name">TravelBuddy</span>
+        <span class="user-role">Sender &amp; Traveler</span>
+      </div>
+      <i class="fa-solid fa-chevron-down"></i>
+
+      <div class="user-menu" id="userMenu">
+        <a href="/user-dashboard/profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+        <a href="/user-dashboard/settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
+        <a href="/user-dashboard/security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+        <a href="/user-dashboard/devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
+        <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
+        <a href="/login/login.html" id="topbarLogoutLink"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+      </div>
+    </div>
+  </div>
+</header>

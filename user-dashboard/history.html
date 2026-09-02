@@ -21,97 +21,12 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <div class="app-shell">
-
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-top">
-        <a href="/" class="brand">
-          <img src="../images/logo.jpeg" alt="" width="32" height="32" />
-          <img src="../images/name.png" alt="TravelBuddy" class="brand-word" />
-        </a>
-        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <nav class="nav-list" id="navList">
-        <a href="overview.html" class="nav-item" data-section="overview">
-          <i class="fa-solid fa-gauge"></i><span>Overview</span>
-        </a>
-        <a href="post.html" class="nav-item" data-section="post">
-          <i class="fa-solid fa-box"></i><span>Post a Parcel</span>
-        </a>
-        <a href="pickup.html" class="nav-item" data-section="pickup">
-          <i class="fa-solid fa-route"></i><span>Pick Up a Parcel</span>
-        </a>
-        <a href="track.html" class="nav-item" data-section="track">
-          <i class="fa-solid fa-location-dot"></i><span>Track Parcel</span>
-        </a>
-        <a href="messages.html" class="nav-item" data-section="messages">
-          <i class="fa-solid fa-message"></i><span>Messages</span>
-          <span class="nav-badge" id="navMsgBadge" style="display: none;">0</span>
-        </a>
-        <a href="notifications.html" class="nav-item" data-section="notifications">
-          <i class="fa-solid fa-bell"></i><span>Notifications</span>
-          <span class="nav-badge" id="navNotifBadge" style="display: none;">0</span>
-        </a>
-        <a href="payments.html" class="nav-item" data-section="payments">
-          <i class="fa-solid fa-wallet"></i><span>Payments</span>
-        </a>
-        <a href="history.html" class="nav-item active" data-section="history">
-          <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <button class="nav-item" id="logoutBtn">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
-        </button>
-      </div>
-    </aside>
-
+    <div id="tbAppSidebarInclude"></div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ================= MAIN ================= -->
     <div class="main">
+      <div id="tbAppTopbarInclude"></div>
 
-      <!-- Topbar -->
-      <header class="topbar">
-        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <h1 class="page-title" id="pageTitle">History</h1>
-
-        <div class="topbar-actions">
-          <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Enter Order ID, e.g. TB-20260709-A7K2P" id="globalSearch" />
-          </div>
-
-          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
-            <i class="fa-solid fa-bell"></i>
-            <span class="dot" id="bellDot"></span>
-          </a>
-
-          <div class="user-chip" id="userChip">
-            <div class="avatar">BS</div>
-            <div class="user-meta">
-              <span class="user-name">Bhushan</span>
-              <span class="user-role">Sender &amp; Traveler</span>
-            </div>
-            <i class="fa-solid fa-chevron-down"></i>
-
-            <div class="user-menu" id="userMenu">
-              <a href="" data-profile-action="profile"><i class="fa-solid fa-user"></i> My Profile</a>
-              <a href="" data-profile-action="settings"><i class="fa-solid fa-gear"></i> Settings</a>
-              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Content -->
       <main class="content" id="content">
 
         <section class="view active history-view" id="view-history" aria-labelledby="historyHeading">

@@ -69,9 +69,9 @@
         return '../shared/';
     }
 
-    var basePath = getBasePath();
-    var v = '4'; // Cache-buster version
-    inject('tbNavbarInclude', basePath + 'navbar.html?v=' + v);
+    var basePath = '/shared/';
+    var v = '5'; // Cache-buster version
+    inject('tbNavbarInclude', basePath + 'public-navbar.html?v=' + v);
 
     // Premium Background Injection (Non-blocking)
     setTimeout(function injectBackground() {
@@ -129,6 +129,7 @@
     loadAsset(basePath + 'ai-assistant.css', 'css');
     loadAsset(basePath + 'ai-assistant.js', 'js');
     loadAsset(basePath + 'nav-dropdown.js', 'js');
+    loadAsset(basePath + 'nav-basic-behavior.js', 'js');
 
     window.TBInclude = {
         injectFooter: function () {

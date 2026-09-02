@@ -1,6 +1,100 @@
 (function () {
   'use strict';
 
+  async function injectDashboardComponents() {
+    const sidebarPlaceholder = document.getElementById('tbAppSidebarInclude');
+    const topbarPlaceholder = document.getElementById('tbAppTopbarInclude');
+    const v = '1';
+
+    if (sidebarPlaceholder) {
+      try {
+        const res = await fetch(`/shared/app-sidebar.html?v=${v}`);
+        if (res.ok) {
+          sidebarPlaceholder.outerHTML = await res.text();
+          highlightActiveNav();
+          // Bind sidebar events
+          const menuBtn = document.getElementById('menuBtn');
+          const sidebarClose = document.getElementById('sidebarClose');
+          const sidebarOverlay = document.getElementById('sidebarOverlay');
+          if (menuBtn) menuBtn.addEventListener('click', openSidebar);
+          if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+          if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+          document.querySelectorAll('.sidebar .nav-item[href]').forEach((link) => {
+            link.addEventListener('click', () => {
+              if (window.matchMedia('(max-width: 900px)').matches) closeSidebar();
+            });
+          });
+          const logoutBtn = document.getElementById('logoutBtn');
+          if (logoutBtn) logoutBtn.addEventListener('click', logoutNow);
+        }
+      } catch (e) { console.error('Sidebar injection failed', e); }
+    }
+
+    if (topbarPlaceholder) {
+      try {
+        const res = await fetch(`/shared/app-topbar.html?v=${v}`);
+        if (res.ok) {
+          topbarPlaceholder.outerHTML = await res.text();
+
+          // Sync page title from <title> tag
+          const pageTitleEl = document.getElementById('pageTitle');
+          if (pageTitleEl) {
+            const titleText = document.title.replace('TravelBuddy - ', '').trim();
+            pageTitleEl.textContent = titleText;
+          }
+
+          personalizeUser();
+          // Bind topbar events
+          const userChip = document.getElementById('userChip');
+          if (userChip) {
+            userChip.setAttribute('role', 'button');
+            userChip.setAttribute('tabindex', '0');
+            userChip.setAttribute('aria-haspopup', 'menu');
+            userChip.setAttribute('aria-expanded', 'false');
+            const setUserMenuOpen = (open) => {
+              userChip.classList.toggle('open', open);
+              userChip.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+            userChip.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (e.target.closest('.user-menu')) return;
+              setUserMenuOpen(!userChip.classList.contains('open'));
+            });
+            userChip.addEventListener('keydown', (e) => {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              setUserMenuOpen(!userChip.classList.contains('open'));
+            });
+            document.getElementById('userMenu')?.addEventListener('click', (e) => e.stopPropagation());
+            document.addEventListener('click', closeUserMenu);
+          }
+          const globalSearch = document.getElementById('globalSearch');
+          if (globalSearch) {
+            globalSearch.addEventListener('click', () => { window.location.href = 'search.html'; });
+            globalSearch.addEventListener('input', () => { window.location.href = `search.html?q=${encodeURIComponent(globalSearch.value)}`; });
+          }
+          document.getElementById('topbarLogoutLink')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeUserMenu();
+            logoutNow();
+          });
+          // Re-bind profile actions for the new topbar
+          document.querySelectorAll('.user-menu a').forEach((link) => {
+            const text = link.textContent.trim().toLowerCase();
+            if (text.includes('my profile')) {
+              link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('profile'); });
+            }
+            if (text.includes('settings')) {
+              link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('settings'); });
+            }
+          });
+        }
+      } catch (e) { console.error('Topbar injection failed', e); }
+    }
+  }
+
+  injectDashboardComponents();
+
   const toast = document.getElementById('toast');
   let toastTimer;
   // MUST be declared here (top of IIFE) — renderProfileAvatar() references
@@ -660,66 +754,37 @@
   window.TravelBuddy.refreshNotifBadge = refreshNotifBadge;
   window.TravelBuddy.setNotifBadge = setNotifBadge;
 
-  const sidebar = document.getElementById('sidebar');
-  const sidebarOverlay = document.getElementById('sidebarOverlay');
-  const menuBtn = document.getElementById('menuBtn');
-  const sidebarClose = document.getElementById('sidebarClose');
+  const sidebar = () => document.getElementById('sidebar');
+  const sidebarOverlay = () => document.getElementById('sidebarOverlay');
 
   function openSidebar() {
-    if (!sidebar || !sidebarOverlay) return;
-    sidebar.classList.add('open');
-    sidebarOverlay.classList.add('show');
+    const s = sidebar(), o = sidebarOverlay();
+    if (!s || !o) return;
+    s.classList.add('open');
+    o.classList.add('show');
     document.body.classList.add('sidebar-is-open');
   }
 
   function closeSidebar() {
-    if (!sidebar || !sidebarOverlay) return;
-    sidebar.classList.remove('open');
-    sidebarOverlay.classList.remove('show');
+    const s = sidebar(), o = sidebarOverlay();
+    if (!s || !o) return;
+    s.classList.remove('open');
+    o.classList.remove('show');
     document.body.classList.remove('sidebar-is-open');
   }
 
-  if (menuBtn && sidebar && sidebarOverlay) menuBtn.addEventListener('click', openSidebar);
-  if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
-  if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-  document.querySelectorAll('.sidebar .nav-item[href]').forEach((link) => {
-    link.addEventListener('click', () => {
-      if (window.matchMedia('(max-width: 900px)').matches) closeSidebar();
-    });
-  });
-
-  const userChip = document.getElementById('userChip');
   function closeUserMenu() {
-    if (!userChip) return;
-    userChip.classList.remove('open');
-    userChip.setAttribute('aria-expanded', 'false');
+    const chip = document.getElementById('userChip');
+    if (!chip) return;
+    chip.classList.remove('open');
+    chip.setAttribute('aria-expanded', 'false');
   }
+  // Injection re-binds these on demand.
+  /*
   if (userChip) {
-    userChip.setAttribute('role', 'button');
-    userChip.setAttribute('tabindex', '0');
-    userChip.setAttribute('aria-haspopup', 'menu');
-    userChip.setAttribute('aria-expanded', 'false');
-    document.getElementById('userMenu')?.setAttribute('role', 'menu');
-
-    const setUserMenuOpen = (open) => {
-      userChip.classList.toggle('open', open);
-      userChip.setAttribute('aria-expanded', open ? 'true' : 'false');
-    };
-
-    userChip.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (e.target.closest('.user-menu')) return;
-      setUserMenuOpen(!userChip.classList.contains('open'));
-    });
-    userChip.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      e.preventDefault();
-      setUserMenuOpen(!userChip.classList.contains('open'));
-    });
-    document.getElementById('userMenu')?.addEventListener('click', (e) => e.stopPropagation());
-    document.addEventListener('click', closeUserMenu);
+    // ...
   }
-
+  */
 
   // profilePhotoCacheBust is declared at the TOP of this IIFE (see line ~5).
 
@@ -1056,26 +1121,11 @@
     document.getElementById('profileLogoutBtn')?.addEventListener('click', logoutNow);
   }
 
+  /*
   document.querySelectorAll('.user-menu a').forEach((link) => {
-    const text = link.textContent.trim().toLowerCase();
-    const action = link.dataset.profileAction;
-    // Handle data-profile-action attribute (used in HTML) as primary selector,
-    // fall back to text-based matching for backward compatibility.
-    if (action === 'profile' || text.includes('my profile')) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeUserMenu();
-        openProfileModal('profile');
-      });
-    }
-    if (action === 'settings' || text.includes('settings')) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeUserMenu();
-        openProfileModal('settings');
-      });
-    }
+    // ...
   });
+  */
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -1084,29 +1134,25 @@
     closeProfileModal();
   });
 
+  /*
   const globalSearch = document.getElementById('globalSearch');
   if (globalSearch) {
-    globalSearch.addEventListener('click', () => {
-      window.location.href = 'search.html';
-    });
-    // Also handle typing if they start typing directly
-    globalSearch.addEventListener('input', () => {
-      window.location.href = `search.html?q=${encodeURIComponent(globalSearch.value)}`;
-    });
+    // ...
   }
+  */
 
+  /*
   document.querySelectorAll('.user-menu a[href="../login/login.html"]').forEach((link) => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeUserMenu();
-      logoutNow();
-    });
+    // ...
   });
+  */
 
+  /*
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', logoutNow);
   }
+  */
 
   highlightActiveNav();
   refreshCurrentUser();
