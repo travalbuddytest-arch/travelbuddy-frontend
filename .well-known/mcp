@@ -114,8 +114,6 @@
     "tokenUrl": "https://travalbuddy.web.app/login/login.html"
   },
   "links": {
-    "documentation": "https://travalbuddy.web.app/developers/index.html",
-    "openApi": "https://travalbuddy.web.app/openapi.json",
-    "llmsTxt": "https://travalbuddy.web.app/llms.txt"
+    "homepage": "https://travalbuddy.web.app/"
   }
 }

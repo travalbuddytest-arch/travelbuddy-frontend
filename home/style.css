@@ -646,14 +646,14 @@ body.nav-open{
 ========================== */
 
 .workflow-3d {
-    padding: 100px clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: #fff;
     text-align: center;
 }
 
 .workflow-heading {
     max-width: 800px;
-    margin: 0 auto 80px;
+    margin: 0 auto clamp(2rem, 5vw, 4rem);
 }
 
 .workflow-heading h2 {
@@ -759,14 +759,14 @@ body.nav-open{
 ========================== */
 
 .platform-ways {
-    padding: 100px clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     background: var(--tb-surface);
     text-align: center;
 }
 
 .platform-ways h2 {
     font-size: clamp(28px, 4vw, 40px);
-    margin-bottom: 56px;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
 }
 
 .ways-cards {
@@ -891,6 +891,12 @@ body.nav-open{
     background: var(--tb-bg);
 }
 
+@media (max-width: 768px) {
+    .smart-matching {
+        padding-block: var(--section-gap-mobile);
+    }
+}
+
 .smart-matching-inner {
     max-width: 1100px;
     margin: 0 auto;
@@ -899,7 +905,7 @@ body.nav-open{
 .smart-matching-heading {
     text-align: center;
     max-width: 680px;
-    margin: 0 auto 56px;
+    margin: 0 auto clamp(2rem, 5vw, 3.5rem);
 }
 
 .smart-matching-heading h2 {
@@ -1082,7 +1088,7 @@ body.nav-open{
     gap: 32px;
     position: relative;
     max-width: 1200px;
-    margin: 48px auto 0;
+    margin: clamp(1.5rem, 4vw, 3rem) auto 0;
 }
 
 @media (max-width: 1100px) {
@@ -1388,6 +1394,12 @@ body.nav-open{
     padding: var(--section-padding) var(--container-px);
 }
 
+@media (max-width: 768px) {
+    .trust-orbit {
+        padding-block: var(--section-gap-mobile);
+    }
+}
+
 .trust-safety-inner {
     max-width: 1280px;
     margin: 0 auto;
@@ -1598,6 +1610,12 @@ body.nav-open{
     background: var(--tb-bg);
 }
 
+@media (max-width: 768px) {
+    .faq-section {
+        padding-block: var(--section-gap-mobile);
+    }
+}
+
 .faq-container {
     max-width: 860px;
     margin: 0 auto;
@@ -1605,7 +1623,7 @@ body.nav-open{
 
 .faq-heading {
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: clamp(2rem, 5vw, 3rem);
 }
 
 .faq-eyebrow {
@@ -1907,15 +1925,22 @@ body.nav-open{
 }
 
 @media(max-width: 768px) {
-    .hero { padding-top: 100px; padding-bottom: 40px; min-height: auto; }
-    .parcel-search-section { padding: 4rem var(--container-px); }
+    .hero { padding-top: 100px; padding-bottom: 1.5rem; min-height: auto; height: auto; }
+    .hero-inner { gap: 1.5rem; }
+    .hero-visual { height: auto; min-height: 180px; padding: 1rem 0; }
+    .parcel-search-section { padding-block: var(--section-gap-mobile); padding-inline: var(--container-px); }
     .hero-actions { flex-direction: column; width: 100%; gap: 12px; }
     .hero-actions .tb-btn-primary,
     .hero-actions .tb-btn-secondary { width: 100%; padding: 12px 20px; }
-    .section-Flow { gap: 4rem; }
-    .ways-cards { grid-template-columns: 1fr; }
+    .section-Flow { gap: 2.5rem; padding-block: var(--section-gap-mobile); }
+    .ways-cards { grid-template-columns: 1fr; gap: 1.25rem; }
     .trust-badges { justify-content: center; gap: 10px; }
     .trust-badges span { width: 100%; justify-content: center; }
+    .timeline-3d { gap: 1.25rem; }
+    .flow-item { padding: 1.25rem; }
+    .workflow-3d { padding-block: var(--section-gap-mobile); }
+    .testimonial-card { padding: 1.5rem; }
+    .news-content h2 { font-size: 28px; }
 }
 
 @media(max-width: 480px) {

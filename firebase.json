@@ -17,6 +17,66 @@
         "source": "/home/index.html",
         "destination": "/",
         "type": 301
+      },
+      {
+        "source": "/post-parcel",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/send-parcel",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/carry-parcel",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/parcel-delivery",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/how-travelbuddy-works",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/safety",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/faq",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/developers",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/llms.txt",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/llms-full.txt",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/openapi.json",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/openapi.yaml",
+        "destination": "/",
+        "type": 301
       }
     ],
     "ignore": [
@@ -25,21 +85,21 @@
       "**/.*",
       "**/node_modules/**",
       ".artifacts/**",
-      "tmp_*.py"
+      "tmp_*.py",
+      "post-parcel/**",
+      "send-parcel/**",
+      "carry-parcel/**",
+      "parcel-delivery/**",
+      "how-travelbuddy-works/**",
+      "safety/**",
+      "faq/**",
+      "developers/**",
+      "llms.txt",
+      "llms-full.txt",
+      "openapi.json",
+      "openapi.yaml"
     ],
     "rewrites": [
-      {
-        "source": "/developers",
-        "destination": "/developers/index.html"
-      },
-      {
-        "source": "/docs",
-        "destination": "/developers/index.html"
-      },
-      {
-        "source": "/api-docs",
-        "destination": "/developers/index.html"
-      },
       {
         "source": "/.well-known/mcp",
         "destination": "/.well-known/mcp.json"

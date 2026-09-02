@@ -87,6 +87,7 @@
 
     --section-padding: clamp(3rem, 10vw, 8rem);
     --container-px: clamp(1rem, 5vw, 2.5rem);
+    --section-gap-mobile: 2.5rem;
 }
 
 /* ============================================================

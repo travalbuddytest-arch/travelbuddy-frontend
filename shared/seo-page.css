@@ -60,9 +60,15 @@ img { height:auto; }
 .seo-btn-ghost:hover{ background:rgba(255,255,255,.22); }
 
 .seo-section{
-    padding:clamp(40px, 6vw, 68px) clamp(18px, 6vw, 8%);
+    padding: var(--section-padding) var(--container-px);
     max-width:1120px;
     margin:0 auto;
+}
+
+@media (max-width: 768px) {
+    .seo-section {
+        padding-block: var(--section-gap-mobile);
+    }
 }
 .seo-section.alt{ background: transparent; max-width:none; }
 .seo-section.alt > .seo-inner{ max-width:1120px; margin:0 auto; }
