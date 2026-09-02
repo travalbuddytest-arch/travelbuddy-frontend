@@ -137,6 +137,12 @@
     var isAdmin = Boolean(localStorage.getItem('travelBuddyAdmin'));
     var isUser = Boolean(localStorage.getItem('travelBuddyUser'));
 
+    // Support link visibility - only show for logged-in users/admins
+    var navSupportLink = document.getElementById('navSupportLink');
+    if (navSupportLink) {
+        navSupportLink.hidden = !isAdmin && !isUser;
+    }
+
     if (!isAdmin && !isUser) {
         guestActions.hidden = false;
         chip.hidden = true;
