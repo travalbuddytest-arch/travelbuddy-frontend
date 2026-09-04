@@ -79,7 +79,7 @@ img{
 .tb-hero-section {
     position: relative;
     width: 100%;
-    padding-top: 60px;
+    padding-top: 90px;
     padding-bottom: clamp(20px, 2.5vw, 48px);
     padding-inline: clamp(16px, 2.5vw, 40px);
     display: flex;
