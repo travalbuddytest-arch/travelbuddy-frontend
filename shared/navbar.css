@@ -8,6 +8,7 @@
 .tb-nav-header{
     width:100%;
     max-width:100%;
+    height: 60px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -393,10 +394,36 @@ button[hidden]{ display:none !important; }
 }
 
 @media(min-width:769px){
+    .tb-nav-header{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+    }
+    .tb-nav-header .logo{
+        flex:0 0 auto;
+        min-width:180px;
+    }
     #mainNav{
-        gap:20px;
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:0;
+    }
+    .nav-links{
+        display:flex;
+        align-items:center;
+        gap:32px;
+        margin:0 auto;
     }
     #mainNav a{ font-size:14px; white-space:nowrap; }
+    .guest-nav-actions,
+    .home-user-chip{
+        flex:0 0 auto;
+        min-width:180px;
+        display:flex;
+        justify-content:flex-end;
+    }
 }
 
 @media(max-width:768px){
@@ -499,6 +526,14 @@ button[hidden]{ display:none !important; }
     .nav-dropdown-menu a:hover {
         padding-left: 24px;
         background: #eef4ff;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 1.5rem;
     }
 
     .home-user-chip { width:100%; margin:8px 0 0; }

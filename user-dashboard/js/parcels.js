@@ -23,11 +23,20 @@
   function initFromQueryParams() {
     const params = new URLSearchParams(window.location.search);
     const filterParam = params.get('filter');
+    const roleParam = params.get('role');
+
     if (filterParam) {
       currentStatusFilter = filterParam.toLowerCase();
       filterTabs.querySelectorAll('.filter-pill').forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.status === currentStatusFilter);
       });
+    }
+
+    if (roleParam) {
+      currentRoleFilter = roleParam.toLowerCase();
+      if (roleSelect) {
+        roleSelect.value = currentRoleFilter;
+      }
     }
   }
 

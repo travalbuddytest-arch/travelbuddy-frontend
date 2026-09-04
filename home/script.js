@@ -51,21 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// =========================
-// Reset Parcel Search Fields on Page Show
-// (prevents stale input values from browser bfcache
-// when user navigates to login and comes back)
-// =========================
 
-window.addEventListener('pageshow', () => {
-    const fromInput = document.getElementById('fromInput');
-    const toInput = document.getElementById('toInput');
-    const parcelType = document.getElementById('parcelType');
-
-    if (fromInput) fromInput.value = '';
-    if (toInput) toInput.value = '';
-    if (parcelType) parcelType.value = '';
-});
 
 // =========================
 // Mobile Menu Toggle
@@ -237,35 +223,6 @@ document.querySelectorAll("nav a").forEach(link => {
 
 })();
 
-// =========================
-// 3D Hero Interaction
-// =========================
-(function initHero3D() {
-    const heroVisual = document.querySelector('.hero-visual');
-    const parcel = document.getElementById('heroParcel');
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-    if (!heroVisual || !parcel || window.innerWidth < 992 || !hasFinePointer || prefersReducedMotion) return;
-
-    heroVisual.addEventListener('mousemove', (e) => {
-        const rect = heroVisual.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
-
-        parcel.style.transform = `rotateX(${rotateX - 20}deg) rotateY(${rotateY + 25}deg)`;
-    });
-
-    heroVisual.addEventListener('mouseleave', () => {
-        parcel.style.transform = `rotateX(-20deg) rotateY(25deg)`;
-    });
-})();
 
 // =========================
 // Scroll Reveal Animation
@@ -289,8 +246,8 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 const revealSelectors = [
+    '.tb-hero-content', '.tb-hero-visual',
     '.card', '.step', '.flow', '.way-card',
-    '.parcel-search-text', '.parcel-search-card',
     '.post-text', '.post-image',
     '.get-text', '.get-image',
     '.reach-text', '.reach-image',
@@ -334,62 +291,7 @@ const lineObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.line').forEach(line => lineObserver.observe(line));
 
 
-// =========================
-// Hero Title Animation
-// =========================
 
-const words = [
-    "DELIVERY ASAP",
-    "SEND FASTER",
-    "FIND TRAVELLERS",
-    "SHIP SMART"
-];
-
-let wordIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-
-const typing = document.getElementById("typing");
-
-function type() {
-
-    const currentWord = words[wordIndex];
-
-    if (!isDeleting) {
-        typing.innerHTML =
-            currentWord.substring(0, charIndex) +
-            '<span class="cursor">|</span>';
-
-        charIndex++;
-
-        if (charIndex > currentWord.length) {
-            isDeleting = true;
-            setTimeout(type, 1500); // Pause before deleting
-            return;
-        }
-
-    } else {
-        typing.innerHTML =
-            currentWord.substring(0, charIndex) +
-            '<span class="cursor">|</span>';
-
-        charIndex--;
-
-        if (charIndex < 0) {
-            isDeleting = false;
-            wordIndex = (wordIndex + 1) % words.length;
-            charIndex = 0;
-        }
-    }
-
-    setTimeout(type, isDeleting ? 80 : 150);
-}
-
-// Only run the typing animation on pages that actually have #typing
-// (this file is now shared with pages like about.html)
-if (typing) {
-    type();
-}
 // =========================
 // Navbar Shadow on Scroll (handled by shared/nav-basic-behavior.js)
 // =========================
@@ -526,36 +428,7 @@ if (smartMatchingSection) {
     });
 })();
 
-// =========================
-// Price Estimator Logic
-// =========================
-(function initPriceEstimator() {
-    const fromInput = document.getElementById('fromInput');
-    const toInput = document.getElementById('toInput');
-    const estBox = document.getElementById('priceEstimator');
-    const estValue = document.getElementById('estPriceValue');
 
-    if (!fromInput || !toInput || !estBox) return;
-
-    const updateEstimate = () => {
-        const from = fromInput.value.trim();
-        const to = toInput.value.trim();
-
-        if (from.length > 2 && to.length > 2) {
-            // Simplified calculation: length of both names as a seed
-            const distanceFactor = (from.length + to.length) % 10;
-            const estimatedPrice = 150 + (distanceFactor * 45);
-
-            estValue.textContent = `₹${estimatedPrice}`;
-            estBox.classList.remove('hidden');
-        } else {
-            estBox.classList.add('hidden');
-        }
-    };
-
-    fromInput.addEventListener('input', updateEstimate);
-    toInput.addEventListener('input', updateEstimate);
-})();
 
 // =========================
 // Testimonials Slider
@@ -608,9 +481,44 @@ if (smartMatchingSection) {
 
 
 
-// =========================
-// Logged-in Home Navigation (handled by shared/nav-basic-behavior.js)
-// =========================
+function resolveAppUrl(relativePath) {
+    const cleanPath = relativePath.startsWith('/') ? relativePath.slice(1) : relativePath;
+    if (window.location.protocol === 'file:') {
+        return cleanPath;
+    }
+    const pathName = window.location.pathname;
+    if (pathName.includes('/Frontend/')) {
+        const base = pathName.substring(0, pathName.indexOf('/Frontend/') + 10);
+        return base + cleanPath;
+    }
+    return '/' + cleanPath;
+}
+
+function checkIsUserLoggedIn() {
+    try {
+        const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
+        const user = localStorage.getItem('travelBuddyUser') || localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
+
+        const hasToken = Boolean(token) && token !== 'null' && token !== 'undefined' && token.length > 5;
+        const hasUser = Boolean(user) && user !== 'null' && user !== 'undefined' && user !== '{}';
+
+        return hasToken || hasUser;
+    } catch (e) {
+        return false;
+    }
+}
+
+function checkIsAdminLoggedIn() {
+    try {
+        const admin = localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
+        const user = localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
+        const hasAdmin = Boolean(admin) && admin !== 'null' && admin !== 'undefined';
+        const hasUser = Boolean(user) && user !== 'null' && user !== 'undefined';
+        return hasAdmin || hasUser;
+    } catch (e) {
+        return false;
+    }
+}
 
 // =========================
 // Home auth routing + dashboard-matched profile modal
@@ -618,16 +526,15 @@ if (smartMatchingSection) {
 (function initHomeAuthenticatedExperience() {
     const API_ORIGIN = APP_CONFIG.API_BASE_URL;
     
-    const isUserLoggedIn = Boolean(localStorage.getItem('travelBuddyUser'));
-    const isAdminLoggedIn = Boolean(localStorage.getItem('travelBuddyAdmin'));
-    const isLoggedIn = isUserLoggedIn || isAdminLoggedIn;
-    const dashboardUrl = isAdminLoggedIn ? '../admin_dashboard/html/admin.html' : '../user-dashboard/overview.html';
-    const loginUrl = '../login/login.html';
+    const isLoggedIn = checkIsUserLoggedIn();
+    const isAdminLoggedIn = checkIsAdminLoggedIn();
+
+    const dashboardUrl = resolveAppUrl(isAdminLoggedIn ? 'admin_dashboard/html/admin.html' : 'user-dashboard/overview.html');
+    const loginUrl = resolveAppUrl('login/login.html');
 
     // Main action buttons on the public home page become session-aware.
     // Logged in -> dashboard. Logged out -> login.
-    // Added :not([data-auth-routing="false"]) to avoid overwriting informational links.
-    document.querySelectorAll('a.primary-btn:not([data-auth-routing="false"])').forEach((link) => {
+    document.querySelectorAll('a.primary-btn:not([data-auth-routing="false"]), a.tb-btn-primary:not([data-auth-routing="false"])').forEach((link) => {
         link.href = isLoggedIn ? dashboardUrl : loginUrl;
     });
 
@@ -636,7 +543,7 @@ if (smartMatchingSection) {
     if (!isLoggedIn || (!profileBtn && !settingsBtn)) return;
 
     // profile/settings modals logic continues below...
-
+})();
 
 function tbRenderAvatar(el, user, fallback) {
   if (!el) return;
@@ -653,3 +560,39 @@ function tbRenderAvatar(el, user, fallback) {
     el.textContent = fallback;
   }
 }
+
+(function initHeroQuickActions() {
+    const actionsContainer = document.querySelector('.tb-hero-quick-actions');
+    if (!actionsContainer) return;
+
+    actionsContainer.querySelectorAll('.tb-action-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Evaluate fresh login status dynamically at click time
+            const isLoggedIn = checkIsUserLoggedIn();
+            const action = card.dataset.action || card.getAttribute('data-action') || (e.target.closest('.tb-action-card') && e.target.closest('.tb-action-card').dataset.action);
+
+            const loginUrl = resolveAppUrl('login/login.html');
+            const routes = {
+                search: resolveAppUrl('user-dashboard/search.html'),
+                pick: resolveAppUrl('user-dashboard/pickup.html'),
+                deliver: resolveAppUrl('user-dashboard/parcels.html?role=traveler&filter=active')
+            };
+
+            const destination = routes[action];
+
+            if (isLoggedIn && destination) {
+                window.location.href = destination;
+            } else {
+                window.location.href = loginUrl;
+            }
+        });
+    });
+})();
+
+
+
+
+})();
+
