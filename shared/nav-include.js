@@ -10,16 +10,24 @@
 (function () {
     'use strict';
 
-    var CURRENT_V = '6';
+    var CURRENT_NAV_V = '7';
+    var CURRENT_FOOTER_V = '6';
+    var CURRENT_V = CURRENT_NAV_V;
     var basePath = '/shared/';
 
     async function inject(placeholderId, url, type) {
         var el = document.getElementById(placeholderId);
         if (!el) return;
 
+        var targetVersion = (type === 'footer') ? CURRENT_FOOTER_V : CURRENT_NAV_V;
+
+        // Find existing component: either nested inside el or as an immediate sibling
+        var existing = (type === 'navbar')
+            ? (el.querySelector('.tb-nav-header') || (el.nextElementSibling && el.nextElementSibling.classList.contains('tb-nav-header') ? el.nextElementSibling : null))
+            : (el.querySelector('.site-footer') || (el.nextElementSibling && el.nextElementSibling.classList.contains('site-footer') ? el.nextElementSibling : null));
+
         // Check if already hardcoded with correct version
-        var existing = el.nextElementSibling;
-        if (existing && existing.getAttribute('data-v') === CURRENT_V) {
+        if (existing && existing.getAttribute('data-v') === targetVersion) {
             // console.log('[nav-include] skipping injection for', type, '- version match');
             if (type === 'navbar' && window.TBNav && typeof window.TBNav.init === 'function') {
                 window.TBNav.init();
@@ -29,9 +37,21 @@
         }
 
         try {
-            const response = await fetch(url + '?v=' + CURRENT_V);
+            const response = await fetch(url + '?v=' + targetVersion);
             if (response.ok) {
                 const html = await response.text();
+
+                // If an outdated existing navbar/footer was a sibling outside el, clean it up to avoid duplicates
+                if (existing && !el.contains(existing)) {
+                    if (type === 'navbar') {
+                        var nextSib = existing.nextElementSibling;
+                        if (nextSib && (nextSib.id === 'navOverlay' || nextSib.classList.contains('nav-overlay'))) {
+                            nextSib.remove();
+                        }
+                    }
+                    existing.remove();
+                }
+
                 el.outerHTML = html;
 
                 if (type === 'navbar') {

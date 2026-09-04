@@ -122,20 +122,53 @@
     height: 2px;
 }
 
+.auth-btn,
 .login-btn,
 .register-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: var(--radius-pill);
+    text-decoration: none !important;
+    padding: 10px 22px;
+    border-radius: var(--radius-pill, 999px);
     cursor:pointer;
     font-size: 14px;
     font-weight: 700;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     min-height:44px;
     white-space: nowrap;
+}
+
+.auth-btn {
+    background: linear-gradient(135deg, var(--tb-primary, #0d6efd), var(--tb-accent, #3d8bff));
+    color: #ffffff !important;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.22);
+    letter-spacing: 0.2px;
+}
+
+.auth-btn:hover {
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.32);
+    background: linear-gradient(135deg, var(--tb-primary-dark, #0b5ed7), var(--tb-primary, #0d6efd));
+}
+
+.auth-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
+}
+
+.auth-btn:focus-visible {
+    outline: 2px solid var(--tb-primary, #0d6efd);
+    outline-offset: 3px;
+}
+
+#mainNav .auth-btn::after,
+#mainNav .login-btn::after,
+#mainNav .register-btn::after {
+    display: none !important;
+    content: none !important;
 }
 
 .login-btn {
@@ -221,13 +254,15 @@ body.nav-open{
 
 /* Logged-in profile chip */
 .guest-nav-actions { display:flex; align-items:center; gap:10px; }
-/* [hidden] is only a default UA style, and it loses to the display:flex
-   rule above regardless of specificity/order. Without this, the guest
-   Login/Register button stays visible even after JS sets
-   guestActions.hidden = true for a logged-in user/admin. */
-.guest-nav-actions[hidden] { display:none !important; }
+/* [hidden] is only a default UA style, and it loses to display:flex / display:inline-flex.
+   Hidden elements must not occupy layout space. */
+.guest-nav-actions[hidden],
+.home-user-chip[hidden],
+#mainNav a[hidden],
+#navSupportLink[hidden] {
+    display: none !important;
+}
 .home-user-chip { position:relative; margin-left:8px; }
-.home-user-chip[hidden] { display:none !important; }
 .home-user-trigger { min-width:0; width:auto; height:auto; min-height:48px; padding:6px 10px 6px 6px; border:1.5px solid #dfe7f3; border-radius:999px; gap:10px; box-shadow:none; display:flex; align-items:center; cursor:pointer; font-family:inherit; color:#142744; }
 .home-user-trigger:hover,
 .home-user-chip.open .home-user-trigger { border-color:#0d6efd; box-shadow:0 6px 16px -8px rgba(13,110,253,.35); }
@@ -241,7 +276,7 @@ body.nav-open{
 .home-user-chip.open .home-user-menu { display:block; animation:homeMenuIn .18s ease-out; }
 .home-user-menu a, .home-user-menu button { width:100%; min-height:42px; padding:0 11px; border:0; border-radius:10px; background:transparent; color:#172b4d; display:flex; align-items:center; gap:10px; text-decoration:none; font:500 14px/1 Poppins,sans-serif; cursor:pointer; text-align:left; }
 .home-user-menu a:hover, .home-user-menu button:hover { background:#eef4ff; color:#1677ff; }
-.home-user-menu a:active, .home-user-menu button:active, .login-btn:active, .register-btn:active { transform:scale(.98); }
+.home-user-menu a:active, .home-user-menu button:active, .auth-btn:active, .login-btn:active, .register-btn:active { transform:scale(.98); }
 .home-user-menu i { width:18px; text-align:center; font-size:14px; }
 button[hidden]{ display:none !important; }
 @keyframes homeMenuIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
@@ -470,6 +505,7 @@ button[hidden]{ display:none !important; }
     .home-user-trigger { width:100%; min-width:0; }
     .home-user-menu { position:static; width:100%; margin-top:8px; box-shadow:none; border-radius:16px; }
     .guest-nav-actions { width:100%; flex-direction:column; }
+    .guest-nav-actions .auth-btn,
     .guest-nav-actions .login-btn,
     .guest-nav-actions .register-btn { width:100%; text-align:center; }
 
@@ -482,6 +518,7 @@ button[hidden]{ display:none !important; }
         font-size:17px;
     }
 
+    #mainNav .auth-btn,
     #mainNav .login-btn,
     #mainNav .register-btn{
         width:100%;
