@@ -107,6 +107,56 @@
     // Initialize Navbar
     inject('tbNavbarInclude', basePath + 'public-navbar.html', 'navbar');
 
+    // Global App Promotion Banner
+    function initAppPromoBanner() {
+        var DISMISSED_KEY = 'travelbuddy_app_promo_dismissed';
+        var ALLOWED_PAGES = ['home', 'about', 'support', 'contact'];
+        var currentPage = document.body.getAttribute('data-page');
+
+        if (localStorage.getItem(DISMISSED_KEY) === 'true') return;
+        if (ALLOWED_PAGES.indexOf(currentPage) === -1) return;
+
+        loadAsset(basePath + 'app-promo-bar.css', 'css');
+
+        var installUrl = (currentPage === 'home') ? '#appPromotionSection' : '/index.html#appPromotionSection';
+
+        var bannerHtml = `
+            <div class="tb-app-promo-bar" id="appPromoBanner">
+                <div class="tb-promo-content">
+                    <div class="tb-promo-icon" aria-hidden="true">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <div class="tb-promo-text">
+                        <span class="tb-promo-title">🎉 Post Your First 2 Parcels for FREE!</span>
+                        <span class="tb-promo-subtitle">Download the TravelBuddy App and unlock your free parcel posts.</span>
+                    </div>
+                    <div class="tb-promo-actions">
+                        <a href="${installUrl}" class="tb-promo-install-btn">Install App</a>
+                        <button type="button" class="tb-promo-close" id="closeAppPromo" aria-label="Close app promotion">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('afterbegin', bannerHtml);
+        document.body.classList.add('has-app-promo-bar');
+
+        var closeBtn = document.getElementById('closeAppPromo');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                var banner = document.getElementById('appPromoBanner');
+                if (banner) banner.remove();
+                document.body.classList.remove('has-app-promo-bar');
+                localStorage.setItem(DISMISSED_KEY, 'true');
+            });
+        }
+    }
+
+    // Run after a short delay to ensure body is ready
+    setTimeout(initAppPromoBanner, 0);
+
     // Premium Background Injection
     setTimeout(function injectBackground() {
         if (document.querySelector('.tb-bg-system')) return;

@@ -80,7 +80,6 @@ img{
     position: relative;
     width: 100%;
     padding-top: 90px;
-    padding-bottom: clamp(20px, 2.5vw, 48px);
     padding-inline: clamp(16px, 2.5vw, 40px);
     display: flex;
     align-items: center;
@@ -683,24 +682,24 @@ body.nav-open{
 ========================== */
 
 .workflow-3d {
-    padding: var(--section-padding) var(--container-px);
-    background: #fff;
+    padding: 50px 65px;
     text-align: center;
+
 }
 
 .workflow-heading {
     max-width: 800px;
-    margin: 0 auto clamp(2rem, 5vw, 4rem);
+    margin: 0 auto clamp(2rem, 5vw, 3rem);
 }
 
 .workflow-heading h2 {
     font-size: clamp(32px, 5vw, 48px);
-    margin: 12px 0 20px;
+    margin: 5px 0 20px;
 }
 
 .timeline-3d {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 24px;
     position: relative;
     max-width: 1400px;
@@ -796,8 +795,7 @@ body.nav-open{
 ========================== */
 
 .platform-ways {
-    padding: var(--section-padding) var(--container-px);
-    background: var(--tb-surface);
+    padding: 60px 40px 100px 40px;
     text-align: center;
 }
 
@@ -924,8 +922,8 @@ body.nav-open{
 ========================== */
 
 .smart-matching {
-    padding: var(--section-padding) var(--container-px);
-    background: var(--tb-bg);
+    padding: 50px 65px;
+    
 }
 
 @media (max-width: 768px) {
@@ -941,12 +939,12 @@ body.nav-open{
 
 .smart-matching-heading {
     text-align: center;
-    max-width: 680px;
+    max-width: 800px;
     margin: 0 auto clamp(2rem, 5vw, 3.5rem);
 }
 
 .smart-matching-heading h2 {
-    font-size: clamp(28px, 4vw, 40px);
+    font-size: 42px;
     margin-bottom: 16px;
 }
 
@@ -1115,8 +1113,10 @@ body.nav-open{
 ========================== */
 
 .why-choose-section {
-    padding: clamp(3rem, 6vw, 6rem) var(--container-px, 1.5rem);
-    background: var(--tb-bg, #f7f9fc);
+    /* padding: clamp(3rem, 6vw, 6rem) var(--container-px, 1.5rem);
+    background: var(--tb-bg, #f7f9fc); */
+    padding-left: 65px;
+    padding-right: 65px;
 }
 
 .why-choose-header {
@@ -1237,13 +1237,16 @@ body.nav-open{
 ========================== */
 
 .trust-safety-layout {
-    padding: var(--section-padding) var(--container-px);
-    background: var(--tb-navy);
-    color: #fff;
+    padding: 10px, 60px;
 }
 
 .trust-safety-layout h2 {
-    color: #fff;
+    text-align: center;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    color: var(--tb-navy, #0b213f);
+    margin-bottom: 4rem;
+    letter-spacing: -0.02em;
 }
 
 .safety-number {
@@ -1353,10 +1356,12 @@ body.nav-open{
 .section-Flow {
     display: flex;
     flex-direction: column;
-    gap: 80px;
-    padding: 90px var(--container-px);
+    padding: 50px var(--container-px);
     max-width: 1320px;
     margin: 0 auto;
+    padding-left: 60px;
+    padding-right: 60px;
+    gap: 80px;
 }
 
 .feature-section,
@@ -1504,7 +1509,7 @@ body.nav-open{
 ========================== */
 
 .trust-orbit {
-    padding: var(--section-padding) var(--container-px);
+    padding: 80px 65px;
 }
 
 @media (max-width: 768px) {
@@ -1720,9 +1725,8 @@ body.nav-open{
 
 .faq-section {
     padding: var(--section-padding) var(--container-px);
-    background: var(--tb-bg);
 }
-
+ 
 @media (max-width: 768px) {
     .faq-section {
         padding-block: var(--section-gap-mobile);
@@ -1853,112 +1857,6 @@ body.nav-open{
     font-size: var(--text-sm);
 }
 
-/* ==========================
-   TESTIMONIALS
-========================== */
-.testimonials-section {
-    text-align: center;
-}
-
-.testimonial-slider-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 40px auto 0;
-    overflow: hidden; /* Heuristic fix: Issue 10 */
-    position: relative;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.testimonial-track {
-    display: flex;
-    width: 100%; /* Heuristic fix: Issue 13 */
-    transition: transform 0.6s var(--tb-transition);
-}
-
-.testimonial-card {
-    flex: 0 0 100%;
-    width: 100%; /* Heuristic fix: Issue 13 */
-    max-width: 100%;
-    min-width: 0;
-    padding: 40px;
-    background: #fff;
-    border: 1px solid var(--tb-border);
-    border-radius: var(--tb-radius-lg);
-    text-align: left;
-    position: relative;
-    opacity: 0.4;
-    transform: scale(0.9);
-    transition: all 0.4s ease;
-    box-sizing: border-box;
-}
-
-.testimonial-card.active {
-    opacity: 1;
-    transform: scale(1);
-    box-shadow: var(--tb-shadow-l3);
-}
-
-.quote-icon {
-    font-size: 32px;
-    color: var(--tb-primary);
-    opacity: 0.2;
-    margin-bottom: 20px;
-}
-
-.testimonial-card p {
-    font-size: 18px;
-    font-style: italic;
-    color: var(--tb-ink-soft);
-    line-height: 1.6;
-    margin-bottom: 30px;
-}
-
-.testi-user {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.testi-user img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.testi-user strong {
-    display: block;
-    font-size: var(--text-md);
-    color: var(--tb-ink);
-}
-
-.testi-user span {
-    font-size: var(--text-sm);
-    color: var(--tb-muted);
-}
-
-.slider-dots {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 30px;
-}
-
-.slider-dots .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--tb-border);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.slider-dots .dot.active {
-    width: 24px;
-    border-radius: 10px;
-    background: var(--tb-primary);
-}
 
 /* ==========================
    NEWSLETTER
@@ -2049,7 +1947,362 @@ body.nav-open{
     .news-content h2 { font-size: 28px; }
 }
 
-@media(max-width: 480px) {
-    #typing { font-size: 32px; }
-    .news-content h2 { font-size: 24px; }
+/* ==========================
+   APP PROMOTION BANNER
+========================== */
+.tb-app-promo-section {
+    padding: 0 var(--container-px) var(--section-padding);
 }
+
+.app-promo-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    position: relative;
+    border-radius: var(--radius-xl, 32px);
+    overflow: hidden;
+    background: url('../images/hero-back.jpg') no-repeat center center;
+    background-size: cover;
+    box-shadow: var(--tb-shadow-l4);
+}
+
+.app-promo-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, rgba(7, 26, 61, 0.94) 0%, rgba(11, 42, 99, 0.85) 45%, rgba(13, 110, 253, 0.1) 100%);
+    z-index: 1;
+}
+
+.app-promo-content {
+    position: relative;
+    z-index: 2;
+    padding: 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.app-promo-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--tb-radius-full);
+    color: #ffd700;
+    font-size: 14px;
+    font-weight: 700;
+    width: fit-content;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-heading {
+    font-size: clamp(28px, 4vw, 44px);
+    color: #fff;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.promo-subtext {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 500px;
+    margin: 0;
+}
+
+.promo-features {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.promo-features span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.promo-features i {
+    color: var(--tb-success);
+}
+
+.app-promo-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 60px;
+}
+
+.download-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.store-buttons {
+    display: flex;
+    gap: 16px;
+}
+
+.store-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+    min-width: 170px;
+}
+
+.store-btn:hover {
+    background: #1c1c1c;
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.store-btn i {
+    font-size: 24px;
+}
+
+.store-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.store-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.store-name {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.trust-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.rating-box, .download-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-val, .download-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.rating-label, .download-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.trust-info .divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.qr-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.qr-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.qr-code-area {
+    width: 120px;
+    height: 120px;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    color: var(--tb-navy);
+}
+
+.qr-text {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ==========================
+   MOBILE APP STICKY BAR
+========================== */
+.tb-mobile-app-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    background: #fff;
+    border-top: 2px solid var(--tb-primary);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    animation: tbMobileBannerIn 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes tbMobileBannerIn {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.mobile-bar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.mobile-promo-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile-promo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--tb-primary-light);
+    color: var(--tb-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.mobile-promo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.mobile-promo-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--tb-navy);
+}
+
+.mobile-promo-sub {
+    font-size: 11px;
+    color: var(--tb-muted);
+}
+
+.mobile-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mobile-install-btn {
+    background: var(--tb-primary);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: var(--tb-radius-full);
+    white-space: nowrap;
+}
+
+.mobile-close-btn {
+    background: none;
+    border: none;
+    color: var(--tb-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* App Promotion Responsiveness */
+@media (max-width: 1200px) {
+    .app-promo-content {
+        padding: 40px;
+        gap: 30px;
+    }
+    .app-promo-right {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 992px) {
+    .app-promo-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 40px 24px;
+    }
+    .app-promo-left {
+        align-items: center;
+    }
+    .app-promo-right {
+        justify-content: center;
+        flex-direction: column;
+        gap: 40px;
+    }
+    .download-section {
+        align-items: center;
+    }
+}
+
+@media (min-width: 769px) {
+    .tb-mobile-app-bar {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-promo-sub {
+        display: none;
+    }
+    .mobile-promo-title {
+        font-size: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tb-mobile-app-bar {
+        animation: none;
+    }
+}
+

@@ -499,10 +499,10 @@ function checkIsUserLoggedIn() {
         const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
         const user = localStorage.getItem('travelBuddyUser') || localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
 
-        const hasToken = Boolean(token) && token !== 'null' && token !== 'undefined' && token.length > 5;
-        const hasUser = Boolean(user) && user !== 'null' && user !== 'undefined' && user !== '{}';
+        const hasToken = token && token !== 'null' && token !== 'undefined' && String(token).trim().length > 10;
+        const hasUser = user && user !== 'null' && user !== 'undefined' && user !== '{}';
 
-        return hasToken || hasUser;
+        return !!(hasToken || hasUser);
     } catch (e) {
         return false;
     }
@@ -562,37 +562,70 @@ function tbRenderAvatar(el, user, fallback) {
 }
 
 (function initHeroQuickActions() {
-    const actionsContainer = document.querySelector('.tb-hero-quick-actions');
-    if (!actionsContainer) return;
+    // Use event delegation for better reliability
+    document.addEventListener('click', function(e) {
+        const card = e.target.closest('.tb-action-card');
+        if (!card) return;
 
-    actionsContainer.querySelectorAll('.tb-action-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
+        e.preventDefault();
+        e.stopPropagation();
 
-            // Evaluate fresh login status dynamically at click time
-            const isLoggedIn = checkIsUserLoggedIn();
-            const action = card.dataset.action || card.getAttribute('data-action') || (e.target.closest('.tb-action-card') && e.target.closest('.tb-action-card').dataset.action);
+        // Fresh login check
+        const loggedIn = checkIsUserLoggedIn();
+        const actionKey = card.getAttribute('data-action') || card.dataset.action;
 
-            const loginUrl = resolveAppUrl('login/login.html');
-            const routes = {
-                search: resolveAppUrl('user-dashboard/search.html'),
-                pick: resolveAppUrl('user-dashboard/pickup.html'),
-                deliver: resolveAppUrl('user-dashboard/parcels.html?role=traveler&filter=active')
-            };
+        const loginUrl = resolveAppUrl('login/login.html');
+        const routes = {
+            search: resolveAppUrl('user-dashboard/search.html'),
+            pick: resolveAppUrl('user-dashboard/pickup.html'),
+            deliver: resolveAppUrl('user-dashboard/parcels.html?role=traveler&filter=active')
+        };
 
-            const destination = routes[action];
+        const targetUrl = routes[actionKey];
 
-            if (isLoggedIn && destination) {
-                window.location.href = destination;
-            } else {
-                window.location.href = loginUrl;
-            }
-        });
+        if (loggedIn && targetUrl) {
+            window.location.href = targetUrl;
+        } else {
+            window.location.href = loginUrl;
+        }
     });
 })();
 
+(function initAppPromotionBanner() {
+    const mobileBanner = document.getElementById('mobileAppBanner');
+    const closeBtn = document.getElementById('closeMobileBanner');
+    const DISMISSED_KEY = 'travelbuddy_app_banner_dismissed';
 
+    if (!mobileBanner || !closeBtn) return;
 
+    // Check if dismissed previously
+    const isDismissed = localStorage.getItem(DISMISSED_KEY) === 'true';
+
+    function updateVisibility() {
+        if (!isDismissed && window.innerWidth <= 768) {
+            mobileBanner.hidden = false;
+        } else {
+            mobileBanner.hidden = true;
+        }
+    }
+
+    // Initial check
+    updateVisibility();
+
+    // Listen for resize to show/hide appropriately
+    window.addEventListener('resize', updateVisibility);
+
+    // Handle close action
+    closeBtn.addEventListener('click', () => {
+        mobileBanner.style.transition = 'transform 0.4s ease';
+        mobileBanner.style.transform = 'translateY(100%)';
+
+        setTimeout(() => {
+            mobileBanner.hidden = true;
+            localStorage.setItem(DISMISSED_KEY, 'true');
+        }, 400);
+    });
+})();
 
 })();
 
