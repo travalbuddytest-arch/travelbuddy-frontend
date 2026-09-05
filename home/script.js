@@ -145,86 +145,6 @@ document.querySelectorAll("nav a").forEach(link => {
 });
 
 // =========================
-// Trust Feature Orbit
-// =========================
-
-(function(){
-
-    const ring = document.getElementById("orbitRing");
-    const linesG = document.getElementById("orbitLines");
-
-    if (!ring || !linesG) return;
-
-    const features = [
-        { icon:"fa-solid fa-lock", label:"Secure Payment" },
-        { icon:"fa-solid fa-shield-halved", label:"Payment Guarantee" },
-        { icon:"fa-solid fa-key", label:"Delivery OTP" },
-        { icon:"fa-solid fa-headset", label:"Dispute Support" },
-        { icon:"fa-solid fa-box-open", label:"Parcel Protection" },
-        { icon:"fa-solid fa-clipboard-list", label:"Delivery Record" },
-        { icon:"fa-solid fa-star", label:"User Ratings" },
-        { icon:"fa-solid fa-rotate-left", label:"Refund Process" },
-        { icon:"fa-solid fa-receipt", label:"Digital Receipt" },
-        { icon:"fa-solid fa-chart-line", label:"Earnings History" },
-        { icon:"fa-solid fa-gift", label:"Loyalty Rewards" }
-    ];
-
-    const n = features.length;
-    const radiusPct = 40;
-    const hubRadiusPct = 10.5;
-    const iconRadiusPct = 4.5;
-
-    features.forEach((feature, i) => {
-
-        const angleDeg = (360 / n) * i - 90;
-        const angleRad = angleDeg * Math.PI / 180;
-        const cosA = Math.cos(angleRad);
-        const sinA = Math.sin(angleRad);
-
-        const x = 50 + radiusPct * cosA;
-        const y = 50 + radiusPct * sinA;
-        const x1 = 50 + hubRadiusPct * cosA;
-        const y1 = 50 + hubRadiusPct * sinA;
-        const x2 = 50 + (radiusPct - iconRadiusPct) * cosA;
-        const y2 = 50 + (radiusPct - iconRadiusPct) * sinA;
-
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-        linesG.appendChild(line);
-
-        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        dot.setAttribute("cx", x1);
-        dot.setAttribute("cy", y1);
-        dot.setAttribute("r", "0.8");
-        linesG.appendChild(dot);
-
-        const node = document.createElement("div");
-        node.className = "orbit-node";
-        node.style.top = y + "%";
-        node.style.left = x + "%";
-        node.style.animationDelay = `0s, ${i * 0.08}s`;
-
-        const iconWrap = document.createElement("div");
-        iconWrap.className = "orbit-icon";
-        iconWrap.innerHTML = `<i class="${feature.icon}" aria-hidden="true"></i>`;
-
-        const label = document.createElement("span");
-        label.className = "orbit-label";
-        label.textContent = feature.label;
-
-        node.appendChild(iconWrap);
-        node.appendChild(label);
-        ring.appendChild(node);
-
-    });
-
-})();
-
-
-// =========================
 // Scroll Reveal Animation
 // =========================
 
@@ -254,7 +174,7 @@ const revealSelectors = [
     '.trusted-text', '.trusted-image',
     '.affordable-text', '.affordable-image',
     '.delivered-text', '.delivered-image',
-    '.features h2', '.workflow h2', '.trust-orbit h2', '.orbit-wrap', '.platform-ways h2',
+    '.features h2', '.workflow h2', '.trust-orbit h2', '.safety-orbit-img', '.platform-ways h2',
     '.safety-content h2', '.safety-item',
     '.smart-matching-heading', '.route-card',
     '.about-image', '.about-content h4',
@@ -625,7 +545,5 @@ function tbRenderAvatar(el, user, fallback) {
             localStorage.setItem(DISMISSED_KEY, 'true');
         }, 400);
     });
-})();
-
 })();
 
