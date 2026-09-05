@@ -44,7 +44,12 @@ html{overflow-x:hidden;}
   .us-panel * { animation-duration: .001s !important; transition-duration: .001s !important; }
 }
 
-.us-panel { padding: 0; }
+.us-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
 
 /* ── Header ───────────────────────────────── */
 .us-header {

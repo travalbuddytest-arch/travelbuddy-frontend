@@ -4,7 +4,7 @@
   async function injectDashboardComponents() {
     const sidebarPlaceholder = document.getElementById('tbAppSidebarInclude');
     const topbarPlaceholder = document.getElementById('tbAppTopbarInclude');
-    const v = '1';
+    const v = '2';
 
     if (sidebarPlaceholder) {
       try {
@@ -26,6 +26,9 @@
           });
           const logoutBtn = document.getElementById('logoutBtn');
           if (logoutBtn) logoutBtn.addEventListener('click', logoutNow);
+
+          // Initialize Collapsible Sidebar System
+          initUserSidebarCollapse();
         }
       } catch (e) { console.error('Sidebar injection failed', e); }
     }
@@ -771,6 +774,29 @@
     s.classList.remove('open');
     o.classList.remove('show');
     document.body.classList.remove('sidebar-is-open');
+  }
+
+  function initUserSidebarCollapse() {
+    function runInit() {
+      if (window.TravelBuddySidebarCollapse) {
+        window.TravelBuddySidebarCollapse.init({
+          sidebarId: 'sidebar',
+          toggleBtnId: 'sidebarToggle',
+          storageKey: 'travelbuddy_user_sidebar_collapsed',
+          navItemSelector: '.nav-item',
+          collapsedClass: 'sidebar-collapsed'
+        });
+      }
+    }
+
+    if (window.TravelBuddySidebarCollapse) {
+      runInit();
+    } else {
+      const script = document.createElement('script');
+      script.src = '/shared/sidebar-collapse.js?v=1';
+      script.onload = runInit;
+      document.head.appendChild(script);
+    }
   }
 
   function closeUserMenu() {

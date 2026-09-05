@@ -65,6 +65,11 @@ const statisticCards = [
   ['fa-triangle-exclamation', 'Needs Attention', '16', '4 critical issues'],
 ];
 
+/* ---------- API Helpers ---------- */
+function fmtMoney(n) {
+  return '₹' + ((n || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 const activityFeed = [
   ['fa-box', 'New parcel posted', 'TB-48291 • Pune → Mumbai', 'Just now'],
   ['fa-person-walking-luggage', 'Traveler accepted parcel', 'TB-48274 • Traveler #TR-9201', '1 min'],
@@ -105,9 +110,6 @@ const searchData = [
   ['fa-shield-halved', 'DSP-0012', 'Dispute • High priority • Investigating'],
   ['fa-person-walking-luggage', 'TR-9201', 'Traveler • Trust score 92 • Verified'],
 ];
-
-/* ---------- API Helpers ---------- */
-const fmtMoney = n => '₹' + ((n||0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
@@ -942,6 +944,26 @@ function initializeSidebarToggle() {
       overlay.classList.remove('show');
     }
   });
+
+  // Initialize Collapsible Sidebar System for Admin Dashboard
+  function runAdminSidebarInit() {
+    window.TravelBuddySidebarCollapse?.init({
+      sidebarId: 'side',
+      toggleBtnId: 'adminSidebarToggle',
+      storageKey: 'travelbuddy_admin_sidebar_collapsed',
+      navItemSelector: 'nav button, #adminChip',
+      collapsedClass: 'sidebar-collapsed'
+    });
+  }
+
+  if (window.TravelBuddySidebarCollapse) {
+    runAdminSidebarInit();
+  } else {
+    const script = document.createElement('script');
+    script.src = '../../shared/sidebar-collapse.js?v=1';
+    script.onload = runAdminSidebarInit;
+    document.head.appendChild(script);
+  }
 }
 
 function initializeSearch() {

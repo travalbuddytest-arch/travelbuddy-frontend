@@ -34,6 +34,16 @@
     var thisScript = document.currentScript;
     var guardType = (thisScript && thisScript.getAttribute('data-guard')) || 'user';
 
+    // Synchronous Zero-FOUC check for sidebar preference on desktop
+    try {
+        if (window.innerWidth > 900) {
+            var sidebarKey = guardType === 'admin' ? 'travelbuddy_admin_sidebar_collapsed' : 'travelbuddy_user_sidebar_collapsed';
+            if (localStorage.getItem(sidebarKey) === 'true') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
+        }
+    } catch (e) {}
+
     function hasSession() {
         try {
             if (guardType === 'admin') {

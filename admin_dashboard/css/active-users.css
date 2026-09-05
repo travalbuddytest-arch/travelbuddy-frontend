@@ -39,7 +39,12 @@ html{overflow-x:hidden;}
   .au-panel * { animation-duration: .001s !important; transition-duration: .001s !important; }
 }
 
-.au-panel { padding: 0; }
+.au-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
 
 /* ── Header ───────────────────────────────── */
 .au-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }

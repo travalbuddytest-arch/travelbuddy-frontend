@@ -17,7 +17,7 @@ html{overflow-x:hidden;}
   justify-content: space-between;
   align-items: center;
   gap: 14px;
-  margin-bottom: 18px;
+  margin-bottom: var(--section-gap, 24px);
   padding-bottom: 16px;
   border-bottom: 1px solid var(--l, #e8edf3);
 }
@@ -78,9 +78,10 @@ html{overflow-x:hidden;}
    ══════════════════════════════════════════════ */
 .kpis {
   margin-top: 12px;
+  margin-bottom: var(--section-gap, 24px);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: var(--grid-gap, 20px);
 }
 
 .kpis .kpi { padding: 12px; }

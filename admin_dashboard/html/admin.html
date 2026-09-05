@@ -32,31 +32,36 @@
 
     <!-- Sidebar -->
     <aside id="side">
-        <a class="brand" href="/" title="Back to TravelBuddy homepage">
-            <img src="../images/logo.jpeg" alt="TravelBuddy logo" class="brand-logo">
-            <div>
-                <img src="../images/name.png" alt="TravelBuddy wordmark" class="brand-wordmark">
-                <small>Admin Control Center</small>
-            </div>
-        </a>
+        <div class="side-header">
+            <a class="brand" href="/" title="Back to TravelBuddy homepage">
+                <img src="../images/logo.jpeg" alt="TravelBuddy logo" class="brand-logo">
+                <div class="brand-text">
+                    <img src="../images/name.png" alt="TravelBuddy wordmark" class="brand-wordmark">
+                    <small>Admin Control Center</small>
+                </div>
+            </a>
+            <button class="sidebar-toggle" id="adminSidebarToggle" type="button" aria-label="Collapse sidebar" aria-expanded="true" title="Collapse sidebar" data-tooltip="Collapse sidebar">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+        </div>
 
         <nav>
             <label>CONTROL</label>
-            <button class="active" data-page="command"><i class="fa-solid fa-grid-2"></i>Command Center</button>
-            <button data-page="operations"><i class="fa-solid fa-satellite-dish"></i>Live Operations <em id="opsSidebarBadge">—</em></button>
-            <button data-page="parcels"><i class="fa-solid fa-box"></i>Parcels</button>
+            <button class="active" data-page="command" data-tooltip="Command Center"><i class="fa-solid fa-grid-2"></i><span>Command Center</span></button>
+            <button data-page="operations" data-tooltip="Live Operations"><i class="fa-solid fa-satellite-dish"></i><span>Live Operations <em id="opsSidebarBadge">—</em></span></button>
+            <button data-page="parcels" data-tooltip="Parcels"><i class="fa-solid fa-box"></i><span>Parcels</span></button>
 
             <label>MANAGEMENT</label>
-            <button data-page="users"><i class="fa-solid fa-users"></i>Users</button>
-            <button data-page="active-users"><i class="fa-solid fa-user-clock"></i>Active Users</button>
-            <button data-page="cancellations"><i class="fa-solid fa-truck-ramp-box"></i>Parcel Outcomes</button>
-            <button data-page="wallet"><i class="fa-solid fa-wallet"></i>Wallet & Payments</button>
-            <button data-page="messages"><i class="fa-solid fa-comments"></i>Users Activity</button>
-            <button data-page="support-reports"><i class="fa-solid fa-headset"></i>Support & Reports</button>
+            <button data-page="users" data-tooltip="Users"><i class="fa-solid fa-users"></i><span>Users</span></button>
+            <button data-page="active-users" data-tooltip="Active Users"><i class="fa-solid fa-user-clock"></i><span>Active Users</span></button>
+            <button data-page="cancellations" data-tooltip="Parcel Outcomes"><i class="fa-solid fa-truck-ramp-box"></i><span>Parcel Outcomes</span></button>
+            <button data-page="wallet" data-tooltip="Wallet &amp; Payments"><i class="fa-solid fa-wallet"></i><span>Wallet &amp; Payments</span></button>
+            <button data-page="messages" data-tooltip="Users Activity"><i class="fa-solid fa-comments"></i><span>Users Activity</span></button>
+            <button data-page="support-reports" data-tooltip="Support &amp; Reports"><i class="fa-solid fa-headset"></i><span>Support &amp; Reports</span></button>
 
             <label>INSIGHTS</label>
-            <button data-page="analytics"><i class="fa-solid fa-chart-line"></i>Analytics</button>
-            <button data-page="system"><i class="fa-solid fa-heart-pulse"></i>System Health</button>
+            <button data-page="analytics" data-tooltip="Analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></button>
+            <button data-page="system" data-tooltip="System Health"><i class="fa-solid fa-heart-pulse"></i><span>System Health</span></button>
         </nav>
 
         <div class="admin" id="adminChip">
@@ -200,6 +205,7 @@
     </div>
 
     <script type="module" src="../js/admin-auth.js"></script>
+    <script src="../../shared/sidebar-collapse.js"></script>
     <script src="../js/admin.js"></script>
     <script src="../../shared/date-utils.js"></script>
     <!-- Small, safe click-ripple effect used across the whole dashboard -->
