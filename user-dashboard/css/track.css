@@ -1,859 +1,160 @@
-.track-view {
-  max-width: 1280px;
+.track-container {
+  max-width: 600px;
   margin: 0 auto;
+  padding: 16px;
+  min-height: calc(100vh - 100px);
+  position: relative;
 }
 
-.track-heading {
-  margin-bottom: 22px;
-  animation: track-fade-up 0.48s ease both;
-}
-
-.eyebrow {
-  display: inline-flex;
-  margin-bottom: 8px;
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0;
-}
-
-.track-heading h2 {
-  margin: 0;
-  font-size: clamp(26px, 4vw, 42px);
-  line-height: 1.12;
-  color: var(--text-main);
-}
-
-.track-heading p {
-  margin: 10px 0 0;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-.track-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
-  gap: 22px;
-  align-items: start;
-}
-
-.track-content.is-switching {
-  animation: parcel-switch 0.32s ease both;
-}
-
-.route-card {
-  position: sticky;
-  top: 96px;
-  min-height: 560px;
-  overflow: hidden;
-  border: 1px solid rgba(104, 154, 255, 0.28);
-  border-radius: var(--radius-lg);
-  background:
-    radial-gradient(circle at 20% 24%, rgba(255, 255, 255, 0.95), transparent 28%),
-    linear-gradient(145deg, #EAF4FF, #DDEEFF 50%, #F4FAFF);
-  box-shadow: var(--shadow-card);
-}
-
-.route-card::before {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.42), transparent);
-  opacity: .7;
-}
-
-.route-glow {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background: rgba(13, 110, 253, 0.12);
-  filter: blur(3px);
-  opacity: .7;
-}
-
-.route-glow--one { left: 10%; top: 16%; }
-.route-glow--two {
-  right: 10%;
-  bottom: 12%;
-  background: rgba(23, 166, 115, 0.12);
-  animation-delay: -1.8s;
-}
-
-.route-visual {
-  position: absolute;
-  inset: 64px 54px 88px;
-}
-
-.route-line {
-  position: absolute;
-  left: 18%;
-  bottom: 18%;
-  width: 66%;
-  height: 46%;
-  transform: rotate(-27deg);
-  transform-origin: left center;
-}
-
-.route-line-base,
-.route-line-progress {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  height: 0;
-  border-top: 4px dashed rgba(13, 110, 253, 0.22);
-  border-radius: 999px;
-}
-
-.route-line-base { width: 100%; }
-
-.route-line-progress {
-  width: 100%;
-  transform: scaleX(var(--route-progress-factor, .18));
-  transform-origin: left center;
-  border-top-color: var(--primary);
-  filter: drop-shadow(0 0 8px rgba(13, 110, 253, 0.26));
-  animation: route-draw 0.7s ease both;
-}
-
-.route-point {
-  position: absolute;
+/* Header */
+.track-app-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  max-width: 44%;
-  animation: label-in 0.45s ease both;
-}
-
-.route-point strong {
-  overflow-wrap: anywhere;
-  color: var(--text-main);
-  font-size: clamp(18px, 2vw, 26px);
-  font-weight: 800;
-}
-
-.route-point--origin {
-  left: 6%;
-  bottom: 8%;
-}
-
-.route-point--destination {
-  right: 4%;
-  top: 6%;
-  flex-direction: row-reverse;
-  text-align: right;
-  animation-delay: 0.12s;
-}
-
-.point-dot {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  flex: 0 0 auto;
-  border: 5px solid #fff;
-  box-shadow: 0 8px 22px -8px rgba(20, 38, 66, 0.45);
-}
-
-.point-dot--origin { background: var(--primary); }
-.point-dot--destination { background: var(--success); }
-
-.route-card[data-current="origin"] .point-dot--origin,
-.route-card[data-current="middle"] .point-dot--origin,
-.route-card[data-current="middle"] .point-dot--destination,
-.route-card[data-current="destination"] .point-dot--destination {
-  animation: status-pulse .9s ease-out both;
-}
-
-.route-card[data-current="destination"] .point-dot {
-  box-shadow: 0 0 0 8px rgba(23, 166, 115, 0.12), 0 8px 22px -8px rgba(20, 38, 66, 0.45);
-}
-
-.route-note {
-  position: absolute;
-  left: 24px;
-  right: 24px;
-  bottom: 20px;
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.track-side {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.parcel-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 16px;
+  margin-bottom: 24px;
 }
-
-.summary-label {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--text-faint);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.parcel-summary h3 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.status-badge {
-  white-space: nowrap;
-  border-radius: 999px;
-  padding: 8px 12px;
-  color: var(--primary);
-  background: rgba(13, 110, 253, 0.1);
-  font-size: 12px;
-  font-weight: 800;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.status-badge.is-accepted { color: var(--primary); background: rgba(13, 110, 253, 0.1); }
-.status-badge.is-pickup_verification,
-.status-badge.is-delivery_verification { color: #1d4ed8; background: #f1f6ff; }
-.status-badge.is-pickup_confirmed { color: #7A4B00; background: var(--warning-bg); }
-.status-badge.is-in_transit { color: #3056C8; background: #E9EEFF; }
-.status-badge.is-delivered { color: var(--success); background: var(--success-bg); }
-.status-badge.is-cancelled { color: var(--error); background: var(--error-bg); }
-
-.traveler-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.traveler-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.traveler-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.traveler-avatar {
-  width: 48px;
-  height: 48px;
-  font-size: 16px;
-}
-
-.traveler-main h3 {
-  margin: 0 0 3px;
-  font-size: 16px;
-}
-
-.traveler-main span {
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.traveler-proof {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  margin: 16px 0;
-  color: var(--text-muted);
-  font-size: 12.5px;
-}
-
-.traveler-proof i {
-  color: var(--success);
-}
-
-.traveler-actions,
-.action-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.journey-timeline {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.timeline-item {
-  position: relative;
-  display: grid;
-  grid-template-columns: 32px 1fr;
-  gap: 12px;
-  padding-bottom: 22px;
-}
-
-.timeline-item:last-child {
-  padding-bottom: 0;
-}
-
-.timeline-item::before {
-  content: "";
-  position: absolute;
-  top: 31px;
-  bottom: -2px;
-  left: 15px;
-  width: 2px;
-  background: var(--border);
-}
-
-.timeline-item:last-child::before {
-  display: none;
-}
-
-.timeline-dot {
-  position: relative;
-  z-index: 1;
-  width: 32px;
-  height: 32px;
+.back-circle-btn {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
+  background: #fff;
   display: grid;
   place-items: center;
-  color: var(--text-faint);
-  background: #EEF2F8;
-  border: 2px solid #fff;
-}
-
-.timeline-item.is-complete .timeline-dot {
-  color: #fff;
-  background: var(--success);
-  animation: check-pop 0.36s ease both;
-}
-
-.timeline-item.is-current .timeline-dot {
-  color: #fff;
-  background: var(--primary);
-  animation: status-pulse .9s ease-out both;
-}
-
-.timeline-item h4 {
-  margin: 1px 0 3px;
-  font-size: 14px;
-}
-
-.timeline-item p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.timeline-item.is-pending h4,
-.timeline-item.is-pending p {
-  color: var(--text-faint);
-}
-
-.action-panel h3 {
-  margin: 0 0 6px;
-  font-size: 16px;
-}
-
-.action-panel p {
-  margin: 0 0 14px;
-  color: var(--text-muted);
-  font-size: 12.5px;
-}
-
-.track-alert {
-  margin-bottom: 16px;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  color: var(--error);
-  background: var(--error-bg);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.track-empty {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  padding: 58px 20px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  text-align: center;
-}
-
-.track-empty i {
-  color: var(--primary);
-  font-size: 36px;
-}
-
-.track-empty h3,
-.track-empty p {
-  margin: 0;
-}
-
-.track-empty p {
-  color: var(--text-muted);
-  max-width: 420px;
-}
-
-.parcel-selector-wrap {
-  max-width: 420px;
-  margin-bottom: 18px;
-}
-
-.parcel-selector-wrap label {
-  display: block;
-  margin-bottom: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   color: var(--text-main);
-  font-size: 12.5px;
-  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.back-circle-btn:hover { transform: scale(1.05); }
+.track-app-header h2 { font-size: 20px; font-weight: 800; margin: 0; color: #1e293b; }
+.track-app-header p { font-size: 13px; color: #64748b; margin: 4px 0 0; }
+
+/* Search Card (Screenshot 2) */
+.search-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.search-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.search-card-info h3 { font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; }
+.search-card-info p { font-size: 12.5px; color: #64748b; margin: 6px 0 0; line-height: 1.5; }
+.search-card-icon {
+  width: 40px; height: 40px; border-radius: 12px; background: #eff6ff; color: #3b82f6;
+  display: grid; place-items: center; font-size: 18px;
 }
 
-.parcel-selector {
-  width: 100%;
-  height: 48px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text-main);
-  font: 600 13px var(--font);
-  padding: 0 14px;
+.search-input-group label { display: block; font-size: 10px; font-weight: 800; color: #94a3b8; margin-bottom: 8px; letter-spacing: 0.05em; }
+.search-field-wrap {
+  display: flex; align-items: center; background: #f8fafc; border: 1.5px solid #e2e8f0;
+  border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+}
+.search-field-wrap input {
+  flex: 1; border: 0; background: transparent; padding: 14px; font-size: 14px; font-weight: 600; outline: none;
+}
+.search-field-wrap button {
+  background: transparent; border: 0; padding: 12px; color: #64748b; cursor: pointer; transition: color 0.2s;
+}
+.search-field-wrap button:hover { color: var(--primary); }
+
+.btn-track-main {
+  width: 100%; height: 48px; border-radius: 12px; background: #cbd5e1; border: 0;
+  color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;
+}
+.btn-track-main.active { background: #3b82f6; }
+
+/* Empty Illustration */
+.empty-illustration {
+  text-align: center; padding: 40px 20px;
+}
+.empty-box-icon {
+  width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; color: #cbd5e1;
+  display: grid; place-items: center; font-size: 32px; margin: 0 auto 20px;
+}
+.empty-illustration h3 { font-size: 22px; font-weight: 900; color: #0f172a; margin: 0; }
+.empty-illustration p { font-size: 14px; color: #64748b; margin: 12px auto 24px; max-width: 300px; line-height: 1.5; }
+.btn-post-main {
+  display: inline-block; padding: 14px 40px; background: #0070f3; color: #fff;
+  font-weight: 700; border-radius: 30px; text-decoration: none; box-shadow: 0 10px 20px rgba(0, 112, 243, 0.2);
 }
 
-.track-skeleton,
-.route-card--skeleton {
-  position: relative;
-  overflow: hidden;
-  min-height: 120px;
-  border-radius: var(--radius-lg);
-  background: #EAF0FA;
+/* Parcel Summary Card (Screenshot 1) */
+.parcel-summary-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px;
+  margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.summary-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.summary-id-area strong { display: block; font-size: 15px; font-weight: 800; color: #0f172a; }
+.summary-id-area span { display: block; font-size: 11px; color: #64748b; margin-top: 4px; }
+.view-details-link { font-size: 13px; font-weight: 700; color: #3b82f6; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+.summary-status-row { display: flex; align-items: center; gap: 12px; }
+.status-pill {
+  padding: 6px 14px; border-radius: 20px; background: #eff6ff; color: #3b82f6;
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+}
+.status-label-text { font-size: 12px; font-weight: 600; color: #64748b; }
+
+/* Timeline (Screenshot 1) */
+.timeline-section { padding: 0 4px; }
+.section-title { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+.section-title i { color: #3b82f6; font-size: 14px; }
+
+.journey-timeline-v2 { position: relative; padding-left: 36px; }
+.journey-timeline-v2::before {
+  content: ''; position: absolute; left: 13px; top: 10px; bottom: 10px; width: 2.5px; background: #e2e8f0;
+}
+.timeline-step { position: relative; margin-bottom: 32px; }
+.timeline-step.done::before {
+  content: ''; position: absolute; left: -23px; top: 20px; height: 100%; width: 2.5px; background: #10b981; z-index: 1;
+}
+.timeline-step:last-child::before { display: none; }
+
+.step-dot {
+  position: absolute; left: -36px; top: 0; width: 28px; height: 28px; border-radius: 50%;
+  background: #f1f5f9; color: #94a3b8; display: grid; place-items: center; font-size: 12px;
+  z-index: 2; border: 2.5px solid #fff;
+}
+.timeline-step.done .step-dot { background: #10b981; color: #fff; }
+.timeline-step.current .step-dot { background: #fff; color: #3b82f6; border-color: #3b82f6; }
+.timeline-step.current .step-dot::after {
+  content: ''; position: absolute; inset: 4px; border-radius: 50%; background: #3b82f6;
 }
 
-.track-skeleton--wide {
-  min-height: 76px;
-  margin-bottom: 22px;
+.step-content h4 { font-size: 15px; font-weight: 800; color: #1e293b; margin: 0; }
+.step-content p { font-size: 11px; color: #94a3b8; margin: 4px 0 0; }
+.step-detail {
+  margin-top: 10px; padding: 12px; background: #f8fafc; border-radius: 12px;
+  font-size: 12px; color: #3b82f6; font-weight: 600; display: flex; align-items: flex-start; gap: 8px;
 }
+.step-detail i { margin-top: 2px; }
 
-.track-skeleton--tall {
-  min-height: 280px;
+/* Bottom Bar */
+.track-bottom-bar {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  width: min(500px, 90vw); height: 64px; background: #fff; border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1); display: flex; align-items: center;
+  justify-content: space-around; padding: 0 10px; z-index: 100;
 }
-
-.route-card--skeleton {
-  min-height: 560px;
-  border: none;
+.bar-btn {
+  background: transparent; border: 0; display: flex; flex-direction: column;
+  align-items: center; gap: 4px; color: #64748b; cursor: pointer; padding: 8px;
+  border-radius: 12px; transition: all 0.2s;
 }
-
-.track-skeleton::after,
-.route-card--skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent);
-  animation: skeleton-shimmer 1.2s ease-in-out infinite;
-}
-
-.success-note {
-  margin-top: 12px;
-  padding: 11px 12px;
-  border-radius: var(--radius-md);
-  color: var(--success);
-  background: var(--success-bg);
-  font-size: 13px;
-  font-weight: 700;
-  animation: check-pop 0.4s ease both;
-}
-
-@keyframes track-fade-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes parcel-switch {
-  from { opacity: 0.6; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes route-draw {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(var(--route-progress-factor, .18)); }
-}
-
-@keyframes label-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes status-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.26), 0 8px 22px -8px rgba(20, 38, 66, 0.45); }
-  50% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0), 0 8px 22px -8px rgba(20, 38, 66, 0.45); }
-}
-
-@keyframes check-pop {
-  from { transform: scale(0.88); }
-  to { transform: scale(1); }
-}
-
-@keyframes float-soft {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(8px, -10px, 0); }
-}
-
-@keyframes route-bg {
-  0%, 100% { transform: translateX(-8%); }
-  50% { transform: translateX(8%); }
-}
-
-@keyframes skeleton-shimmer {
-  to { transform: translateX(100%); }
-}
-
-@media (max-width: 1180px) {
-  .track-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .route-card {
-    position: relative;
-    top: auto;
-    min-height: 420px;
-  }
-
-  .route-card--skeleton {
-    min-height: 420px;
-  }
-}
-
-@media (max-width: 640px) {
-  .track-heading h2 {
-    font-size: 28px;
-  }
-
-  .route-card {
-    min-height: 360px;
-  }
-
-  .route-visual {
-    inset: 44px 22px 76px;
-  }
-
-  .route-point {
-    max-width: 54%;
-  }
-
-  .route-point strong {
-    font-size: 18px;
-  }
-
-  .parcel-summary,
-  .traveler-actions,
-  .action-buttons {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .status-badge {
-    width: max-content;
-    max-width: 100%;
-  }
-
-  .traveler-actions .btn-ghost,
-  .action-buttons .btn-primary,
-  .action-buttons .btn-ghost {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .route-line-progress,
-  .route-point,
-  .timeline-dot,
-  .track-heading,
-  .track-content.is-switching,
-  .track-skeleton::after,
-  .route-card--skeleton::after {
-    animation: none !important;
-  }
-}
-
-.parcel-summary,
-.traveler-card,
-.action-panel,
-.timeline-item { min-width: 0; }
-
-@media (hover: none), (pointer: coarse) {
-  .traveler-card:active,
-  .action-panel:active { transform: scale(.995); }
-}
-
-.order-track-search{display:flex;gap:10px;max-width:720px;margin:18px 0 22px}.order-track-search input{flex:1;min-width:0;padding:13px 15px;border:1px solid #d5deea;border-radius:12px;font:inherit;text-transform:uppercase}.order-track-search button{border:0;border-radius:12px;background:#0d6efd;color:#fff;padding:0 20px;font-weight:700;cursor:pointer}@media(max-width:600px){.order-track-search{flex-direction:column}.order-track-search button{padding:13px}}
-
-
-/* OTP-protected pickup and delivery verification */
-.journey-otp-modal[hidden]{display:none}.journey-otp-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px}.journey-otp-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.58);backdrop-filter:blur(5px)}.journey-otp-card{position:relative;width:min(440px,100%);background:#fff;border-radius:22px;padding:30px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.25);animation:otpPop .22s ease-out}.journey-otp-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:30px;cursor:pointer;color:#64748b}.journey-otp-icon{width:62px;height:62px;margin:0 auto 14px;border-radius:18px;display:grid;place-items:center;background:#eaf2ff;color:#2563eb;font-size:25px}.journey-otp-card h2{margin:0 0 9px}.journey-otp-card p{color:#64748b}.journey-otp-dest{margin:14px 0;font-size:13px;font-weight:700;color:#334155}.journey-otp-input{width:100%;box-sizing:border-box;text-align:center;font-size:30px;font-weight:800;letter-spacing:10px;padding:14px;border:2px solid #dbe4f0;border-radius:14px;outline:none}.journey-otp-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.1)}.journey-otp-error{min-height:22px;margin:8px 0;color:#dc2626;font-size:13px}.journey-otp-verify{width:100%;justify-content:center}.journey-otp-resend{margin-top:12px;border:0;background:transparent;color:#2563eb;font-weight:700;cursor:pointer}.journey-otp-resend:disabled{color:#94a3b8;cursor:not-allowed}.journey-otp-note{font-size:12px!important;margin-bottom:0}@keyframes otpPop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}@media(max-width:520px){.journey-otp-card{padding:25px 18px}.journey-otp-input{font-size:25px;letter-spacing:7px}}
-
-/* QR-first pickup and delivery verification */
-.journey-qr-modal[hidden]{display:none}.journey-qr-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px}.journey-qr-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.58);backdrop-filter:blur(5px)}.journey-qr-card{position:relative;width:min(470px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;background:#fff;border-radius:22px;padding:30px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.25);animation:otpPop .22s ease-out}.journey-qr-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:30px;cursor:pointer;color:#64748b}.journey-qr-icon{width:62px;height:62px;margin:0 auto 14px;border-radius:18px;display:grid;place-items:center;background:#eaf2ff;color:#2563eb;font-size:25px}.journey-qr-card h2{margin:0 0 9px}.journey-qr-card p{color:#64748b}.journey-qr-body{display:grid;gap:12px;margin:18px 0}.journey-qr-label{font-size:12px;font-weight:800;text-transform:uppercase;color:#2563eb;letter-spacing:0}.journey-qr-code{width:min(280px,100%);aspect-ratio:1;margin:0 auto;padding:18px;border:1px solid #dbe7ff;border-radius:18px;background:#f8fbff;display:grid;place-items:center}.journey-qr-code img,.journey-qr-code canvas{width:100%!important;height:100%!important;max-width:220px;max-height:220px;image-rendering:auto}.journey-qr-loading,.journey-qr-placeholder{display:grid;place-items:center;gap:8px;color:#64748b;font-size:13px;font-weight:700}.journey-qr-placeholder i{font-size:46px;color:#94a3b8}.journey-qr-countdown{display:inline-flex;justify-content:center;justify-self:center;padding:9px 13px;border-radius:999px;background:#f1f6ff;color:#1d4ed8;font-size:14px;font-weight:800}.journey-qr-status{min-height:24px;margin:8px 0 0;font-size:13px;font-weight:700;line-height:1.45}.journey-qr-status i{margin-right:6px}.journey-qr-status.is-info{color:#475569}.journey-qr-status.is-success{padding:12px;border-radius:14px;background:#ecfdf3;color:#12805c}.journey-qr-status.is-success i{font-size:18px}.journey-qr-status.is-success span{display:block;margin-top:3px;color:#166534}.journey-qr-status.is-error{color:#dc2626}.journey-qr-status.is-warning{color:#a16207}.journey-qr-actions{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:16px}.journey-qr-actions .btn-primary,.journey-qr-actions .btn-ghost{justify-content:center}.journey-qr-fallback-label{flex-basis:100%;color:#64748b;font-size:12px;font-weight:700}.journey-qr-scanner{position:relative;width:100%;max-width:360px;aspect-ratio:1;margin:0 auto;border:1px solid #dbe7ff;border-radius:18px;background:#0f172a;overflow:hidden;display:grid;place-items:center}.journey-qr-scanner video{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover}.journey-qr-scanner .journey-qr-placeholder{position:relative;z-index:1}.journey-qr-note{margin:0!important;font-size:12px!important}@media(max-width:520px){.journey-qr-card{padding:25px 18px}.journey-qr-code{width:min(250px,100%);padding:14px}.journey-qr-actions{flex-direction:column}.journey-qr-actions .btn-primary,.journey-qr-actions .btn-ghost{width:100%}.journey-qr-fallback-label{flex-basis:auto}.journey-qr-scanner{max-width:300px}}
-
-
-/* Compact connected route map refresh */
-.track-grid{grid-template-columns:minmax(0,.82fr) minmax(380px,1.18fr);gap:18px}
-.route-card{min-height:330px;position:sticky;top:96px;border-radius:22px;background:linear-gradient(145deg,#f8fbff,#eaf3ff);box-shadow:0 16px 42px rgba(31,76,135,.12)}
-.route-card-head{position:absolute;z-index:4;left:22px;right:22px;top:18px;display:flex;align-items:center;justify-content:space-between}
-.route-card-head span{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--text-main)}
-.route-card-head span i{color:var(--primary)}
-.route-card-head small{color:var(--text-muted);font-weight:700}
-.route-visual{position:absolute;inset:72px 30px 38px}
-.route-line{left:14%;bottom:26%;width:72%;height:42%;transform:rotate(-20deg)}
-.route-line-base,.route-line-progress{border-top-width:3px}
-.route-line-base{border-top-style:solid;border-top-color:rgba(13,110,253,.18)}
-.route-line-progress{border-top-style:solid;box-shadow:0 0 14px rgba(13,110,253,.24)}
-.route-point{gap:8px;max-width:42%;z-index:3;padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.76);backdrop-filter:blur(6px);box-shadow:0 8px 22px rgba(31,76,135,.08)}
-.route-point strong{font-size:clamp(12px, 1.5vw, 19px);line-height:1.2;overflow-wrap:anywhere;word-break:normal}
-.route-point--origin{left:2%;bottom:12%}
-.route-point--destination{right:2%;top:10%}
-.point-dot{width:20px;height:20px;border-width:4px;box-shadow:0 0 0 5px rgba(13,110,253,.08),0 6px 16px rgba(20,38,66,.18)}
-.point-dot--destination{box-shadow:0 0 0 5px rgba(23,166,115,.09),0 6px 16px rgba(20,38,66,.18)}
-.route-moving-dot{position:absolute;z-index:5;left:22%;bottom:29%;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--primary);box-shadow:0 8px 22px rgba(13,110,253,.22);animation:parcel-route-float 3s ease-in-out infinite}
-.route-moving-dot i{font-size:14px;animation:parcel-box-bob 1.4s ease-in-out infinite}
-.route-glow{width:110px;height:110px;opacity:.7}
-@keyframes parcel-route-float{0%,100%{transform:translate(0,0)}50%{transform:translate(48px,-18px)}}
-@keyframes parcel-box-bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
-@media(max-width:1180px){.track-grid{grid-template-columns:1fr}.route-card{position:relative;top:auto;min-height:300px}}
-@media(max-width:640px){.route-card{min-height:270px}.route-card-head{left:16px;right:16px;top:14px}.route-card-head small{display:none}.route-visual{inset:58px 14px 24px}.route-line{left:16%;bottom:28%;width:68%;height:38%;transform:rotate(-18deg)}.route-point{max-width:46%;padding:6px 8px}.route-point strong{font-size:13px}.point-dot{width:17px;height:17px;border-width:3px}.route-moving-dot{width:30px;height:30px;left:24%;bottom:31%}}
-@media(prefers-reduced-motion:reduce){.route-moving-dot,.route-moving-dot i{animation:none}}
-
-
-/* ============================================================
-   TRACK PARCEL WORKSPACE LAYOUT (desktop)
-   Fixed forever: heading+subtitle, Order ID search bar,
-   "Select parcel journey" dropdown, Live Route map, and the
-   blue "PARCEL JOURNEY" label.
-   Scrolls together as one region (from anywhere on the page,
-   via the wheel-forwarding script in track.js): Traveler/User
-   Card -> Parcel Journey Timeline -> Available Actions.
-   ============================================================ */
-@media (min-width: 1181px) {
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .app-shell {
-    height: 100vh;
-  }
-
-  .main {
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .main > .content {
-    flex: 1;
-    min-height: 0;
-    height: calc(100vh - 80px); /* Adjust for topbar height */
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 24px;
-  }
-
-  .track-view.active {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* Fixed block #1: heading + subtitle + Order ID search + dropdown */
-  .track-view .track-fixed-top {
-    flex: 0 0 auto;
-    position: static;
-    margin: 0 0 18px;
-    padding: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .track-view .track-heading {
-    margin: 0 0 18px;
-  }
-
-  .track-view .track-heading h2 {
-    margin: 0;
-    font-size: clamp(1.8rem, 3.35vw, 4rem);
-    line-height: 1.02;
-    letter-spacing: -0.045em;
-    white-space: normal;
-  }
-
-  .track-view .track-heading p {
-    margin: 12px 0 0;
-    font-size: 1.08rem;
-    line-height: 1.45;
-  }
-
-  .track-view .track-control-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 18px;
-    align-items: end;
-  }
-
-  .track-view .order-track-search {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 12px;
-    min-width: 0;
-    margin: 0;
-  }
-
-  .track-view .order-track-search input {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .track-view .order-track-search button {
-    white-space: nowrap;
-  }
-
-  .track-view #parcelSelectorWrap.parcel-selector-wrap:not(.hidden) {
-    position: static;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .track-view #parcelSelectorWrap label {
-    display: block;
-    margin: 0 0 7px;
-    font-size: .82rem;
-    font-weight: 800;
-    color: #64748b;
-  }
-
-  .track-view #parcelSelectorWrap .parcel-selector {
-    width: 100%;
-    min-height: 56px;
-    margin: 0;
-  }
-
-  /* Alert, loading and empty states: fill the remaining space below the fixed top */
-  .track-view .track-alert:not(.hidden) {
-    flex: 0 0 auto;
-  }
-
-  .track-view .track-loading:not(.hidden),
-  .track-view .track-empty:not(.hidden) {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-  }
-
-  /* Result state: map + right column fill remaining space */
-  #trackContent.track-content:not(.hidden) {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 600px; /* Ensure enough height for the grid */
-  }
-
-  #trackContent #trackGrid.track-grid {
-    flex: 1;
-    width: 100%;
-    gap: 24px;
-  }
-
-  /* Fixed block #2: Live Route map */
-  #trackContent #trackGrid > .route-card {
-    position: relative;
-    top: auto;
-    flex: 1;
-    min-height: 400px;
-    max-height: 600px;
-    align-self: stretch;
-  }
-
-  #trackContent #trackGrid > .track-side {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Fixed block #3: the blue "PARCEL JOURNEY" label - never scrolls */
-  .track-side > .parcel-journey-label {
-    flex: 0 0 auto;
-    margin: 2px 0 12px;
-    padding-top: 2px;
-    background: var(--page-bg, #f5f8ff);
-  }
-
-  /* Scrolling region: Traveler Card -> Timeline -> Available Actions, as one unit */
-  .track-side-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior: contain;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-right: 2px;
-    padding-bottom: 28px;
-  }
-
-  .track-side-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
-  }
-
-  .track-side-scroll > :first-child {
-    margin-top: 0;
-  }
-}
-
-/* Tablet/mobile: everything returns to normal, natural page scrolling. */
-@media (max-width: 1180px) {
-  html, body {
-    height: auto;
-    overflow: visible;
-  }
-
-  .track-view .track-fixed-top {
-    position: relative;
-    top: auto;
-  }
-
-  .track-view .track-control-row {
-    display: grid;
-    gap: 12px;
-  }
-
-  .track-view #parcelSelectorWrap.parcel-selector-wrap {
-    position: relative;
-    top: auto;
-  }
-
-  .track-side-scroll {
-    overflow: visible;
-  }
-}
-
-/* Visually hide the "Select parcel journey" label while keeping it for screen readers */
-.track-view .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.tb-profile-photo{width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;border-radius:inherit!important;}
+.bar-btn i { font-size: 18px; }
+.bar-btn span { font-size: 10px; font-weight: 700; }
+.bar-btn:hover { background: #f1f5f9; color: #3b82f6; }
+.bar-btn.danger:hover { background: #fef2f2; color: #ef4444; }
+
+/* Utils */
+.hidden { display: none !important; }
+.track-loading-v2 { text-align: center; padding: 60px 0; color: #64748b; }
+.track-loading-v2 i { font-size: 28px; color: #3b82f6; margin-bottom: 12px; }

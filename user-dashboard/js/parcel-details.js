@@ -82,11 +82,70 @@
   const reportDescription = document.getElementById('reportDescription');
   const submitReportBtn = document.getElementById('submitReportBtn');
 
+  // New Elements for Functional Parity
+  const roleBadgePremium = document.getElementById('roleBadgePremium');
+  const roleBadgeText = document.getElementById('roleBadgeText');
+  const pathFromCity = document.getElementById('pathFromCity');
+  const pathToCity = document.getElementById('pathToCity');
+  const specWeight = document.getElementById('specWeight');
+  const specEarning = document.getElementById('specEarning');
+  const specEarningLabel = document.getElementById('specEarningLabel');
+  const changePickupBtn = document.getElementById('changePickupBtn');
+  const changeDeliveryBtn = document.getElementById('changeDeliveryBtn');
+  const nextActionCard = document.getElementById('nextActionCard');
+  const recFromCity = document.getElementById('recFromCity');
+  const recToCity = document.getElementById('recToCity');
+
+  const cancellationCard = document.getElementById('cancellationCard');
+  const cancelOriginalPrice = document.getElementById('cancelOriginalPrice');
+  const cancelFeeRow = document.getElementById('cancelFeeRow');
+  const cancelFeeValue = document.getElementById('cancelFeeValue');
+  const cancelCompensationRow = document.getElementById('cancelCompensationRow');
+  const cancelCompensationValue = document.getElementById('cancelCompensationValue');
+  const cancelNetLabel = document.getElementById('cancelNetLabel');
+  const cancelNetValue = document.getElementById('cancelNetValue');
+  const refundStatusPill = document.getElementById('refundStatusPill');
+
+  const locationRequestCard = document.getElementById('locationRequestCard');
+  const reqLocationType = document.getElementById('reqLocationType');
+  const reqLocationName = document.getElementById('reqLocationName');
+  const reqLocationAddress = document.getElementById('reqLocationAddress');
+  const reqReasonBox = document.getElementById('reqReasonBox');
+  const approveLocationBtn = document.getElementById('approveLocationBtn');
+  const declineLocationBtn = document.getElementById('declineLocationBtn');
+
+  const locationModal = document.getElementById('locationModal');
+  const locationModalClose = document.getElementById('locationModalClose');
+  const locationModalTitle = document.getElementById('locationModalTitle');
+  const useCurrentLocationBtn = document.getElementById('useCurrentLocationBtn');
+  const pickOnMapBtn = document.getElementById('pickOnMapBtn');
+  const locationPickerMap = document.getElementById('locationPickerMap');
+  const recommendedPointsList = document.getElementById('recommendedPointsList');
+  const selectedPointCard = document.getElementById('selectedPointCard');
+  const selectedPointName = document.getElementById('selectedPointName');
+  const selectedPointAddress = document.getElementById('selectedPointAddress');
+  const confirmLocationBtn = document.getElementById('confirmLocationBtn');
+  const changingWarning = document.getElementById('changingWarning');
+
+  const profileModal = document.getElementById('profileModal');
+  const profileModalClose = document.getElementById('profileModalClose');
+  const locationChangeModal = document.getElementById('locationChangeModal');
+  const locationChangeModalClose = document.getElementById('locationChangeModalClose');
+  const chosenLocationText = document.getElementById('chosenLocationText');
+  const openLocationPickerBtn = document.getElementById('openLocationPickerBtn');
+  const submitChangeRequestBtn = document.getElementById('submitChangeRequestBtn');
+  const changeReasonText = document.getElementById('changeReason');
+
   // State
   let parcelData = null;
   let currentUserId = null;
   let currentOtpPurpose = 'pickup';
   let selectedRating = 5;
+  let map = null;
+  let mapMarker = null;
+  let selectedLocation = null;
+  let activePickerPurpose = 'pickup'; // pickup or delivery
+  let isRequestChange = false; // true if sender is requesting a change
 
   function getParcelIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -167,14 +226,113 @@
       ? '<span class="parcel-role-badge is-sender"><i class="fa-solid fa-paper-plane"></i> You: Sender</span>'
       : '<span class="parcel-role-badge is-traveler"><i class="fa-solid fa-person-walking-luggage"></i> You: Traveler</span>';
 
+    // Premium Role Badge
+    if (roleBadgePremium) {
+      roleBadgePremium.classList.remove('hidden', 'is-sender', 'is-traveler');
+      roleBadgePremium.classList.add(isSender ? 'is-sender' : 'is-traveler');
+      roleBadgeText.textContent = isSender ? 'YOU ARE THE SENDER' : 'YOU ARE THE TRAVELER';
+      roleBadgePremium.querySelector('i').className = isSender ? 'fa-solid fa-person' : 'fa-solid fa-person-walking-luggage';
+    }
+
     if (liveTrackLink) {
       liveTrackLink.href = `track.html?id=${encodeURIComponent(p.id)}`;
+    }
+
+    // Address Path Viz
+    if (pathFromCity) pathFromCity.textContent = p.fromCity;
+    if (pathToCity) pathToCity.textContent = p.toCity;
+
+    // Specs Grid
+    if (specWeight) specWeight.textContent = `${p.weight} kg`;
+    if (specEarning) {
+      const e = p.financials?.netEarnings || p.travelerEarning;
+      specEarning.textContent = window.TravelBuddy.formatPaise(e);
+      specEarningLabel.textContent = isSender ? 'Reward' : 'Earning';
     }
 
     // Cancel Button visibility
     const isCancellable = ['pending', 'accepted', 'pickup_point_pending', 'pickup_point_selected'].includes(p.status);
     if (cancelParcelBtn) {
       cancelParcelBtn.style.display = isCancellable ? 'inline-flex' : 'none';
+    }
+
+    // Change Location Buttons
+    if (changePickupBtn) {
+       const canChangePickup = !isSender && ['accepted', 'pickup_point_pending', 'pickup_point_selected'].includes(p.status);
+       const senderCanRequestChange = isSender && p.status === 'pickup_point_selected' && p.pickupPoint?.locked;
+       changePickupBtn.style.display = (canChangePickup || senderCanRequestChange) ? 'block' : 'none';
+       changePickupBtn.textContent = senderCanRequestChange ? 'Request Change' : 'Change';
+       changePickupBtn.onclick = () => {
+         if (senderCanRequestChange) openLocationChangeRequest('pickup');
+         else openLocationPicker('pickup', false);
+       };
+    }
+    if (changeDeliveryBtn) {
+       const canChangeDelivery = !isSender && ['in_transit', 'delivery_point_pending', 'delivery_point_selected'].includes(p.status);
+       const senderCanRequestChange = isSender && p.status === 'delivery_point_selected' && p.deliveryPoint?.locked;
+       changeDeliveryBtn.style.display = (canChangeDelivery || senderCanRequestChange) ? 'block' : 'none';
+       changeDeliveryBtn.textContent = senderCanRequestChange ? 'Request Change' : 'Change';
+       changeDeliveryBtn.onclick = () => {
+         if (senderCanRequestChange) openLocationChangeRequest('delivery');
+         else openLocationPicker('delivery', false);
+       };
+    }
+
+    // Location Change Request Card
+    if (locationRequestCard) {
+      const req = p.locationChangeRequest;
+      if (!isSender && req && req.status === 'pending') {
+        locationRequestCard.classList.remove('hidden');
+        reqLocationType.textContent = req.type;
+        reqLocationName.textContent = req.newLocation.name;
+        reqLocationAddress.textContent = req.newLocation.formattedAddress;
+        reqReasonBox.textContent = req.reason ? `"${req.reason}"` : 'No reason provided.';
+
+        approveLocationBtn.onclick = () => handleLocationRequest('approve');
+        declineLocationBtn.onclick = () => handleLocationRequest('decline');
+      } else {
+        locationRequestCard.classList.add('hidden');
+      }
+    }
+
+    // Cancellation Summary
+    if (cancellationCard) {
+      if (p.status.includes('cancel')) {
+        cancellationCard.style.display = 'block';
+        cancelOriginalPrice.textContent = window.TravelBuddy.formatPaise(p.financials?.grossAmount || p.price);
+
+        if (isSender) {
+          cancelFeeRow.style.display = 'flex';
+          cancelCompensationRow.style.display = 'none';
+          cancelFeeValue.textContent = `-${window.TravelBuddy.formatPaise(p.cancellationFee)}`;
+          cancelNetLabel.textContent = 'Net Refund';
+          const refund = (p.financials?.grossAmount || p.price) - p.cancellationFee;
+          cancelNetValue.textContent = window.TravelBuddy.formatPaise(refund);
+        } else {
+          cancelFeeRow.style.display = 'none';
+          cancelCompensationRow.style.display = 'flex';
+          cancelCompensationValue.textContent = `+${window.TravelBuddy.formatPaise(p.cancellationTravelerCompensation)}`;
+          cancelNetLabel.textContent = 'Total Compensation';
+          cancelNetValue.textContent = window.TravelBuddy.formatPaise(p.cancellationTravelerCompensation);
+        }
+
+        refundStatusPill.innerHTML = p.paymentStatus === 'refunded'
+          ? '<i class="fa-solid fa-circle-check"></i> Processed'
+          : '<i class="fa-solid fa-clock"></i> Processing';
+      } else {
+        cancellationCard.style.display = 'none';
+      }
+    }
+
+    // Recommendation Card
+    if (nextActionCard) {
+       if (p.status === 'delivered') {
+          nextActionCard.classList.remove('hidden');
+          recFromCity.textContent = p.fromCity;
+          recToCity.textContent = p.toCity;
+       } else {
+          nextActionCard.classList.add('hidden');
+       }
     }
 
     // Review Button visibility
@@ -312,8 +470,13 @@
           <button type="button" class="btn-ghost" id="requestPickupOtpBtn"><i class="fa-solid fa-key"></i> Resend Pickup OTP</button>
         `;
       } else {
-        actionBannerDesc.textContent = 'Collect the parcel from the sender. Verify the 6-digit handover OTP or scan their QR code to confirm.';
-        actionBannerButtons.innerHTML = `
+        const isPointNeeded = s === 'pickup_point_pending';
+        actionBannerDesc.textContent = isPointNeeded
+          ? 'Choose a convenient meeting point to collect the parcel from the sender.'
+          : 'Collect the parcel from the sender. Verify the 6-digit handover OTP or scan their QR code to confirm.';
+        actionBannerButtons.innerHTML = isPointNeeded
+          ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('pickup', false)"><i class="fa-solid fa-location-dot"></i> Select Pickup Point</button>`
+          : `
           <button type="button" class="btn-primary" id="openVerifyPickupOtpBtn"><i class="fa-solid fa-key"></i> Verify Pickup OTP</button>
           <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-ghost" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Sender QR</a>
         `;
@@ -342,8 +505,13 @@
           <button type="button" class="btn-ghost" id="requestDeliveryOtpBtn"><i class="fa-solid fa-key"></i> Resend Delivery OTP</button>
         `;
       } else {
-        actionBannerDesc.textContent = 'You are currently transporting this parcel. Hand over to the recipient and verify the delivery OTP or scan their QR.';
-        actionBannerButtons.innerHTML = `
+        const isPointNeeded = s === 'delivery_point_pending';
+        actionBannerDesc.textContent = isPointNeeded
+          ? 'Choose the final destination point to deliver the parcel safely.'
+          : 'You are currently transporting this parcel. Hand over to the recipient and verify the delivery OTP or scan their QR.';
+        actionBannerButtons.innerHTML = isPointNeeded
+          ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('delivery', false)"><i class="fa-solid fa-location-dot"></i> Select Delivery Point</button>`
+          : `
           <button type="button" class="btn-primary" id="openVerifyDeliveryOtpBtn"><i class="fa-solid fa-check-double"></i> Verify Delivery OTP</button>
           <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-ghost" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Recipient QR</a>
         `;
@@ -356,7 +524,7 @@
         ? 'Parcel delivery verified! Your payment has been securely settled to the traveler.'
         : 'Delivery completed! Your earnings have been credited to your TravelBuddy wallet.';
       actionBannerButtons.innerHTML = (!p.isRated)
-        ? `<button type="button" class="btn-primary" id="bannerReviewBtn"><i class="fa-solid fa-star"></i> Rate Experience</button>`
+        ? `<button type="button" class="btn-primary" onclick="window.openReviewModal()"><i class="fa-solid fa-star"></i> Rate Experience</button>`
         : `<span class="tag tag--delivered"><i class="fa-solid fa-check"></i> Reviewed</span>`;
       actionBanner.classList.remove('hidden');
     } else {
@@ -434,6 +602,296 @@
     }
     if (chatCounterpartBtn) {
       chatCounterpartBtn.onclick = () => startChatWithCounterpart(person.userId);
+    }
+    if (counterpartBox) {
+      counterpartBox.onclick = () => openPublicProfile(person.userId);
+    }
+  }
+
+  async function openPublicProfile(userId) {
+    if (!userId) return;
+    const avatar = document.getElementById('profAvatar');
+    const name = document.getElementById('profName');
+    const verified = document.getElementById('profVerified');
+    const rating = document.getElementById('profRating');
+    const trips = document.getElementById('profTrips');
+    const posted = document.getElementById('profPosted');
+    const joined = document.getElementById('profJoined');
+    const reliability = document.getElementById('profReliability');
+
+    profileModal.classList.remove('hidden');
+
+    // Initial state
+    name.textContent = 'Loading...';
+    avatar.style.backgroundImage = 'none';
+    avatar.textContent = '..';
+
+    try {
+      // Use existing public profile API if exists, or /api/auth/profile/:id
+      // For parity, we assume a rich profile fetch
+      const res = await fetch(`${API_ORIGIN}/api/admin/users/${userId}`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+
+      const u = data.user;
+      name.textContent = `${u.firstName} ${u.lastName}`;
+      avatar.textContent = (u.firstName[0] + u.lastName[0]).toUpperCase();
+      if (u.profilePhoto) {
+         avatar.style.backgroundImage = `url(${window.TravelBuddy.resolveMediaUrl(u.profilePhoto)})`;
+         avatar.textContent = '';
+      }
+      verified.style.display = u.verification?.governmentId === 'verified' ? 'inline-flex' : 'none';
+      rating.textContent = (u.rating || 0).toFixed(1);
+      trips.textContent = data.performance?.completedDeliveries || 0;
+      posted.textContent = data.performance?.postedParcels || 0;
+      reliability.textContent = `${data.performance?.completionRate || 100}%`;
+      joined.textContent = window.TravelBuddyDate ? window.TravelBuddyDate.formatDate(u.createdAt, { month: 'short', year: 'numeric' }) : 'Aug 2026';
+
+    } catch (err) {
+      name.textContent = 'Error loading profile';
+    }
+  }
+
+  function initMap(lat, lng) {
+    if (map) {
+      map.setView([lat, lng], 13);
+      if (mapMarker) mapMarker.setLatLng([lat, lng]);
+      return;
+    }
+
+    map = L.map('locationPickerMap').setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    mapMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+    mapMarker.on('dragend', function() {
+      const pos = mapMarker.getLatLng();
+      updateSelectedLocationFromCoords(pos.lat, pos.lng);
+    });
+
+    map.on('click', function(e) {
+      mapMarker.setLatLng(e.latlng);
+      updateSelectedLocationFromCoords(e.latlng.lat, e.latlng.lng);
+    });
+  }
+
+  async function updateSelectedLocationFromCoords(lat, lng) {
+     // Simple reverse geocoding using OSM Nominatim (Free for small usage)
+     try {
+       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+       const data = await res.json();
+       selectedLocation = {
+          name: data.name || data.display_name.split(',')[0],
+          formattedAddress: data.display_name,
+          latitude: lat,
+          longitude: lng,
+          city: data.address.city || data.address.town || data.address.village || ''
+       };
+       renderSelectedPoint();
+     } catch (e) {
+       selectedLocation = { name: 'Pinned Location', formattedAddress: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, latitude: lat, longitude: lng };
+       renderSelectedPoint();
+     }
+  }
+
+  function renderSelectedPoint() {
+    if (!selectedLocation) return;
+    selectedPointCard.classList.remove('hidden');
+    selectedPointName.textContent = selectedLocation.name;
+    selectedPointAddress.textContent = selectedLocation.formattedAddress;
+    confirmLocationBtn.disabled = false;
+
+    if (isRequestChange && chosenLocationText) {
+       chosenLocationText.textContent = selectedLocation.name;
+    }
+  }
+
+  window.openLocationPicker = async (purpose, requestChange = false) => {
+    activePickerPurpose = purpose;
+    isRequestChange = requestChange;
+    locationModalTitle.textContent = `Select ${purpose === 'pickup' ? 'Pickup' : 'Delivery'} Point`;
+
+    const existing = purpose === 'pickup' ? parcelData.pickupPoint : parcelData.deliveryPoint;
+    changingWarning.classList.toggle('hidden', !existing?.name);
+
+    locationModal.classList.remove('hidden');
+    locationPickerMap.classList.add('hidden');
+    selectedPointCard.classList.add('hidden');
+    confirmLocationBtn.disabled = true;
+
+    // Load recommendations
+    try {
+      recommendedPointsList.innerHTML = '<p style="font-size:12px; color:var(--text-faint);">Loading recommendations...</p>';
+      const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-recommendations?purpose=${purpose}`, { headers: authHeaders() });
+      const data = await res.json();
+
+      if (data.recommendations?.length) {
+        recommendedPointsList.innerHTML = data.recommendations.map(p => `
+          <div class="recent-item" onclick="selectRecommendedPoint('${p._id}')" style="background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px; cursor:pointer;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:13px;">${escapeHTML(p.name)}</strong>
+              ${p.isBestMatch ? '<span style="font-size:9px; background:var(--success); color:#fff; padding:2px 6px; border-radius:4px;">Best Match</span>' : ''}
+            </div>
+            <p style="font-size:11px; color:var(--text-muted); margin:2px 0 0;">${escapeHTML(p.formattedAddress)}</p>
+          </div>
+        `).join('');
+
+        // Store points globally for selection
+        window._points = data.recommendations;
+      } else {
+        recommendedPointsList.innerHTML = '<p style="font-size:12px; color:var(--text-faint);">No specific recommendations for this city. Use the map to pick a point.</p>';
+      }
+    } catch (e) {
+      recommendedPointsList.innerHTML = '<p style="font-size:12px; color:var(--error);">Failed to load recommendations.</p>';
+    }
+  };
+
+  window.selectRecommendedPoint = (id) => {
+    const p = window._points.find(x => x._id === id);
+    if (!p) return;
+    selectedLocation = {
+      travelPointId: p._id,
+      name: p.name,
+      type: p.type,
+      formattedAddress: p.formattedAddress,
+      city: p.city,
+      latitude: p.latitude,
+      longitude: p.longitude
+    };
+    renderSelectedPoint();
+  };
+
+  if (pickOnMapBtn) {
+    pickOnMapBtn.onclick = () => {
+      locationPickerMap.classList.remove('hidden');
+      const defaultLat = selectedLocation?.latitude || 19.9975; // Nashik approx
+      const defaultLng = selectedLocation?.longitude || 73.7898;
+      setTimeout(() => {
+        initMap(defaultLat, defaultLng);
+        map.invalidateSize();
+      }, 100);
+    };
+  }
+
+  if (useCurrentLocationBtn) {
+    useCurrentLocationBtn.onclick = () => {
+       if (!navigator.geolocation) {
+         window.showToast('Geolocation is not supported by your browser', 'error');
+         return;
+       }
+       setButtonLoading(useCurrentLocationBtn, true, 'Locating...');
+       navigator.geolocation.getCurrentPosition(
+         (pos) => {
+           setButtonLoading(useCurrentLocationBtn, false);
+           updateSelectedLocationFromCoords(pos.coords.latitude, pos.coords.longitude);
+           locationPickerMap.classList.remove('hidden');
+           setTimeout(() => {
+             initMap(pos.coords.latitude, pos.coords.longitude);
+             map.invalidateSize();
+           }, 100);
+         },
+         () => {
+           setButtonLoading(useCurrentLocationBtn, false);
+           window.showToast('Location access denied or unavailable', 'error');
+         }
+       );
+    };
+  }
+
+  if (confirmLocationBtn) {
+    confirmLocationBtn.onclick = async () => {
+       if (!selectedLocation) return;
+
+       if (isRequestChange) {
+          locationModal.classList.add('hidden');
+          return; // The value is already set in state
+       }
+
+       setButtonLoading(confirmLocationBtn, true, 'Saving...');
+       try {
+         const url = `${API_BASE}/tracking/${parcelData.id}/${activePickerPurpose}-point`;
+         const res = await fetch(url, {
+           method: 'POST',
+           headers: authHeaders(),
+           body: JSON.stringify(selectedLocation)
+         });
+         const data = await res.json();
+         if (!res.ok) throw new Error(data.error);
+
+         window.showToast(`${activePickerPurpose.toUpperCase()} point saved!`, 'success');
+         locationModal.classList.add('hidden');
+         loadParcelDetails();
+       } catch (err) {
+         window.showToast(err.message || 'Failed to save location', 'error');
+       } finally {
+         setButtonLoading(confirmLocationBtn, false);
+       }
+    };
+  }
+
+  function openLocationChangeRequest(purpose) {
+     activePickerPurpose = purpose;
+     isRequestChange = true;
+     selectedLocation = null;
+     chosenLocationText.textContent = 'Choose meeting point...';
+     changeReasonText.value = '';
+     locationChangeModal.classList.remove('hidden');
+  }
+
+  if (openLocationPickerBtn) {
+    openLocationPickerBtn.onclick = () => openLocationPicker(activePickerPurpose, true);
+  }
+
+  if (submitChangeRequestBtn) {
+    submitChangeRequestBtn.onclick = async () => {
+      if (!selectedLocation) {
+        window.showToast('Please select a new location first', 'warning');
+        return;
+      }
+      setButtonLoading(submitChangeRequestBtn, true, 'Sending...');
+      try {
+        const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-change/request`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({
+            type: activePickerPurpose,
+            newLocation: selectedLocation,
+            reason: changeReasonText.value.trim()
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        window.showToast('Request sent to traveler!', 'success');
+        locationChangeModal.classList.add('hidden');
+        loadParcelDetails();
+      } catch (err) {
+        window.showToast(err.message || 'Failed to send request', 'error');
+      } finally {
+        setButtonLoading(submitChangeRequestBtn, false);
+      }
+    };
+  }
+
+  async function handleLocationRequest(action) {
+    const btn = action === 'approve' ? approveLocationBtn : declineLocationBtn;
+    setButtonLoading(btn, true, action === 'approve' ? 'Approving...' : 'Declining...');
+    try {
+      const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-change/${action}`, {
+        method: 'POST',
+        headers: authHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      window.showToast(`Request ${action}d successfully`, 'success');
+      loadParcelDetails();
+    } catch (err) {
+      window.showToast(err.message || 'Action failed', 'error');
+    } finally {
+      setButtonLoading(btn, false);
     }
   }
 
@@ -585,14 +1043,14 @@
   }
 
   // Review Modal
-  function openReviewModal() {
+  window.openReviewModal = () => {
     selectedRating = 5;
     updateStarDisplay(5);
     reviewComment.value = '';
     const name = (parcelData.role === 'sender' ? parcelData.traveler?.displayName : parcelData.sender?.displayName) || 'the user';
     reviewTargetName.textContent = name;
     reviewModal.classList.remove('hidden');
-  }
+  };
 
   function updateStarDisplay(count) {
     const stars = starRatingBox.querySelectorAll('i');
@@ -651,7 +1109,7 @@
   }
 
   if (reviewBtn) {
-    reviewBtn.onclick = openReviewModal;
+    reviewBtn.onclick = window.openReviewModal;
   }
 
   // Report Issue Modal
@@ -703,10 +1161,13 @@
   if (otpModalClose) otpModalClose.onclick = () => otpModal.classList.add('hidden');
   if (reviewModalClose) reviewModalClose.onclick = () => reviewModal.classList.add('hidden');
   if (reportModalClose) reportModalClose.onclick = () => reportModal.classList.add('hidden');
+  if (locationModalClose) locationModalClose.onclick = () => locationModal.classList.add('hidden');
+  if (profileModalClose) profileModalClose.onclick = () => profileModal.classList.add('hidden');
+  if (locationChangeModalClose) locationChangeModalClose.onclick = () => locationChangeModal.classList.add('hidden');
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      [cancelModal, otpModal, reviewModal, reportModal].forEach(m => m && m.classList.add('hidden'));
+      [cancelModal, otpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal].forEach(m => m && m.classList.add('hidden'));
     }
   });
 

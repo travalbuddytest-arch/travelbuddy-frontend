@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="css/common.css" />
   <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <!-- Leaflet Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     .details-shell {
       display: flex;
@@ -249,6 +252,132 @@
       color: var(--text-faint);
       display: block;
     }
+
+    /* Role Badge */
+    .role-badge-premium {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      font-size: 12px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .role-badge-premium.is-sender {
+      background: rgba(13, 110, 253, 0.08);
+      color: var(--primary);
+      border: 1px solid rgba(13, 110, 253, 0.2);
+    }
+    .role-badge-premium.is-traveler {
+      background: rgba(124, 92, 252, 0.08);
+      color: #7C5CFC;
+      border: 1px solid rgba(124, 92, 252, 0.2);
+    }
+
+    /* Address Path */
+    .address-path-viz {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .path-node {
+      flex: 1;
+    }
+    .path-node-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .path-node-city {
+      display: block;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .path-arrow {
+      color: var(--border);
+      font-size: 20px;
+    }
+
+    /* Specs Grid */
+    .specs-grid-premium {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .spec-item-premium {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .spec-item-premium:hover {
+      transform: translateY(-2px);
+    }
+    .spec-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      font-size: 18px;
+    }
+    .spec-value {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .spec-label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 2px;
+    }
+
+    /* Location Change Request Card */
+    .location-request-card {
+      background: rgba(13, 110, 253, 0.03);
+      border: 1.5px dashed var(--primary);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    /* Map Styles */
+    #locationPickerMap {
+      height: 300px;
+      width: 100%;
+      border-radius: var(--radius-md);
+      margin: 14px 0;
+      z-index: 1;
+    }
+
+    /* Recommendation Card */
+    .recommendation-card {
+      background: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(124, 92, 252, 0.05));
+      border: 1px solid rgba(13, 110, 253, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -263,6 +392,12 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
+        <!-- Role Context Badge -->
+        <div id="roleBadgePremium" class="role-badge-premium hidden">
+           <i class="fa-solid fa-person-walking-luggage"></i>
+           <span id="roleBadgeText">YOU ARE THE TRAVELER</span>
+        </div>
+
         <!-- Loading State -->
         <div id="detailsLoading" style="text-align:center; padding: 60px 20px;">
           <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:var(--primary);"></i>
@@ -318,9 +453,70 @@
             <div id="actionBannerButtons" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
           </div>
 
+          <!-- Location Change Request (Visible to Traveler) -->
+          <div id="locationRequestCard" class="location-request-card hidden">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <i class="fa-solid fa-location-crosshairs" style="color:var(--primary);"></i>
+              <strong style="font-size:14px; color:var(--primary);">Location Change Request</strong>
+            </div>
+            <p style="font-size:13px; color:var(--text-main); margin-bottom:8px;">
+              The sender requested to change the <span id="reqLocationType">pickup</span> point to:
+            </p>
+            <div style="background:#fff; padding:12px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:14px;">
+               <strong id="reqLocationName" style="display:block; font-size:14px;">Location Name</strong>
+               <span id="reqLocationAddress" style="display:block; font-size:12px; color:var(--text-muted);">Formatted Address</span>
+               <div id="reqReasonBox" style="margin-top:8px; padding-top:8px; border-top:1px solid #f1f5f9; font-style:italic; font-size:12px; color:var(--text-faint);">
+                 "Reason for change"
+               </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button type="button" class="btn-ghost" id="declineLocationBtn" style="flex:1;">Decline</button>
+              <button type="button" class="btn-primary" id="approveLocationBtn" style="flex:1;">Accept Change</button>
+            </div>
+          </div>
+
           <div class="details-grid">
             <!-- Left Column: Timeline, Specs, Route -->
             <div style="display:flex; flex-direction:column; gap:20px;">
+
+              <!-- Address Path Visualization -->
+              <div class="address-path-viz">
+                <div class="path-node">
+                  <span class="path-node-label">Pickup From</span>
+                  <span class="path-node-city" id="pathFromCity">Nashik</span>
+                </div>
+                <div class="path-arrow"><i class="fa-solid fa-arrow-right-long"></i></div>
+                <div class="path-node" style="text-align:right;">
+                  <span class="path-node-label">Delivery To</span>
+                  <span class="path-node-city" id="pathToCity">Pune</span>
+                </div>
+              </div>
+
+              <!-- Premium Specs Grid -->
+              <div class="specs-grid-premium">
+                <div class="spec-item-premium">
+                  <div class="spec-icon-box" style="background:rgba(13,110,253,0.1); color:var(--primary);">
+                    <i class="fa-solid fa-weight-hanging"></i>
+                  </div>
+                  <span class="spec-value" id="specWeight">-</span>
+                  <span class="spec-label">Weight</span>
+                </div>
+                <div class="spec-item-premium">
+                  <div class="spec-icon-box" style="background:rgba(22,163,74,0.1); color:var(--success);">
+                    <i class="fa-solid fa-wallet"></i>
+                  </div>
+                  <span class="spec-value" id="specEarning">-</span>
+                  <span class="spec-label" id="specEarningLabel">Earning</span>
+                </div>
+                <div class="spec-item-premium">
+                  <div class="spec-icon-box" style="background:rgba(124,92,252,0.1); color:#7C5CFC;">
+                    <i class="fa-solid fa-bolt"></i>
+                  </div>
+                  <span class="spec-value">Express</span>
+                  <span class="spec-label">Service</span>
+                </div>
+              </div>
+
               <!-- Timeline Card -->
               <div class="timeline-card">
                 <div class="panel-head panel-head--row" style="margin-bottom:12px;">
@@ -338,16 +534,22 @@
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                   <div style="background:#F8FAFC; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
-                    <span style="font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:4px;">
-                      <i class="fa-solid fa-circle-dot" style="color:var(--primary);"></i> Pickup Point
-                    </span>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                      <span style="font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; display:block;">
+                        <i class="fa-solid fa-circle-dot" style="color:var(--primary);"></i> Pickup Point
+                      </span>
+                      <button type="button" class="link-btn" id="changePickupBtn" style="font-size:10px; padding:0; height:auto; text-transform:none; font-weight:700;">Change</button>
+                    </div>
                     <strong id="pickupCityText" style="font-size:15px; display:block; margin-bottom:4px;">City</strong>
                     <p id="pickupPointText" style="font-size:12.5px; color:var(--text-muted); margin:0;">Point details pending</p>
                   </div>
                   <div style="background:#F8FAFC; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
-                    <span style="font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:4px;">
-                      <i class="fa-solid fa-location-dot" style="color:var(--success);"></i> Delivery Point
-                    </span>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                      <span style="font-size:11px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; display:block;">
+                        <i class="fa-solid fa-location-dot" style="color:var(--success);"></i> Delivery Point
+                      </span>
+                      <button type="button" class="link-btn" id="changeDeliveryBtn" style="font-size:10px; padding:0; height:auto; text-transform:none; font-weight:700;">Change</button>
+                    </div>
                     <strong id="deliveryCityText" style="font-size:15px; display:block; margin-bottom:4px;">City</strong>
                     <p id="deliveryPointText" style="font-size:12.5px; color:var(--text-muted); margin:0;">Point details pending</p>
                   </div>
@@ -389,7 +591,7 @@
                 <div class="panel-head">
                   <h3 id="counterpartTitle">Counterpart</h3>
                 </div>
-                <div class="profile-summary-box" id="counterpartBox">
+                <div class="profile-summary-box" id="counterpartBox" style="cursor:pointer;" title="View Public Profile">
                   <div class="profile-summary-avatar" id="counterpartAvatar">TR</div>
                   <div style="min-width:0; flex:1;">
                     <div style="display:flex; align-items:center; gap:6px;">
@@ -401,10 +603,40 @@
                       <span id="counterpartDeliveries"><i class="fa-solid fa-truck-fast"></i> 0 trips</span>
                     </div>
                   </div>
+                  <i class="fa-solid fa-chevron-right" style="font-size:10px; color:var(--text-faint);"></i>
                 </div>
                 <button type="button" class="btn-primary" id="counterpartChatBtn" style="width:100%;">
                   <i class="fa-solid fa-message"></i> Chat Now
                 </button>
+              </div>
+
+              <!-- Cancellation Breakdown -->
+              <div class="panel" id="cancellationCard" style="display:none; background:rgba(220,38,38,0.03); border-color:rgba(220,38,38,0.1);">
+                <div class="panel-head">
+                  <h3 style="color:var(--error);"><i class="fa-solid fa-ban"></i> Cancellation Summary</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
+                  <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
+                    <span>Original Amount</span>
+                    <strong id="cancelOriginalPrice">₹0.00</strong>
+                  </div>
+                  <div id="cancelFeeRow" style="display:flex; justify-content:space-between; color:var(--error);">
+                    <span>Cancellation Fee (20%)</span>
+                    <strong id="cancelFeeValue">-₹0.00</strong>
+                  </div>
+                  <div id="cancelCompensationRow" style="display:flex; justify-content:space-between; color:var(--success);">
+                    <span>Traveler Compensation</span>
+                    <strong id="cancelCompensationValue">+₹0.00</strong>
+                  </div>
+                  <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700;" id="cancelNetLabel">Net Refund</span>
+                    <strong style="font-size:15px; color:var(--text-main);" id="cancelNetValue">₹0.00</strong>
+                  </div>
+                  <div id="refundStatusPill" style="margin-top:6px; display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--success); background:rgba(22,163,74,0.1); padding:4px 10px; border-radius:20px; align-self:flex-start;">
+                    <i class="fa-solid fa-circle-check"></i> Refund Completed
+                  </div>
+                </div>
               </div>
 
               <!-- Money Journey -->
@@ -450,10 +682,127 @@
                   Funds are securely locked in your account balance and only released to the traveler after pickup and final delivery verification. Free cancellation applies before parcel handover.
                 </p>
               </div>
+
+              <!-- Recommendation Card -->
+              <div id="nextActionCard" class="recommendation-card hidden">
+                <span style="display:block; font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Need to send another?</span>
+                <h4 style="margin:0 0 6px; font-size:14px;">Post another parcel for this route?</h4>
+                <p style="margin:0 0 16px; font-size:12px; color:var(--text-muted);">You recently sent a parcel from <span id="recFromCity">Nashik</span> to <span id="recToCity">Pune</span>. Travelers are looking for matches now!</p>
+                <a href="post.html" class="btn-primary" style="text-decoration:none; display:inline-flex; height:38px; padding:0 18px; font-size:12.5px;">Post New Parcel</a>
+              </div>
             </div>
           </div>
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- Location Selection Modal -->
+  <div class="modal-overlay hidden" id="locationModal">
+    <div class="modal-card" style="max-width:550px;">
+      <button class="modal-close" id="locationModalClose">&times;</button>
+      <h3 class="modal-title" id="locationModalTitle">Choose Meeting Point</h3>
+      <p id="locationModalSub" style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Select a convenient location for the handover.</p>
+
+      <div style="display:flex; gap:10px; margin-bottom:14px;">
+        <button type="button" class="btn-ghost" id="useCurrentLocationBtn" style="flex:1; font-size:12px; height:40px;">
+          <i class="fa-solid fa-location-arrow"></i> Use Current Location
+        </button>
+        <button type="button" class="btn-ghost" id="pickOnMapBtn" style="flex:1; font-size:12px; height:40px;">
+          <i class="fa-solid fa-map-location-dot"></i> Select on Map
+        </button>
+      </div>
+
+      <div class="field">
+        <label>Search Recommended Points</label>
+        <div id="recommendedPointsList" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; padding-right:6px; margin-top:6px;">
+          <!-- Points list here -->
+        </div>
+      </div>
+
+      <div id="locationPickerMap" class="hidden"></div>
+
+      <div id="selectedPointCard" class="hidden" style="background:#F8FAFC; border:1px solid var(--primary); border-radius:var(--radius-md); padding:14px; margin-top:14px;">
+        <span style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:4px;">Selected Location</span>
+        <strong id="selectedPointName" style="display:block; font-size:14px;">Location Name</strong>
+        <p id="selectedPointAddress" style="font-size:12px; color:var(--text-muted); margin:0;">Address details...</p>
+      </div>
+
+      <div id="changingWarning" class="hidden" style="margin-top:12px; font-size:11px; color:var(--error); font-weight:600;">
+        <i class="fa-solid fa-triangle-exclamation"></i> You are changing an existing selection.
+      </div>
+
+      <button type="button" class="btn-primary" id="confirmLocationBtn" style="width:100%; margin-top:18px;" disabled>
+        <span class="btn-label">Confirm This Location</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Location Change Request Modal (Sender) -->
+  <div class="modal-overlay hidden" id="locationChangeModal">
+    <div class="modal-card">
+      <button class="modal-close" id="locationChangeModalClose">&times;</button>
+      <h3 class="modal-title">Request Location Change</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Suggest a different meeting point to the traveler.</p>
+
+      <div class="field" style="margin-bottom:14px;">
+        <label>New Location</label>
+        <button type="button" id="openLocationPickerBtn" class="btn-ghost" style="width:100%; justify-content:space-between; height:44px; padding:0 14px;">
+          <span id="chosenLocationText">Choose meeting point...</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div class="field" style="margin-bottom:18px;">
+        <label for="changeReason">Reason for change</label>
+        <textarea id="changeReason" rows="2" placeholder="e.g. My office is closer to this station..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;"></textarea>
+      </div>
+
+      <button type="button" class="btn-primary" id="submitChangeRequestBtn" style="width:100%;">
+        <span class="btn-label">Send Request to Traveler</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Public Profile Modal -->
+  <div class="modal-overlay hidden" id="profileModal">
+    <div class="modal-card" style="max-width:420px; padding:0; overflow:hidden;">
+      <div style="background:linear-gradient(135deg, var(--primary), var(--secondary)); padding:30px 20px; text-align:center; position:relative;">
+        <button class="modal-close" id="profileModalClose" style="color:#fff; top:15px; right:15px;">&times;</button>
+        <div id="profAvatar" style="width:80px; height:80px; border-radius:50%; background:#fff; margin:0 auto 12px; display:grid; place-items:center; font-size:32px; font-weight:800; color:var(--primary); border:4px solid rgba(255,255,255,0.3); background-size:cover; background-position:center;">TB</div>
+        <h3 id="profName" style="color:#fff; margin:0 0 4px; font-size:18px; font-weight:800;">User Name</h3>
+        <div id="profVerified" style="display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.2); color:#fff; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700;">
+          <i class="fa-solid fa-circle-check"></i> Verified Member
+        </div>
+      </div>
+      <div style="padding:24px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; text-align:center;">
+          <div style="padding:12px; background:#F8FAFC; border-radius:var(--radius-md);">
+            <strong id="profRating" style="display:block; font-size:18px; color:var(--text-main);">0.0</strong>
+            <span style="font-size:11px; color:var(--text-faint);">Avg. Rating</span>
+          </div>
+          <div style="padding:12px; background:#F8FAFC; border-radius:var(--radius-md);">
+            <strong id="profTrips" style="display:block; font-size:18px; color:var(--text-main);">0</strong>
+            <span style="font-size:11px; color:var(--text-faint);">Total Trips</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px; border-top:1px solid var(--border); padding-top:20px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px;">
+            <span style="color:var(--text-muted);"><i class="fa-solid fa-box-open" style="width:20px;"></i> Parcels Posted</span>
+            <strong id="profPosted">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px;">
+            <span style="color:var(--text-muted);"><i class="fa-solid fa-calendar-day" style="width:20px;"></i> Member Since</span>
+            <strong id="profJoined">Aug 2026</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px;">
+            <span style="color:var(--text-muted);"><i class="fa-solid fa-shield-heart" style="width:20px;"></i> Reliability</span>
+            <strong id="profReliability">100%</strong>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

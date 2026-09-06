@@ -76,15 +76,15 @@
 
     const NAV_MAP = {
         'HOME': '/',
-        'POST_PARCEL': '../post-parcel/post.html',
-        'PICKUP_PARCEL': '../carry-parcel/search.html',
-        'TRACK_PARCEL': '../parcel-delivery/tracking.html',
-        'WALLET': '../user-dashboard/wallet.html',
-        'MESSAGES': '../user-dashboard/messages.html',
-        'NOTIFICATIONS': '../user-dashboard/notifications.html',
-        'PROFILE': '../user-dashboard/profile.html',
-        'SETTINGS': '../user-dashboard/settings.html',
-        'HELP': '../support/support.html'
+        'POST_PARCEL': '/post-parcel/post.html',
+        'PICKUP_PARCEL': '/carry-parcel/search.html',
+        'TRACK_PARCEL': '/parcel-delivery/tracking.html',
+        'WALLET': '/user-dashboard/wallet.html',
+        'MESSAGES': '/user-dashboard/messages.html',
+        'NOTIFICATIONS': '/user-dashboard/notifications.html',
+        'PROFILE': '/user-dashboard/profile.html',
+        'SETTINGS': '/user-dashboard/settings.html',
+        'HELP': '/support/support.html'
     };
 
     form.onsubmit = async (e) => {
@@ -102,7 +102,8 @@
         const sendRequest = async () => {
             try {
                 const screen = document.body.getAttribute('data-page') || 'Unknown';
-                const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken');
+                // Detect User or Admin token
+                const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
 
                 // Robust config check
                 let apiBase = '';

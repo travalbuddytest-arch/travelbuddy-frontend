@@ -212,6 +212,24 @@
     });
   }
 
+  function loadAsset(url, type) {
+    if (type === 'css') {
+      if (!document.querySelector(`link[href="${url}"]`)) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        document.head.appendChild(link);
+      }
+    } else {
+      if (!document.querySelector(`script[src="${url}"]`)) {
+        var script = document.createElement('script');
+        script.src = url;
+        script.defer = true;
+        document.body.appendChild(script);
+      }
+    }
+  }
+
   window.TravelBuddy = {
     API_ORIGIN,
     escapeHTML,
@@ -1180,6 +1198,8 @@
   }
   */
 
+  loadAsset('/shared/ai-assistant.css', 'css');
+  loadAsset('/shared/ai-assistant.js', 'js');
   highlightActiveNav();
   refreshCurrentUser();
   refreshMessageBadge();
