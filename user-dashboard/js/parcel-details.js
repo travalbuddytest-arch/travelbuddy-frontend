@@ -299,8 +299,9 @@
     if (roleBadgePremium) {
       roleBadgePremium.classList.remove('hidden', 'is-sender', 'is-traveler');
       roleBadgePremium.classList.add(isSender ? 'is-sender' : 'is-traveler');
-      roleBadgeText.textContent = isSender ? 'YOU ARE THE SENDER' : 'YOU ARE THE TRAVELER';
-      roleBadgePremium.querySelector('i').className = isSender ? 'fa-solid fa-person' : 'fa-solid fa-person-walking-luggage';
+      if (roleBadgeText) roleBadgeText.textContent = isSender ? 'YOU ARE THE SENDER' : 'YOU ARE THE TRAVELER';
+      const roleIcon = roleBadgePremium.querySelector('i');
+      if (roleIcon) roleIcon.className = isSender ? 'fa-solid fa-person' : 'fa-solid fa-person-walking-luggage';
     }
 
     if (liveTrackLink) {
@@ -308,14 +309,17 @@
     }
 
     // Address Path Viz
-    if (pathFromCity) pathFromCity.textContent = p.fromCity;
-    if (pathToCity) pathToCity.textContent = p.toCity;
+    if (pathFromCity) pathFromCity.textContent = p.fromCity || '---';
+    if (pathToCity) pathToCity.textContent = p.toCity || '---';
 
     // Specs Grid
-    if (specWeight) specWeight.textContent = `${p.weight} kg`;
+    if (specWeight) {
+      const w = Number(p.weight) || 0;
+      specWeight.textContent = `${w > 0 ? w : '---'} kg`;
+    }
     if (specEarning) {
-      const e = p.financials?.netEarnings || p.travelerEarning;
-      specEarning.textContent = window.TravelBuddy.formatPaise(e);
+      const e = p.financials?.netEarnings ?? p.travelerEarning;
+      specEarning.textContent = window.TravelBuddy.formatPaise(e || 0);
       specEarningLabel.textContent = isSender ? 'Reward' : 'Earning';
     }
 
@@ -327,24 +331,40 @@
 
     // Change Location Buttons
     if (changePickupBtn) {
-       const canChangePickup = !isSender && ['accepted', 'pickup_point_pending', 'pickup_point_selected'].includes(p.status);
+       const isLocked = p.pickupPoint?.locked || ['pickup_confirmed', 'in_transit', 'delivered'].includes(p.status);
+       const canChangePickup = !isSender && ['accepted', 'pickup_point_pending', 'pickup_point_selected'].includes(p.status) && !isLocked;
        const senderCanRequestChange = isSender && p.status === 'pickup_point_selected' && p.pickupPoint?.locked;
+
        changePickupBtn.style.display = (canChangePickup || senderCanRequestChange) ? 'block' : 'none';
        changePickupBtn.textContent = senderCanRequestChange ? 'Request Change' : 'Change';
        changePickupBtn.onclick = () => {
          if (senderCanRequestChange) openLocationChangeRequest('pickup');
-         else openLocationPicker('pickup', false);
+         else window.openLocationPicker('pickup', false);
        };
+
+       if (isLocked && !senderCanRequestChange) {
+          pickupPointText.innerHTML = `<i class="fa-solid fa-lock" style="font-size:10px; opacity:0.6; margin-right:4px;"></i> ${escapeHTML(p.pickupPoint?.name || '---')}`;
+       } else {
+          pickupPointText.textContent = p.pickupPoint?.name || p.pickupPoint?.address || (p.status === 'pending' ? 'Will be arranged once accepted' : 'Exact pickup location arranged in chat');
+       }
     }
     if (changeDeliveryBtn) {
-       const canChangeDelivery = !isSender && ['in_transit', 'delivery_point_pending', 'delivery_point_selected'].includes(p.status);
+       const isLocked = p.deliveryPoint?.locked || ['delivered'].includes(p.status);
+       const canChangeDelivery = !isSender && ['in_transit', 'delivery_point_pending', 'delivery_point_selected'].includes(p.status) && !isLocked;
        const senderCanRequestChange = isSender && p.status === 'delivery_point_selected' && p.deliveryPoint?.locked;
+
        changeDeliveryBtn.style.display = (canChangeDelivery || senderCanRequestChange) ? 'block' : 'none';
        changeDeliveryBtn.textContent = senderCanRequestChange ? 'Request Change' : 'Change';
        changeDeliveryBtn.onclick = () => {
          if (senderCanRequestChange) openLocationChangeRequest('delivery');
-         else openLocationPicker('delivery', false);
+         else window.openLocationPicker('delivery', false);
        };
+
+       if (isLocked && !senderCanRequestChange) {
+          deliveryPointText.innerHTML = `<i class="fa-solid fa-lock" style="font-size:10px; opacity:0.6; margin-right:4px;"></i> ${escapeHTML(p.deliveryPoint?.name || '---')}`;
+       } else {
+          deliveryPointText.textContent = p.deliveryPoint?.name || p.deliveryPoint?.address || (p.status === 'pending' ? 'Will be arranged once accepted' : 'Exact delivery location arranged in chat');
+       }
     }
 
     // Location Change Request Card
@@ -851,21 +871,25 @@
   }
 
   window.openLocationPicker = async (purpose, requestChange = false) => {
+    if (!parcelData || !parcelData.id) {
+       window.showToast('Wait for parcel data to load...', 'warning');
+       return;
+    }
     activePickerPurpose = purpose;
     isRequestChange = requestChange;
     locationModalTitle.textContent = `Select ${purpose === 'pickup' ? 'Pickup' : 'Delivery'} Point`;
 
     const existing = purpose === 'pickup' ? parcelData.pickupPoint : parcelData.deliveryPoint;
-    changingWarning.classList.toggle('hidden', !existing?.name);
+    if (changingWarning) changingWarning.classList.toggle('hidden', !existing?.name);
 
-    locationModal.classList.remove('hidden');
-    locationPickerMap.classList.add('hidden');
-    selectedPointCard.classList.add('hidden');
-    confirmLocationBtn.disabled = true;
+    if (locationModal) locationModal.classList.remove('hidden');
+    if (locationPickerMap) locationPickerMap.classList.add('hidden');
+    if (selectedPointCard) selectedPointCard.classList.add('hidden');
+    if (confirmLocationBtn) confirmLocationBtn.disabled = true;
 
     // Load recommendations
     try {
-      recommendedPointsList.innerHTML = '<p style="font-size:12px; color:var(--text-faint);">Loading recommendations...</p>';
+      if (recommendedPointsList) recommendedPointsList.innerHTML = '<p style="font-size:12px; color:var(--text-faint);">Loading recommendations...</p>';
       const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-recommendations?purpose=${purpose}`, { headers: authHeaders() });
       const data = await res.json();
 

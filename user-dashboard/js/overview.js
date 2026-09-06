@@ -36,14 +36,25 @@
     // 2. Fetch fresh data
     try {
       const res = await fetch(`${API_ORIGIN}/api/postparcel/dashboard-aggregator`, { headers: authHeaders() });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));
         applyDashboardData(data, false);
+      } else {
+        console.error('Aggregator error:', data.error);
+        if (!cached) showOverviewError(data.error || 'Failed to load dashboard data.');
       }
     } catch (err) {
       console.error('Aggregator fetch failed:', err);
+      if (!cached) showOverviewError('Could not reach the server.');
     }
+  }
+
+  function showOverviewError(msg) {
+    window.showToast(msg, 'error');
+    document.querySelectorAll('.stat-value').forEach(el => {
+       if (el.textContent === '0' || el.textContent === 'Rs. 0') el.textContent = '---';
+    });
   }
 
   function applyDashboardData(data, isCached) {
@@ -317,6 +328,19 @@
 
   function initials(name) {
     return (name || 'User').split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
+  }
+
+  function timeAgo(iso) {
+    if (!iso) return '';
+    const seconds = Math.floor((new Date() - new Date(iso)) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    return new Date(iso).toLocaleDateString();
   }
 
   async function loadRecentMessages() {
