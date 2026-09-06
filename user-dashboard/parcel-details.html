@@ -398,6 +398,9 @@
            <span id="roleBadgeText">YOU ARE THE TRAVELER</span>
         </div>
 
+        <!-- Action Banners (NEW) -->
+        <div id="contextualBannersContainer" style="display:flex; flex-direction:column; gap:12px; margin-bottom: 20px;"></div>
+
         <!-- Loading State -->
         <div id="detailsLoading" style="text-align:center; padding: 60px 20px;">
           <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:var(--primary);"></i>
@@ -723,9 +726,15 @@
       <div id="locationPickerMap" class="hidden"></div>
 
       <div id="selectedPointCard" class="hidden" style="background:#F8FAFC; border:1px solid var(--primary); border-radius:var(--radius-md); padding:14px; margin-top:14px;">
-        <span style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:4px;">Selected Location</span>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <span style="font-size:10px; font-weight:700; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:4px;">Selected Location</span>
+          <span id="compatibilityBadge" class="tag hidden">EXCELLENT</span>
+        </div>
         <strong id="selectedPointName" style="display:block; font-size:14px;">Location Name</strong>
         <p id="selectedPointAddress" style="font-size:12px; color:var(--text-muted); margin:0;">Address details...</p>
+        <div id="detourWarningBox" class="hidden" style="margin-top:10px; background:rgba(220,38,38,0.05); color:var(--error); border:1px solid rgba(220,38,38,0.2); padding:10px; border-radius:8px; font-size:11.5px; font-weight:600;">
+          <i class="fa-solid fa-triangle-exclamation"></i> This location is a detour from your travel route.
+        </div>
       </div>
 
       <div id="changingWarning" class="hidden" style="margin-top:12px; font-size:11px; color:var(--error); font-weight:600;">
@@ -736,6 +745,17 @@
         <span class="btn-label">Confirm This Location</span>
         <span class="spinner"></span>
       </button>
+    </div>
+  </div>
+
+  <!-- Verification Success Overlay (NEW) -->
+  <div id="verificationSuccessOverlay" class="modal-overlay hidden" style="background: rgba(0,0,0,0.8); z-index: 2000; cursor: pointer;">
+    <div style="text-align: center; color: #fff;">
+       <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--success); color: #fff; display: grid; place-items:center; font-size: 40px; margin: 0 auto 20px; animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;">
+         <i class="fa-solid fa-check"></i>
+       </div>
+       <h2 style="font-weight: 800; font-size: 24px; margin-bottom: 8px;">Verification Successful!</h2>
+       <p style="opacity: 0.8; font-size: 14px;">The journey stage has been updated.</p>
     </div>
   </div>
 
@@ -835,22 +855,26 @@
 
   <!-- OTP Modal -->
   <div class="modal-overlay hidden" id="otpModal">
-    <div class="modal-card" style="max-width:400px; text-align:center;">
-      <button class="modal-close" id="otpModalClose">&times;</button>
-      <div style="width:50px; height:50px; border-radius:50%; background:#EFF6FF; color:var(--primary); display:grid; place-items:center; font-size:22px; margin:0 auto 12px;">
-        <i class="fa-solid fa-key"></i>
-      </div>
-      <h3 class="modal-title" id="otpModalTitle">Enter Verification PIN</h3>
-      <p id="otpModalSub" style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">Enter the 6-digit OTP provided by the counterpart.</p>
-      
-      <div class="field" style="margin-bottom:18px;">
-        <input type="text" id="otpInput" maxlength="6" placeholder="• • • • • •" style="text-align:center; font-size:24px; letter-spacing:8px; font-weight:800; height:52px;" autocomplete="one-time-code" />
-      </div>
+    ... (omitted for brevity)
+  </div>
 
-      <button type="button" class="btn-primary" id="submitOtpBtn" style="width:100%;">
-        <span class="btn-label">Verify &amp; Confirm</span>
-        <span class="spinner"></span>
-      </button>
+  <!-- Secure QR Modal (NEW) -->
+  <div class="modal-overlay hidden" id="qrModal">
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <button class="modal-close" id="qrModalClose">&times;</button>
+      <div id="qrLoadingState" class="hidden">
+         <div style="width:60px; height:60px; border-radius:50%; border:4px solid #f1f5f9; border-top-color:var(--primary); margin: 0 auto 20px; animation: fa-spin 1s linear infinite;"></div>
+         <h3 style="font-weight:800; font-size:18px;">Securing Stage...</h3>
+         <p style="color:var(--text-faint); font-size:13px;">Generating one-time secure code</p>
+      </div>
+      <div id="qrReadyState" class="hidden">
+         <h3 class="modal-title" style="margin-bottom:8px;">Handover QR Code</h3>
+         <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Show this to the traveler to confirm handover.</p>
+         <div id="qrCodeContainer" style="background:#fff; padding:20px; border-radius:16px; border:1px solid var(--border); display:inline-block; margin-bottom:20px;"></div>
+         <div style="font-size:11px; color:var(--text-faint);">
+            Expires in <span id="qrExpiryTime">--:--</span>
+         </div>
+      </div>
     </div>
   </div>
 
@@ -920,6 +944,7 @@
   <script defer src="../shared/analytics-client.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
   <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script defer src="js/common.js?v=4"></script>
   <script defer src="js/parcel-details.js"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>

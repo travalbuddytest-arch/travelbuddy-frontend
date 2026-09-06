@@ -64,9 +64,16 @@
   const routeRecPanel = document.getElementById('routeRecommendationsPanel');
   const routeRecList = document.getElementById('routeRecommendationsList');
 
+  // Match Stats Elements
+  const routeMatchStats = document.getElementById('routeMatchStats');
+  const matchFoundCount = document.getElementById('matchFoundCount');
+  const matchTodayCount = document.getElementById('matchTodayCount');
+  const matchMinPrice = document.getElementById('matchMinPrice');
+
   // State
   let userWalletData = null;
   let isFreePostEligible = false;
+  let matchStatsDebounce = null;
 
   // Set minimum date to today
   if (stepDate) {
@@ -74,6 +81,35 @@
     stepDate.setAttribute('min', todayStr);
     stepDate.value = todayStr;
   }
+
+  function fetchMatchStats() {
+    const from = stepFromCity.value.trim();
+    const to = stepToCity.value.trim();
+    if (!from || !to || from.toLowerCase() === to.toLowerCase()) {
+      routeMatchStats.classList.add('hidden');
+      return;
+    }
+
+    clearTimeout(matchStatsDebounce);
+    matchStatsDebounce = setTimeout(async () => {
+      try {
+        const res = await fetch(`${API_BASE}/travelers/match?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, { headers: authHeaders() });
+        const data = await res.json();
+        if (res.ok && data.travelersFound > 0) {
+          routeMatchStats.classList.remove('hidden');
+          matchFoundCount.textContent = data.travelersFound;
+          matchTodayCount.textContent = data.availableToday;
+          matchMinPrice.textContent = `₹${data.startingPrice || 150}`;
+        } else {
+          routeMatchStats.classList.add('hidden');
+        }
+      } catch (e) { console.error('Match stats fetch failed', e); }
+    }, 600);
+  }
+
+  [stepFromCity, stepToCity].forEach(el => {
+    el?.addEventListener('input', fetchMatchStats);
+  });
 
   function goToStep(step) {
     if (step < 1 || step > totalSteps) return;

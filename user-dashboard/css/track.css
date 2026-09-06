@@ -158,3 +158,26 @@
 .hidden { display: none !important; }
 .track-loading-v2 { text-align: center; padding: 60px 0; color: #64748b; }
 .track-loading-v2 i { font-size: 28px; color: #3b82f6; margin-bottom: 12px; }
+
+/* Live Map Parity */
+.stat-pill {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.stat-pill i {
+  color: #3b82f6;
+  font-size: 14px;
+}
+
+#liveMap {
+  z-index: 10;
+}

@@ -126,6 +126,9 @@
   const selectedPointAddress = document.getElementById('selectedPointAddress');
   const confirmLocationBtn = document.getElementById('confirmLocationBtn');
   const changingWarning = document.getElementById('changingWarning');
+  const compatibilityBadge = document.getElementById('compatibilityBadge');
+  const detourWarningBox = document.getElementById('detourWarningBox');
+  const verificationSuccessOverlay = document.getElementById('verificationSuccessOverlay');
 
   const profileModal = document.getElementById('profileModal');
   const profileModalClose = document.getElementById('profileModalClose');
@@ -136,16 +139,82 @@
   const submitChangeRequestBtn = document.getElementById('submitChangeRequestBtn');
   const changeReasonText = document.getElementById('changeReason');
 
+  const qrModal = document.getElementById('qrModal');
+  const qrModalClose = document.getElementById('qrModalClose');
+  const qrLoadingState = document.getElementById('qrLoadingState');
+  const qrReadyState = document.getElementById('qrReadyState');
+  const qrCodeContainer = document.getElementById('qrCodeContainer');
+  const qrExpiryTime = document.getElementById('qrExpiryTime');
+
   // State
   let parcelData = null;
   let currentUserId = null;
   let currentOtpPurpose = 'pickup';
+  let otpCooldownSeconds = 0;
+  let otpCooldownTimer = null;
   let selectedRating = 5;
   let map = null;
   let mapMarker = null;
   let selectedLocation = null;
   let activePickerPurpose = 'pickup'; // pickup or delivery
   let isRequestChange = false; // true if sender is requesting a change
+  let qrExpiryTimer = null;
+
+  function generateSecureQr(purpose) {
+    if (!qrModal) return;
+    qrModal.classList.remove('hidden');
+    qrLoadingState.classList.remove('hidden');
+    qrReadyState.classList.add('hidden');
+    qrCodeContainer.innerHTML = '';
+
+    setTimeout(async () => {
+      try {
+        const url = `${API_BASE}/${parcelData.id}/${purpose}-qr`;
+        const res = await fetch(url, { method: 'POST', headers: authHeaders() });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || 'QR generation failed');
+
+        qrLoadingState.classList.add('hidden');
+        qrReadyState.classList.remove('hidden');
+
+        new QRCode(qrCodeContainer, {
+          text: data.qrToken,
+          width: 200,
+          height: 200,
+          colorDark : "#0f172a",
+          colorLight : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+
+        startQrExpiryTimer(data.expiresAt);
+      } catch (err) {
+        window.showToast(err.message, 'error');
+        qrModal.classList.add('hidden');
+      }
+    }, 1500); // Functional Parity: Simulate "Securing" delay
+  }
+
+  function startQrExpiryTimer(expiryIso) {
+    const expiry = new Date(expiryIso);
+    clearInterval(qrExpiryTimer);
+
+    const update = () => {
+      const now = new Date();
+      const diff = expiry - now;
+      if (diff <= 0) {
+        qrExpiryTime.textContent = 'Expired';
+        clearInterval(qrExpiryTimer);
+        return;
+      }
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      qrExpiryTime.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    update();
+    qrExpiryTimer = setInterval(update, 1000);
+  }
 
   function getParcelIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -226,7 +295,7 @@
       ? '<span class="parcel-role-badge is-sender"><i class="fa-solid fa-paper-plane"></i> You: Sender</span>'
       : '<span class="parcel-role-badge is-traveler"><i class="fa-solid fa-person-walking-luggage"></i> You: Traveler</span>';
 
-    // Premium Role Badge
+    // Premium Role Badge Parity
     if (roleBadgePremium) {
       roleBadgePremium.classList.remove('hidden', 'is-sender', 'is-traveler');
       roleBadgePremium.classList.add(isSender ? 'is-sender' : 'is-traveler');
@@ -343,6 +412,9 @@
     // Timeline Rendering
     renderTimeline(p);
 
+    // Contextual Banners Parity
+    renderContextualBanners(p, isSender);
+
     // Action Banner Rendering
     renderActionBanner(p, isSender);
 
@@ -448,6 +520,51 @@
     }).join('');
   }
 
+  function renderContextualBanners(p, isSender) {
+    if (!bannersContainer) return;
+    bannersContainer.innerHTML = '';
+    const s = p.status;
+
+    const addBanner = (title, sub, icon, actionText, actionFn) => {
+      const banner = document.createElement('div');
+      banner.className = 'journey-action-box is-info';
+      banner.style.margin = '0';
+      banner.innerHTML = `
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:rgba(13,110,253,0.1); color:var(--primary); display:grid; place-items:center; font-size:18px;">
+            <i class="fa-solid ${icon}"></i>
+          </div>
+          <div>
+            <h4 style="margin:0; font-size:14px; font-weight:700;">${title}</h4>
+            <p style="margin:2px 0 0; font-size:12px; color:var(--text-muted);">${sub}</p>
+          </div>
+        </div>
+        ${actionText ? `<button type="button" class="btn-primary" style="height:36px; font-size:12px; padding:0 14px;">${actionText}</button>` : ''}
+      `;
+      if (actionFn && actionText) {
+        banner.querySelector('button').onclick = actionFn;
+      }
+      bannersContainer.appendChild(banner);
+    };
+
+    if (!isSender) {
+      if (s === 'pickup_point_pending') {
+        addBanner('📍 Pickup Point Required', `Choose a convenient meeting point in ${p.fromCity.toUpperCase()}.`, 'fa-location-dot', 'Select Now', () => window.openLocationPicker('pickup', false));
+      } else if (s === 'delivery_point_pending') {
+        addBanner('🏠 Delivery Point Required', `Select the destination point in ${p.toCity.toUpperCase()}.`, 'fa-map-pin', 'Select Now', () => window.openLocationPicker('delivery', false));
+      }
+    }
+
+    if (p.locationChangeRequest?.status === 'pending') {
+      if (!isSender) {
+        // Traveler sees notification of request (already handled by locationRequestCard, but banners are more standard)
+        // For parity we keep locationRequestCard for now as it has approve/decline buttons.
+      } else {
+        addBanner('🔄 Location Change Pending', `Waiting for the traveler to respond to your change request.`, 'fa-clock');
+      }
+    }
+  }
+
   function renderActionBanner(p, isSender) {
     if (!actionBanner) return;
     const s = p.status;
@@ -466,7 +583,7 @@
       if (isSender) {
         actionBannerDesc.textContent = 'Meet the traveler to hand over the parcel. Provide the pickup OTP or show the secure QR code.';
         actionBannerButtons.innerHTML = `
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=pickup-qr" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-qrcode"></i> Show Pickup QR</a>
+          <button type="button" class="btn-primary" onclick="window.generateSecureQr('pickup')"><i class="fa-solid fa-qrcode"></i> Show Pickup QR</button>
           <button type="button" class="btn-ghost" id="requestPickupOtpBtn"><i class="fa-solid fa-key"></i> Resend Pickup OTP</button>
         `;
       } else {
@@ -501,7 +618,7 @@
       if (isSender) {
         actionBannerDesc.textContent = 'The parcel is on the way. Once arrived, share the delivery completion OTP or show your QR code to release payment.';
         actionBannerButtons.innerHTML = `
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=delivery-qr" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-qrcode"></i> Show Delivery QR</a>
+          <button type="button" class="btn-primary" onclick="window.generateSecureQr('delivery')"><i class="fa-solid fa-qrcode"></i> Show Delivery QR</button>
           <button type="button" class="btn-ghost" id="requestDeliveryOtpBtn"><i class="fa-solid fa-key"></i> Resend Delivery OTP</button>
         `;
       } else {
@@ -703,9 +820,34 @@
     selectedPointAddress.textContent = selectedLocation.formattedAddress;
     confirmLocationBtn.disabled = false;
 
+    // Compatibility Parity
+    if (selectedLocation.compatibility && compatibilityBadge) {
+      compatibilityBadge.classList.remove('hidden', 'tag--success', 'tag--warning', 'tag--error');
+      compatibilityBadge.textContent = selectedLocation.compatibility;
+      if (selectedLocation.compatibility === 'EXCELLENT') compatibilityBadge.classList.add('tag--success');
+      else if (selectedLocation.compatibility === 'GOOD') compatibilityBadge.classList.add('tag--warning');
+      else if (selectedLocation.compatibility === 'DETOUR') {
+        compatibilityBadge.classList.add('tag--error');
+        detourWarningBox?.classList.remove('hidden');
+      } else {
+        compatibilityBadge.classList.add('hidden');
+      }
+    } else {
+      compatibilityBadge?.classList.add('hidden');
+      detourWarningBox?.classList.add('hidden');
+    }
+
     if (isRequestChange && chosenLocationText) {
        chosenLocationText.textContent = selectedLocation.name;
     }
+  }
+
+  function showVerificationSuccess() {
+    if (!verificationSuccessOverlay) return;
+    verificationSuccessOverlay.classList.remove('hidden');
+    setTimeout(() => {
+      verificationSuccessOverlay.classList.add('hidden');
+    }, 2500);
   }
 
   window.openLocationPicker = async (purpose, requestChange = false) => {
@@ -758,7 +900,8 @@
       formattedAddress: p.formattedAddress,
       city: p.city,
       latitude: p.latitude,
-      longitude: p.longitude
+      longitude: p.longitude,
+      compatibility: p.compatibility // Pass through from API
     };
     renderSelectedPoint();
   };
@@ -942,6 +1085,8 @@
 
   async function requestOtp(purpose) {
     if (!parcelData) return;
+    if (otpCooldownSeconds > 0) return;
+
     try {
       window.showToast(`Requesting ${purpose} OTP...`, 'info');
       const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/otp/${purpose}/request`, {
@@ -954,10 +1099,45 @@
         return;
       }
       window.showToast(`${purpose.toUpperCase()} OTP sent to recipient successfully!`, 'success');
+
+      startOtpCooldown(data.resendAfterSeconds || 60);
     } catch (err) {
       console.error(err);
       window.showToast('Could not reach server to request OTP.', 'error');
     }
+  }
+
+  function startOtpCooldown(seconds) {
+    otpCooldownSeconds = seconds;
+    updateOtpButtonsUI();
+
+    clearInterval(otpCooldownTimer);
+    otpCooldownTimer = setInterval(() => {
+      otpCooldownSeconds--;
+      updateOtpButtonsUI();
+      if (otpCooldownSeconds <= 0) {
+        clearInterval(otpCooldownTimer);
+      }
+    }, 1000);
+  }
+
+  function updateOtpButtonsUI() {
+    const btns = [
+      document.getElementById('requestPickupOtpBtn'),
+      document.getElementById('requestDeliveryOtpBtn')
+    ];
+
+    btns.forEach(btn => {
+      if (!btn) return;
+      if (otpCooldownSeconds > 0) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-clock"></i> Resend in ${otpCooldownSeconds}s`;
+      } else {
+        btn.disabled = false;
+        const type = btn.id.includes('Pickup') ? 'Pickup' : 'Delivery';
+        btn.innerHTML = `<i class="fa-solid fa-key"></i> Resend ${type} OTP`;
+      }
+    });
   }
 
   function openOtpModal(purpose) {
@@ -994,6 +1174,7 @@
 
         window.showToast(`${currentOtpPurpose === 'pickup' ? 'Pickup' : 'Delivery'} verified successfully!`, 'success');
         otpModal.classList.add('hidden');
+        showVerificationSuccess();
         loadParcelDetails();
       } catch (err) {
         console.error(err);
@@ -1165,9 +1346,16 @@
   if (profileModalClose) profileModalClose.onclick = () => profileModal.classList.add('hidden');
   if (locationChangeModalClose) locationChangeModalClose.onclick = () => locationChangeModal.classList.add('hidden');
 
+  if (qrModalClose) qrModalClose.onclick = () => {
+    qrModal.classList.add('hidden');
+    clearInterval(qrExpiryTimer);
+  };
+  window.generateSecureQr = generateSecureQr;
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      [cancelModal, otpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal].forEach(m => m && m.classList.add('hidden'));
+      [cancelModal, otpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal].forEach(m => m && m.classList.add('hidden'));
+      clearInterval(qrExpiryTimer);
     }
   });
 

@@ -29,8 +29,79 @@
   const helpBtn = document.getElementById('helpBtn');
   const reportBtn = document.getElementById('reportBtn');
 
+  // Live Map Elements
+  const mapContainer = document.getElementById('liveTrackingMapContainer');
+  const liveEta = document.getElementById('liveEta');
+  const liveSpeed = document.getElementById('liveSpeed');
+  const lastSeenText = document.getElementById('lastSeenText');
+
   let parcels = [];
   let selectedId = null;
+  let map = null;
+  let travelerMarker = null;
+  let firestoreUnsubscribe = null;
+
+  // Initialize Firebase (Compat version)
+  if (typeof firebase !== 'undefined' && window.TravelBuddyFirebaseConfig) {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(window.TravelBuddyFirebaseConfig);
+    }
+  }
+
+  function initMap(lat, lng) {
+    if (map) return;
+    map = L.map('liveMap').setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const travelerIcon = L.divIcon({
+      className: 'custom-div-icon',
+      html: "<div style='background-color:#3b82f6; width:16px; height:16px; border:3px solid #fff; border-radius:50%; box-shadow: 0 0 10px rgba(59,130,246,0.5);'></div>",
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    });
+
+    travelerMarker = L.marker([lat, lng], { icon: travelerIcon }).addTo(map);
+  }
+
+  function updateMapLocation(lat, lng, data = {}) {
+    if (!map) {
+      initMap(lat, lng);
+    } else {
+      const pos = [lat, lng];
+      travelerMarker.setLatLng(pos);
+      map.panTo(pos);
+    }
+
+    if (data.timestamp) {
+      const d = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+      lastSeenText.textContent = `Last seen: ${d.toLocaleTimeString()}`;
+    }
+
+    if (data.speed) {
+      liveSpeed.textContent = `${Math.round(data.speed * 3.6)} km/h`;
+    }
+  }
+
+  function observeLiveTracking(travelerId) {
+    if (firestoreUnsubscribe) firestoreUnsubscribe();
+    if (!travelerId || typeof firebase === 'undefined') return;
+
+    const db = firebase.firestore();
+    firestoreUnsubscribe = db.collection('traveler_locations').doc(travelerId)
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.latitude && data.longitude) {
+            mapContainer.classList.remove('hidden');
+            updateMapLocation(data.latitude, data.longitude, data);
+          }
+        }
+      }, (err) => {
+        console.error('Firestore tracking error:', err);
+      });
+  }
 
   const STATUS_STAGES = [
     { key: 'pending', title: 'Parcel Posted', icon: 'fa-box' },
@@ -107,6 +178,14 @@
     summaryStatusPill.textContent = (p.status || 'Pending').replace(/_/g, ' ');
     summaryStatusLabel.textContent = p.statusLabel || 'Processing';
     viewDetailsLink.href = `parcel-details.html?id=${p.id}`;
+
+    // Live Tracking Parity
+    if (p.status === 'in_transit' && p.travelerId) {
+      observeLiveTracking(p.travelerId);
+    } else {
+      if (firestoreUnsubscribe) firestoreUnsubscribe();
+      mapContainer.classList.add('hidden');
+    }
 
     // Timeline Rendering
     renderTimeline(p);
