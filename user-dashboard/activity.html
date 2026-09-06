@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Activity History</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .activity-feed {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .tl-group {
+      margin-bottom: 30px;
+    }
+    .tl-date {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .tl-item:hover {
+      transform: translateX(5px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+
+    .tl-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #EFF6FF;
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .tl-item::after {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 24px;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      z-index: 3;
+    }
+
+    .tl-content {
+      flex: 1;
+    }
+    .tl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .tl-time {
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .tl-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .tl-meta {
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .tl-amount {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .tl-amount.credit { color: var(--success); }
+    .tl-amount.debit { color: var(--error); }
+
+    .tl-status {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #F1F5F9;
+    }
+
+    .load-more {
+      text-align: center;
+      margin-top: 32px;
+      padding-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <div id="tbAppSidebarInclude"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <div id="tbAppTopbarInclude"></div>
+
+      <main class="content" id="content">
+        <div class="activity-feed">
+          <div class="panel-head">
+            <h2>Activity History</h2>
+            <p class="panel-sub">A complete chronological record of your TravelBuddy journey.</p>
+          </div>
+
+          <div class="filter-tabs" id="filterTabs">
+            <button class="filter-btn active" data-cat="all">All Activity</button>
+            <button class="filter-btn" data-cat="parcels">Parcels</button>
+            <button class="filter-btn" data-cat="trips">Trips</button>
+            <button class="filter-btn" data-cat="wallet">Wallet</button>
+            <button class="filter-btn" data-cat="security">Security</button>
+          </div>
+
+          <div id="activityLoading" class="loading-state" style="text-align:center; padding: 40px;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:var(--primary);"></i>
+          </div>
+
+          <div class="timeline" id="activityTimeline"></div>
+
+          <div class="load-more hidden" id="loadMoreWrap">
+            <button class="btn-ghost" id="loadMoreBtn">Load older activity</button>
+          </div>
+
+          <div id="activityEmpty" class="tb-empty-state hidden">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <h3>No Activity Found</h3>
+            <p>You haven't performed any actions in this category yet.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/activity.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

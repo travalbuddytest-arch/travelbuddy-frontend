@@ -264,6 +264,7 @@ function renderUsers() {
         <td>${u.travelerDeliveryCount || 0}</td>
         <td>${u.completedCount ?? '—'}</td>
         <td>${u.cancelledCount || 0}</td>
+        <td><span class="us-status-tag ${u.riskScore > 40 ? 'rejected' : u.riskScore > 15 ? 'pending' : 'active'}" style="font-size:9px; padding:2px 6px;">${u.riskScore || 0}</span></td>
         <td><span class="us-rating"><i class="fa-solid fa-star"></i> ${(u.rating || 0).toFixed(1)}</span></td>
         <td><span class="us-reports-badge ${u.reportCount ? 'has-reports' : ''}">${u.reportCount || 0}</span></td>
         <td>${timeAgo(u.lastSeenAt)}</td>

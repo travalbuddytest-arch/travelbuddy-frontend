@@ -203,6 +203,9 @@
     // Counterpart Profile
     renderCounterpart(p, isSender);
 
+    // Money Journey
+    renderMoneyJourney(p);
+
     // Financials
     const rawPrice = Number(p.price || 0);
     const paise = rawPrice > 1000 ? rawPrice : rawPrice * 100;
@@ -224,6 +227,35 @@
       finPaymentStatusTag.className = 'tag tag--held';
       finPaymentStatusTag.textContent = 'Held in Escrow';
     }
+  }
+
+  function renderMoneyJourney(p) {
+    const journey = p.paymentJourney;
+    const panel = document.getElementById('moneyJourneyPanel');
+    const list = document.getElementById('moneyJourneyList');
+    if (!panel || !list) return;
+
+    if (!journey || !journey.isHeld) {
+      panel.style.display = 'none';
+      return;
+    }
+
+    panel.style.display = 'block';
+    list.innerHTML = journey.stages.map((st, idx) => {
+      let itemClass = '';
+      if (st.done) itemClass = 'is-done';
+      else if (idx > 0 && journey.stages[idx-1].done) itemClass = 'is-current';
+
+      return `
+        <div class="money-item ${itemClass}">
+          <div class="money-dot"></div>
+          <div class="money-info">
+            <span class="money-label">${escapeHTML(st.label)}</span>
+            <span class="money-desc">${escapeHTML(st.desc)}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   function renderTimeline(p) {

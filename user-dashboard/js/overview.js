@@ -47,15 +47,25 @@
     }
 
     list.innerHTML = activity.slice(0, ACTIVITY_LIMIT).map((item, i) => {
-      const meta = TYPE_META[item.type] || DEFAULT_META;
+      let metaHtml = '';
+      if (item.amount) {
+        const directionClass = item.direction === 'debit' || item.type.includes('WITHDRAWAL') ? 'debit' : 'credit';
+        const prefix = item.direction === 'debit' ? '-' : '+';
+        metaHtml = `<span class="activity-amount ${directionClass}">${prefix}${window.TravelBuddy.formatPaise(item.amount)}</span>`;
+      }
+
       return `
-      <li class="activity-item" style="animation-delay:${i * 0.06}s">
-        <div class="activity-icon" style="background:${meta.color}"><i class="fa-solid ${meta.icon}"></i></div>
-        <div>
-          <span class="activity-text"><strong>${escapeHTML(meta.label)}</strong> - ${escapeHTML(item.text)}</span>
-          <span class="activity-time">${escapeHTML(timeAgo(item.createdAt))}</span>
+      <a href="${item.link || '#'}" class="activity-item" style="animation-delay:${i * 0.06}s; text-decoration:none;">
+        <div class="activity-icon" style="background:#EFF6FF; color:var(--primary)"><i class="fa-solid ${item.icon || 'fa-bell'}"></i></div>
+        <div style="flex:1">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="activity-text"><strong>${escapeHTML(item.title)}</strong></span>
+            ${metaHtml}
+          </div>
+          <span class="activity-subtext" style="font-size:12px; color:var(--text-muted); display:block;">${escapeHTML(item.description)}</span>
+          <span class="activity-time">${escapeHTML(timeAgo(item.timestamp))}</span>
         </div>
-      </li>
+      </a>
     `;
     }).join('');
   }
@@ -64,10 +74,10 @@
     const list = document.getElementById('activityList');
     if (!list) return;
     try {
-      const res = await fetch(`${NOTIF_BASE}?limit=${ACTIVITY_LIMIT}`, { headers: authHeaders() });
+      const res = await fetch(`${API_ORIGIN}/api/activity/history?limit=${ACTIVITY_LIMIT}`, { headers: authHeaders() });
       const data = await res.json();
       if (!res.ok) return;
-      activity = data.notifications || [];
+      activity = data.items || [];
       renderActivity();
     } catch (err) {
       console.error('load activity failed:', err);

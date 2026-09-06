@@ -1520,6 +1520,9 @@ function initAdminLiveSocket() {
 
   liveSocket.on('admin:alert', (alert) => {
     addBellAlert(alert);
+    if (alert.severity === 'high' || alert.severity === 'critical') {
+      showToast(`⚠️ ${alert.title}: ${alert.description}`);
+    }
   });
 
   liveSocket.on('connect_error', () => {
