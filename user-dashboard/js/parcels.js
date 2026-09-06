@@ -76,16 +76,17 @@
         const id = raw.id || raw._id;
         if (!id) return;
 
-        if (map.has(id)) {
-          // Merge details if tracking or history has richer status
-          const existing = map.get(id);
-          map.set(id, { ...existing, ...raw });
-          return;
-        }
-
         const isSender = raw.senderId === currentUserId || raw.role === 'sender' || sourceHint === 'my';
         const senderObj = raw.sender;
         const senderName = typeof senderObj === 'object' ? `${senderObj.firstName || ''} ${senderObj.lastName || ''}`.trim() : (raw.sender || '');
+        const normalizedPrice = Number(raw.price || 0);
+
+        if (map.has(id)) {
+          // Merge details if tracking or history has richer status
+          const existing = map.get(id);
+          map.set(id, { ...existing, ...raw, price: normalizedPrice });
+          return;
+        }
 
         map.set(id, {
           id: id,
@@ -94,7 +95,7 @@
           to: raw.to || raw.toCity || 'Destination',
           desc: raw.desc || raw.description || 'General Parcel',
           status: (raw.status || 'pending').toLowerCase(),
-          price: Number(raw.price || 0),
+          price: normalizedPrice,
           weight: raw.weight || '1',
           date: raw.date || raw.pickupDate || raw.createdAt || new Date().toISOString(),
           updatedAt: raw.updatedAt || raw.deliveredAt || raw.cancelledAt,

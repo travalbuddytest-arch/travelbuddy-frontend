@@ -855,7 +855,23 @@
 
   <!-- OTP Modal -->
   <div class="modal-overlay hidden" id="otpModal">
-    ... (omitted for brevity)
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <button class="modal-close" id="otpModalClose">&times;</button>
+      <div style="width:50px; height:50px; border-radius:50%; background:#EFF6FF; color:var(--primary); display:grid; place-items:center; font-size:22px; margin:0 auto 12px;">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <h3 class="modal-title" id="otpModalTitle">Enter Verification PIN</h3>
+      <p id="otpModalSub" style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">Enter the 6-digit OTP provided by the counterpart.</p>
+
+      <div class="field" style="margin-bottom:18px;">
+        <input type="text" id="otpInput" maxlength="6" placeholder="• • • • • •" style="text-align:center; font-size:24px; letter-spacing:8px; font-weight:800; height:52px;" autocomplete="one-time-code" />
+      </div>
+
+      <button type="button" class="btn-primary" id="submitOtpBtn" style="width:100%;">
+        <span class="btn-label">Verify &amp; Confirm</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
   </div>
 
   <!-- Secure QR Modal (NEW) -->
