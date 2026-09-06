@@ -4,96 +4,145 @@
   async function injectDashboardComponents() {
     const sidebarPlaceholder = document.getElementById('tbAppSidebarInclude');
     const topbarPlaceholder = document.getElementById('tbAppTopbarInclude');
-    const v = '2';
+    const v = '3'; // Cache bust version
+
+    const cachedSidebar = sessionStorage.getItem('tb_sidebar_html');
+    const cachedTopbar = sessionStorage.getItem('tb_topbar_html');
 
     if (sidebarPlaceholder) {
+      if (cachedSidebar) {
+        sidebarPlaceholder.outerHTML = cachedSidebar;
+        initSidebarEvents();
+      }
       try {
         const res = await fetch(`/shared/app-sidebar.html?v=${v}`);
         if (res.ok) {
-          sidebarPlaceholder.outerHTML = await res.text();
-          highlightActiveNav();
-          // Bind sidebar events
-          const menuBtn = document.getElementById('menuBtn');
-          const sidebarClose = document.getElementById('sidebarClose');
-          const sidebarOverlay = document.getElementById('sidebarOverlay');
-          if (menuBtn) menuBtn.addEventListener('click', openSidebar);
-          if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
-          if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-          document.querySelectorAll('.sidebar .nav-item[href]').forEach((link) => {
-            link.addEventListener('click', () => {
-              if (window.matchMedia('(max-width: 900px)').matches) closeSidebar();
-            });
-          });
-          const logoutBtn = document.getElementById('logoutBtn');
-          if (logoutBtn) logoutBtn.addEventListener('click', logoutNow);
-
-          // Initialize Collapsible Sidebar System
-          initUserSidebarCollapse();
+          const html = await res.text();
+          if (html !== cachedSidebar) {
+            sessionStorage.setItem('tb_sidebar_html', html);
+            if (!cachedSidebar) {
+              sidebarPlaceholder.outerHTML = html;
+              initSidebarEvents();
+            }
+          }
         }
       } catch (e) { console.error('Sidebar injection failed', e); }
     }
 
     if (topbarPlaceholder) {
+      if (cachedTopbar) {
+        topbarPlaceholder.outerHTML = cachedTopbar;
+        initTopbarEvents();
+      }
       try {
         const res = await fetch(`/shared/app-topbar.html?v=${v}`);
         if (res.ok) {
-          topbarPlaceholder.outerHTML = await res.text();
-
-          // Sync page title from <title> tag
-          const pageTitleEl = document.getElementById('pageTitle');
-          if (pageTitleEl) {
-            const titleText = document.title.replace('TravelBuddy - ', '').trim();
-            pageTitleEl.textContent = titleText;
-          }
-
-          personalizeUser();
-          // Bind topbar events
-          const userChip = document.getElementById('userChip');
-          if (userChip) {
-            userChip.setAttribute('role', 'button');
-            userChip.setAttribute('tabindex', '0');
-            userChip.setAttribute('aria-haspopup', 'menu');
-            userChip.setAttribute('aria-expanded', 'false');
-            const setUserMenuOpen = (open) => {
-              userChip.classList.toggle('open', open);
-              userChip.setAttribute('aria-expanded', open ? 'true' : 'false');
-            };
-            userChip.addEventListener('click', (e) => {
-              e.stopPropagation();
-              if (e.target.closest('.user-menu')) return;
-              setUserMenuOpen(!userChip.classList.contains('open'));
-            });
-            userChip.addEventListener('keydown', (e) => {
-              if (e.key !== 'Enter' && e.key !== ' ') return;
-              e.preventDefault();
-              setUserMenuOpen(!userChip.classList.contains('open'));
-            });
-            document.getElementById('userMenu')?.addEventListener('click', (e) => e.stopPropagation());
-            document.addEventListener('click', closeUserMenu);
-          }
-          const globalSearch = document.getElementById('globalSearch');
-          if (globalSearch) {
-            globalSearch.addEventListener('click', () => { window.location.href = 'search.html'; });
-            globalSearch.addEventListener('input', () => { window.location.href = `search.html?q=${encodeURIComponent(globalSearch.value)}`; });
-          }
-          document.getElementById('topbarLogoutLink')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeUserMenu();
-            logoutNow();
-          });
-          // Re-bind profile actions for the new topbar
-          document.querySelectorAll('.user-menu a').forEach((link) => {
-            const text = link.textContent.trim().toLowerCase();
-            if (text.includes('my profile')) {
-              link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('profile'); });
+          const html = await res.text();
+          if (html !== cachedTopbar) {
+            sessionStorage.setItem('tb_topbar_html', html);
+            if (!cachedTopbar) {
+              topbarPlaceholder.outerHTML = html;
+              initTopbarEvents();
             }
-            if (text.includes('settings')) {
-              link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('settings'); });
-            }
-          });
+          }
         }
       } catch (e) { console.error('Topbar injection failed', e); }
     }
+  }
+
+  function initSidebarEvents() {
+    highlightActiveNav();
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebarClose = document.getElementById('sidebarClose');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    if (menuBtn) menuBtn.addEventListener('click', openSidebar);
+    if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+    document.querySelectorAll('.sidebar .nav-item[href]').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.matchMedia('(max-width: 900px)').matches) closeSidebar();
+      });
+    });
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', logoutNow);
+    initUserSidebarCollapse();
+  }
+
+  function initTopbarEvents() {
+    const pageTitleEl = document.getElementById('pageTitle');
+    if (pageTitleEl) {
+      const titleText = document.title.replace('TravelBuddy - ', '').replace('TravelBuddy — ', '').trim();
+      pageTitleEl.textContent = titleText;
+    }
+
+    personalizeUser();
+    const userChip = document.getElementById('userChip');
+    if (userChip) {
+      userChip.setAttribute('role', 'button');
+      userChip.setAttribute('tabindex', '0');
+      userChip.setAttribute('aria-haspopup', 'menu');
+      userChip.setAttribute('aria-expanded', 'false');
+      const setUserMenuOpen = (open) => {
+        userChip.classList.toggle('open', open);
+        userChip.setAttribute('aria-expanded', open ? 'true' : 'false');
+      };
+      userChip.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (e.target.closest('.user-menu')) return;
+        setUserMenuOpen(!userChip.classList.contains('open'));
+      });
+      userChip.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        setUserMenuOpen(!userChip.classList.contains('open'));
+      });
+      document.getElementById('userMenu')?.addEventListener('click', (e) => e.stopPropagation());
+      document.addEventListener('click', closeUserMenu);
+    }
+    const globalSearch = document.getElementById('globalSearch');
+    if (globalSearch) {
+      globalSearch.addEventListener('click', () => { window.location.href = 'search.html'; });
+      globalSearch.addEventListener('input', () => { window.location.href = `search.html?q=${encodeURIComponent(globalSearch.value)}`; });
+    }
+    document.getElementById('topbarLogoutLink')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeUserMenu();
+      logoutNow();
+    });
+    document.querySelectorAll('.user-menu a, .user-menu button').forEach((link) => {
+      const text = link.textContent.trim().toLowerCase();
+      if (text.includes('my profile')) {
+        link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('profile'); });
+      }
+      if (text.includes('settings')) {
+        link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('settings'); });
+      }
+      if (text.includes('privacy mode') || text.includes('balances')) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          setPrivacyMode(!isPrivacyMode());
+        });
+      }
+    });
+
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu && !userMenu.querySelector('.privacy-toggle-btn')) {
+       const hr = userMenu.querySelector('hr');
+       const toggleHtml = `
+         <button type="button" class="user-menu-btn privacy-toggle-btn">
+           <i class="fa-solid fa-eye"></i> <span class="btn-label">Hide Balances</span>
+         </button>
+       `;
+       if (hr) hr.insertAdjacentHTML('beforebegin', toggleHtml);
+       else userMenu.insertAdjacentHTML('beforeend', toggleHtml);
+
+       const newBtn = userMenu.querySelector('.privacy-toggle-btn');
+       newBtn?.addEventListener('click', (e) => {
+          e.preventDefault();
+          setPrivacyMode(!isPrivacyMode());
+       });
+    }
+    updatePrivacyUI();
   }
 
   injectDashboardComponents();
@@ -212,6 +261,30 @@
     });
   }
 
+  function isPrivacyMode() {
+    return localStorage.getItem('tb_privacy_mode') === 'true';
+  }
+
+  function setPrivacyMode(enabled) {
+    localStorage.setItem('tb_privacy_mode', String(enabled));
+    document.dispatchEvent(new CustomEvent('travelbuddy:privacy-toggled', { detail: { enabled } }));
+    showToast(`Privacy mode ${enabled ? 'enabled (balances hidden)' : 'disabled'}.`, 'info');
+    updatePrivacyUI();
+  }
+
+  function updatePrivacyUI() {
+    const isPrivate = isPrivacyMode();
+    document.querySelectorAll('.privacy-toggle-btn').forEach(btn => {
+      btn.classList.toggle('active', isPrivate);
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isPrivate ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+      }
+      const label = btn.querySelector('.btn-label');
+      if (label) label.textContent = isPrivate ? 'Show Balances' : 'Hide Balances';
+    });
+  }
+
   function loadAsset(url, type) {
     if (type === 'css') {
       if (!document.querySelector(`link[href="${url}"]`)) {
@@ -242,6 +315,8 @@
     toPaise,
     statusBadge,
     highlightActiveNav,
+    isPrivacyMode,
+    setPrivacyMode,
   };
 
   const fetchCache = new Map();
@@ -373,6 +448,12 @@
   personalizeUser();
 
   async function refreshCurrentUser() {
+    // Return cached user immediately while refreshing
+    const cached = parseStoredUser();
+    if (cached && cached.id) {
+       personalizeUser();
+    }
+
     try {
       const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() }, 30000); // 30s cache
       const data = await res.json();
@@ -382,7 +463,7 @@
           localStorage.removeItem('travelBuddyUser');
           window.location.href = '../login/login.html';
         }
-        return null;
+        return cached; // Return cached on error if refresh failed
       }
       saveStoredUser(data.user);
       personalizeUser();
@@ -390,7 +471,7 @@
       return data.user;
     } catch (err) {
       console.error('Profile refresh failed:', err);
-      return null;
+      return cached;
     }
   }
   window.TravelBuddy.getCurrentUser = refreshCurrentUser;

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../shared/auth-guard.js" data-guard="user"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TravelBuddy — Trust &amp; Verification</title>
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+  <style>
+    .kyc-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+    .kyc-status-info h3 {
+      margin: 0 0 4px;
+      color: var(--primary);
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .kyc-status-info p {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+    .kyc-hero-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: rgba(13, 110, 253, 0.08);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+    }
+    .kyc-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .kyc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .kyc-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: var(--primary);
+    }
+    .kyc-item-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(13, 110, 253, 0.05);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+    .kyc-item-body {
+      flex: 1;
+    }
+    .kyc-item-body strong {
+      display: block;
+      font-size: 14.5px;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .kyc-item-body span {
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+    .kyc-item-status {
+      text-align: right;
+    }
+    .kyc-item-status .status-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .kyc-item-status i {
+      color: var(--text-faint);
+      font-size: 14px;
+    }
+    .info-card {
+      background: rgba(13, 110, 253, 0.05);
+      border: 1px solid rgba(13, 110, 253, 0.1);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 24px;
+    }
+    .info-card i {
+      color: var(--primary);
+      font-size: 18px;
+    }
+    .info-card p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <div id="tbAppSidebarInclude"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <div id="tbAppTopbarInclude"></div>
+
+      <main class="content" id="content">
+        <div class="support-head">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Trust &amp; Verification</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Verified profiles build more trust and unlock higher delivery limits.</p>
+          </div>
+        </div>
+
+        <div class="kyc-hero">
+          <div class="kyc-status-info">
+            <h3 id="kycTierText">Status: Verification Required</h3>
+            <p id="kycSubText">Complete your profile to unlock premium benefits.</p>
+          </div>
+          <div class="kyc-hero-icon">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+        </div>
+
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Verification Documents</h3>
+
+        <div class="kyc-grid">
+          <a href="#" class="kyc-item" id="kycGovId">
+            <div class="kyc-item-icon"><i class="fa-solid fa-address-card"></i></div>
+            <div class="kyc-item-body">
+              <strong>Government ID</strong>
+              <span>Aadhaar, PAN, or Passport</span>
+            </div>
+            <div class="kyc-item-status">
+              <span class="status-tag" id="statusGovId">Not Started</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+          </a>
+
+          <a href="#" class="kyc-item" id="kycSelfie">
+            <div class="kyc-item-icon"><i class="fa-solid fa-face-smile"></i></div>
+            <div class="kyc-item-body">
+              <strong>Face Verification</strong>
+              <span>Selfie for identity confirmation</span>
+            </div>
+            <div class="kyc-item-status">
+              <span class="status-tag" id="statusSelfie">Not Started</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+          </a>
+
+          <a href="#" class="kyc-item" id="kycDL">
+            <div class="kyc-item-icon"><i class="fa-solid fa-car"></i></div>
+            <div class="kyc-item-body">
+              <strong>Driving License</strong>
+              <span>Required for verified travelers</span>
+            </div>
+            <div class="kyc-item-status">
+              <span class="status-tag" id="statusDL">Not Started</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+          </a>
+        </div>
+
+        <div class="info-card">
+          <i class="fa-solid fa-circle-info"></i>
+          <p>Verified profiles get 2x more parcel matches and can earn up to 40% more per delivery.</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script defer src="../shared/config.js?v=1"></script>
+  <script defer src="../shared/auth-cookie-client.js?v=1"></script>
+  <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/date-utils.js"></script>
+  <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/verification.js"></script>
+  <script defer src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>

@@ -586,7 +586,7 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
 .user-chip.open .user-menu { display: flex; }
 @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
-.user-menu a {
+.user-menu a, .user-menu-btn {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -596,8 +596,14 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
   color: var(--text-main);
   font-size: 13px;
   transition: background 0.15s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font);
 }
-.user-menu a:hover { background: rgba(13,110,253,0.06); color: var(--primary); }
+.user-menu a:hover, .user-menu-btn:hover { background: rgba(13,110,253,0.06); color: var(--primary); }
 
 .content {
   padding: var(--content-pt) var(--container-px) var(--content-pb);

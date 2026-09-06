@@ -20,6 +20,8 @@
   let searchDebounceTimer = null;
   let currentUserId = null;
 
+  const CACHE_KEY = 'tb_parcels_cache';
+
   function initFromQueryParams() {
     const params = new URLSearchParams(window.location.search);
     const filterParam = params.get('filter');
@@ -41,9 +43,17 @@
   }
 
   async function fetchAllParcels() {
-    if (loadingState) loadingState.classList.remove('hidden');
+    // 1. Load from cache immediately
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        allParcels = JSON.parse(cached);
+        renderParcels();
+      } catch (e) { localStorage.removeItem(CACHE_KEY); }
+    }
+
+    if (!allParcels.length && loadingState) loadingState.classList.remove('hidden');
     if (emptyState) emptyState.classList.add('hidden');
-    if (parcelsGrid) parcelsGrid.innerHTML = '';
 
     try {
       const user = await window.TravelBuddy.getCurrentUser();
@@ -104,14 +114,17 @@
         return db - da;
       });
 
+      localStorage.setItem(CACHE_KEY, JSON.stringify(allParcels));
       renderParcels();
     } catch (err) {
       console.error('Fetch parcels failed:', err);
-      window.showToast('Unable to load parcels from server.', 'error');
-      if (emptyState) {
-        emptyState.classList.remove('hidden');
-        emptyStateTitle.textContent = 'Error Loading Parcels';
-        emptyStateMessage.textContent = 'Please check your internet connection or try again shortly.';
+      if (!allParcels.length) {
+        window.showToast('Unable to load parcels from server.', 'error');
+        if (emptyState) {
+          emptyState.classList.remove('hidden');
+          emptyStateTitle.textContent = 'Error Loading Parcels';
+          emptyStateMessage.textContent = 'Please check your internet connection or try again shortly.';
+        }
       }
     } finally {
       if (loadingState) loadingState.classList.add('hidden');

@@ -55,9 +55,19 @@
   function renderNotifications() {
     if (!notifList) return;
 
-    const items = notifications.filter((n) => notifFilter === 'all' || !n.read);
+    let items = notifications;
+    if (notifFilter === 'unread') {
+      items = items.filter(n => !n.read);
+    } else if (notifFilter === 'parcels') {
+      items = items.filter(n => n.type.startsWith('parcel') || n.type.startsWith('rating'));
+    } else if (notifFilter === 'payments') {
+      items = items.filter(n => n.type.includes('wallet') || n.type.includes('payment') || n.type.includes('earning'));
+    } else if (notifFilter === 'messages') {
+      items = items.filter(n => n.type === 'message');
+    }
+
     if (!items.length) {
-      notifList.innerHTML = `<p class="empty-state"><i class="fa-solid fa-bell-slash"></i>You're all caught up!</p>`;
+      notifList.innerHTML = `<p class="empty-state"><i class="fa-solid fa-bell-slash"></i>No ${notifFilter === 'all' ? '' : notifFilter + ' '}notifications found.</p>`;
       return;
     }
 

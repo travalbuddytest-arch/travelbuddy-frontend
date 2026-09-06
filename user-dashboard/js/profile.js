@@ -53,6 +53,7 @@
   function renderProfile(user) {
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'TravelBuddy User';
     const initials = ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() || 'TB';
+    const isPrivate = window.TravelBuddy.isPrivacyMode();
 
     heroFullName.textContent = fullName;
     heroEmail.textContent = user.email || '';
@@ -69,7 +70,7 @@
     }
 
     if (statsWalletBalance) {
-      statsWalletBalance.textContent = formatPaise(user.walletBalance || 0);
+      statsWalletBalance.textContent = isPrivate ? '••••' : formatPaise(user.walletBalance || 0);
     }
 
     // Avatar
@@ -216,6 +217,10 @@
       }
     });
   }
+
+  document.addEventListener('travelbuddy:privacy-toggled', () => {
+    if (currentUserData) renderProfile(currentUserData);
+  });
 
   loadProfile();
 })();

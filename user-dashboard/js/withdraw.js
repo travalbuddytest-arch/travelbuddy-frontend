@@ -34,6 +34,16 @@
 
   const withdrawalsTableBody = document.getElementById('withdrawalsTableBody');
 
+  // Detail Modal
+  const withdrawDetailModal = document.getElementById('withdrawDetailModal');
+  const withdrawDetailClose = document.getElementById('withdrawDetailClose');
+  const wdDetailId = document.getElementById('wdDetailId');
+  const wdDetailStatusBadge = document.getElementById('wdDetailStatusBadge');
+  const wdDetailAmount = document.getElementById('wdDetailAmount');
+  const wdDetailMethod = document.getElementById('wdDetailMethod');
+  const wdDetailDate = document.getElementById('wdDetailDate');
+  const wdTimeline = document.getElementById('wdTimeline');
+
   // State
   let availableBalancePaise = 0;
   let currentMethod = 'upi';
@@ -346,26 +356,81 @@
         : `Bank: •••• ${escapeHTML(String(w.bankDetails?.accountNumber || '').slice(-4))}`;
 
       const actionBtn = isRequested
-        ? `<button type="button" class="btn-ghost cancel-wd-btn" data-id="${escapeHTML(w._id)}" style="color:var(--error); padding:4px 10px; font-size:12px; height:auto;">
+        ? `<button type="button" class="btn-ghost cancel-wd-btn" data-id="${escapeHTML(w._id)}" style="color:var(--error); padding:4px 10px; font-size:12px; height:auto; margin-left:8px;">
              Cancel
            </button>`
-        : '<span style="color:var(--text-faint); font-size:12px;">—</span>';
+        : '<span style="color:var(--text-faint); font-size:12px; margin-left:8px;">—</span>';
 
       return `
-        <tr>
+        <tr class="is-clickable" data-view-id="${escapeHTML(w._id)}">
           <td style="font-size:12.5px; color:var(--text-muted);">${escapeHTML(dateStr)}</td>
           <td style="font-family:monospace; font-weight:700; font-size:12.5px;">${escapeHTML(w.withdrawalId || w._id)}</td>
           <td style="font-size:13px;">${dest}</td>
           <td style="font-weight:800; font-size:14px; color:var(--text-main);">${formatPaise(w.amount)}</td>
           <td>${statusBadge(w.status)}</td>
-          <td>${actionBtn}</td>
+          <td onclick="event.stopPropagation()">${actionBtn}</td>
         </tr>
       `;
     }).join('');
 
     withdrawalsTableBody.querySelectorAll('.cancel-wd-btn').forEach(btn => {
-      btn.addEventListener('click', () => cancelWithdrawal(btn.dataset.id));
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cancelWithdrawal(btn.dataset.id);
+      });
     });
+
+    withdrawalsTableBody.querySelectorAll('tr[data-view-id]').forEach(tr => {
+      tr.addEventListener('click', () => openWithdrawalDetails(tr.dataset.viewId));
+    });
+  }
+
+  let allWithdrawals = [];
+  async function loadWithdrawalHistory() {
+    if (!withdrawalsTableBody) return;
+
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/withdraw/history`, { headers: authHeaders() });
+      const data = await res.json();
+
+      if (!res.ok) {
+        withdrawalsTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--error);">Failed to load history.</td></tr>`;
+        return;
+      }
+
+      allWithdrawals = data.withdrawals || [];
+      renderWithdrawalHistory(allWithdrawals);
+    } catch (err) {
+      console.error(err);
+      withdrawalsTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--error);">Could not connect to server.</td></tr>`;
+    }
+  }
+
+  function openWithdrawalDetails(id) {
+    const w = allWithdrawals.find(x => String(x._id) === String(id));
+    if (!w) return;
+
+    wdDetailId.textContent = (w.withdrawalId || w._id).toUpperCase();
+    wdDetailStatusBadge.innerHTML = statusBadge(w.status);
+    wdDetailAmount.textContent = formatPaise(w.amount);
+    wdDetailMethod.textContent = w.method === 'upi' ? `UPI: ${w.upiId}` : `Bank Account (•••• ${String(w.bankDetails?.accountNumber || '').slice(-4)})`;
+    wdDetailDate.textContent = window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(w.createdAt) : new Date(w.createdAt).toLocaleString('en-IN');
+
+    // Update Timeline
+    const steps = ['requested', 'processing', 'completed'];
+    const currentIdx = steps.indexOf(w.status.toLowerCase());
+
+    wdTimeline.querySelectorAll('.timeline-v-item').forEach((el, idx) => {
+      el.classList.remove('is-done', 'is-current');
+      if (idx < currentIdx || w.status === 'completed') el.classList.add('is-done');
+      else if (idx === currentIdx) el.classList.add('is-current');
+    });
+
+    withdrawDetailModal.classList.remove('hidden');
+  }
+
+  if (withdrawDetailClose) {
+    withdrawDetailClose.onclick = () => withdrawDetailModal.classList.add('hidden');
   }
 
   async function cancelWithdrawal(id) {

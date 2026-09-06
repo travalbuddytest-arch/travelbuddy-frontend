@@ -28,6 +28,7 @@
   let searchDebounceTimer = null;
 
   async function loadWalletSummary() {
+    const isPrivate = window.TravelBuddy.isPrivacyMode();
     try {
       const [walletRes, withdrawRes] = await Promise.allSettled([
         fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() }).then(r => r.json()),
@@ -46,10 +47,10 @@
         .filter(w => w.status === 'requested' || w.status === 'processing')
         .reduce((sum, w) => sum + Number(w.amount || 0), 0);
 
-      if (walletAvailableBalance) walletAvailableBalance.textContent = formatPaise(availablePaise);
-      if (walletLockedBalance) walletLockedBalance.textContent = formatPaise(lockedPaise);
-      if (walletTotalEarnings) walletTotalEarnings.textContent = formatPaise(earningsPaise);
-      if (walletPendingWithdrawal) walletPendingWithdrawal.textContent = formatPaise(pendingPaise);
+      if (walletAvailableBalance) walletAvailableBalance.textContent = isPrivate ? '••••' : formatPaise(availablePaise);
+      if (walletLockedBalance) walletLockedBalance.textContent = isPrivate ? '••••' : formatPaise(lockedPaise);
+      if (walletTotalEarnings) walletTotalEarnings.textContent = isPrivate ? '••••' : formatPaise(earningsPaise);
+      if (walletPendingWithdrawal) walletPendingWithdrawal.textContent = isPrivate ? '••••' : formatPaise(pendingPaise);
     } catch (err) {
       console.error('Wallet summary load failed:', err);
     }
@@ -101,6 +102,8 @@
       return;
     }
 
+    const isPrivate = window.TravelBuddy.isPrivacyMode();
+
     txTableBody.innerHTML = transactions.map(tx => {
       const isCredit = tx.direction === 'credit';
       const sign = isCredit ? '+' : '-';
@@ -112,6 +115,7 @@
         : new Date(tx.createdAt).toLocaleString('en-IN');
 
       const typeLabel = (tx.type || 'transaction').replace(/_/g, ' ');
+      const displayAmount = isPrivate ? '••••' : formatPaise(amountPaise);
 
       return `
         <tr>
@@ -122,13 +126,18 @@
           </td>
           <td style="text-transform:capitalize; font-size:13px;">${escapeHTML(typeLabel)}</td>
           <td style="font-weight:800; font-size:14px; ${colorStyle}">
-            ${sign}${formatPaise(amountPaise)}
+            ${sign}${displayAmount}
           </td>
           <td>${statusBadge(tx.status || 'completed')}</td>
         </tr>
       `;
     }).join('');
   }
+
+  document.addEventListener('travelbuddy:privacy-toggled', () => {
+    loadWalletSummary();
+    renderTransactions(transactionsCache);
+  });
 
   // Filter Listeners
   if (txTypeSelect) txTypeSelect.addEventListener('change', loadTransactions);

@@ -21,20 +21,128 @@
 
   let activity = [];
 
-  function timeAgo(iso) {
-    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatRelative(iso);
-    const then = new Date(iso).getTime();
-    if (Number.isNaN(then)) return '';
-    const diffMs = Date.now() - then;
-    const minutes = Math.floor(diffMs / 60000);
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
-    const days = Math.floor(hours / 24);
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days} days ago`;
-    return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  const CACHE_KEY = 'tb_dashboard_data';
+
+  async function loadDashboard() {
+    // 1. Try to load from cache immediately (Stale-While-Revalidate)
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        applyDashboardData(data, true);
+      } catch (e) { localStorage.removeItem(CACHE_KEY); }
+    }
+
+    // 2. Fetch fresh data
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/postparcel/dashboard-aggregator`, { headers: authHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        applyDashboardData(data, false);
+      }
+    } catch (err) {
+      console.error('Aggregator fetch failed:', err);
+    }
+  }
+
+  function applyDashboardData(data, isCached) {
+    if (!data) return;
+
+    // Apply User data
+    if (data.user) {
+      saveStoredUser(data.user);
+      personalizeUser();
+    }
+
+    // Apply Unread counts
+    if (data.unread) {
+      setNotifBadge(data.unread.notifications || 0);
+      const msgBadge = document.getElementById('navMsgBadge');
+      if (msgBadge) {
+        msgBadge.textContent = data.unread.messages || 0;
+        msgBadge.style.display = data.unread.messages ? '' : 'none';
+      }
+    }
+
+    // Apply Stats with animation (only if not cached to avoid re-animating)
+    if (data.stats) {
+      if (isCached) {
+        document.getElementById('statActiveParcels').textContent = data.stats.activeParcels.toLocaleString();
+        document.getElementById('statCompletedDeliveries').textContent = data.stats.completedDeliveries.toLocaleString();
+        document.getElementById('statTripsPosted').textContent = data.stats.tripsPosted.toLocaleString();
+        document.getElementById('statTotalEarnings').textContent = '₹' + (data.stats.totalEarnings / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      } else {
+        animateCount(document.getElementById('statActiveParcels'), data.stats.activeParcels, false);
+        animateCount(document.getElementById('statCompletedDeliveries'), data.stats.completedDeliveries, false);
+        animateCount(document.getElementById('statTripsPosted'), data.stats.tripsPosted, false);
+        animateCount(document.getElementById('statTotalEarnings'), data.stats.totalEarnings, true, '₹');
+      }
+
+      const earningsEl = document.getElementById('walletEarningsValue');
+      if (earningsEl) earningsEl.textContent = window.TravelBuddy.formatPaise(data.stats.totalEarnings || 0);
+    }
+
+    // Apply Activity
+    if (data.activity) {
+      activity = data.activity;
+      renderActivity();
+    }
+
+    // Apply Recent Messages
+    if (data.recentMessages) {
+       renderRecentMessages(data.recentMessages);
+    }
+
+    // Apply Wallet
+    const heroValue = document.getElementById('heroWalletValue');
+    const balanceValue = document.getElementById('walletBalanceValue');
+    const lockedValue = document.getElementById('walletLockedValue');
+    const isPrivate = window.TravelBuddy.isPrivacyMode();
+
+    if (data.user) {
+      const balanceText = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.user.walletBalance || 0);
+      const lockedText = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.user.lockedBalance || 0);
+      if (heroValue) heroValue.textContent = balanceText;
+      if (balanceValue) balanceValue.textContent = balanceText;
+      if (lockedValue) lockedValue.textContent = lockedText;
+    }
+  }
+
+  function saveStoredUser(user) {
+    localStorage.setItem('travelBuddyUser', JSON.stringify(user || {}));
+  }
+
+  function personalizeUser() {
+     if (window.personalizeUser) window.personalizeUser();
+  }
+
+  function setNotifBadge(count) {
+     if (window.TravelBuddy.setNotifBadge) window.TravelBuddy.setNotifBadge(count);
+  }
+
+  function renderRecentMessages(conversations) {
+    const container = document.getElementById('recentMessages');
+    if (!container) return;
+
+    if (!conversations.length) {
+      container.innerHTML = `<p class="empty-state"><i class="fa-solid fa-comments-slash"></i>No messages yet.</p>`;
+      return;
+    }
+
+    container.innerHTML = conversations.map((c) => `
+      <a href="messages.html?conversation=${encodeURIComponent(c.id)}" class="msg-thread-item">
+        <div class="avatar avatar--sm">${escapeHTML(initials(c.other.label))}</div>
+        <div class="msg-thread-info">
+          <div class="msg-thread-name">
+            <strong>${escapeHTML(c.other.label)}</strong>
+            <span class="msg-thread-date">${escapeHTML(formatTime(c.lastMessageAt))}</span>
+          </div>
+          <span class="msg-thread-snippet">${escapeHTML(c.lastMessage || 'Start a conversation')}</span>
+        </div>
+        ${c.unreadCount ? `<span class="msg-unread-dot"></span>` : ''}
+      </a>
+    `).join('');
   }
 
   function renderActivity() {
@@ -46,12 +154,15 @@
       return;
     }
 
+    const isPrivate = window.TravelBuddy.isPrivacyMode();
+
     list.innerHTML = activity.slice(0, ACTIVITY_LIMIT).map((item, i) => {
       let metaHtml = '';
       if (item.amount) {
         const directionClass = item.direction === 'debit' || item.type.includes('WITHDRAWAL') ? 'debit' : 'credit';
         const prefix = item.direction === 'debit' ? '-' : '+';
-        metaHtml = `<span class="activity-amount ${directionClass}">${prefix}${window.TravelBuddy.formatPaise(item.amount)}</span>`;
+        const displayAmount = isPrivate ? '••••' : window.TravelBuddy.formatPaise(item.amount);
+        metaHtml = `<span class="activity-amount ${directionClass}">${prefix}${displayAmount}</span>`;
       }
 
       return `
@@ -106,7 +217,13 @@
     function tick(now) {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
+      const isPrivate = window.TravelBuddy.isPrivacyMode();
+
       if (isCurrency) {
+        if (isPrivate) {
+          el.textContent = '••••';
+          return;
+        }
         const value = (safeTarget * eased) / 100;
         el.textContent = labelPrefix + value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       } else {
@@ -151,15 +268,16 @@
     const balanceValue = document.getElementById('walletBalanceValue');
     const lockedValue = document.getElementById('walletLockedValue');
     const earningsValue = document.getElementById('walletEarningsValue');
+    const isPrivate = window.TravelBuddy.isPrivacyMode();
 
     try {
       const res = await fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() });
       if (res.ok) {
         const data = await res.json();
-        if (heroValue) heroValue.textContent = window.TravelBuddy.formatPaise(data.walletBalance || 0);
-        if (balanceValue) balanceValue.textContent = window.TravelBuddy.formatPaise(data.walletBalance || 0);
-        if (lockedValue) lockedValue.textContent = window.TravelBuddy.formatPaise(data.lockedBalance || 0);
-        if (earningsValue) earningsValue.textContent = window.TravelBuddy.formatPaise(data.totalEarnings || 0);
+        if (heroValue) heroValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.walletBalance || 0);
+        if (balanceValue) balanceValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.walletBalance || 0);
+        if (lockedValue) lockedValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.lockedBalance || 0);
+        if (earningsValue) earningsValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.totalEarnings || 0);
         return;
       }
     } catch (e) {
@@ -169,8 +287,8 @@
     try {
       const user = await window.TravelBuddy.getCurrentUser();
       if (!user) return;
-      const balance = window.TravelBuddy.formatPaise(user.walletBalance || 0);
-      const locked = window.TravelBuddy.formatPaise(user.lockedBalance || 0);
+      const balance = isPrivate ? '••••' : window.TravelBuddy.formatPaise(user.walletBalance || 0);
+      const locked = isPrivate ? '••••' : window.TravelBuddy.formatPaise(user.lockedBalance || 0);
       if (heroValue) heroValue.textContent = balance;
       if (balanceValue) balanceValue.textContent = balance;
       if (lockedValue) lockedValue.textContent = locked;
@@ -178,6 +296,12 @@
       console.error('load wallet failed:', err);
     }
   }
+
+  document.addEventListener('travelbuddy:privacy-toggled', () => {
+    loadWallet();
+    loadStats();
+    renderActivity();
+  });
 
   function formatTime(iso) {
     if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(iso);
@@ -228,10 +352,11 @@
     }
   }
 
-  loadActivity();
-  loadStats();
-  loadWallet();
-  loadRecentMessages();
+  document.addEventListener('travelbuddy:privacy-toggled', () => {
+    loadDashboard();
+  });
+
+  loadDashboard();
 
 
   const orderSearch = document.getElementById('globalSearch');

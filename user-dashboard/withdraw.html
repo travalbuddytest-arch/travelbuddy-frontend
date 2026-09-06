@@ -270,6 +270,120 @@
     </div>
   </div>
 
+  <!-- Withdrawal Details Modal -->
+  <div class="modal-overlay hidden" id="withdrawDetailModal">
+    <div class="modal-card" style="max-width:480px;">
+      <button class="modal-close" id="withdrawDetailClose">&times;</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div>
+          <h3 class="modal-title" style="margin:0;">Withdrawal Details</h3>
+          <p id="wdDetailId" style="font-family:monospace; font-size:12px; color:var(--text-faint); margin:4px 0 0;"></p>
+        </div>
+        <div id="wdDetailStatusBadge"></div>
+      </div>
+
+      <div class="panel" style="background:#F8FAFC; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+          <span style="font-size:13px; color:var(--text-muted);">Amount</span>
+          <strong id="wdDetailAmount" style="font-size:18px; color:var(--text-main);"></strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+          <span style="font-size:13px; color:var(--text-muted);">Payout Method</span>
+          <span id="wdDetailMethod" style="font-weight:700; font-size:13px;"></span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="font-size:13px; color:var(--text-muted);">Requested On</span>
+          <span id="wdDetailDate" style="font-size:13px;"></span>
+        </div>
+      </div>
+
+      <h4 style="font-size:12px; font-weight:800; color:var(--text-faint); letter-spacing:1px; margin-bottom:16px; text-transform:uppercase;">Status Timeline</h4>
+
+      <div class="timeline-v" id="wdTimeline">
+        <div class="timeline-v-item" data-step="requested">
+          <div class="timeline-v-icon"><i class="fa-solid fa-check"></i></div>
+          <div class="timeline-v-content">
+            <strong>Requested</strong>
+            <p>Withdrawal request submitted successfully.</p>
+          </div>
+        </div>
+        <div class="timeline-v-item" data-step="processing">
+          <div class="timeline-v-icon"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+          <div class="timeline-v-content">
+            <strong>Processing</strong>
+            <p>Our finance team is verifying and initiating the transfer.</p>
+          </div>
+        </div>
+        <div class="timeline-v-item" data-step="completed">
+          <div class="timeline-v-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+          <div class="timeline-v-content">
+            <strong>Completed</strong>
+            <p>Funds have been successfully settled to your account.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .timeline-v {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-v-item {
+      display: flex;
+      gap: 16px;
+      position: relative;
+      padding-bottom: 24px;
+    }
+    .timeline-v-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-v-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      color: var(--text-faint);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      z-index: 1;
+      border: 2px solid var(--surface);
+    }
+    .timeline-v-item.is-done .timeline-v-icon {
+      background: var(--success);
+      color: #fff;
+    }
+    .timeline-v-item.is-current .timeline-v-icon {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+    }
+    .timeline-v-content strong {
+      display: block;
+      font-size: 14px;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .timeline-v-content p {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+    .timeline-v-item:not(.is-done):not(.is-current) .timeline-v-content {
+      opacity: 0.5;
+    }
+  </style>
+
   <script defer src="../shared/config.js?v=1"></script>
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>

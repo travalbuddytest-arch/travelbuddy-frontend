@@ -20,6 +20,15 @@
   const reportDetails = document.getElementById('reportDetails');
   const sendReportBtn = document.getElementById('sendReportBtn');
 
+  // Feedback Modal
+  const viewFeedbackModal = document.getElementById('viewFeedbackModal');
+  const viewFeedbackClose = document.getElementById('viewFeedbackClose');
+  const feedbackReason = document.getElementById('feedbackReason');
+  const feedbackDesc = document.getElementById('feedbackDesc');
+  const feedbackAdminNotes = document.getElementById('feedbackAdminNotes');
+
+  let allReports = [];
+
   async function loadMyReports() {
     if (reportsLoading) reportsLoading.classList.remove('hidden');
     if (reportsEmpty) reportsEmpty.classList.add('hidden');
@@ -34,14 +43,14 @@
         return;
       }
 
-      const list = data.reports || [];
-      if (!list.length) {
+      allReports = data.reports || [];
+      if (!allReports.length) {
         if (reportsEmpty) reportsEmpty.classList.remove('hidden');
         return;
       }
 
       if (reportsTableWrap) reportsTableWrap.classList.remove('hidden');
-      renderReportsTable(list);
+      renderReportsTable(allReports);
     } catch (err) {
       console.error(err);
       window.showToast('Could not connect to server.', 'error');
@@ -71,9 +80,38 @@
             ${escapeHTML(r.description || '')}
           </td>
           <td>${statusBadge(r.status || 'open')}</td>
+          <td>
+            <button type="button" class="btn-ghost view-feedback-btn" data-id="${escapeHTML(r._id)}" style="padding:4px 8px; font-size:12px; height:auto; color:var(--primary);">
+              View Feedback
+            </button>
+          </td>
         </tr>
       `;
     }).join('');
+
+    reportsTableBody.querySelectorAll('.view-feedback-btn').forEach(btn => {
+      btn.addEventListener('click', () => openFeedbackModal(btn.dataset.id));
+    });
+  }
+
+  function openFeedbackModal(reportId) {
+    const r = allReports.find(x => String(x._id) === String(reportId));
+    if (!r) return;
+
+    feedbackReason.textContent = r.reason || 'Safety Report';
+    feedbackDesc.textContent = r.description || 'No description provided.';
+
+    if (r.adminNotes) {
+      feedbackAdminNotes.textContent = r.adminNotes;
+      feedbackAdminNotes.style.fontStyle = 'normal';
+      feedbackAdminNotes.style.color = 'var(--text-main)';
+    } else {
+      feedbackAdminNotes.textContent = 'This report is still being investigated. Our team will provide feedback once resolved.';
+      feedbackAdminNotes.style.fontStyle = 'italic';
+      feedbackAdminNotes.style.color = 'var(--text-muted)';
+    }
+
+    viewFeedbackModal.classList.remove('hidden');
   }
 
   // Modal Handlers
@@ -87,6 +125,10 @@
 
   if (submitReportClose) {
     submitReportClose.addEventListener('click', () => submitReportModal.classList.add('hidden'));
+  }
+
+  if (viewFeedbackClose) {
+    viewFeedbackClose.addEventListener('click', () => viewFeedbackModal.classList.add('hidden'));
   }
 
   if (reportTargetType) {

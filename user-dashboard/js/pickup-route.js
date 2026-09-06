@@ -7,6 +7,14 @@
   const routePostForm = document.getElementById('postRouteForm');
   const routePostBtn = document.getElementById('routePostBtn');
   const myRouteList = document.getElementById('myRouteList');
+  const routePostCapacity = document.getElementById('routePostCapacity');
+  const capacityValue = document.getElementById('capacityValue');
+
+  if (routePostCapacity && capacityValue) {
+    routePostCapacity.addEventListener('input', (e) => {
+      capacityValue.textContent = `${e.target.value} kg`;
+    });
+  }
 
   function renderMyRoutes(routes) {
     if (!myRouteList) return;
@@ -23,6 +31,7 @@
           <p class="parcel-title">${escapeHTML(r.notes || 'No notes added')}</p>
           <div class="parcel-meta">
             <span><i class="fa-regular fa-calendar"></i> ${formatDate(r.date)}</span>
+            ${r.availableWeight ? `<span><i class="fa-solid fa-weight-hanging"></i> ${r.availableWeight} kg</span>` : ''}
           </div>
         </div>
         <button class="quick-delete-btn" data-cancel-id="${escapeHTML(r.id)}"><i class="fa-solid fa-ban"></i> Cancel</button>
@@ -75,6 +84,7 @@
       const to = document.getElementById('routePostTo').value.trim();
       const date = document.getElementById('routePostDate').value;
       const notes = document.getElementById('routePostNotes').value.trim();
+      const availableWeight = routePostCapacity ? parseInt(routePostCapacity.value, 10) : 5;
 
       if (!from || !to || !date) {
         window.showToast('Enter a route and travel date.', 'error');
@@ -90,7 +100,7 @@
         const res = await fetch(API_BASE, {
           method: 'POST',
           headers: authHeaders(),
-          body: JSON.stringify({ from, to, date, notes }),
+          body: JSON.stringify({ from, to, date, notes, availableWeight }),
         });
         const data = await res.json();
 
