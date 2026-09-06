@@ -4,11 +4,18 @@
   <div class="wl-page-head">
     <div>
       <h2 class="wl-page-title">Wallet &amp; Payments</h2>
-      <p class="wl-page-sub">Platform-wide ledger — every top-up, hold, earning, refund and commission.</p>
+      <p class="wl-page-sub">Platform-wide ledger and user withdrawal management.</p>
     </div>
   </div>
 
-  <div class="wallet-summary" id="walletSummary"></div>
+  <div class="wl-tabs" id="wlTabs">
+    <button class="wl-tab active" data-tab="ledger">Financial Ledger</button>
+    <button class="wl-tab" data-tab="withdrawals">Withdrawal Requests <em id="withdrawalBadge" class="hidden">0</em></button>
+  </div>
+
+  <div id="ledgerView">
+    <div class="wallet-summary" id="walletSummary"></div>
+
 
   <!-- ═══ RECENT ACTIVITY — last 5 transactions across ALL users, site-wide ═══ -->
   <div class="wallet-recent" id="walletRecent">
@@ -100,6 +107,53 @@
     </table>
   </div>
   <div class="pagination" id="walletPagination"></div>
+  </div>
+
+  <div id="withdrawalView" class="hidden">
+    <div class="wl-ledger-head">
+      <h3 class="wl-section-title">Pending Withdrawals</h3>
+      <div class="wallet-toolbar">
+         <select id="wdFilterStatus" class="wl-filter-input" style="min-width: 120px;">
+           <option value="requested">Requested</option>
+           <option value="processing">Processing</option>
+           <option value="completed">Completed</option>
+           <option value="rejected">Rejected</option>
+           <option value="all">All Status</option>
+         </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Withdrawal ID</th>
+            <th>User</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="withdrawalTableBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="withdrawalPagination"></div>
+  </div>
+
+  <!-- Withdrawal Action Modal -->
+  <div class="modal" id="wdActionModal">
+    <div class="admin-profile-box" style="width: 480px;">
+      <button class="admin-profile-close" id="wdModalClose"><i class="fa-solid fa-xmark"></i></button>
+      <h2 id="wdModalTitle">Review Withdrawal</h2>
+      <div id="wdModalBody" class="wd-modal-body"></div>
+      <div class="wd-modal-actions">
+        <button id="wdRejectBtn" class="wl-btn red">Reject Request</button>
+        <button id="wdApproveBtn" class="wl-btn wl-btn-active" style="background: var(--g); color: #fff; border: 0;">Complete Transfer</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../../shared/date-utils.js"></script>
   <script type="module" src="../js/wallet.js"></script>
 </section>

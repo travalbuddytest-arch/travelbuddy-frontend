@@ -9,10 +9,23 @@ async function apiGet(url) {
   return data;
 }
 
+async function apiPost(url, body) {
+  const token = localStorage.getItem('admin_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, credentials: 'include', body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, data };
+  return data;
+}
+
 const $ = (sel) => document.querySelector(sel);
 
 let currentWalletPage = 1;
+let currentWithdrawPage = 1;
+let currentTab = 'ledger';
 let searchDebounce = null;
+let activeWithdrawal = null;
 
 const TYPE_LABELS = {
   topup: 'Top-up',
@@ -115,7 +128,165 @@ export function initWallet() {
   const el = document.getElementById('walletLedger');
   if (!el) return;
   wireFilterControls();
+  wireTabControls();
+  wireWithdrawalActions();
   loadWallet();
+  loadWithdrawals(); // Pre-load or just badge count
+}
+
+function wireTabControls() {
+  const tabs = document.querySelectorAll('.wl-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      currentTab = target;
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      document.getElementById('ledgerView').classList.toggle('hidden', target !== 'ledger');
+      document.getElementById('withdrawalView').classList.toggle('hidden', target !== 'withdrawals');
+
+      if (target === 'ledger') loadWallet();
+      else loadWithdrawals();
+    });
+  });
+}
+
+function wireWithdrawalActions() {
+  $('#wdFilterStatus')?.addEventListener('change', () => {
+    currentWithdrawPage = 1;
+    loadWithdrawals();
+  });
+
+  $('#wdModalClose')?.addEventListener('click', () => $('#wdActionModal').classList.remove('show'));
+
+  $('#wdApproveBtn')?.addEventListener('click', async () => {
+    if (!activeWithdrawal) return;
+    const utr = prompt('Enter UTR/Transaction Reference:');
+    if (utr === null) return;
+    try {
+      await apiPost('/api/admin/withdrawals/admin/complete', { withdrawalId: activeWithdrawal.withdrawalId, utr });
+      window.showToast('Withdrawal marked as completed');
+      $('#wdActionModal').classList.remove('show');
+      loadWithdrawals();
+    } catch (err) {
+      window.showToast(err.data?.error || 'Failed to complete withdrawal', 'error');
+    }
+  });
+
+  $('#wdRejectBtn')?.addEventListener('click', async () => {
+    if (!activeWithdrawal) return;
+    const reason = prompt('Enter rejection reason:');
+    if (reason === null) return;
+    try {
+      await apiPost('/api/admin/withdrawals/admin/reject', { withdrawalId: activeWithdrawal.withdrawalId, reason });
+      window.showToast('Withdrawal rejected and funds reversed');
+      $('#wdActionModal').classList.remove('show');
+      loadWithdrawals();
+    } catch (err) {
+      window.showToast(err.data?.error || 'Failed to reject withdrawal', 'error');
+    }
+  });
+}
+
+async function loadWithdrawals() {
+  const tableBody = document.getElementById('withdrawalTableBody');
+  const pagination = document.getElementById('withdrawalPagination');
+  const badge = document.getElementById('withdrawalBadge');
+  if (!tableBody) return;
+
+  tableBody.innerHTML = `<tr><td colspan="7" class="loading-cell">Loading...</td></tr>`;
+
+  try {
+    const status = $('#wdFilterStatus').value;
+    const data = await apiGet(`/api/admin/withdrawals?status=${status}&page=${currentWithdrawPage}&limit=20`);
+    const { withdrawals, total } = data;
+
+    if (status === 'requested' && badge) {
+      badge.textContent = total;
+      badge.classList.toggle('hidden', total === 0);
+    }
+
+    if (!withdrawals || withdrawals.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="7" class="empty-cell">No withdrawal requests found.</td></tr>`;
+      if (pagination) pagination.innerHTML = '';
+      return;
+    }
+
+    tableBody.innerHTML = withdrawals.map(w => {
+      const userName = w.user ? `${w.user.firstName || ''} ${w.user.lastName || ''}`.trim() : '—';
+      const statusClass = w.status === 'requested' ? 'orange' : w.status === 'completed' ? 'green' : w.status === 'rejected' ? 'red' : 'muted';
+      return `<tr>
+        <td><span class="cell-sub">${formatDate(w.createdAt)}</span></td>
+        <td><span class="cell-mono">${escHtml(w.withdrawalId)}</span></td>
+        <td>
+          <div style="display:flex;flex-direction:column">
+            <b>${escHtml(userName)}</b>
+            <span class="cell-sub" style="font-size:9px">${escHtml(w.user?.email || '')}</span>
+          </div>
+        </td>
+        <td><span class="cell-mono">${fmtMoney(w.amount)}</span></td>
+        <td><span class="status-tag info">${escHtml(w.method.toUpperCase())}</span></td>
+        <td><span class="status-tag ${statusClass}">${escHtml(w.status)}</span></td>
+        <td>
+          ${w.status === 'requested' || w.status === 'processing' ?
+            `<button class="wl-btn wl-btn-sm" data-id="${w._id}">Review</button>` : '—'}
+        </td>
+      </tr>`;
+    }).join('');
+
+    tableBody.querySelectorAll('button[data-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const withdrawal = withdrawals.find(w => String(w._id) === btn.dataset.id);
+        if (withdrawal) openWithdrawalModal(withdrawal);
+      });
+    });
+
+    if (pagination) {
+      const totalPages = Math.ceil(total / 20);
+      let html = '';
+      if (currentWithdrawPage > 1) html += `<button data-p="${currentWithdrawPage - 1}">&lsaquo; Prev</button>`;
+      html += `<span class="pagi-info">Page ${currentWithdrawPage} of ${totalPages}</span>`;
+      if (currentWithdrawPage < totalPages) html += `<button data-p="${currentWithdrawPage + 1}">Next &rsaquo;</button>`;
+      pagination.innerHTML = html;
+      pagination.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', () => {
+          currentWithdrawPage = parseInt(b.dataset.p, 10);
+          loadWithdrawals();
+        });
+      });
+    }
+  } catch (err) {
+    tableBody.innerHTML = `<tr><td colspan="7" class="error-cell">Failed to load.</td></tr>`;
+  }
+}
+
+function openWithdrawalModal(w) {
+  activeWithdrawal = w;
+  const body = $('#wdModalBody');
+  const user = w.user || {};
+
+  let payoutHtml = '';
+  if (w.method === 'upi') {
+    payoutHtml = `<div class="wd-info-row"><span>UPI ID</span><span>${escHtml(w.upiId || '—')}</span></div>`;
+  } else {
+    const b = w.bankDetails || {};
+    payoutHtml = `
+      <div class="wd-info-row"><span>Account Name</span><span>${escHtml(b.accountHolderName || '—')}</span></div>
+      <div class="wd-info-row"><span>Account Number</span><span>${escHtml(b.accountNumber || '—')}</span></div>
+      <div class="wd-info-row"><span>Bank / IFSC</span><span>${escHtml(b.bankName || '')} / ${escHtml(b.ifscCode || '')}</span></div>
+    `;
+  }
+
+  body.innerHTML = `
+    <div class="wd-info-row"><span>User</span><span>${escHtml(user.firstName)} ${escHtml(user.lastName)}</span></div>
+    <div class="wd-info-row"><span>Amount</span><span style="color:var(--b);font-size:16px">${fmtMoney(w.amount)}</span></div>
+    <div class="wd-info-row"><span>User Balance</span><span>${fmtMoney(user.walletBalance)}</span></div>
+    <div style="margin-top:15px;padding-top:10px;border-top:1px solid #eee">
+      <b style="font-size:10px;text-transform:uppercase;color:#98a2b3">Payout Destination (${w.method.toUpperCase()})</b>
+      ${payoutHtml}
+    </div>
+  `;
+
+  $('#wdActionModal').classList.add('show');
 }
 
 function wireFilterControls() {

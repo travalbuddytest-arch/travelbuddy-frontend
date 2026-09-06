@@ -6,6 +6,7 @@
 const dashboardInfo = {
   command: ['Command Center', 'Live overview of your TravelBuddy platform'],
   operations: ['Live Operations', 'Monitor active parcel journeys in real time'],
+  trips: ['Traveler Trips', 'Manage and monitor all traveler routes posted on the platform'],
   parcels: ['Parcel Control', 'Search, inspect and manage every parcel journey'],
   users: ['User Management', 'Complete user profiles, activity and account controls'],
   'active-users': ['Active Users', "Who's on TravelBuddy right now, and who visited recently"],
@@ -56,60 +57,18 @@ const infoCards = {
   ],
 };
 
-const statisticCards = [
-  ['fa-users', 'Total Users', '12,847', '↑ 12.4% this month', 'users'],
-  ['fa-circle-dot', 'Active Now', '438', 'Live users', 'active-users'],
-  ['fa-box', 'Parcels Today', '284', '↑ 8.2% vs yesterday', 'parcels'],
-  ['fa-truck-fast', 'Active Deliveries', '91', 'Currently moving', 'parcels'],
-  ['fa-indian-rupee-sign', 'Platform Revenue', '₹84,620', '↑ 18.6% this month'],
-  ['fa-triangle-exclamation', 'Needs Attention', '16', '4 critical issues'],
-];
+const statisticCards = [];
+const activityFeed = [];
+const riskItems = [];
+const journeyStats = [];
+const revenueData = [];
+const activeJourneys = [];
+const searchData = [];
 
 /* ---------- API Helpers ---------- */
 function fmtMoney(n) {
   return '₹' + ((n || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-
-const activityFeed = [
-  ['fa-box', 'New parcel posted', 'TB-48291 • Pune → Mumbai', 'Just now'],
-  ['fa-person-walking-luggage', 'Traveler accepted parcel', 'TB-48274 • Traveler #TR-9201', '1 min'],
-  ['fa-wallet', 'Wallet payment secured', `${fmtMoney(85000)} • Parcel TB-48266`, '3 min'],
-  ['fa-key', 'Pickup OTP verified', 'TB-48240 • Pickup confirmed', '5 min'],
-  ['fa-truck-fast', 'Parcel entered transit', 'TB-48231 • Nashik → Pune', '8 min'],
-  ['fa-circle-check', 'Delivery completed', `TB-48198 • ${fmtMoney(124000)} settled`, '12 min'],
-];
-
-const riskItems = [
-  ['fa-wallet', 'Wallet settlement mismatch', `Parcel TB-48291 • ${fmtMoney(125000)}`, 'Critical'],
-  ['fa-clock', 'Delivery overdue by 4h', 'TB-38420 • Pune → Mumbai', 'High'],
-  ['fa-key', '5 failed OTP attempts', 'User #US-9021 • 8 min ago', 'High'],
-  ['fa-ban', 'Unusual cancellation pattern', '4 cancellations in 7 days', 'Medium'],
-];
-
-const journeyStats = [
-  ['Waiting for traveler', 64],
-  ['Accepted', 48],
-  ['Pickup confirmed', 32],
-  ['In transit', 91],
-  ['Delivered today', 78],
-];
-
-const revenueData = [52, 76, 61, 88, 69, 94, 82];
-
-const activeJourneys = [
-  ['TB-48291', 'Pune → Mumbai', 76],
-  ['TB-48274', 'Nashik → Pune', 48],
-  ['TB-48266', 'Mumbai → Surat', 91],
-  ['TB-48240', 'Nagpur → Pune', 35],
-  ['TB-48231', 'Pune → Kolhapur', 64],
-];
-
-const searchData = [
-  ['fa-box', 'TB-48291', 'Parcel • Pune → Mumbai • In transit'],
-  ['fa-user', 'bhushan@example.com', 'User • 12 parcels • Active'],
-  ['fa-shield-halved', 'DSP-0012', 'Dispute • High priority • Investigating'],
-  ['fa-person-walking-luggage', 'TR-9201', 'Traveler • Trust score 92 • Verified'],
-];
 
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
@@ -1423,8 +1382,24 @@ function initAdminLiveSocket() {
   });
 }
 
+function hydrateAdminChip() {
+  try {
+    const admin = JSON.parse(localStorage.getItem('travelBuddyAdmin') || '{}');
+    if (admin && admin.firstName) {
+      const initials = (admin.firstName[0] + (admin.lastName ? admin.lastName[0] : '')).toUpperCase();
+      const chip = document.getElementById('adminChip');
+      if (chip) {
+        chip.querySelector('span').textContent = initials;
+        chip.querySelector('b').textContent = `${admin.firstName} ${admin.lastName}`;
+        chip.querySelector('small').textContent = admin.role ? admin.role.charAt(0).toUpperCase() + admin.role.slice(1) : 'Admin';
+      }
+    }
+  } catch (e) {}
+}
+
 /* ---------- Initialize Dashboard ---------- */
 function initializeDashboard() {
+  hydrateAdminChip();
   // Restore whichever page the admin was last on (URL hash first, then
   // sessionStorage), instead of always forcing Command Center. Falls back
   // to Command Center on first visit or if the saved page no longer exists.

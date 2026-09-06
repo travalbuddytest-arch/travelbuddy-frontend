@@ -322,7 +322,7 @@ if (smartMatchingSection) {
 // =========================
 // FAQ Accordion
 // =========================
-(function () {
+function initFaqAccordion() {
     const faqItems = document.querySelectorAll('.faq-item');
     if (!faqItems.length) return;
 
@@ -330,23 +330,31 @@ if (smartMatchingSection) {
         const button = item.querySelector('.faq-question');
         if (!button) return;
 
-        button.addEventListener('click', () => {
-            const willOpen = !item.classList.contains('is-open');
+        button.addEventListener('click', function(e) {
+            const isOpen = item.classList.contains('is-open');
 
-            // Keep the section clean: only one answer open at a time.
+            // Close all items first (accordion behavior)
             faqItems.forEach(otherItem => {
                 otherItem.classList.remove('is-open');
                 const otherButton = otherItem.querySelector('.faq-question');
                 if (otherButton) otherButton.setAttribute('aria-expanded', 'false');
             });
 
-            if (willOpen) {
+            // If it wasn't open, open it now
+            if (!isOpen) {
                 item.classList.add('is-open');
-                button.setAttribute('aria-expanded', 'true');
+                this.setAttribute('aria-expanded', 'true');
             }
         });
     });
-})();
+}
+
+// Robust initialization
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFaqAccordion);
+} else {
+    initFaqAccordion();
+}
 
 
 

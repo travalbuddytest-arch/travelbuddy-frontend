@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="../css/parcels.css">
+<section id="trips-panel" class="panel">
+  <div class="wl-page-head" style="display:flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+    <div>
+      <h2 class="wl-page-title">Traveler Trips</h2>
+      <p class="wl-page-sub">Manage and monitor all traveler routes posted on the platform.</p>
+    </div>
+  </div>
+
+  <div class="wl-ledger-head" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <div class="wallet-toolbar" style="display:flex; gap: 10px; align-items: center;">
+      <div class="wl-search-wrap" style="position:relative;">
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#98a2b3; font-size:12px;"></i>
+        <input type="text" id="tripSearch" class="wl-search" placeholder="Search city or traveler..." style="padding-left:30px;">
+      </div>
+      <select id="tripFilterStatus" class="wl-filter-input">
+        <option value="active">Active</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="expired">Expired</option>
+        <option value="all">All Trips</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Traveler</th>
+          <th>Route</th>
+          <th>Capacity</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tripTableBody"></tbody>
+    </table>
+  </div>
+  <div class="pagination" id="tripPagination"></div>
+
+  <script type="module" src="../js/trips.js"></script>
+</section>

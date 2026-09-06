@@ -424,6 +424,63 @@ html{overflow-x:hidden;}
 .retry-inline:hover { background: #eef4ff; }
 
 /* ══════════════════════════════════════════════
+   TABS
+   ══════════════════════════════════════════════ */
+.wl-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--l);
+  margin-bottom: 20px;
+}
+.wl-tab {
+  border: 0;
+  background: none;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #667085;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wl-tab em {
+  font-style: normal;
+  background: #f04438;
+  color: #fff;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+.wl-tab em.hidden { display: none; }
+.wl-tab.active {
+  color: var(--b);
+  border-bottom-color: var(--b);
+}
+.hidden { display: none !important; }
+
+.wd-modal-body {
+  padding: 20px 0;
+  font-size: 12px;
+}
+.wd-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.wd-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f2f4f7;
+}
+.wd-info-row:last-child { border-bottom: 0; }
+.wd-info-row span:first-child { color: #667085; }
+.wd-info-row span:last-child { font-weight: 600; }
+
+/* ══════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════ */
 @media (max-width: 900px) {
