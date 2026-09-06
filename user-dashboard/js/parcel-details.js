@@ -457,14 +457,14 @@
     renderMoneyJourney(p);
 
     // Financials
-    const rawPrice = Number(p.price || 0);
-    const paise = rawPrice > 1000 ? rawPrice : rawPrice * 100;
-    finGrossPrice.textContent = formatPaise(paise);
+    // Canonical Unit: Backend always returns price/commission/earning in Paise.
+    const financials = p.financials || {};
+    const grossPaise = Number(financials.grossAmount ?? p.price ?? 0);
+    const platformPaise = Number(financials.platformFee ?? p.platformCommission ?? Math.round(grossPaise * 0.1));
+    const earningPaise = Number(financials.netEarnings ?? p.travelerEarning ?? (grossPaise - platformPaise));
 
-    const commissionPaise = p.platformCommission ? Number(p.platformCommission) : Math.round(paise * 0.1);
-    finPlatformFee.textContent = formatPaise(commissionPaise);
-
-    const earningPaise = p.travelerEarning ? Number(p.travelerEarning) : (paise - commissionPaise);
+    finGrossPrice.textContent = formatPaise(grossPaise);
+    finPlatformFee.textContent = formatPaise(platformPaise);
     finTravelerEarning.textContent = formatPaise(earningPaise);
 
     if (p.status === 'delivered') {

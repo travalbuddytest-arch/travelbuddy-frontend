@@ -199,10 +199,8 @@
         ? window.TravelBuddyDate.formatDate(p.date)
         : (new Date(p.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }));
 
-      // p.price from backend is either in rupees or paise depending on endpoint.
-      // If price > 2000 and has no decimals, in backend wallet/post it's stored in paise.
-      // Standardize display:
-      const displayPrice = p.price > 1000 ? formatPaise(p.price) : `₹${Number(p.price || 0).toLocaleString('en-IN')}`;
+      // Canonical Unit: Backend always returns price in Paise.
+      const displayPrice = formatPaise(p.price || 0);
 
       return `
         <a href="parcel-details.html?id=${encodeURIComponent(p.id)}" class="parcel-card-item" data-id="${escapeHTML(p.id)}">

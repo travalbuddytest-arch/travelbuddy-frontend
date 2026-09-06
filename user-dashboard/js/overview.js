@@ -76,18 +76,18 @@
       }
     }
 
-    // Apply Stats with animation (only if not cached to avoid re-animating)
+    // Apply Stats with animation
     if (data.stats) {
       if (isCached) {
-        document.getElementById('statActiveParcels').textContent = data.stats.activeParcels.toLocaleString();
-        document.getElementById('statCompletedDeliveries').textContent = data.stats.completedDeliveries.toLocaleString();
-        document.getElementById('statTripsPosted').textContent = data.stats.tripsPosted.toLocaleString();
-        document.getElementById('statTotalEarnings').textContent = '₹' + (data.stats.totalEarnings / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        document.getElementById('statActiveParcels').textContent = (data.stats.activeParcels || 0).toLocaleString();
+        document.getElementById('statCompletedDeliveries').textContent = (data.stats.completedDeliveries || 0).toLocaleString();
+        document.getElementById('statTripsPosted').textContent = (data.stats.tripsPosted || 0).toLocaleString();
+        document.getElementById('statTotalEarnings').textContent = window.TravelBuddy.formatPaise(data.stats.totalEarnings || 0);
       } else {
-        animateCount(document.getElementById('statActiveParcels'), data.stats.activeParcels, false);
-        animateCount(document.getElementById('statCompletedDeliveries'), data.stats.completedDeliveries, false);
-        animateCount(document.getElementById('statTripsPosted'), data.stats.tripsPosted, false);
-        animateCount(document.getElementById('statTotalEarnings'), data.stats.totalEarnings, true, '₹');
+        animateCount(document.getElementById('statActiveParcels'), data.stats.activeParcels || 0, false);
+        animateCount(document.getElementById('statCompletedDeliveries'), data.stats.completedDeliveries || 0, false);
+        animateCount(document.getElementById('statTripsPosted'), data.stats.tripsPosted || 0, false);
+        animateCount(document.getElementById('statTotalEarnings'), data.stats.totalEarnings || 0, true, '₹');
       }
 
       const earningsEl = document.getElementById('walletEarningsValue');
