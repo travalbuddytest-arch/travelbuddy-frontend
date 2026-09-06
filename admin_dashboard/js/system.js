@@ -22,7 +22,7 @@ async function loadSystem() {
   container.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#98a2b3;grid-column:1/-1">Checking system health...</div>';
 
   try {
-    const data = await apiGet('/api/admin/system');
+    const data = await apiGet('/api/admin/system') || {};
     const overallHealthy = data.status === 'healthy';
 
     const db = data.database || {};
@@ -31,7 +31,7 @@ async function loadSystem() {
     const uptime = srv.uptime ? Math.floor(srv.uptime / 3600) + 'h ' + Math.floor((srv.uptime % 3600) / 60) + 'm' : '—';
     const mem = srv.memory || {};
 
-    const collGrid = db.collections
+    const collGrid = (db.collections && typeof db.collections === 'object')
       ? Object.entries(db.collections).map(([name, count]) =>
           `<span><b>${escHtml(name)}</b><small>${count}</small></span>`
         ).join('')

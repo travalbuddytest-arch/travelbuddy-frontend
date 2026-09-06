@@ -482,9 +482,11 @@ const TABS = [
   ['overview', 'Overview', 'fa-id-card'],
   ['activity', 'Activity', 'fa-timeline'],
   ['parcels', 'Parcels', 'fa-box'],
+  ['trips', 'Trips', 'fa-route'],
   ['payments', 'Payments', 'fa-wallet'],
   ['verification', 'Verification', 'fa-shield-halved'],
   ['documents', 'Documents', 'fa-file-lines'],
+  ['security', 'Security', 'fa-shield-halved'],
   ['reports', 'Reports', 'fa-triangle-exclamation'],
   ['notes', 'Admin Notes', 'fa-note-sticky'],
 ];
@@ -530,9 +532,11 @@ function renderModal(data, initialTab = 'overview') {
       <div class="us-tab-panel ${initialTab === 'overview' ? 'active' : ''}" data-panel="overview">${renderOverviewTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'activity' ? 'active' : ''}" data-panel="activity">${renderActivityTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'parcels' ? 'active' : ''}" data-panel="parcels">${renderParcelsTab(data)}</div>
+      <div class="us-tab-panel ${initialTab === 'trips' ? 'active' : ''}" data-panel="trips">${renderTripsTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'payments' ? 'active' : ''}" data-panel="payments">${renderPaymentsTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'verification' ? 'active' : ''}" data-panel="verification">${renderVerificationTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'documents' ? 'active' : ''}" data-panel="documents">${renderDocumentsTab(data)}</div>
+      <div class="us-tab-panel ${initialTab === 'security' ? 'active' : ''}" data-panel="security">${renderSecurityTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'reports' ? 'active' : ''}" data-panel="reports">${renderReportsTab(data)}</div>
       <div class="us-tab-panel ${initialTab === 'notes' ? 'active' : ''}" data-panel="notes">${renderNotesTab(data)}</div>
     </div>
@@ -595,13 +599,32 @@ function renderOverviewTab(data) {
 }
 
 function renderActivityTab(data) {
-  if (!data.timeline.length) return `<div class="us-empty-note">No recent activity recorded.</div>`;
-  const icons = { parcel_posted: 'fa-box', parcel_cancelled: 'fa-ban', parcel_delivered: 'fa-circle-check', delivery_accepted: 'fa-truck', wallet_credit: 'fa-arrow-down', wallet_debit: 'fa-arrow-up', wallet_hold: 'fa-lock', wallet_system: 'fa-gear' };
-  return data.timeline.map(t => `
-    <div class="us-tl-item">
-      <div class="us-tl-dot"><i class="fa-solid ${icons[t.type] || 'fa-circle'}"></i></div>
-      <div class="us-tl-content"><strong>${esc(t.label)}</strong><span>${fmtDateTime(t.at)}</span></div>
-    </div>`).join('');
+  if (!data.timeline?.length) return `<div class="us-empty-note">No recent activity recorded.</div>`;
+  const icons = {
+    parcel_posted: 'fa-box',
+    parcel_cancelled: 'fa-ban',
+    parcel_delivered: 'fa-circle-check',
+    delivery_accepted: 'fa-handshake',
+    delivery_completed: 'fa-check-double',
+    trip_created: 'fa-route',
+    withdrawal_requested: 'fa-money-bill-transfer',
+    wallet_credit: 'fa-arrow-down',
+    wallet_debit: 'fa-arrow-up',
+    wallet_hold: 'fa-lock',
+    wallet_system: 'fa-gear',
+    admin_action: 'fa-user-shield'
+  };
+  return `
+    <div class="us-tl-container">
+      ${data.timeline.map(t => `
+        <div class="us-tl-item ${t.type}">
+          <div class="us-tl-dot"><i class="fa-solid ${icons[t.type] || 'fa-circle'}"></i></div>
+          <div class="us-tl-content">
+            <strong>${esc(t.label)}</strong>
+            <span>${fmtDateTime(t.at)}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 
 function renderParcelsTab(data) {
@@ -609,7 +632,7 @@ function renderParcelsTab(data) {
     <tr>
       <td class="us-mono">${esc(p.orderId)}</td>
       <td>${esc(p.fromCity)} → ${esc(p.toCity)}</td>
-      <td>${cap(p.status.replace('_',' '))}</td>
+      <td><span class="status-tag ${p.status}">${cap(p.status.replace('_',' '))}</span></td>
       <td>${fmtMoney(p.price)}</td>
       <td>${esc(p[roleLabel] || '—')}</td>
       <td>${fmtDate(p.createdAt)}</td>
@@ -617,26 +640,103 @@ function renderParcelsTab(data) {
   const sent = data.sentParcels || [], acc = data.travelerParcels || [];
   return `
     <div class="us-section-title"><i class="fa-solid fa-box-open"></i> Posted Parcels (as Sender)</div>
-    ${sent.length ? `<table class="us-mini-table"><thead><tr><th>Order</th><th>Route</th><th>Status</th><th>Price</th><th>Traveler</th><th>Created</th></tr></thead><tbody>${rows(sent, 'traveler')}</tbody></table>` : `<div class="us-empty-note">No parcels posted yet.</div>`}
-    <div class="us-section-title"><i class="fa-solid fa-truck"></i> Accepted Deliveries (as Traveler)</div>
-    ${acc.length ? `<table class="us-mini-table"><thead><tr><th>Order</th><th>Route</th><th>Status</th><th>Earning</th><th>Sender</th><th>Created</th></tr></thead><tbody>${rows(acc, 'sender')}</tbody></table>` : `<div class="us-empty-note">No deliveries accepted yet.</div>`}
+    ${sent.length ? `<div class="us-table-mini-wrap"><table class="us-mini-table"><thead><tr><th>Order</th><th>Route</th><th>Status</th><th>Price</th><th>Traveler</th><th>Created</th></tr></thead><tbody>${rows(sent, 'traveler')}</tbody></table></div>` : `<div class="us-empty-note">No parcels posted yet.</div>`}
+    <div class="us-section-title" style="margin-top:20px;"><i class="fa-solid fa-truck"></i> Accepted Deliveries (as Traveler)</div>
+    ${acc.length ? `<div class="us-table-mini-wrap"><table class="us-mini-table"><thead><tr><th>Order</th><th>Route</th><th>Status</th><th>Earning</th><th>Sender</th><th>Created</th></tr></thead><tbody>${rows(acc, 'sender')}</tbody></table></div>` : `<div class="us-empty-note">No deliveries accepted yet.</div>`}
+  `;
+}
+
+function renderTripsTab(data) {
+  const trips = data.trips || [];
+  return `
+    <div class="us-section-title"><i class="fa-solid fa-route"></i> Traveler Routes</div>
+    ${trips.length ? `
+      <div class="us-table-mini-wrap">
+        <table class="us-mini-table">
+          <thead><tr><th>Route</th><th>Date</th><th>Capacity</th><th>Status</th></tr></thead>
+          <tbody>
+            ${trips.map(t => `
+              <tr>
+                <td>${esc(t.fromCity)} → ${esc(t.toCity)}</td>
+                <td>${fmtDate(t.travelDate)}</td>
+                <td>${t.capacityKg || 0} kg</td>
+                <td><span class="status-tag ${t.status}">${cap(t.status)}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : `<div class="us-empty-note">No trips posted yet.</div>`}
   `;
 }
 
 function renderPaymentsTab(data) {
   const w = data.wallet;
   const txns = w.transactions || [];
+  const withdrawals = data.withdrawals || [];
   return `
     <div class="us-perf-grid" style="margin-bottom:20px;">
-      <div class="us-perf-card"><div class="val">${fmtMoney(data.user.walletBalance)}</div><div class="lbl">Wallet Balance</div></div>
-      <div class="us-perf-card"><div class="val">${fmtMoney(w.summary.totalCredits)}</div><div class="lbl">Total Credits</div></div>
-      <div class="us-perf-card"><div class="val">${fmtMoney(w.summary.totalDebits)}</div><div class="lbl">Total Debits</div></div>
-      <div class="us-perf-card"><div class="val">${w.summary.txCount}</div><div class="lbl">Transactions</div></div>
+      <div class="us-perf-card"><div class="val">${fmtMoney(data.user.walletBalance)}</div><div class="lbl">Available</div></div>
+      <div class="us-perf-card"><div class="val">${fmtMoney(data.user.lockedBalance)}</div><div class="lbl">Locked</div></div>
+      <div class="us-perf-card"><div class="val">${w.summary.totalCredits ? fmtMoney(w.summary.totalCredits) : '₹0'}</div><div class="lbl">Total In</div></div>
+      <div class="us-perf-card"><div class="val">${withdrawals.length}</div><div class="lbl">Withdrawals</div></div>
     </div>
-    <div class="us-section-title"><i class="fa-solid fa-receipt"></i> Recent Transactions</div>
-    ${txns.length ? `<table class="us-mini-table"><thead><tr><th>Type</th><th>Direction</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>
-      ${txns.map(t => `<tr><td>${cap(t.type.replace(/_/g,' '))}</td><td>${cap(t.direction)}</td><td>${fmtMoney(t.amount)}</td><td>${cap(t.status)}</td><td>${fmtDateTime(t.createdAt)}</td></tr>`).join('')}
-    </tbody></table>` : `<div class="us-empty-note">No wallet transactions yet.</div>`}
+
+    <div class="us-section-title"><i class="fa-solid fa-receipt"></i> Wallet Ledger (Last 20)</div>
+    ${txns.length ? `<div class="us-table-mini-wrap"><table class="us-mini-table"><thead><tr><th>Type</th><th>Direction</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>
+      ${txns.map(t => `<tr><td>${cap(t.type.replace(/_/g,' '))}</td><td>${cap(t.direction)}</td><td class="${t.direction==='credit'?'success-text':t.direction==='debit'?'danger-text':''}"> ${t.direction==='debit'?'-':'+'}${fmtMoney(t.amount)}</td><td>${cap(t.status)}</td><td>${fmtDate(t.createdAt)}</td></tr>`).join('')}
+    </tbody></table></div>` : `<div class="us-empty-note">No wallet transactions yet.</div>`}
+
+    <div class="us-section-title" style="margin-top:20px;"><i class="fa-solid fa-money-bill-transfer"></i> Payout History</div>
+    ${withdrawals.length ? `
+      <div class="us-table-mini-wrap">
+        <table class="us-mini-table">
+          <thead><tr><th>ID</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            ${withdrawals.map(w => `
+              <tr>
+                <td class="us-mono">${esc(w.withdrawalId)}</td>
+                <td>${fmtMoney(w.amount)}</td>
+                <td>${cap(w.method)}</td>
+                <td><span class="status-tag ${w.status}">${w.status}</span></td>
+                <td>${fmtDate(w.createdAt)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : `<div class="us-empty-note">No withdrawal requests found.</div>`}
+  `;
+}
+
+function renderSecurityTab(data) {
+  const u = data.user;
+  return `
+    <div class="us-section-title"><i class="fa-solid fa-shield-halved"></i> Security Posture</div>
+    <div class="us-info-grid">
+      <div class="us-info-item"><label>Two-Step Verification</label><div>${u.twoStepEnabled ? '<span class="success-text">Enabled</span>' : '<span class="danger-text">Disabled</span>'}</div></div>
+      <div class="us-info-item"><label>Recovery Email</label><div>${esc(u.recoveryEmail || 'Not set')}</div></div>
+      <div class="us-info-item"><label>Auth Provider</label><div>${esc(cap(u.authProvider || 'local'))}</div></div>
+      <div class="us-info-item"><label>Verified Email</label><div>Yes (at registration)</div></div>
+    </div>
+
+    <div class="us-section-title" style="margin-top:20px;"><i class="fa-solid fa-mobile-screen"></i> Registered Devices</div>
+    ${u.devices?.length ? `
+      <div class="us-table-mini-wrap">
+        <table class="us-mini-table">
+          <thead><tr><th>Platform</th><th>Version</th><th>Last Seen</th></tr></thead>
+          <tbody>
+            ${u.devices.map(d => `
+              <tr>
+                <td>${cap(d.platform)}</td>
+                <td>v${d.appVersion}</td>
+                <td>${timeAgo(d.lastSeenAt)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : `<div class="us-empty-note">No mobile devices registered.</div>`}
   `;
 }
 

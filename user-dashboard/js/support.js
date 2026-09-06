@@ -75,17 +75,6 @@
 
       allFaqs = data.faqs || [];
 
-      // Fallback default FAQs if none created in database yet
-      if (!allFaqs.length) {
-        allFaqs = [
-          { question: 'How does parcel escrow protection work?', answer: 'When a parcel is posted, the offer amount is held securely in TravelBuddy escrow. Funds are never released to the traveler until pickup and delivery OTP or QR verification is completed.' },
-          { question: 'How are traveler earnings calculated?', answer: 'Travelers receive 90% of the offered parcel price. A nominal 10% platform fee is deducted to cover insurance and payment gateway charges.' },
-          { question: 'What is the cancellation policy?', answer: 'Free cancellation is allowed anytime before parcel pickup. If a traveler cancels after pickup, full refunds are issued and penalties apply.' },
-          { question: 'How do I withdraw funds to my bank account?', answer: 'Visit the Withdraw page under Money in your dashboard. You can withdraw instantly via UPI or IMPS Bank Transfer with 2-step email verification.' },
-          { question: 'What items are prohibited from being transported?', answer: 'Hazardous chemicals, flammable substances, illegal narcotics, weapons, and counterfeit goods are strictly prohibited.' }
-        ];
-      }
-
       renderFaqs(allFaqs);
     } catch (err) {
       console.error(err);

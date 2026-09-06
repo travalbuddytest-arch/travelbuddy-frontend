@@ -73,30 +73,45 @@ function fmtMoney(n) {
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('admin_token');
+  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
-  const data = await res.json().catch(() => ({}));
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    data = { error: 'Invalid JSON response from server' };
+  }
   if (!res.ok) throw { status: res.status, data };
   return data;
 }
 
 async function apiPut(url, body) {
-  const token = localStorage.getItem('admin_token');
+  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PUT', headers, credentials: 'include', body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    data = { error: 'Invalid JSON response from server' };
+  }
   if (!res.ok) throw { status: res.status, data };
   return data;
 }
 
 async function apiPatch(url, body) {
-  const token = localStorage.getItem('admin_token');
+  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PATCH', headers, credentials: 'include', body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    data = { error: 'Invalid JSON response from server' };
+  }
   if (!res.ok) throw { status: res.status, data };
   return data;
 }
@@ -614,7 +629,6 @@ function renderUserDetail(data) {
   const u = data.user;
   const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Unknown';
   const initials = (u.firstName?.[0] || '') + (u.lastName?.[0] || '');
-  const statusColor = u.isOnline ? '#12b76a' : '#d0d5dd';
   const formatDateStr = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(d) : formatDate(d);
 
   let html = `
@@ -624,87 +638,218 @@ function renderUserDetail(data) {
         <strong>${escHtml(name)}</strong>
         <span>${escHtml(u.email || '')}${u.phone ? ` • ${escHtml(u.phone)}` : ''}</span>
         <div class="dp-meta">
-          <div class="dp-meta-item"><span>Wallet</span><strong>${fmtMoney(u.walletBalance || 0)}</strong></div>
+          <div class="dp-meta-item"><span>Balance</span><strong>${fmtMoney(u.walletBalance || 0)}</strong></div>
           <div class="dp-meta-item"><span>Rating</span><strong>${(u.rating || 0).toFixed(1)}</strong></div>
-          <div class="dp-meta-item"><span>Status</span><strong style="color:${statusColor}">${u.isOnline ? 'Online' : 'Offline'}</strong></div>
-          <div class="dp-meta-item"><span>Auth</span><strong>${escHtml(u.authProvider || 'local')}</strong></div>
+          <div class="dp-meta-item"><span>Risk</span><strong class="${u.riskScore > 40 ? 'danger-text' : u.riskScore > 15 ? 'warning-text' : 'success-text'}">${u.riskScore || 0}</strong></div>
+          <div class="dp-meta-item"><span>Status</span><span class="status-tag ${u.status}">${escHtml(u.status)}</span></div>
         </div>
       </div>
     </div>
-    <div class="drawer-section">
-      <h3>Details</h3>
-      <div class="detail-row"><span>User ID</span><span class="cell-mono">${escHtml(u._id || '')}</span></div>
-      ${u.senderPublicId ? `<div class="detail-row"><span>Sender ID</span><span class="cell-mono">${escHtml(u.senderPublicId)}</span></div>` : ''}
-      ${u.travelerPublicId ? `<div class="detail-row"><span>Traveler ID</span><span class="cell-mono">${escHtml(u.travelerPublicId)}</span></div>` : ''}
-      <div class="detail-row"><span>Joined</span><span>${formatDateStr(u.createdAt)}</span></div>
-      <div class="detail-row"><span>Last Seen</span><span>${u.lastSeenAt ? formatDateStr(u.lastSeenAt) : '—'}</span></div>
-      <div class="detail-row"><span>Verified</span><span>${u.isVerified ? 'Yes' : 'No'}</span></div>
+
+    <div class="drawer-tabs">
+      <button class="drawer-tab active" data-tab="overview">Overview</button>
+      <button class="drawer-tab" data-tab="activity">Activity</button>
+      <button class="drawer-tab" data-tab="parcels">Parcels</button>
+      <button class="drawer-tab" data-tab="trips">Trips</button>
+      <button class="drawer-tab" data-tab="wallet">Wallet</button>
+      <button class="drawer-tab" data-tab="admin">Admin</button>
+    </div>
+
+    <div class="drawer-content">
+      <!-- Overview Tab -->
+      <div class="tab-pane active" id="tab-overview">
+        <div class="drawer-section">
+          <h3>Performance</h3>
+          <div class="dp-meta" style="margin-bottom:15px;">
+            <div class="dp-meta-item"><span>Posted</span><strong>${data.performance?.postedParcels || 0}</strong></div>
+            <div class="dp-meta-item"><span>Carried</span><strong>${data.performance?.acceptedDeliveries || 0}</strong></div>
+            <div class="dp-meta-item"><span>Success</span><strong>${data.performance?.completionRate != null ? data.performance.completionRate + '%' : '—'}</strong></div>
+            <div class="dp-meta-item"><span>Cancel %</span><strong class="${data.performance?.cancellationRate > 20 ? 'danger-text' : ''}">${data.performance?.cancellationRate || 0}%</strong></div>
+          </div>
+          <h3>Account Info</h3>
+          <div class="detail-row"><span>User ID</span><span class="cell-mono">${escHtml(u._id || '')}</span></div>
+          <div class="detail-row"><span>Public ID</span><span class="cell-mono">${escHtml(u.senderPublicId || u.travelerPublicId || '—')}</span></div>
+          <div class="detail-row"><span>Auth Provider</span><span>${escHtml(u.authProvider || 'local')}</span></div>
+          <div class="detail-row"><span>Joined</span><span>${formatDateStr(u.createdAt)}</span></div>
+          <div class="detail-row"><span>Last Seen</span><span>${u.lastSeenAt ? formatDateStr(u.lastSeenAt) : '—'}</span></div>
+          <div class="detail-row"><span>KYC Status</span><span>${escHtml(u.verification?.governmentId || 'not_submitted')}</span></div>
+        </div>
+
+        ${u.riskFlags && u.riskFlags.length ? `
+          <div class="drawer-section">
+            <h3 class="danger-text">Risk Flags</h3>
+            <div class="risk-flags">
+              ${u.riskFlags.map(f => `<span class="status-tag danger">${f.replace(/_/g, ' ')}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- Activity Tab (Timeline) -->
+      <div class="tab-pane" id="tab-activity">
+        <div class="timeline-360">
+          ${(data.timeline || []).map(item => `
+            <div class="tl-item ${item.type}">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <span class="tl-time">${timeAgoShort(item.at)}</span>
+                <span class="tl-label">${escHtml(item.label)}</span>
+                ${item.meta?.reason ? `<small style="color:var(--m);font-size:8px;">Reason: ${escHtml(item.meta.reason)}</small>` : ''}
+              </div>
+            </div>
+          `).join('') || '<div class="drawer-empty">No recent activity</div>'}
+        </div>
+      </div>
+
+      <!-- Parcels Tab -->
+      <div class="tab-pane" id="tab-parcels">
+        <div class="drawer-section">
+          <h3>Parcels Sent (${(data.sentParcels || []).length})</h3>
+          ${data.sentParcels?.length ? `
+            <table class="drawer-table">
+              <thead><tr><th>Order</th><th>Route</th><th>Status</th></tr></thead>
+              <tbody>
+                ${data.sentParcels.map(p => `
+                  <tr>
+                    <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
+                    <td>${escHtml(p.fromCity)} → ${escHtml(p.toCity)}</td>
+                    <td><span class="status-tag ${p.status}">${p.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="drawer-empty">No parcels sent</div>'}
+        </div>
+        <div class="drawer-section">
+          <h3>Deliveries Carried (${(data.travelerParcels || []).length})</h3>
+          ${data.travelerParcels?.length ? `
+            <table class="drawer-table">
+              <thead><tr><th>Order</th><th>Route</th><th>Status</th></tr></thead>
+              <tbody>
+                ${data.travelerParcels.map(p => `
+                  <tr>
+                    <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
+                    <td>${escHtml(p.fromCity)} → ${escHtml(p.toCity)}</td>
+                    <td><span class="status-tag ${p.status}">${p.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="drawer-empty">No deliveries</div>'}
+        </div>
+      </div>
+
+      <!-- Trips Tab -->
+      <div class="tab-pane" id="tab-trips">
+        <div class="drawer-section">
+          <h3>Posted Trips</h3>
+          ${data.trips?.length ? `
+            <table class="drawer-table">
+              <thead><tr><th>Route</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody>
+                ${data.trips.map(t => `
+                  <tr>
+                    <td>${escHtml(t.fromCity)} → ${escHtml(t.toCity)}</td>
+                    <td>${new Date(t.travelDate).toLocaleDateString()}</td>
+                    <td><span class="status-tag ${t.status}">${t.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="drawer-empty">No trips posted</div>'}
+        </div>
+      </div>
+
+      <!-- Wallet Tab -->
+      <div class="tab-pane" id="tab-wallet">
+        <div class="drawer-section">
+          <h3>Financial Summary</h3>
+          <div class="dp-meta" style="margin-bottom:15px;">
+            <div class="dp-meta-item"><span>Available</span><strong>${fmtMoney(u.walletBalance || 0)}</strong></div>
+            <div class="dp-meta-item"><span>Locked</span><strong>${fmtMoney(u.lockedBalance || 0)}</strong></div>
+            <div class="dp-meta-item"><span>Withdrawals</span><strong>${(data.withdrawals || []).length}</strong></div>
+          </div>
+          <h3>Ledger (Last 20)</h3>
+          ${data.wallet?.transactions?.length ? `
+            <table class="drawer-table">
+              <thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead>
+              <tbody>
+                ${data.wallet.transactions.slice(0, 20).map(tx => `
+                  <tr>
+                    <td style="font-size:8px;color:var(--m)">${new Date(tx.createdAt).toLocaleDateString()}</td>
+                    <td style="font-size:8px">${escHtml(tx.type)}</td>
+                    <td class="cell-mono" style="color:${tx.direction === 'credit' ? 'var(--g)' : tx.direction === 'debit' ? 'var(--r)' : 'inherit'}">
+                      ${tx.direction === 'debit' ? '-' : '+'}${fmtMoney(tx.amount)}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="drawer-empty">No transactions</div>'}
+        </div>
+      </div>
+
+      <!-- Admin Tab -->
+      <div class="tab-pane" id="tab-admin">
+        <div class="drawer-section">
+          <h3>Admin Notes</h3>
+          ${data.adminNotes?.length ? `
+            <div class="admin-notes-list">
+              ${data.adminNotes.map(n => `
+                <div class="admin-note-item" style="padding:10px;background:#f9fafb;border-radius:8px;margin-bottom:8px;border:1px solid var(--l)">
+                  <p style="font-size:10px;margin-bottom:4px;">${escHtml(n.note)}</p>
+                  <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--m)">
+                    <span>${escHtml(n.adminName)}</span>
+                    <span>${formatDateStr(n.createdAt)}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : '<div class="drawer-empty">No admin notes</div>'}
+        </div>
+        <div class="drawer-section">
+          <h3>Open Reports (${(data.reports || []).filter(r => r.status === 'open').length})</h3>
+          ${data.reports?.length ? `
+             <div class="admin-reports-list">
+              ${data.reports.map(r => `
+                <div class="report-item" style="padding:10px;border:1px solid var(--l);border-radius:8px;margin-bottom:8px;">
+                  <b style="font-size:10px;display:block;">${escHtml(r.reason)}</b>
+                  <p style="font-size:9px;color:var(--m);margin-top:4px;">${escHtml(r.description)}</p>
+                  <span class="status-tag ${r.status}" style="margin-top:5px;">${r.status}</span>
+                </div>
+              `).join('')}
+             </div>
+          ` : '<div class="drawer-empty">No reports filed</div>'}
+        </div>
+      </div>
     </div>
   `;
 
-  // Sent Parcels
-  html += `<div class="drawer-section"><h3>Parcels Sent (${(data.sentParcels || []).length})</h3>`;
-  if (data.sentParcels && data.sentParcels.length) {
-    html += `<table class="drawer-table"><thead><tr><th>Order</th><th>Route</th><th>Status</th><th>Amount</th></tr></thead><tbody>`;
-    html += data.sentParcels.map(p => `
-      <tr>
-        <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
-        <td>${escHtml(p.fromCity || '')} → ${escHtml(p.toCity || '')}</td>
-        <td><span class="status-tag ${p.status === 'delivered' ? 'success' : p.status === 'cancelled' ? 'danger' : 'muted'}">${escHtml(p.status)}</span></td>
-        <td class="cell-mono">${fmtMoney(p.price || 0)}</td>
-      </tr>
-    `).join('');
-    html += '</tbody></table>';
-  } else {
-    html += '<div class="drawer-empty">No parcels sent</div>';
-  }
-  html += '</div>';
-
-  // Traveled Parcels
-  html += `<div class="drawer-section"><h3>Parcels Delivered (${(data.travelerParcels || []).length})</h3>`;
-  if (data.travelerParcels && data.travelerParcels.length) {
-    html += `<table class="drawer-table"><thead><tr><th>Order</th><th>Route</th><th>Status</th><th>Earning</th></tr></thead><tbody>`;
-    html += data.travelerParcels.map(p => `
-      <tr>
-        <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
-        <td>${escHtml(p.fromCity || '')} → ${escHtml(p.toCity || '')}</td>
-        <td><span class="status-tag ${p.status === 'delivered' ? 'success' : p.status === 'cancelled' ? 'danger' : 'muted'}">${escHtml(p.status)}</span></td>
-        <td class="cell-mono">${fmtMoney(p.travelerEarning || 0)}</td>
-      </tr>
-    `).join('');
-    html += '</tbody></table>';
-  } else {
-    html += '<div class="drawer-empty">No deliveries as traveler</div>';
-  }
-  html += '</div>';
-
-  // Wallet
-  const wallet = data.wallet || {};
-  const summ = wallet.summary || {};
-  html += `<div class="drawer-section">
-    <h3>Wallet Activity</h3>
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <div class="dp-meta-item"><span>Credits</span><strong style="color:#12b76a">${fmtMoney(summ.totalCredits || 0)}</strong></div>
-      <div class="dp-meta-item"><span>Debits</span><strong style="color:#f04438">${fmtMoney(summ.totalDebits || 0)}</strong></div>
-      <div class="dp-meta-item"><span>Transactions</span><strong>${summ.txCount || 0}</strong></div>
-    </div>`;
-  if (wallet.transactions && wallet.transactions.length) {
-    html += `<table class="drawer-table"><thead><tr><th>Date</th><th>Type</th><th>Direction</th><th>Amount</th></tr></thead><tbody>`;
-    html += wallet.transactions.slice(0, 10).map(tx => `
-      <tr>
-        <td style="font-size:8px;color:#98a2b3">${new Date(tx.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</td>
-        <td style="font-size:8px">${escHtml(tx.type || '')}</td>
-        <td><span class="status-tag ${tx.direction === 'credit' ? 'success' : tx.direction === 'debit' ? 'danger' : 'muted'}" style="font-size:7px;padding:1px 5px">${escHtml(tx.direction || '')}</span></td>
-        <td class="cell-mono" style="color:${tx.direction === 'credit' ? '#12b76a' : tx.direction === 'debit' ? '#f04438' : 'inherit'}">${fmtMoney(tx.amount || 0)}</td>
-      </tr>
-    `).join('');
-    html += '</tbody></table>';
-  } else {
-    html += '<div class="drawer-empty">No wallet transactions</div>';
-  }
-  html += '</div>';
-
   drawerBody.innerHTML = html;
+
+  // Wire up tab switching
+  drawerBody.querySelectorAll('.drawer-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      drawerBody.querySelectorAll('.drawer-tab').forEach(b => b.classList.remove('active'));
+      drawerBody.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const tabId = btn.dataset.tab;
+      const pane = drawerBody.querySelector(`#tab-${tabId}`);
+      if (pane) pane.classList.add('active');
+    });
+  });
+}
+
+function timeAgoShort(iso) {
+  if (!iso) return '—';
+  const seconds = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (seconds < 60) return 'now';
+  const intervals = { yr: 31536000, mo: 2592000, wk: 604800, d: 86400, h: 3600, m: 60 };
+  for (let key in intervals) {
+    const counter = Math.floor(seconds / intervals[key]);
+    if (counter > 0) return `${counter}${key}`;
+  }
+  return 'now';
 }
 
 function formatDate(d) {

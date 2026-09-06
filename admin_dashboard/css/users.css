@@ -448,6 +448,35 @@ html{overflow-x:hidden;}
 .us-mini-table td { padding: 9px 10px; border-bottom: 1px solid var(--us-border); }
 .us-mini-table tr:last-child td { border-bottom: none; }
 
+/* ── Timeline 360 ─────────────────────────── */
+.us-tl-container { position: relative; padding-left: 28px; margin-top: 5px; }
+.us-tl-container::before { content: ''; position: absolute; left: 10px; top: 10px; bottom: 10px; width: 2px; background: var(--us-border); }
+.us-tl-item { position: relative; margin-bottom: 24px; animation: us-fadeIn .3s ease forwards; }
+.us-tl-dot { position: absolute; left: -24px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2.5px solid var(--us-primary); display: grid; place-items: center; z-index: 2; }
+.us-tl-dot i { font-size: 7px; color: var(--us-primary); }
+.us-tl-content { background: #F8FAFC; border: 1px solid var(--us-border); border-radius: var(--us-radius-sm); padding: 10px 14px; transition: transform .2s ease; }
+.us-tl-content:hover { transform: translateX(4px); background: #fff; }
+.us-tl-content strong { display: block; font-size: 11px; color: var(--us-text); margin-bottom: 3px; }
+.us-tl-content span { font-size: 9px; color: var(--us-text-muted); }
+
+.us-tl-item.parcel_posted .us-tl-dot { border-color: var(--us-primary); }
+.us-tl-item.parcel_delivered .us-tl-dot { border-color: var(--us-success); background: var(--us-success); }
+.us-tl-item.parcel_delivered .us-tl-dot i { color: #fff; }
+.us-tl-item.wallet_debit .us-tl-dot { border-color: var(--us-danger); }
+.us-tl-item.wallet_credit .us-tl-dot { border-color: var(--us-success); }
+.us-tl-item.admin_action .us-tl-dot { border-color: var(--us-text); }
+
+/* ── Mini Tables ──────────────────────────── */
+.us-table-mini-wrap { border: 1px solid var(--us-border); border-radius: var(--us-radius-sm); overflow: hidden; }
+.us-mini-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+.us-mini-table th { background: #F8FAFC; padding: 10px; text-align: left; font-weight: 700; color: var(--us-text-muted); border-bottom: 1px solid var(--us-border); }
+.us-mini-table td { padding: 10px; border-bottom: 1px solid var(--us-border); color: var(--us-text); }
+.us-mini-table tr:last-child td { border-bottom: 0; }
+
+.success-text { color: var(--us-success); }
+.danger-text { color: var(--us-danger); }
+.warning-text { color: var(--us-warning); }
+
 /* ── Toast ────────────────────────────────── */
 .us-toast {
   position: fixed; bottom: 24px; right: 24px; background: var(--us-text); color: #fff;
