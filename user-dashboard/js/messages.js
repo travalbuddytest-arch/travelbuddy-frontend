@@ -222,6 +222,13 @@
     `;
     audioCallBtn.disabled = conversation.status !== 'active';
     chatInput.disabled = conversation.status !== 'active';
+    if (chatInput.disabled) {
+      chatInput.placeholder = (conversation.status === 'read_only' || conversation.status === 'archived')
+        ? 'Messaging is unavailable for completed parcels.'
+        : 'This conversation is currently inactive.';
+    } else {
+      chatInput.placeholder = 'Type a message...';
+    }
     document.getElementById('acceptParcelBtn')?.addEventListener('click', handleAcceptParcel);
     bindAvatarFallbacks(document.getElementById('chatActive'));
   }

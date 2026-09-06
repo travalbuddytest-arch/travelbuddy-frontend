@@ -16,6 +16,7 @@
   <!-- Leaflet Maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     .details-shell {
       display: flex;
@@ -377,6 +378,53 @@
       border-radius: var(--radius-lg);
       padding: 20px;
       margin-top: 20px;
+    }
+
+    /* Receipt Preview Styles */
+    .receipt-preview-section {
+      margin-bottom: 20px;
+    }
+    .receipt-preview-section h4 {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .receipt-label {
+      color: var(--text-muted);
+    }
+    .receipt-value {
+      font-weight: 600;
+      color: var(--text-main);
+      text-align: right;
+    }
+    .receipt-timeline-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .receipt-timeline-icon {
+      color: var(--success);
+      font-size: 10px;
+      margin-top: 3px;
+    }
+    .receipt-gen-stage.completed {
+      color: var(--success);
+      font-weight: 600;
+    }
+    .receipt-gen-stage.completed i {
+      color: var(--success);
     }
   </style>
 </head>
@@ -952,6 +1000,42 @@
         <span class="btn-label">Submit Report to Support</span>
         <span class="spinner"></span>
       </button>
+    </div>
+  </div>
+
+  <!-- Receipt Generation Modal -->
+  <div class="modal-overlay hidden" id="receiptGenModal">
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <div id="receiptGenLoading">
+         <div style="width:60px; height:60px; border-radius:50%; border:4px solid #f1f5f9; border-top-color:var(--primary); margin: 0 auto 20px; animation: fa-spin 1s linear infinite;"></div>
+         <h3 style="font-weight:800; font-size:18px;">Generating Receipt...</h3>
+         <div id="receiptGenStages" style="text-align:left; margin-top:20px; font-size:13px; color:var(--text-muted); display:flex; flex-direction:column; gap:8px;">
+            <div id="stage-details" class="receipt-gen-stage"><i class="fa-regular fa-circle"></i> Collecting parcel details</div>
+            <div id="stage-timeline" class="receipt-gen-stage"><i class="fa-regular fa-circle"></i> Preparing journey timeline</div>
+            <div id="stage-financials" class="receipt-gen-stage"><i class="fa-regular fa-circle"></i> Preparing financial details</div>
+            <div id="stage-final" class="receipt-gen-stage"><i class="fa-regular fa-circle"></i> Generating receipt</div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Preview Modal -->
+  <div class="modal-overlay hidden" id="receiptPreviewModal">
+    <div class="modal-card" style="max-width:600px; padding:0; overflow:hidden;">
+      <button class="modal-close" id="receiptPreviewModalClose" style="top:15px; right:15px;">&times;</button>
+      <div style="background:var(--primary); padding:30px 20px; text-align:center; color:#fff;">
+         <h3 style="margin:0; font-size:20px; font-weight:800;">Receipt Ready</h3>
+         <p style="margin:4px 0 0; font-size:12px; opacity:0.8;">TravelBuddy Official Parcel Receipt</p>
+      </div>
+      <div id="receiptPreviewContent" style="padding:24px; max-height:70vh; overflow-y:auto; background:#fff;">
+         <!-- Deterministic Receipt Data -->
+      </div>
+      <div style="padding:16px 24px; background:#F8FAFC; border-top:1px solid var(--border); display:flex; gap:12px;">
+         <button type="button" class="btn-ghost" id="closeReceiptPreviewBtn" style="flex:1;">Close</button>
+         <button type="button" class="btn-primary" id="downloadReceiptBtn" style="flex:1.5;">
+            <i class="fa-solid fa-download"></i> Download PDF
+         </button>
+      </div>
     </div>
   </div>
 

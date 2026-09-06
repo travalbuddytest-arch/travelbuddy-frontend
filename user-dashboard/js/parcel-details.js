@@ -148,6 +148,13 @@
   const qrCodeContainer = document.getElementById('qrCodeContainer');
   const qrExpiryTime = document.getElementById('qrExpiryTime');
 
+  const receiptGenModal = document.getElementById('receiptGenModal');
+  const receiptPreviewModal = document.getElementById('receiptPreviewModal');
+  const receiptPreviewContent = document.getElementById('receiptPreviewContent');
+  const downloadReceiptBtn = document.getElementById('downloadReceiptBtn');
+  const closeReceiptPreviewBtn = document.getElementById('closeReceiptPreviewBtn');
+  const receiptPreviewModalClose = document.getElementById('receiptPreviewModalClose');
+
   // State
   let parcelData = null;
   let currentUserId = null;
@@ -431,6 +438,20 @@
       reviewBtn.style.display = (p.status === 'delivered' && !p.isRated) ? 'inline-flex' : 'none';
     }
 
+    // Chat Lock Enforcement
+    const isCompleted = ['delivered', 'cancelled', 'cancelled_by_sender', 'cancelled_by_traveler', 'cancelled_by_system'].includes(p.status);
+    if (isCompleted) {
+      if (chatCounterpartBtn) {
+        chatCounterpartBtn.disabled = true;
+        chatCounterpartBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Chat Locked';
+        chatCounterpartBtn.title = 'Messaging is unavailable for completed parcels.';
+      }
+      if (counterpartChatBtn) {
+        counterpartChatBtn.disabled = true;
+        counterpartChatBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Chat Locked';
+      }
+    }
+
     // Timeline Rendering
     renderTimeline(p);
 
@@ -662,10 +683,20 @@
       actionBannerDesc.textContent = isSender
         ? 'Parcel delivery verified! Your payment has been securely settled to the traveler.'
         : 'Delivery completed! Your earnings have been credited to your TravelBuddy wallet.';
-      actionBannerButtons.innerHTML = (!p.isRated)
-        ? `<button type="button" class="btn-primary" onclick="window.openReviewModal()"><i class="fa-solid fa-star"></i> Rate Experience</button>`
-        : `<span class="tag tag--delivered"><i class="fa-solid fa-check"></i> Reviewed</span>`;
+
+      let buttonsHtml = '';
+      if (!p.isRated) {
+        buttonsHtml += `<button type="button" class="btn-primary" onclick="window.openReviewModal()"><i class="fa-solid fa-star"></i> Rate Experience</button>`;
+      } else {
+        buttonsHtml += `<span class="tag tag--delivered" style="height:36px; padding:0 14px; display:inline-flex; align-items:center;"><i class="fa-solid fa-check"></i> Reviewed</span>`;
+      }
+      buttonsHtml += `<button type="button" class="btn-ghost" id="genReceiptBtn" style="border-color:var(--primary); color:var(--primary);"><i class="fa-solid fa-file-invoice"></i> Generate Receipt</button>`;
+
+      actionBannerButtons.innerHTML = buttonsHtml;
       actionBanner.classList.remove('hidden');
+
+      const genBtn = document.getElementById('genReceiptBtn');
+      if (genBtn) genBtn.onclick = () => window.generateReceipt();
     } else {
       actionBanner.classList.add('hidden');
     }
@@ -1364,19 +1395,201 @@
   }
 
   // Close modals
-  [cancelModalClose, cancelModalDismiss].forEach(el => el && (el.onclick = () => cancelModal.classList.add('hidden')));
-  if (otpModalClose) otpModalClose.onclick = () => otpModal.classList.add('hidden');
-  if (reviewModalClose) reviewModalClose.onclick = () => reviewModal.classList.add('hidden');
-  if (reportModalClose) reportModalClose.onclick = () => reportModal.classList.add('hidden');
-  if (locationModalClose) locationModalClose.onclick = () => locationModal.classList.add('hidden');
-  if (profileModalClose) profileModalClose.onclick = () => profileModal.classList.add('hidden');
-  if (locationChangeModalClose) locationChangeModalClose.onclick = () => locationChangeModal.classList.add('hidden');
-
-  if (qrModalClose) qrModalClose.onclick = () => {
-    qrModal.classList.add('hidden');
+  const closeModalElements = [
+    cancelModalClose, cancelModalDismiss, otpModalClose,
+    reviewModalClose, reportModalClose, locationModalClose,
+    profileModalClose, locationChangeModalClose, qrModalClose,
+    receiptPreviewModalClose, closeReceiptPreviewBtn
+  ];
+  closeModalElements.forEach(el => el && (el.onclick = () => {
+    [cancelModal, otpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal, receiptPreviewModal].forEach(m => m && m.classList.add('hidden'));
     clearInterval(qrExpiryTimer);
-  };
+  }));
+
   window.generateSecureQr = generateSecureQr;
+
+  // ---------- Receipt Generation & PDF ----------
+
+  window.generateReceipt = async () => {
+    if (!parcelData) return;
+    receiptGenModal.classList.remove('hidden');
+
+    const stages = ['details', 'timeline', 'financials', 'final'];
+    const resetStages = () => stages.forEach(s => {
+      const el = document.getElementById(`stage-${s}`);
+      el.classList.remove('completed');
+      el.querySelector('i').className = 'fa-regular fa-circle';
+    });
+
+    resetStages();
+
+    const runStage = async (id, ms) => {
+      const el = document.getElementById(`stage-${id}`);
+      await new Promise(r => setTimeout(r, ms));
+      el.classList.add('completed');
+      el.querySelector('i').className = 'fa-solid fa-circle-check';
+    };
+
+    try {
+      await runStage('details', 800);
+      await runStage('timeline', 1000);
+      await runStage('financials', 800);
+      await runStage('final', 1200);
+
+      renderReceiptPreview();
+      receiptGenModal.classList.add('hidden');
+      receiptPreviewModal.classList.remove('hidden');
+    } catch (err) {
+      window.showToast('Failed to generate receipt.', 'error');
+      receiptGenModal.classList.add('hidden');
+    }
+  };
+
+  function renderReceiptPreview() {
+    const p = parcelData;
+    const isSender = p.role === 'sender';
+    const counterpart = isSender ? p.traveler : p.sender;
+    const fin = p.financials || {};
+
+    const timelineHtml = [
+      { l: 'Parcel Posted', t: p.createdAt },
+      { l: 'Accepted by Traveler', t: p.acceptedAt },
+      { l: 'Pickup Confirmed', t: p.pickupConfirmedAt },
+      { l: 'In Transit', t: p.inTransitAt },
+      { l: 'Delivered', t: p.deliveredAt }
+    ].filter(x => x.t).map(x => `
+      <div class="receipt-timeline-item">
+        <i class="fa-solid fa-check-circle receipt-timeline-icon"></i>
+        <div>
+          <div style="font-weight:700;">${x.l}</div>
+          <div style="font-size:11px; color:var(--text-faint);">${formatDateTime(x.t)}</div>
+        </div>
+      </div>
+    `).join('');
+
+    receiptPreviewContent.innerHTML = `
+      <div class="receipt-preview-section">
+        <h4>General Information</h4>
+        <div class="receipt-row"><span class="receipt-label">Receipt ID</span><span class="receipt-value">${p.parcelNumber || p.id}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Parcel ID</span><span class="receipt-value">#${p.orderId || p.id}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Status</span><span class="receipt-value" style="color:var(--success);">Delivered</span></div>
+        <div class="receipt-row"><span class="receipt-label">User Role</span><span class="receipt-value">${isSender ? 'Sender' : 'Traveler'}</span></div>
+      </div>
+
+      <div class="receipt-preview-section">
+        <h4>Participants</h4>
+        <div class="receipt-row"><span class="receipt-label">Sender</span><span class="receipt-value">${escapeHTML(p.sender?.displayName || 'TravelBuddy Sender')}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Traveler</span><span class="receipt-value">${escapeHTML(p.traveler?.displayName || 'TravelBuddy Traveler')}</span></div>
+      </div>
+
+      <div class="receipt-preview-section">
+        <h4>Route & Parcel</h4>
+        <div class="receipt-row"><span class="receipt-label">Origin</span><span class="receipt-value">${escapeHTML(p.fromCity)}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Destination</span><span class="receipt-value">${escapeHTML(p.toCity)}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Pickup Point</span><span class="receipt-value">${escapeHTML(p.pickupPoint?.name || 'Arranged in Chat')}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Delivery Point</span><span class="receipt-value">${escapeHTML(p.deliveryPoint?.name || 'Arranged in Chat')}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Weight</span><span class="receipt-value">${p.weight} kg</span></div>
+        <div class="receipt-row"><span class="receipt-label">Description</span><span class="receipt-value">${escapeHTML(p.description)}</span></div>
+      </div>
+
+      <div class="receipt-preview-section">
+        <h4>Financial Details</h4>
+        <div class="receipt-row"><span class="receipt-label">Parcel Amount</span><span class="receipt-value">${formatPaise(fin.grossAmount || p.price)}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Platform Fee</span><span class="receipt-value">${formatPaise(fin.platformFee || p.platformCommission)}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Traveler Earnings</span><span class="receipt-value" style="color:var(--success); font-size:15px;">${formatPaise(fin.netEarnings || p.travelerEarning)}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Payment Status</span><span class="receipt-value">Released</span></div>
+      </div>
+
+      <div class="receipt-preview-section">
+        <h4>Journey Timeline</h4>
+        <div style="margin-top:10px;">${timelineHtml}</div>
+      </div>
+
+      <div style="text-align:center; font-size:10px; color:var(--text-faint); margin-top:20px; border-top:1px dashed var(--border); padding-top:10px;">
+        This is a computer-generated document. No signature is required.
+      </div>
+    `;
+
+    downloadReceiptBtn.onclick = () => downloadReceiptPDF();
+  }
+
+  async function downloadReceiptPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const p = parcelData;
+    const fin = p.financials || {};
+
+    // Branding
+    doc.setFillColor(13, 110, 253);
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('TRAVELBUDDY', 20, 20);
+    doc.setFontSize(10);
+    doc.text('Parcel Delivery Receipt', 20, 30);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    let y = 55;
+
+    const row = (label, val, bold = false) => {
+      doc.setFont('helvetica', 'normal');
+      doc.text(label + ':', 20, y);
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.text(String(val), 190, y, { align: 'right' });
+      y += 10;
+    };
+
+    const section = (title) => {
+      y += 5;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(title.toUpperCase(), 20, y);
+      doc.line(20, y + 2, 190, y + 2);
+      y += 12;
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+    };
+
+    section('General Information');
+    row('Receipt Reference', p.parcelNumber || p.id);
+    row('Parcel ID', '#' + (p.orderId || p.id));
+    row('Status', 'DELIVERED', true);
+    row('User Role', p.role.charAt(0).toUpperCase() + p.role.slice(1));
+
+    section('Participants');
+    row('Sender', p.sender?.displayName || 'TravelBuddy User');
+    row('Traveler', p.traveler?.displayName || 'TravelBuddy User');
+
+    section('Parcel & Route');
+    row('Route', `${escapeHTML(p.fromCity)} to ${escapeHTML(p.toCity)}`);
+    row('Pickup Point', p.pickupPoint?.name || 'Arranged in Chat');
+    row('Delivery Point', p.deliveryPoint?.name || 'Arranged in Chat');
+    row('Weight', p.weight + ' kg');
+
+    section('Financials');
+    row('Parcel Amount', formatPaise(fin.grossAmount || p.price));
+    row('Platform Fee', formatPaise(fin.platformFee || p.platformCommission));
+    row('Traveler Earning', formatPaise(fin.netEarnings || p.travelerEarning), true);
+    row('Settlement Status', 'Released');
+
+    section('Journey Timeline');
+    if (p.createdAt) row('Posted', formatDateTime(p.createdAt));
+    if (p.acceptedAt) row('Accepted', formatDateTime(p.acceptedAt));
+    if (p.pickupConfirmedAt) row('Picked Up', formatDateTime(p.pickupConfirmedAt));
+    if (p.inTransitAt) row('In Transit', formatDateTime(p.inTransitAt));
+    if (p.deliveredAt) row('Delivered', formatDateTime(p.deliveredAt));
+
+    y += 20;
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Generated by TravelBuddy on ' + new Date().toLocaleString(), 105, y, { align: 'center' });
+
+    doc.save(`TravelBuddy-Receipt-${p.parcelNumber || p.id}.pdf`);
+    window.showToast('Receipt downloaded successfully!', 'success');
+  }
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
