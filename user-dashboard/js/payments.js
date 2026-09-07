@@ -305,4 +305,14 @@
   renderTransactions();
   refreshWalletBalance();
   applyRequestedTopupAmount();
+
+  // Real-time Update Listener
+  document.addEventListener('travelbuddy:notification', (e) => {
+    const type = e.detail?.type;
+    if (type === 'wallet_added' || type === 'reward_added') {
+      console.log('[Payments] Wallet update received, refreshing...');
+      refreshWalletBalance();
+      renderTransactions();
+    }
+  });
 })();

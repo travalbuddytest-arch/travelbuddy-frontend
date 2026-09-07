@@ -30,17 +30,17 @@
         <div class="track-container">
           <!-- Standard App Header -->
           <div class="track-app-header">
-            <a href="overview.html" class="back-circle-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="overview.html" class="back-circle-btn" id="trackBackBtn"><i class="fa-solid fa-arrow-left"></i></a>
             <div>
-              <h2>Track Parcel</h2>
-              <p>Track your parcel in real time</p>
+              <h2 id="trackPageTitle">Track Parcel</h2>
+              <p id="trackPageSubtitle">Track your parcel in real time</p>
             </div>
           </div>
 
           <div class="track-alert hidden" id="trackAlert" role="status"></div>
 
-          <!-- Empty State (Matches Screenshot 2) -->
-          <div class="track-empty hidden" id="trackEmpty">
+          <!-- State A: Track Parcel Search (Landing) -->
+          <div class="track-view" id="viewSearch">
             <div class="search-card">
               <div class="search-card-info">
                 <div>
@@ -51,18 +51,19 @@
               </div>
 
               <form class="search-input-group" id="orderTrackForm">
-                <label>ENTER PARCEL ID</label>
+                <label for="orderTrackInput">ENTER PARCEL ID</label>
                 <div class="search-field-wrap">
-                  <input id="orderTrackInput" type="text" placeholder="e.g. TB-20260709-A7K2P" />
+                  <input id="orderTrackInput" type="text" placeholder="e.g. TB-20260709-A7K2P" autocomplete="off" />
                   <button type="button" id="pasteBtn" title="Paste from clipboard"><i class="fa-solid fa-paste"></i></button>
                 </div>
-                <button type="submit" class="btn-track-main">
-                  <i class="fa-solid fa-magnifying-glass"></i> Track Parcel
+                <button type="submit" class="btn-track-main" id="trackSubmitBtn">
+                  <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Track Parcel</span>
+                  <span class="spinner"></span>
                 </button>
               </form>
             </div>
 
-            <div class="empty-illustration">
+            <div class="empty-illustration" id="emptyIllustration">
               <div class="empty-box-icon"><i class="fa-solid fa-box"></i></div>
               <h3>No active parcel journeys yet.</h3>
               <p>Once a traveler accepts your parcel request, you can follow its journey here.</p>
@@ -70,44 +71,50 @@
             </div>
           </div>
 
-          <!-- Active Tracking State (Matches Screenshot 1) -->
-          <div class="track-content hidden" id="trackContent">
+          <!-- State B: Tracking Details -->
+          <div class="track-view hidden" id="viewDetails">
             <!-- Top Summary Card -->
-            <div class="parcel-summary-card" id="parcelSummaryCard">
+            <div class="parcel-summary-card">
               <div class="summary-top">
                 <div class="summary-id-area">
-                  <strong id="summaryOrderId">TB-00000000-00000</strong>
-                  <span id="summaryAcceptedTime">Accepted on ...</span>
+                  <strong id="detOrderId">TB-00000000-00000</strong>
+                  <span id="detAcceptedTime">Accepted on ...</span>
                 </div>
-                <a href="parcel-details.html" id="viewDetailsLink" class="view-details-link">View Details <i class="fa-solid fa-chevron-right"></i></a>
+                <button type="button" class="view-details-link" id="viewFullDetailsBtn">View Details <i class="fa-solid fa-chevron-right"></i></button>
               </div>
               <div class="summary-status-row">
-                <span class="status-pill" id="summaryStatusPill">STATUS</span>
-                <span class="status-label-text" id="summaryStatusLabel">Status Description</span>
+                <span class="status-pill" id="detStatusPill">STATUS</span>
+                <span class="status-label-text" id="detStatusLabel">Status Description</span>
               </div>
             </div>
 
-            <!-- Live Map Section (NEW) -->
-            <div id="liveTrackingMapContainer" class="hidden" style="margin-bottom: 20px;">
-              <div class="section-title"><i class="fa-solid fa-location-dot"></i> Live Tracking</div>
-              <div id="trackingStatsOverlay" style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <!-- Live Map Section -->
+            <div id="liveTrackingMapContainer" class="hidden">
+              <div class="section-title"><i class="fa-solid fa-location-dot"></i> Live Location</div>
+              <div class="tracking-stats-bar">
                  <div class="stat-pill"><i class="fa-solid fa-clock"></i> ETA: <span id="liveEta">Calculating...</span></div>
                  <div class="stat-pill"><i class="fa-solid fa-gauge-high"></i> Speed: <span id="liveSpeed">0 km/h</span></div>
               </div>
-              <div id="liveMap" style="height: 350px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);"></div>
-              <p id="lastSeenText" style="font-size: 11px; color: var(--text-faint); margin-top: 6px; text-align: right;"></p>
+              <div id="liveMap" class="leaflet-map-v2"></div>
+              <p id="lastSeenText" class="last-seen-label"></p>
             </div>
 
             <!-- Timeline -->
             <div class="timeline-section">
-              <div class="section-title"><i class="fa-solid fa-chart-line"></i> Journey Timeline</div>
-              <div class="journey-timeline-v2" id="journeyTimeline"></div>
+              <div class="section-title"><i class="fa-solid fa-timeline"></i> Journey Timeline</div>
+              <div class="journey-timeline-v3" id="journeyTimeline">
+                <!-- Timeline steps injected via JS -->
+              </div>
+            </div>
+
+            <div class="track-another-area">
+                <button type="button" class="btn-ghost" id="trackAnotherBtn"><i class="fa-solid fa-rotate-left"></i> Track Another Parcel</button>
             </div>
           </div>
 
-          <div id="trackLoading" class="track-loading-v2">
+          <div id="trackLoading" class="track-loading-v2 hidden">
             <i class="fa-solid fa-circle-notch fa-spin"></i>
-            <p>Loading journey data...</p>
+            <p>Locating your parcel...</p>
           </div>
         </div>
 

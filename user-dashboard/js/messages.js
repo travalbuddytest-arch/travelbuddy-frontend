@@ -11,6 +11,14 @@
   const chatEmpty = document.getElementById('chatEmpty');
   const chatActive = document.getElementById('chatActive');
   const chatMessages = document.getElementById('chatMessages');
+
+  chatMessages?.addEventListener('scroll', () => {
+    const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 50;
+    if (isAtBottom) {
+      document.getElementById('newMessagesIndicator')?.remove();
+    }
+  });
+
   const chatForm = document.getElementById('chatForm');
   const chatInput = document.getElementById('chatInput');
   const navMsgBadge = document.getElementById('navMsgBadge');
@@ -416,7 +424,9 @@
     });
 
     chatMessages.innerHTML = html;
+    // Scroll to bottom immediately and also after a short delay for safety
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 50);
   }
 
   function showNewMessagesIndicator() {
@@ -425,12 +435,12 @@
     indicator.type = 'button';
     indicator.id = 'newMessagesIndicator';
     indicator.className = 'new-messages-indicator';
-    indicator.textContent = 'New messages';
+    indicator.innerHTML = '<i class="fa-solid fa-arrow-down"></i> New messages';
     indicator.addEventListener('click', () => {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
       indicator.remove();
     });
-    chatMessages.appendChild(indicator);
+    chatActive.appendChild(indicator); // Append to chatActive, not chatMessages so it stays fixed
   }
 
   function appendMessage(message, conversationId) {
@@ -442,7 +452,7 @@
     messagesByConversation.set(conversationId, list);
 
     if (String(conversationId) === String(activeConversationId)) {
-      const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 120;
+      const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 150;
 
       const lastMsgDate = list.length > 1 ? new Date(list[list.length - 2].createdAt).toDateString() : null;
       const newMsgDate = new Date(message.createdAt).toDateString();
@@ -453,7 +463,12 @@
 
       chatMessages.insertAdjacentHTML('beforeend', renderMessage(message));
 
-      if (isNearBottom || message.fromMe) {
+      if (message.fromMe) {
+        // Immediate scroll for own messages
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        document.getElementById('newMessagesIndicator')?.remove();
+        return true;
+      } else if (isNearBottom) {
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return true;
       } else {

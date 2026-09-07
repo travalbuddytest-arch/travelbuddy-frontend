@@ -1516,13 +1516,37 @@ function initBellDropdown() {
 
 function initAdminLiveSocket() {
   const opsBadge = document.getElementById('opsSidebarBadge');
+  const liveIndicator = document.querySelector('.tools .live');
   if (typeof io === 'undefined') return;
-  const token = localStorage.getItem('admin_token');
+  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
   if (!token) return;
 
   const liveSocket = io(`${APP_CONFIG.SOCKET_URL}/admin`, {
     auth: { token },
     transports: ['websocket', 'polling'],
+  });
+
+  const updateIndicator = (status) => {
+    if (!liveIndicator) return;
+    const dot = liveIndicator.querySelector('i');
+    if (status === 'connected') {
+        liveIndicator.innerHTML = '<i></i>System Live';
+        liveIndicator.classList.remove('offline', 'connecting');
+    } else if (status === 'connecting') {
+        liveIndicator.innerHTML = '<i></i>Connecting...';
+        liveIndicator.classList.add('connecting');
+    } else {
+        liveIndicator.innerHTML = '<i></i>Offline';
+        liveIndicator.classList.add('offline');
+    }
+  };
+
+  liveSocket.on('connect', () => {
+    updateIndicator('connected');
+    if (opsBadge) {
+        // Initial fetch of stats might be needed if they changed while offline
+        liveSocket.emit('admin:refresh');
+    }
   });
 
   liveSocket.on('admin:stats', (stats) => {
@@ -1537,8 +1561,15 @@ function initAdminLiveSocket() {
   });
 
   liveSocket.on('connect_error', () => {
+    updateIndicator('offline');
     if (opsBadge) opsBadge.textContent = '—';
   });
+
+  liveSocket.on('reconnecting', () => {
+    updateIndicator('connecting');
+  });
+
+  window.AdminSocket = liveSocket; // Global access for pages
 }
 
 function hydrateAdminChip() {

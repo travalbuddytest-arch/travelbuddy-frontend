@@ -271,7 +271,8 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
   margin-left: var(--sidebar-current-w);
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   transition: margin-left 280ms cubic-bezier(.2,.8,.2,1);
 }
 
@@ -614,6 +615,7 @@ textarea:disabled { cursor: not-allowed; opacity: .62; }
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .view > :last-child,
@@ -1567,4 +1569,64 @@ input:focus-visible {
 
 @media (min-width: 480px) {
   .tb-call-popup-btn span { display: inline; }
+}
+
+/* ============================================================
+   LIVE CONNECTION STATUS (Centralized)
+============================================================ */
+.tb-live-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+.tb-live-status.fade-out {
+    opacity: 0.4;
+    transform: scale(0.95);
+}
+
+.tb-live-status:hover {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.tb-live-status .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #64748b;
+}
+
+.tb-live-status .dot.connected {
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34,197,94,0.6);
+}
+
+.tb-live-status .dot.connecting {
+    background: #f59e0b;
+    animation: tb-pulse 1.5s infinite;
+}
+
+.tb-live-status .dot.disconnected {
+    background: #ef4444;
+}
+
+@keyframes tb-pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
 }

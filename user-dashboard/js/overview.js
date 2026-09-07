@@ -218,6 +218,11 @@
     }
   });
 
+  document.addEventListener('travelbuddy:parcel-status', (e) => {
+    console.log('[Overview] Parcel status update received, refreshing dashboard...');
+    loadDashboard();
+  });
+
   function animateCount(el, target, isCurrency, prefix) {
     if (!el) return;
     const duration = 900;

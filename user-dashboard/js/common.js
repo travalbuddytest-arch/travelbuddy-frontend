@@ -795,17 +795,6 @@
   function connectNotificationSocket() {
     if (!window.io) return;
 
-    // Shared connection: any page can reuse window.TravelBuddy.socket instead
-    // of opening a second Socket.IO connection (messages.js keeps its own,
-    // dedicated one for conversation rooms/calls).
-    //
-    // Same fix as messages.js's socket: withCredentials-only cookie auth is
-    // unreliable (older/mismatched session cookie, cross-origin cookie
-    // settings, etc.), which made the handshake get rejected with "Login
-    // required" on every page except the one already carrying a working
-    // socket - so the bell badge and toast popup silently never arrived
-    // anywhere except messages/notifications. Sending the same Bearer token
-    // the REST calls use keeps the socket reliably authenticated everywhere.
     const token = getAuthToken();
     const socket = window.io(APP_CONFIG.SOCKET_URL, {
       withCredentials: true,
@@ -815,20 +804,60 @@
       transports: ['websocket', 'polling'],
     });
 
+    const updateLiveStatus = (status) => {
+        const existing = document.getElementById('tbLiveStatus');
+        if (!existing) {
+            const el = document.createElement('div');
+            el.id = 'tbLiveStatus';
+            el.className = 'tb-live-status';
+            el.innerHTML = '<span class="dot"></span> <span class="text">Live</span>';
+            document.body.appendChild(el);
+        }
+        const el = document.getElementById('tbLiveStatus');
+        const dot = el.querySelector('.dot');
+        const text = el.querySelector('.text');
+
+        if (status === 'connected') {
+            dot.className = 'dot connected';
+            text.textContent = 'Live';
+            setTimeout(() => el.classList.add('fade-out'), 3000);
+        } else if (status === 'connecting') {
+            dot.className = 'dot connecting';
+            text.textContent = 'Connecting...';
+            el.classList.remove('fade-out');
+        } else {
+            dot.className = 'dot disconnected';
+            text.textContent = 'Offline';
+            el.classList.remove('fade-out');
+        }
+    };
+
     socket.on('connect', () => {
-      // Catch anything that arrived while this page was loading/reconnecting.
       refreshNotifBadge();
       refreshMessageBadge();
+      updateLiveStatus('connected');
     });
 
     socket.on('connect_error', (err) => {
       console.error('Notification socket connection failed:', err.message || err);
+      updateLiveStatus('disconnected');
+    });
+
+    socket.on('reconnecting', () => {
+      updateLiveStatus('connecting');
     });
 
     socket.on('notification:new', ({ notification, unreadCount }) => {
       setNotifBadge(Number(unreadCount || 0));
       showNotificationPopup(notification);
       document.dispatchEvent(new CustomEvent('travelbuddy:notification', { detail: notification }));
+    });
+
+    socket.on('parcel_status_change', (data) => {
+      console.log('[Live] Parcel status change:', data);
+      document.dispatchEvent(new CustomEvent('travelbuddy:parcel-status', { detail: data }));
+      // Global toast for status change if it's relevant to the current user
+      showToast(`Parcel #${data.parcelId.slice(-6)}: ${data.status.replace(/_/g, ' ')}`, 'info');
     });
 
     socket.on('incoming-call', (payload) => {
