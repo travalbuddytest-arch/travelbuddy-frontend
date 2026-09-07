@@ -9,6 +9,7 @@
   min-height: 0;
   height: 100%;
   overflow: hidden;
+  padding-bottom: 0; /* Constraints in the dashboard */
 }
 
 .messages-shell {
@@ -22,6 +23,7 @@
   flex: 1;
   min-height: 0;
   height: 100%;
+  max-height: 100%;
 }
 
 /* Ensure global content area doesn't scroll when messages are active */
@@ -33,6 +35,7 @@ body:has(#view-messages.active) .content {
 .thread-panel {
   border-right: 1px solid var(--border);
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: var(--bg-faint);
@@ -156,7 +159,14 @@ body:has(#view-messages.active) .content {
 .thread-status.success { color: var(--success); }
 
 /* ---------- Chat Panel ---------- */
-.chat-panel { display: flex; flex-direction: column; min-width: 0; background: #f8fafc; position: relative; }
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: #f8fafc;
+  position: relative;
+}
 .chat-active { flex: 1; display: flex; flex-direction: column; min-height: 0; position: relative; }
 .chat-header {
   padding: 14px 20px;
@@ -365,7 +375,22 @@ body:has(#view-messages.active) .content {
   background: var(--bg-faint);
 }
 .chat-input-row input:focus { border-color: var(--primary); background: #fff; }
-.chat-input-row input:disabled { background: #f8fafc; cursor: not-allowed; }
+.chat-input-row.is-closed { background: #f8fafc; opacity: 0.8; }
+.chat-input-row.is-closed input { background: #fff; }
+
+.chat-closed-hint {
+  padding: 12px 20px;
+  background: #fefce8;
+  border-top: 1px solid #fef08a;
+  font-size: 12.5px;
+  color: #854d0e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slide-up 0.25s ease-out;
+}
+
+@keyframes slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ---------- Modals ---------- */
 .rating-stars { display: flex; justify-content: center; gap: 8px; font-size: 28px; color: #ffc107; cursor: pointer; }

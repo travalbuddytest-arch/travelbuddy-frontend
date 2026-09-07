@@ -22,11 +22,71 @@
       box-shadow: var(--shadow-card);
       max-width: 800px;
       margin: 0 auto 30px;
+      width: 100%;
+      box-sizing: border-box;
     }
     @media (max-width: 640px) {
-      .wizard-card { padding: 20px 16px; }
-      .wizard-stepper { overflow-x: auto; justify-content: flex-start; gap: 24px; padding-bottom: 8px; }
+      .wizard-card {
+        padding: 20px 16px;
+        margin: 0 0 20px;
+        border-radius: var(--radius-md);
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .wizard-stepper {
+        display: flex;
+        justify-content: space-between;
+        gap: 4px;
+        overflow-x: visible;
+        padding-bottom: 0;
+        margin-bottom: 24px;
+      }
       .wizard-stepper::before { display: none; }
+      .wizard-step {
+        flex: 1;
+        min-width: 0;
+      }
+      .wizard-step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+      .wizard-step-title {
+        font-size: 9px;
+        line-height: 1.1;
+        text-align: center;
+        width: 100%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .wallet-status-box > div {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 4px;
+      }
+      .wallet-status-box strong {
+        font-size: 14px;
+      }
+      #walletShortageWarning {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 12px;
+      }
+      #walletShortageWarning a {
+        width: 100%;
+        text-align: center;
+        margin-top: 4px;
+      }
+      #routeMatchStats > div {
+        flex-wrap: wrap;
+        gap: 12px !important;
+      }
+      #routeMatchStats > div > div {
+        flex: 1 1 100px;
+      }
     }
     .wizard-step-pane {
       display: none;
@@ -39,10 +99,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
       margin-top: 28px;
       padding-top: 20px;
       border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    @media (max-width: 480px) {
+      .wizard-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .wizard-actions > button,
+      .wizard-actions > a,
+      .wizard-actions .btn-primary,
+      .wizard-actions .btn-ghost {
+        width: 100%;
+        margin: 0;
+        justify-content: center;
+      }
+      /* If only one button exists (Step 1), ensure it's full width and not pushed by empty div */
+      .wizard-actions div:first-child:empty { display: none; }
     }
     .summary-grid {
       display: grid;

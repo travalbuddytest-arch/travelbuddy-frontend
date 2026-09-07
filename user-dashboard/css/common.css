@@ -1396,7 +1396,7 @@ input:focus-visible {
     --section-gap: 18px;
     --grid-gap: 16px;
   }
-  .content { padding: var(--content-pt) var(--container-px) var(--content-pb); }
+  .content { padding: var(--content-pt) var(--container-px) var(--content-pb); width: 100%; max-width: 100%; }
   .topbar { width:100%; min-width:0; padding:12px var(--container-px); gap:8px; overflow:visible; }
   .page-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .topbar-actions { min-width:0; flex-shrink:1; gap:6px; }
@@ -1406,7 +1406,7 @@ input:focus-visible {
   .search-row { flex-direction: column; align-items: stretch; }
   .search-row .field,
   .btn-primary--inline,
-  .btn-ghost { width: 100%; min-width: 0; }
+  .btn-ghost { width: 100%; min-width: 0; flex-shrink: 1; }
   .panel-head--row { align-items: flex-start; flex-wrap: wrap; }
   .link-btn { margin-left: 0; }
   .modal-overlay { padding: 12px; }

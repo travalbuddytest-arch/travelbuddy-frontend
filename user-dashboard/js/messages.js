@@ -80,6 +80,62 @@
   let dynamicIceServers = null;
   const failedMediaUrls = new Set();
 
+  // Pagination state
+  let currentPages = new Map(); // conversationId -> lastLoadedPage
+  let loadingOlder = false;
+  let hasMoreMessages = new Map(); // conversationId -> boolean
+
+  chatMessages?.addEventListener('scroll', () => {
+    const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 50;
+    if (isAtBottom) {
+      document.getElementById('newMessagesIndicator')?.remove();
+    }
+
+    // Load older messages when scrolling near top
+    if (chatMessages.scrollTop < 100 && !loadingOlder && activeConversationId && hasMoreMessages.get(activeConversationId) !== false) {
+      loadOlderMessages(activeConversationId);
+    }
+  });
+
+  async function loadOlderMessages(conversationId) {
+    if (loadingOlder) return;
+    loadingOlder = true;
+
+    const nextPage = (currentPages.get(conversationId) || 1) + 1;
+    const oldScrollHeight = chatMessages.scrollHeight;
+
+    try {
+      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages?page=${nextPage}&limit=30`, {
+        headers: authHeaders(),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not load older messages.');
+
+      const newMessages = data.messages || [];
+      if (newMessages.length === 0) {
+        hasMoreMessages.set(conversationId, false);
+      } else {
+        const existing = messagesByConversation.get(conversationId) || [];
+        // Prepend new messages, avoiding duplicates
+        const combined = [...newMessages, ...existing].filter((msg, index, self) =>
+          index === self.findIndex((m) => String(m.id) === String(msg.id))
+        );
+        messagesByConversation.set(conversationId, combined);
+        currentPages.set(conversationId, nextPage);
+
+        renderMessages(false); // Don't auto-scroll to bottom
+
+        // Adjust scroll to maintain position
+        const newScrollHeight = chatMessages.scrollHeight;
+        chatMessages.scrollTop = newScrollHeight - oldScrollHeight;
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      loadingOlder = false;
+    }
+  }
+
   if (pendingAutoCall || pendingAcceptCallId) {
     const cleanUrl = new URL(window.location.href);
     cleanUrl.searchParams.delete('call');
@@ -313,8 +369,17 @@
 
     if (isTerminal) {
       chatInput.placeholder = 'Conversation is closed.';
+      chatForm.classList.add('is-closed');
+      const closedHint = document.createElement('div');
+      closedHint.className = 'chat-closed-hint';
+      closedHint.innerHTML = `<i class="fa-solid fa-lock"></i> This conversation is closed for new messages. You can still view your previous history.`;
+      const existingHint = chatActive.querySelector('.chat-closed-hint');
+      if (existingHint) existingHint.remove();
+      chatActive.insertBefore(closedHint, chatForm);
     } else {
       chatInput.placeholder = 'Type a message...';
+      chatForm.classList.remove('is-closed');
+      chatActive.querySelector('.chat-closed-hint')?.remove();
     }
 
     // Bind actions
@@ -404,7 +469,7 @@
       </div>`;
   }
 
-  function renderMessages() {
+  function renderMessages(shouldScrollToBottom = true) {
     const messages = messagesByConversation.get(activeConversationId) || [];
     if (!messages.length) {
       chatMessages.innerHTML = '<div class="messages-empty-state">No messages yet. Start the conversation!</div>';
@@ -424,9 +489,12 @@
     });
 
     chatMessages.innerHTML = html;
-    // Scroll to bottom immediately and also after a short delay for safety
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 50);
+
+    if (shouldScrollToBottom) {
+      // Scroll to bottom immediately and also after a short delay for safety
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 50);
+    }
   }
 
   function showNewMessagesIndicator() {
@@ -489,7 +557,10 @@
   }, true);
 
   async function loadMessages(conversationId) {
-    const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages`, {
+    currentPages.set(conversationId, 1);
+    hasMoreMessages.set(conversationId, true);
+
+    const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages?page=1&limit=50`, {
       headers: authHeaders(),
     });
     const data = await res.json();
