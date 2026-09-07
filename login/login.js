@@ -54,10 +54,6 @@
       remember: rememberInput.checked,
     };
 
-    if (rememberInput.checked) {
-      state.password = passwordInput.value;
-    }
-
     sessionStorage.setItem(LOGIN_STATE_KEY, JSON.stringify(state));
   }
 
@@ -72,9 +68,6 @@
       }
       if (typeof state.remember === 'boolean') {
         rememberInput.checked = state.remember;
-      }
-      if (state.remember && typeof state.password === 'string') {
-        passwordInput.value = state.password;
       }
     } catch (err) {
       sessionStorage.removeItem(LOGIN_STATE_KEY);
@@ -290,12 +283,16 @@
             localStorage.setItem('travelBuddyAdminToken', data.token);
           }
           if (data.admin) {
-            localStorage.setItem('admin_user', JSON.stringify(data.admin));
-            localStorage.setItem('travelBuddyAdmin', JSON.stringify(data.admin));
+            const adminObj = { ...data.admin, role: 'admin' };
+            localStorage.setItem('admin_user', JSON.stringify(adminObj));
+            localStorage.setItem('travelBuddyAdmin', JSON.stringify(adminObj));
           }
         } else {
           if (data.token) localStorage.setItem('travelBuddyToken', data.token);
-          if (data.user) localStorage.setItem('travelBuddyUser', JSON.stringify(data.user));
+          if (data.user) {
+            const userObj = { ...data.user, role: data.role || 'user' };
+            localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
+          }
         }
         clearLoginState();
       } catch (storageErr) {
@@ -332,7 +329,8 @@
       }
       try {
         if (data.token) localStorage.setItem('travelBuddyToken', data.token);
-        localStorage.setItem('travelBuddyUser', JSON.stringify(data.user));
+        const userObj = { ...data.user, role: data.role || 'user' };
+        localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
         clearLoginState();
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
@@ -527,7 +525,8 @@
 
       try {
         if (data.token) localStorage.setItem('travelBuddyToken', data.token);
-        localStorage.setItem('travelBuddyUser', JSON.stringify(data.user));
+        const userObj = { ...data.user, role: data.role || 'user' };
+        localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
         clearLoginState();
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);

@@ -40,6 +40,16 @@
         }
     }
 
+    function escHtml(s) {
+        if (!s) return '';
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function renderReports(reports) {
         if (!reports || reports.length === 0) {
             reportsList.innerHTML = '<tr><td colspan="7">No reports found.</td></tr>';
@@ -48,13 +58,13 @@
         reportsList.innerHTML = reports.map(r => `
             <tr>
                 <td>${new Date(r.createdAt).toLocaleDateString()}</td>
-                <td>${r.fromUser?.firstName} ${r.fromUser?.lastName}</td>
-                <td>${r.targetType}</td>
-                <td>${r.targetParcelId?.orderId || r.targetUserId?.email || 'N/A'}</td>
-                <td>${r.reason}</td>
-                <td><span class="status-tag ${r.status}">${r.status}</span></td>
+                <td>${escHtml(r.fromUser?.firstName)} ${escHtml(r.fromUser?.lastName)}</td>
+                <td>${escHtml(r.targetType)}</td>
+                <td>${escHtml(r.targetParcelId?.orderId || r.targetUserId?.email || 'N/A')}</td>
+                <td>${escHtml(r.reason)}</td>
+                <td><span class="status-tag ${escHtml(r.status)}">${escHtml(r.status)}</span></td>
                 <td>
-                    <button onclick="updateReportStatus('${r._id}', 'resolved')">Resolve</button>
+                    <button onclick="updateReportStatus('${escHtml(r._id)}', 'resolved')">Resolve</button>
                 </td>
             </tr>
         `).join('');
@@ -112,14 +122,14 @@
         ticketsList.innerHTML = tickets.map(t => `
             <tr>
                 <td>${new Date(t.createdAt).toLocaleDateString()}</td>
-                <td>${t.user?.firstName} ${t.user?.lastName}</td>
-                <td>${t.category}</td>
-                <td>${t.subject}</td>
-                <td><span class="status-tag ${t.status}">${t.status}</span></td>
-                <td>${t.priority} ${t.callRequested ? '📞' : ''}</td>
+                <td>${escHtml(t.user?.firstName)} ${escHtml(t.user?.lastName)}</td>
+                <td>${escHtml(t.category)}</td>
+                <td>${escHtml(t.subject)}</td>
+                <td><span class="status-tag ${escHtml(t.status)}">${escHtml(t.status)}</span></td>
+                <td>${escHtml(t.priority)} ${t.callRequested ? '📞' : ''}</td>
                 <td>
-                    <button onclick="openSupportChat('${t._id}', '${t.subject}')">Chat</button>
-                    <button onclick="updateTicketStatus('${t._id}', 'resolved')">Close</button>
+                    <button onclick="openSupportChat('${escHtml(t._id)}', '${escHtml(t.subject)}')">Chat</button>
+                    <button onclick="updateTicketStatus('${escHtml(t._id)}', 'resolved')">Close</button>
                 </td>
             </tr>
         `).join('');
@@ -157,8 +167,8 @@
         div.innerHTML = `
             <div class="msg-content">
                 ${m.messageType === 'call_request' ? '<strong>📞 Call Requested</strong>' : ''}
-                ${m.content || m.message}
-                ${m.attachment ? `<br><a href="${m.attachment}" target="_blank">📎 Attachment</a>` : ''}
+                ${escHtml(m.content || m.message)}
+                ${m.attachment ? `<br><a href="${escHtml(m.attachment)}" target="_blank">📎 Attachment</a>` : ''}
             </div>
             <div class="msg-time">${new Date(m.createdAt).toLocaleTimeString()}</div>
         `;

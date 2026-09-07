@@ -594,7 +594,12 @@ async function renderSearchResults(q = '') {
 
 function escHtml(s) {
   if (!s) return '';
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function showToast(msg) { toastBar.textContent = msg; toastBar.classList.add('show'); setTimeout(() => toastBar.classList.remove('show'), 2000); }
@@ -649,7 +654,7 @@ function renderUserDetail(data) {
           <div class="dp-meta-item"><span>Balance</span><strong>${fmtMoney(u.walletBalance || 0)}</strong></div>
           <div class="dp-meta-item"><span>Rating</span><strong>${(u.rating || 0).toFixed(1)}</strong></div>
           <div class="dp-meta-item"><span>Risk</span><strong class="${u.riskScore > 40 ? 'danger-text' : u.riskScore > 15 ? 'warning-text' : 'success-text'}">${u.riskScore || 0}</strong></div>
-          <div class="dp-meta-item"><span>Status</span><span class="status-tag ${u.status}">${escHtml(u.status)}</span></div>
+          <div class="dp-meta-item"><span>Status</span><span class="status-tag ${escHtml(u.status)}">${escHtml(u.status)}</span></div>
         </div>
       </div>
     </div>
@@ -687,7 +692,7 @@ function renderUserDetail(data) {
           <div class="drawer-section">
             <h3 class="danger-text">Risk Flags</h3>
             <div class="risk-flags">
-              ${u.riskFlags.map(f => `<span class="status-tag danger">${f.replace(/_/g, ' ')}</span>`).join('')}
+              ${u.riskFlags.map(f => `<span class="status-tag danger">${escHtml(f.replace(/_/g, ' '))}</span>`).join('')}
             </div>
           </div>
         ` : ''}
@@ -721,7 +726,7 @@ function renderUserDetail(data) {
                   <tr>
                     <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
                     <td>${escHtml(p.fromCity)} → ${escHtml(p.toCity)}</td>
-                    <td><span class="status-tag ${p.status}">${p.status}</span></td>
+                    <td><span class="status-tag ${escHtml(p.status)}">${escHtml(p.status)}</span></td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -738,7 +743,7 @@ function renderUserDetail(data) {
                   <tr>
                     <td class="cell-mono">${escHtml(p.orderId || '—')}</td>
                     <td>${escHtml(p.fromCity)} → ${escHtml(p.toCity)}</td>
-                    <td><span class="status-tag ${p.status}">${p.status}</span></td>
+                    <td><span class="status-tag ${escHtml(p.status)}">${escHtml(p.status)}</span></td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -759,7 +764,7 @@ function renderUserDetail(data) {
                   <tr>
                     <td>${escHtml(t.fromCity)} → ${escHtml(t.toCity)}</td>
                     <td>${new Date(t.travelDate).toLocaleDateString()}</td>
-                    <td><span class="status-tag ${t.status}">${t.status}</span></td>
+                    <td><span class="status-tag ${escHtml(t.status)}">${escHtml(t.status)}</span></td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -823,7 +828,7 @@ function renderUserDetail(data) {
                 <div class="report-item" style="padding:10px;border:1px solid var(--l);border-radius:8px;margin-bottom:8px;">
                   <b style="font-size:10px;display:block;">${escHtml(r.reason)}</b>
                   <p style="font-size:9px;color:var(--m);margin-top:4px;">${escHtml(r.description)}</p>
-                  <span class="status-tag ${r.status}" style="margin-top:5px;">${r.status}</span>
+                  <span class="status-tag ${escHtml(r.status)}" style="margin-top:5px;">${escHtml(r.status)}</span>
                 </div>
               `).join('')}
              </div>

@@ -47,15 +47,29 @@
     function hasSession() {
         try {
             if (guardType === 'admin') {
-                return Boolean(
-                    localStorage.getItem('admin_token') ||
-                    localStorage.getItem('travelBuddyAdminToken')
-                );
+                var hasToken = Boolean(localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken'));
+                var adminData = localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
+                if (!hasToken || !adminData) return false;
+
+                try {
+                    var admin = JSON.parse(adminData);
+                    return admin && admin.role === 'admin';
+                } catch (e) {
+                    return false;
+                }
             }
-            return Boolean(localStorage.getItem('travelBuddyToken'));
+
+            var hasUserToken = Boolean(localStorage.getItem('travelBuddyToken'));
+            var userData = localStorage.getItem('travelBuddyUser');
+            if (!hasUserToken || !userData) return false;
+
+            try {
+                var user = JSON.parse(userData);
+                return user && (user.role === 'user' || user.role === 'traveler' || user.role === 'sender');
+            } catch (e) {
+                return false;
+            }
         } catch (e) {
-            // Storage blocked (private mode edge-cases, etc.) — treat as
-            // logged out rather than risk exposing a protected page.
             return false;
         }
     }

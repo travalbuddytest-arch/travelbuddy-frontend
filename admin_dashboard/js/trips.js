@@ -89,13 +89,13 @@ async function loadTrips() {
         </td>
         <td>
           <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-weight:600">${capitalize(t.fromCity)}</span>
+            <span style="font-weight:600">${escHtml(capitalize(t.fromCity))}</span>
             <i class="fa-solid fa-arrow-right" style="font-size:8px;color:#98a2b3"></i>
-            <span style="font-weight:600">${capitalize(t.toCity)}</span>
+            <span style="font-weight:600">${escHtml(capitalize(t.toCity))}</span>
           </div>
         </td>
-        <td><span class="cell-sub">${t.capacityKg || 0} kg</span></td>
-        <td><span class="status-tag ${statusClass}">${t.status}</span></td>
+        <td><span class="cell-sub">${escHtml(String(t.capacityKg || 0))} kg</span></td>
+        <td><span class="status-tag ${escHtml(statusClass)}">${escHtml(t.status)}</span></td>
         <td>
           ${t.status === 'active' ?
             `<button class="wl-btn wl-btn-sm red" data-cancel-id="${t._id}">Cancel</button>` : '—'}
@@ -137,6 +137,14 @@ async function loadTrips() {
 }
 
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escHtml(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 initTrips();

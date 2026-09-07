@@ -18,7 +18,7 @@ let state = {
 /* ── Helpers ───────────────────────────── */
 const $ = (s, p) => (p || document).querySelector(s);
 const $$ = (s, p) => [...(p || document).querySelectorAll(s)];
-const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
+const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
 const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 const fmtDate = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDate(d) : (d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—');
 const fmtDateTime = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(d) : (d ? new Date(d).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—');
