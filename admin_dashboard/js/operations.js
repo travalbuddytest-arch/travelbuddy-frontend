@@ -18,7 +18,8 @@ const $ = (id) => document.getElementById(id);
 
 // ── Initialization ───────────────────────────
 function initMap() {
-    if (map) return;
+    const mapEl = $('opsLeafletMap');
+    if (!mapEl || map) return;
 
     // Initialize Leaflet map focused on India
     map = L.map('opsLeafletMap', {
@@ -55,15 +56,17 @@ async function fetchActiveParcels() {
             parcelsMap.clear();
             const bounds = [];
             data.journeys.forEach(j => {
+                parcelsMap.set(String(j._id || j.id), j);
                 if (j.fromCoords?.lat) {
-                    parcelsMap.set(String(j._id || j.id), j);
                     bounds.push([j.fromCoords.lat, j.fromCoords.lng]);
-                    if (j.toCoords?.lat) bounds.push([j.toCoords.lat, j.toCoords.lng]);
+                }
+                if (j.toCoords?.lat) {
+                    bounds.push([j.toCoords.lat, j.toCoords.lng]);
                 }
             });
             renderAll();
             if (bounds.length > 0) {
-                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 10 });
             }
         }
     } catch (err) {
@@ -82,8 +85,16 @@ function connectSocket() {
     });
 
     socket.on('connect', () => {
+        console.log('[Live] Admin socket connected');
         $('opsLiveDot').className = 'ops-dot live';
         $('opsLiveText').textContent = 'LIVE';
+        lastUpdateTimestamp = Date.now();
+        updateTimeUI();
+    });
+
+    socket.on('connect_error', () => {
+        $('opsLiveDot').className = 'ops-dot';
+        $('opsLiveText').textContent = 'CONNECTING...';
     });
 
     socket.on('disconnect', () => {
@@ -136,9 +147,9 @@ function renderKPIs() {
     const stats = {
         active: parcels.length,
         transit: parcels.filter(p => p.status === 'in_transit').length,
-        assigned: parcels.filter(p => p.status === 'accepted').length,
-        pickedUp: parcels.filter(p => p.status === 'pickup_confirmed').length,
-        near: parcels.filter(p => p.isNearDestination).length, // Placeholder logic
+        assigned: parcels.filter(p => p.traveler?.id).length,
+        pickedUp: parcels.filter(p => ['pickup_confirmed', 'in_transit', 'delivery_point_pending', 'delivery_point_selected'].includes(p.status)).length,
+        near: parcels.filter(p => p.status === 'delivery_point_selected').length,
         urgent: parcels.filter(p => p.status === 'disputed' || p.isDelayed).length
     };
 
@@ -171,8 +182,9 @@ function getStatusClass(status) {
     if (status === 'in_transit') return 'status-transit';
     if (status === 'accepted') return 'status-assigned';
     if (status === 'pending') return 'status-pending';
+    if (status === 'pickup_confirmed') return 'status-assigned';
     if (status === 'disputed') return 'status-attention';
-    return '';
+    return 'status-pending';
 }
 
 // ── Map Operations ────────────────────────────
@@ -196,12 +208,17 @@ function updateParcelOnMap(id) {
 
     const statusColor = getStatusColor(p.status);
 
-    // Traveler / Current Location Marker
     const loc = p.currentLocation || p.fromCoords;
+    if (!loc || !loc.lat) return; // Still no coordinates, skip marker
+
+    const iconHtml = p.status === 'pending'
+        ? `<i class="fa-solid fa-magnifying-glass" style="color: ${statusColor}; font-size: 16px; text-shadow: 0 0 8px rgba(0,0,0,0.3);"></i>`
+        : `<i class="fa-solid fa-truck-fast" style="color: ${statusColor}; font-size: 20px; text-shadow: 0 0 10px rgba(0,0,0,0.5);"></i>`;
+
     const marker = L.marker([loc.lat, loc.lng], {
         icon: L.divIcon({
             className: 'ops-marker-traveler',
-            html: `<i class="fa-solid fa-truck-fast" style="color: ${statusColor}; font-size: 20px; text-shadow: 0 0 10px rgba(0,0,0,0.5);"></i>`,
+            html: iconHtml,
             iconSize: [24, 24],
             iconAnchor: [12, 12]
         })
@@ -266,6 +283,7 @@ function getStatusColor(status) {
         case 'accepted': return '#10b981';
         case 'pickup_confirmed': return '#f59e0b';
         case 'disputed': return '#ef4444';
+        case 'pending': return '#fbbf24';
         default: return '#94a3b8';
     }
 }

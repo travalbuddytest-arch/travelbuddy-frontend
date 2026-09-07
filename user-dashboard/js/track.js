@@ -301,12 +301,15 @@
     }
 
     const db = firebase.firestore();
-    firestoreUnsubscribe = db.collection('traveler_locations').doc(travelerId)
+    firestoreUnsubscribe = db.collection('locations').doc(travelerId)
       .onSnapshot((doc) => {
         if (doc.exists) {
           const data = doc.data();
-          if (data.latitude && data.longitude) {
-            updateMapLocation(data.latitude, data.longitude, data);
+          // Android app uses lat/lng instead of latitude/longitude
+          const lat = data.lat || data.latitude;
+          const lng = data.lng || data.longitude;
+          if (lat && lng) {
+            updateMapLocation(lat, lng, data);
           }
         }
       }, (err) => {

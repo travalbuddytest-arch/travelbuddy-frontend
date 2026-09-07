@@ -3,7 +3,7 @@
 .ops-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 76px); /* Matches topbar height */
     background: #0f172a;
     color: #f8fafc;
 }
@@ -116,17 +116,23 @@
     grid-template-columns: 1fr 320px;
     flex: 1;
     overflow: hidden;
+    min-height: 0;
 }
 
 .ops-map-wrapper {
     position: relative;
     background: #020617;
+    height: 100%;
 }
 
 #opsLeafletMap {
     height: 100%;
     width: 100%;
+    z-index: 1;
 }
+
+/* Ensure no Google Maps fallback artifacts show up if accidentally loaded */
+.gm-err-container, .gm-style, [class*="gm-"] { display: none !important; }
 
 /* Sidebar List */
 .ops-list-panel {
