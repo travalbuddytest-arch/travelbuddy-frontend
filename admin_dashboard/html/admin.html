@@ -157,6 +157,7 @@
                 <button class="admin-profile-tab active" type="button" data-admin-tab="photo">Photo</button>
                 <button class="admin-profile-tab" type="button" data-admin-tab="details">Details</button>
                 <button class="admin-profile-tab" type="button" data-admin-tab="security">Security</button>
+                <button class="admin-profile-tab" type="button" data-admin-tab="privacy">Privacy</button>
             </div>
             <section class="admin-profile-panel" id="adminPhotoPanel">
                 <div class="admin-photo-focus">
@@ -186,6 +187,15 @@
                     <div class="admin-profile-field"><label for="adminNewPassword">New Password</label><input id="adminNewPassword" type="password" autocomplete="new-password"></div>
                     <button class="admin-profile-save" type="submit"><i class="fa-solid fa-key"></i> Change Password</button>
                 </form>
+            </section>
+            <section class="admin-profile-panel hidden" id="adminPrivacyPanel">
+                <div style="padding: 10px 0;">
+                    <h3 style="font-size: 14px; margin-bottom: 8px;">Privacy & Data</h3>
+                    <p style="font-size: 11px; color: var(--m); margin-bottom: 16px;">Manage your cookie preferences and data collection settings for this device.</p>
+                    <button class="admin-profile-save" type="button" id="adminManageCookiesBtn" style="background: var(--bg); color: var(--t); border: 1px solid var(--l);">
+                        <i class="fa-solid fa-cookie-bite"></i> Manage Cookies
+                    </button>
+                </div>
             </section>
         </div>
     </div>

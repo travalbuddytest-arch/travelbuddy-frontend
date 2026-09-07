@@ -62,6 +62,11 @@
 .tb-banner-reopen:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,.18)}
 .tb-banner-reopen:active{transform:translateY(0) scale(.96)}
 
+/* Helper to hide cookie pill on dashboards */
+body.tb-hide-cookie-pill .tb-banner-reopen {
+  display: none !important;
+}
+
 @keyframes tbBannerSlideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 @keyframes tbBannerSlideDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(100%)}}
 @keyframes tbReopenPop{0%{opacity:0;transform:scale(.5) translateY(10px)}70%{opacity:1;transform:scale(1.06) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}

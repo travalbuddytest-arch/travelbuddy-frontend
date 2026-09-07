@@ -103,6 +103,13 @@ function init(){
   // window.TB_ALWAYS_SHOW_BANNER (left as an opt-in dev/test hook, defaults off)
   // can force the banner to appear for QA purposes.
   const alwaysShow=window.TB_ALWAYS_SHOW_BANNER===true;
+
+  // Auto-hide the pill on dashboard pages to relocate it to settings
+  const isDashboard = location.pathname.includes('/user-dashboard/') || location.pathname.includes('/admin_dashboard/');
+  if (isDashboard) {
+    document.body.classList.add('tb-hide-cookie-pill');
+  }
+
   if(current&&!alwaysShow){
     settings.classList.add('show');
   }else{
@@ -111,11 +118,18 @@ function init(){
     setTimeout(showBanner,700);
   }
 }
-window.TravelBuddyCookies={
+  window.TravelBuddyCookies={
+    get:()=>read()||{...defaults},
+    has:type=>type==='necessary'||!!(read()||defaults)[type],
+    open:openModal,
+    reset:()=>{document.cookie=`${COOKIE_NAME}=; Max-Age=0; Path=/`;}
+  };
+}
+window.TravelBuddyCookies=window.TravelBuddyCookies||{
   get:()=>read()||{...defaults},
   has:type=>type==='necessary'||!!(read()||defaults)[type],
   open:()=>document.getElementById('tbBannerReopen')?.click(),
-  reset:()=>{document.cookie=`${COOKIE_NAME}=; Max-Age=0; Path=/`;}
+  reset:()=>{document.cookie=`travelbuddy_cookie_consent=; Max-Age=0; Path=/`;}
 };
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

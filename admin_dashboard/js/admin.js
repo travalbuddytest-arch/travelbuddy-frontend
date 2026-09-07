@@ -1265,6 +1265,7 @@ function initAdminProfileModal() {
     photo: document.getElementById('adminPhotoPanel'),
     details: document.getElementById('adminDetailsPanel'),
     security: document.getElementById('adminSecurityPanel'),
+    privacy: document.getElementById('adminPrivacyPanel'),
   };
 
   function setTab(tab) {
@@ -1397,6 +1398,16 @@ function initAdminProfileModal() {
       showToast('Password changed successfully');
     } catch (err) {
       showToast(err?.data?.error || 'Could not change password.');
+    }
+  });
+
+  document.getElementById('adminManageCookiesBtn')?.addEventListener('click', () => {
+    if (window.TravelBuddyCookies && typeof window.TravelBuddyCookies.open === 'function') {
+      // Close the profile modal first to show the cookie modal clearly
+      document.getElementById('adminProfileModal')?.classList.remove('show');
+      window.TravelBuddyCookies.open();
+    } else {
+      showToast('Cookie management is currently unavailable.', 'error');
     }
   });
 }

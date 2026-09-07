@@ -23,6 +23,9 @@
   const feedbackCommentInput = document.getElementById('feedbackCommentInput');
   const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
 
+  // Privacy Elements
+  const manageCookiesBtn = document.getElementById('manageCookiesBtn');
+
   async function loadAddresses() {
     if (addressesLoading) addressesLoading.classList.remove('hidden');
     if (addressesEmpty) addressesEmpty.classList.add('hidden');
@@ -186,6 +189,17 @@
         window.showToast('Could not reach server to submit feedback.', 'error');
       } finally {
         setButtonLoading(submitFeedbackBtn, false);
+      }
+    });
+  }
+
+  // Privacy & Cookies
+  if (manageCookiesBtn) {
+    manageCookiesBtn.addEventListener('click', () => {
+      if (window.TravelBuddyCookies && typeof window.TravelBuddyCookies.open === 'function') {
+        window.TravelBuddyCookies.open();
+      } else {
+        window.showToast('Cookie management is currently unavailable.', 'warning');
       }
     });
   }
