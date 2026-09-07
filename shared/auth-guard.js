@@ -92,22 +92,45 @@
         }
     };
 
-    if (hasSession()) return;
+    if (hasSession()) {
+        console.log('[AuthGuard] Session found in localStorage. Access granted.');
+        return;
+    }
 
-    // Not logged in: stop the browser from painting any protected markup
-    // and send the visitor to login, preserving where they were headed so
-    // login can return them there afterward.
+    // Not logged in (or session not yet restored from cookies):
+    // Enter CHECKING state. Hide the browser from painting any protected
+    // markup while we wait for the async session restoration to finish.
+    console.log('[AuthGuard] No session in localStorage. Entering CHECKING state...');
+
     try {
         document.documentElement.style.display = 'none';
     } catch (e) { /* no-op */ }
 
-    var loginUrl = guardType === 'admin' ? '../../login/login.html' : '../login/login.html';
-    var returnTo = window.location.pathname + window.location.search + window.location.hash;
-    var target = loginUrl + '?redirect=' + encodeURIComponent(returnTo);
+    window.resolveTravelBuddyAuth = function (authenticated) {
+        if (window.TravelBuddyAuthChecked) return;
+        window.TravelBuddyAuthChecked = true;
+        clearTimeout(safetyTimeout);
 
-    window.location.replace(target);
+        if (authenticated) {
+            console.log('[AuthGuard] Async auth confirmed. Access granted.');
+            document.documentElement.style.display = '';
+        } else {
+            console.log('[AuthGuard] Async auth denied. Redirecting to login.');
+            doRedirect();
+        }
+    };
 
-    // Belt-and-braces: if replace() is somehow delayed, stop the rest of
-    // this document from executing/parsing further inline scripts.
-    window.stop && window.stop();
+    var safetyTimeout = setTimeout(function () {
+        if (!window.TravelBuddyAuthChecked) {
+            console.warn('[AuthGuard] Auth check timed out (3s). Redirecting to login.');
+            doRedirect();
+        }
+    }, 3000);
+
+    function doRedirect() {
+        var loginUrl = guardType === 'admin' ? '../../login/login.html' : '../login/login.html';
+        var returnTo = window.location.pathname + window.location.search + window.location.hash;
+        var target = loginUrl + '?redirect=' + encodeURIComponent(returnTo);
+        window.location.replace(target);
+    }
 })();

@@ -34,9 +34,14 @@ async function ensureAdminProfile() {
     if (smallNode) smallNode.textContent = admin.email;
     // expose admin on window for other scripts
     window.ADMIN = admin;
+
+    if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
     return admin;
   } catch (err) {
     console.warn('Admin auth failed, redirecting to login', err);
+
+    if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
+
     // clear stored token and redirect
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');

@@ -452,6 +452,7 @@
     const cached = parseStoredUser();
     if (cached && cached.id) {
        personalizeUser();
+       if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
     }
 
     try {
@@ -459,14 +460,22 @@
       const data = await res.json();
       if (!res.ok) {
         // Redundant 401 handling removed: centralized in shared/auth-cookie-client.js
+        if (res.status === 401 && window.resolveTravelBuddyAuth) {
+          window.resolveTravelBuddyAuth(false);
+        }
         return cached; // Return cached on error if refresh failed
       }
       saveStoredUser(data.user);
       personalizeUser();
       populateProfileForms(data.user);
+      if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
       return data.user;
     } catch (err) {
       console.error('Profile refresh failed:', err);
+      // We don't resolve(false) here because a network error shouldn't
+      // necessarily boot the user if they have a cached session,
+      // but if the guard is waiting, we might need to decide.
+      // Let's allow the safety timeout to handle true network failures.
       return cached;
     }
   }
