@@ -144,23 +144,26 @@ function init(){
   if(current&&!alwaysShow){
     settings.classList.add('show');
   }else{
-    // Small delay so the banner doesn't flash in before the page has painted,
-    // but still appears promptly like a real consent banner (not after 10s).
     setTimeout(showBanner,700);
   }
-}
-  window.TravelBuddyCookies={
-    get:()=>read()||{...defaults},
-    has:type=>type==='necessary'||!!(read()||defaults)[type],
-    open:openModal,
-    reset:()=>{document.cookie=`${COOKIE_NAME}=; Max-Age=0; Path=/`;}
+
+  // Expose the API
+  window.TravelBuddyCookies = {
+    get: () => read() || { ...defaults },
+    has: (type) => type === 'necessary' || !!(read() || defaults)[type],
+    open: openModal,
+    reset: () => { document.cookie = `${COOKIE_NAME}=; Max-Age=0; Path=/`; }
   };
 }
-window.TravelBuddyCookies=window.TravelBuddyCookies||{
-  get:()=>read()||{...defaults},
-  has:type=>type==='necessary'||!!(read()||defaults)[type],
-  open:()=>document.getElementById('tbBannerReopen')?.click(),
-  reset:()=>{document.cookie=`travelbuddy_cookie_consent=; Max-Age=0; Path=/`;}
+
+// Fallback if accessed before init/DOMContentLoaded
+window.TravelBuddyCookies = window.TravelBuddyCookies || {
+  get: () => read() || { ...defaults },
+  has: (type) => type === 'necessary' || !!(read() || defaults)[type],
+  open: () => document.getElementById('tbBannerReopen')?.click(),
+  reset: () => { document.cookie = `${COOKIE_NAME}=; Max-Age=0; Path=/`; }
 };
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+else init();
 })();
