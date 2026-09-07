@@ -64,6 +64,7 @@
                     </button>
                     <div class="chat-menu" id="chatMenu">
                       <button type="button" id="chatMenuViewProfile"><i class="fa-solid fa-user"></i><span>View profile</span></button>
+                      <button type="button" id="chatMenuViewParcel"><i class="fa-solid fa-box-open"></i><span>View parcel details</span></button>
                       <button type="button" id="chatMenuClear"><i class="fa-solid fa-broom"></i><span>Clear chat</span></button>
                       <button type="button" id="chatMenuDelete" class="danger"><i class="fa-solid fa-trash-can"></i><span>Delete chat</span></button>
                     </div>
@@ -153,6 +154,61 @@
             </button>
           </div>
 
+          <!-- Review Modal -->
+          <div class="modal-overlay hidden" id="reviewModal">
+            <div class="modal-card">
+              <button class="modal-close" id="reviewModalClose">&times;</button>
+              <h3 class="modal-title"><i class="fa-solid fa-star"></i> Rate Your Experience</h3>
+              <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">How was your experience with <span id="reviewTargetName">the user</span>?</p>
+              <div style="text-align:center; margin-bottom:16px;">
+                <div class="rating-stars" id="starRatingBox">
+                  <i class="fa-solid fa-star" data-rating="1"></i>
+                  <i class="fa-solid fa-star" data-rating="2"></i>
+                  <i class="fa-solid fa-star" data-rating="3"></i>
+                  <i class="fa-solid fa-star" data-rating="4"></i>
+                  <i class="fa-solid fa-star" data-rating="5"></i>
+                </div>
+                <span id="starRatingLabel" style="font-size:13px; font-weight:700; color:var(--primary);">Select a rating</span>
+              </div>
+              <div class="field" style="margin-bottom:18px;">
+                <label for="reviewComment">Review Comments</label>
+                <textarea id="reviewComment" rows="3" placeholder="Share details about punctuality, care of items, and communication..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;"></textarea>
+              </div>
+              <button type="button" class="btn-primary" id="submitReviewBtn" style="width:100%;">
+                <span class="btn-label">Submit Review</span>
+                <span class="spinner"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Receipt Generation Modal -->
+          <div class="modal-overlay hidden" id="receiptGenModal">
+            <div class="modal-card" style="max-width:360px;">
+              <h3 class="modal-title">Generating Receipt</h3>
+              <div id="receiptGenLoading">
+                <div class="receipt-gen-stage" id="stage-details"><i class="fa-regular fa-circle"></i> Gathering parcel details...</div>
+                <div class="receipt-gen-stage" id="stage-timeline"><i class="fa-regular fa-circle"></i> Verifying journey timeline...</div>
+                <div class="receipt-gen-stage" id="stage-financials"><i class="fa-regular fa-circle"></i> Calculating final amounts...</div>
+                <div class="receipt-gen-stage" id="stage-final"><i class="fa-regular fa-circle"></i> Preparing PDF document...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Receipt Preview Modal -->
+          <div class="modal-overlay hidden" id="receiptPreviewModal">
+            <div class="modal-card receipt-modal">
+              <button class="modal-close" id="receiptPreviewModalClose">&times;</button>
+              <h3 class="modal-title"><i class="fa-solid fa-receipt"></i> Digital Receipt Preview</h3>
+              <div class="receipt-preview-content" id="receiptPreviewContent"></div>
+              <div class="confirm-actions" style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+                <button type="button" class="btn-ghost" id="closeReceiptPreviewBtn">Close</button>
+                <button type="button" class="btn-primary" id="downloadReceiptBtn">
+                  <span class="btn-label"><i class="fa-solid fa-download"></i> Download PDF</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <audio id="remoteAudio" autoplay></audio>
 
           <!-- Image Preview Modal -->
@@ -180,5 +236,6 @@
   <script defer src="../shared/site-banner.js?v=3"></script>
   <script defer src="../shared/firebase-config.js?v=1"></script>
   <script defer src="../shared/push-client.js?v=1"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
