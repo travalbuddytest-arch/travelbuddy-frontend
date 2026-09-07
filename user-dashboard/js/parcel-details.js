@@ -798,25 +798,24 @@
     avatar.textContent = '..';
 
     try {
-      // Use existing public profile API if exists, or /api/auth/profile/:id
-      // For parity, we assume a rich profile fetch
-      const res = await fetch(`${API_ORIGIN}/api/admin/users/${userId}`, { headers: authHeaders() });
+      // Use the public profile API instead of the admin one to avoid 403 Forbidden auto-logout
+      const res = await fetch(`${API_ORIGIN}/api/auth/profile/${userId}`, { headers: authHeaders() });
       const data = await res.json();
       if (!res.ok) throw new Error();
 
-      const u = data.user;
-      name.textContent = `${u.firstName} ${u.lastName}`;
-      avatar.textContent = (u.firstName[0] + u.lastName[0]).toUpperCase();
-      if (u.profilePhoto) {
-         avatar.style.backgroundImage = `url(${window.TravelBuddy.resolveMediaUrl(u.profilePhoto)})`;
+      const p = data.profile;
+      name.textContent = p.displayName;
+      avatar.textContent = p.initials;
+      if (p.profilePhoto) {
+         avatar.style.backgroundImage = `url(${window.TravelBuddy.resolveMediaUrl(p.profilePhoto)})`;
          avatar.textContent = '';
       }
-      verified.style.display = u.verification?.governmentId === 'verified' ? 'inline-flex' : 'none';
-      rating.textContent = (u.rating || 0).toFixed(1);
-      trips.textContent = data.performance?.completedDeliveries || 0;
-      posted.textContent = data.performance?.postedParcels || 0;
-      reliability.textContent = `${data.performance?.completionRate || 100}%`;
-      joined.textContent = window.TravelBuddyDate ? window.TravelBuddyDate.formatDate(u.createdAt, { month: 'short', year: 'numeric' }) : 'Aug 2026';
+      verified.style.display = p.isVerified ? 'inline-flex' : 'none';
+      rating.textContent = (p.rating || 0).toFixed(1);
+      trips.textContent = p.stats?.parcelsDelivered || 0;
+      posted.textContent = p.stats?.parcelsPosted || 0;
+      reliability.textContent = '100%'; // Default for public view
+      joined.textContent = window.TravelBuddyDate ? window.TravelBuddyDate.formatDate(p.memberSince, { month: 'short', year: 'numeric' }) : 'Aug 2026';
 
     } catch (err) {
       name.textContent = 'Error loading profile';
