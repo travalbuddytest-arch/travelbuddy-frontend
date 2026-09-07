@@ -458,11 +458,7 @@
       const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() }, 30000); // 30s cache
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 401) {
-          localStorage.removeItem('travelBuddyToken');
-          localStorage.removeItem('travelBuddyUser');
-          window.location.href = '../login/login.html';
-        }
+        // Redundant 401 handling removed: centralized in shared/auth-cookie-client.js
         return cached; // Return cached on error if refresh failed
       }
       saveStoredUser(data.user);

@@ -8,12 +8,16 @@ window.fetch = async (input, init = {}) => {
   const response = await nativeFetch(input, isTravelBuddyApi ? { ...init, credentials: 'include' } : init);
 
   if (isTravelBuddyApi) {
-    if (response.status === 401 || response.status === 403) {
-      // Avoid redirect loops if already on login page
+    if (response.status === 401) {
+      // 401 Unauthorized: Session is invalid/expired. Logout.
       if (!window.location.pathname.includes('login.html')) {
         window.TravelBuddyAuth.logout();
         window.location.href = '../login/login.html?reason=session_expired';
       }
+    } else if (response.status === 403) {
+      // 403 Forbidden: Permission denied for this resource. DO NOT logout.
+      // The calling code should handle this (e.g. show "Access Denied").
+      console.warn('Access denied (403):', url);
     } else if (response.status === 429) {
       if (window.TBToast) {
         window.TBToast.show('Too many requests. Please wait a moment.', 'warning');

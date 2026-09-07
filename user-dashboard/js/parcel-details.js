@@ -780,7 +780,10 @@
   }
 
   async function openPublicProfile(userId) {
-    if (!userId) return;
+    if (!userId || userId === 'undefined') {
+       window.showToast('User information not available', 'warning');
+       return;
+    }
     const avatar = document.getElementById('profAvatar');
     const name = document.getElementById('profName');
     const verified = document.getElementById('profVerified');
