@@ -283,8 +283,8 @@
     if (resultCount) resultCount.textContent = `${results.length} match${results.length > 1 ? 'es' : ''} available`;
 
     pickupResults.innerHTML = results.map((p, i) => {
-      const grossPrice = Number(p.price || 0);
-      const earningRupees = Math.round(grossPrice * 0.9);
+      const grossPaise = Number(p.price || 0);
+      const earningPaise = Math.round(grossPaise * 0.9);
 
       return `
         <li class="parcel-card" style="animation-delay:${i * 0.05}s">
@@ -294,12 +294,12 @@
             <div class="parcel-meta">
               <span><i class="fa-solid fa-user"></i> ${escapeHTML(p.sender)}</span>
               <span><i class="fa-solid fa-weight-hanging"></i> ${escapeHTML(String(p.weight))}kg</span>
-              <span class="price-highlight"><i class="fa-solid fa-indian-rupee-sign"></i>${escapeHTML(String(grossPrice))}</span>
+              <span class="price-highlight"><i class="fa-solid fa-indian-rupee-sign"></i>${formatPaise(grossPaise).replace('₹', '')}</span>
               <span><i class="fa-regular fa-calendar"></i> ${formatDate(p.date)}</span>
             </div>
             <div class="earning-info">
               <span class="earning-label">Your Earning:</span>
-              <span class="earning-value">₹${earningRupees}</span>
+              <span class="earning-value">${formatPaise(earningPaise)}</span>
               <small>(after 10% platform fee)</small>
             </div>
           </div>
@@ -375,7 +375,7 @@
           return;
         }
 
-        renderPickupResults(data.results || []);
+        renderPickupResults(data.parcels || []);
       } catch (err) {
         console.error(err);
         window.showToast('Could not reach the server.', 'error');

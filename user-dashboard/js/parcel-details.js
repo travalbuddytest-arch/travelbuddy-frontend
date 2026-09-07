@@ -97,6 +97,7 @@
   const recToCity = document.getElementById('recToCity');
 
   const bannersContainer = document.getElementById('contextualBannersContainer');
+  const counterpartBox = document.getElementById('counterpartBox');
 
   const cancellationCard = document.getElementById('cancellationCard');
   const cancelOriginalPrice = document.getElementById('cancelOriginalPrice');
