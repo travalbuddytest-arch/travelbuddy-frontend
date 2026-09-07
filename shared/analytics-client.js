@@ -34,6 +34,11 @@
   }
 
   function track(type, meta) {
+    // Real Management: Respect cookie consent
+    if (window.TravelBuddyCookies && !window.TravelBuddyCookies.has('analytics')) {
+      return;
+    }
+
     var payload = collectContext();
     payload.type = type;
     if (meta) payload.meta = meta;
@@ -97,6 +102,22 @@
   //   window.TBAnalytics.track('support_ticket_created', { ticketId })
   window.TBAnalytics = { track: track };
 
+  // Real Management: React to consent changes dynamically
+  window.addEventListener('travelbuddy:consent-changed', function(e) {
+    var consent = e.detail;
+    if (consent.analytics) {
+      // Consent granted: start tracking and presence
+      track('page_view', { note: 'consent_granted_mid_session' });
+      schedulePresenceSocket();
+    } else {
+      // Consent revoked: disconnect presence socket
+      if (window.TBAnalyticsPresenceSocket) {
+        window.TBAnalyticsPresenceSocket.disconnect();
+        window.TBAnalyticsPresenceSocket = null;
+      }
+    }
+  });
+
   // ---- Real-time presence (powers the admin dashboard's live cards) ----
   // A plain Socket.IO connection that stays open for as long as this page
   // is open. The backend counts it as "one live visitor" from the moment
@@ -107,6 +128,12 @@
 
   function connectPresenceSocket() {
     if (!window.io || window.TBAnalyticsPresenceSocket) return;
+
+    // Real Management: Respect cookie consent
+    if (window.TravelBuddyCookies && !window.TravelBuddyCookies.has('analytics')) {
+      return;
+    }
+
     try {
       var ctx = collectContext();
       var socket = window.io(APP_CONFIG.SOCKET_URL + '/live-visitors', {

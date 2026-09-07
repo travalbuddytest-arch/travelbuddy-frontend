@@ -12,6 +12,13 @@ function read(){
 function write(value){
   const data={necessary:true,preferences:!!value.preferences,analytics:!!value.analytics,updatedAt:new Date().toISOString()};
   document.cookie=`${COOKIE_NAME}=${encodeURIComponent(JSON.stringify(data))}; Max-Age=${DAYS*86400}; Path=/; SameSite=Lax${location.protocol==='https:'?'; Secure':''}`;
+
+  // Real Management: Clear actual tracking cookies if consent is revoked
+  if (!data.analytics) {
+    document.cookie = 'tb_vid=; Max-Age=0; Path=/';
+    document.cookie = 'tb_sid=; Max-Age=0; Path=/';
+  }
+
   window.travelBuddyCookieConsent=data;
   window.dispatchEvent(new CustomEvent('travelbuddy:consent-changed',{detail:data}));
 }
@@ -36,9 +43,33 @@ function build(){
   </section>
   <section class="tb-notice-modal" id="tbNoticeModal" role="dialog" aria-modal="true" aria-labelledby="tbNoticeTitle">
     <div class="tb-notice-modal-head"><div><h2 id="tbNoticeTitle">Cookie preferences</h2><p class="tb-banner-text">Choose which optional cookies TravelBuddy may use. Necessary cookies are always active.</p></div><button class="tb-notice-close" data-banner-action="close" aria-label="Close">×</button></div>
-    <div class="tb-notice-option"><div><h3>Necessary cookies</h3><p>Required for login state, security, wallet and core website features.</p></div><span class="tb-notice-always">Always on</span></div>
-    <div class="tb-notice-option"><div><h3>Preference cookies</h3><p>Remember optional choices such as interface preferences.</p></div><label class="tb-notice-switch"><input id="tbPrefToggle" type="checkbox"><span class="tb-notice-slider"></span></label></div>
-    <div class="tb-notice-option"><div><h3>Analytics cookies</h3><p>Allow anonymous usage measurement when analytics is connected.</p></div><label class="tb-notice-switch"><input id="tbAnalyticsToggle" type="checkbox"><span class="tb-notice-slider"></span></label></div>
+
+    <div class="tb-notice-option">
+      <div>
+        <h3>Necessary cookies</h3>
+        <p>Required for login state, security, wallet and core website features.</p>
+        <code style="font-size:10px; color:var(--tb-banner-muted);">Used: travelbuddy_session, travelbuddy_cookie_consent</code>
+      </div>
+      <span class="tb-notice-always">Always on</span>
+    </div>
+
+    <div class="tb-notice-option">
+      <div>
+        <h3>Preference cookies</h3>
+        <p>Remember optional choices such as interface preferences and language.</p>
+      </div>
+      <label class="tb-notice-switch"><input id="tbPrefToggle" type="checkbox"><span class="tb-notice-slider"></span></label>
+    </div>
+
+    <div class="tb-notice-option">
+      <div>
+        <h3>Analytics cookies</h3>
+        <p>Allow anonymous usage measurement to help us improve the platform.</p>
+        <code style="font-size:10px; color:var(--tb-banner-muted);">Used: tb_vid, tb_sid</code>
+      </div>
+      <label class="tb-notice-switch"><input id="tbAnalyticsToggle" type="checkbox"><span class="tb-notice-slider"></span></label>
+    </div>
+
     <div class="tb-notice-modal-actions"><button class="tb-banner-btn tb-banner-ghost" data-banner-action="reject">Reject non-essential</button><button class="tb-banner-btn tb-banner-primary" data-banner-action="save">Save preferences</button></div>
   </section>
   <button class="tb-banner-reopen" id="tbBannerReopen" type="button" aria-label="Manage cookie preferences">
