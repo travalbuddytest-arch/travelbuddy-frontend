@@ -45,6 +45,9 @@
       .wizard-step {
         flex: 1;
         min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .wizard-step-circle {
         width: 28px;
@@ -99,17 +102,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
       margin-top: 28px;
       padding-top: 20px;
       border-top: 1px solid var(--border);
       flex-wrap: wrap;
     }
-    @media (max-width: 480px) {
+    @media (max-width: 540px) {
       .wizard-actions {
         flex-direction: column-reverse;
         align-items: stretch;
-        gap: 10px;
       }
       .wizard-actions > button,
       .wizard-actions > a,
@@ -119,7 +121,6 @@
         margin: 0;
         justify-content: center;
       }
-      /* If only one button exists (Step 1), ensure it's full width and not pushed by empty div */
       .wizard-actions div:first-child:empty { display: none; }
     }
     .summary-grid {

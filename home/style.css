@@ -170,6 +170,7 @@ img{
     border: 1px solid var(--tb-border, #e6ecf9);
     border-radius: var(--tb-radius-full, 9999px);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     text-decoration: none;
     white-space: nowrap;
     transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s ease, border-color 0.25s ease;
@@ -195,6 +196,7 @@ img{
     border: 1px solid rgba(230, 236, 249, 0.9);
     border-radius: var(--tb-radius-md, 16px);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     margin-bottom: 1.75rem;
     box-shadow: 0 4px 16px rgba(18, 32, 58, 0.03);
 }
@@ -2011,6 +2013,7 @@ body.nav-open{
 .qr-section {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 20px;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.2);

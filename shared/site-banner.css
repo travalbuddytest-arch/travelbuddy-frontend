@@ -1,9 +1,9 @@
 
 :root{--tb-banner-accent:#0d6efd;--tb-banner-text:#17233d;--tb-banner-muted:#667085;--tb-banner-surface:#fff;--tb-banner-border:#e5eaf2;--tb-banner-bar-bg:#f4f1e6;--tb-banner-bar-border:#e3ddc8;--tb-banner-bar-text:#1c1c1c}
 
-.tb-banner-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.28);backdrop-filter:blur(3px);z-index:99997;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.tb-banner-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:99997;opacity:0;pointer-events:none;transition:opacity .4s ease}
 .tb-banner-backdrop.show{opacity:1;pointer-events:auto}
-.tb-banner-backdrop.tb-backdrop-behind-banner{background:rgba(20,20,15,.12);backdrop-filter:blur(6px);pointer-events:none}
+.tb-banner-backdrop.tb-backdrop-behind-banner{background:rgba(20,20,15,.12);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none}
 
 .tb-banner-bar,.tb-notice-modal{font-family:inherit;box-sizing:border-box}
 .tb-banner-bar{position:fixed;left:0;right:0;bottom:0;width:100%;background:var(--tb-banner-bar-bg);border-top:1px solid var(--tb-banner-bar-border);box-shadow:0 -8px 30px rgba(15,23,42,.10);z-index:99998;padding:20px 48px 16px;display:none;flex-direction:column;gap:12px;color:var(--tb-banner-bar-text)}

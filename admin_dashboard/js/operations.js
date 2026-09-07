@@ -12,6 +12,9 @@ let map = null;
 let markerClusterGroup = null;
 let selectedParcelId = null;
 let lastUpdateTimestamp = Date.now();
+let lastHeartbeatTimestamp = 0;
+let lastBridgeStatus = 'unknown'; // active or error
+let heartbeatCheckTimer = null;
 
 // ── DOM Refs ─────────────────────────────────
 const $ = (id) => document.getElementById(id);
@@ -89,9 +92,38 @@ function connectSocket() {
     socket.off('traveler:location', handleLocationUpdate);
     socket.on('traveler:location', handleLocationUpdate);
 
+    socket.off('admin:alert', handleAdminAlert);
+    socket.on('admin:alert', handleAdminAlert);
+
     // Initial sync
-    $('opsLiveDot').className = socket.connected ? 'ops-dot live' : 'ops-dot';
-    $('opsLiveText').textContent = socket.connected ? 'LIVE' : 'OFFLINE';
+    updateLiveStatusUI();
+}
+
+function handleAdminAlert(alert) {
+    if (alert.type === 'location_bridge_heartbeat') {
+        lastHeartbeatTimestamp = Date.now();
+        lastBridgeStatus = alert.status || 'active';
+        updateLiveStatusUI();
+    }
+}
+
+function updateLiveStatusUI() {
+    const isSocketConnected = socket && socket.connected;
+    const isBridgeActive = (Date.now() - lastHeartbeatTimestamp) < 45000; // 45s threshold
+    const hasBridgeError = lastBridgeStatus === 'error';
+
+    const isLive = isSocketConnected && isBridgeActive && !hasBridgeError;
+
+    const dot = $('opsLiveDot');
+    const text = $('opsLiveText');
+
+    if (dot) dot.className = isLive ? 'ops-dot live' : (isSocketConnected && isBridgeActive && hasBridgeError ? 'ops-dot urgent' : 'ops-dot');
+    if (text) {
+        if (!isSocketConnected) text.textContent = 'OFFLINE (Socket)';
+        else if (hasBridgeError) text.textContent = 'ERROR (Firestore)';
+        else if (!isBridgeActive) text.textContent = 'STALE (Bridge)';
+        else text.textContent = 'LIVE';
+    }
 }
 
 function handleParcelUpdate(payload) {
@@ -131,7 +163,9 @@ export function destroyOperations() {
     if (socket) {
         socket.off('parcel:update', handleParcelUpdate);
         socket.off('traveler:location', handleLocationUpdate);
+        socket.off('admin:alert', handleAdminAlert);
     }
+    if (heartbeatCheckTimer) clearInterval(heartbeatCheckTimer);
     if (map) {
         map.remove();
         map = null;
@@ -375,6 +409,7 @@ export default function initOperations() {
     wireUI();
 
     setInterval(updateTimeUI, 5000);
+    heartbeatCheckTimer = setInterval(updateLiveStatusUI, 10000);
 }
 
 // Global exposure for onclick handlers in HTML

@@ -318,7 +318,7 @@ html{overflow-x:hidden;}
   position: fixed; top: 0; right: 0; bottom: 0; left: var(--us-sidebar-w);
   background: rgba(16,24,40,.55); z-index: 1000;
   display: flex; align-items: center; justify-content: center; padding: 24px;
-  animation: us-fadeIn .18s ease; backdrop-filter: blur(3px);
+  animation: us-fadeIn .18s ease; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
 }
 .us-modal {
   background: var(--us-card); border-radius: 18px;

@@ -58,7 +58,8 @@
     background: #fff;
     border: 1px solid #e4e7ec;
     border-radius: 12px;
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 table {

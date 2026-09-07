@@ -458,6 +458,7 @@ html{overflow-x:hidden;}
   inset: 0;
   background: #10182866;
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 .ops-modal-box {
   position: relative;
