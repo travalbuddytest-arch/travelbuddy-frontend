@@ -45,8 +45,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       cursor: pointer;
       font-family: var(--font);
+    }
+    .faq-question-btn span {
+      flex: 1;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
     .faq-answer-pane {
       padding: 0 20px 16px;
@@ -165,66 +171,6 @@
 
     <div class="main">
       <div id="tbAppTopbarInclude"></div>
-
-      <main class="content" id="content">
-          <span class="nav-group-title">Account</span>
-          <a href="profile.html" class="nav-item" data-section="profile">
-            <i class="fa-solid fa-user-gear"></i><span>Profile</span>
-          </a>
-          <a href="settings.html" class="nav-item" data-section="settings">
-            <i class="fa-solid fa-sliders"></i><span>Settings</span>
-          </a>
-          <a href="security.html" class="nav-item" data-section="security">
-            <i class="fa-solid fa-shield-halved"></i><span>Security</span>
-          </a>
-          <a href="devices.html" class="nav-item" data-section="devices">
-            <i class="fa-solid fa-laptop-file"></i><span>Logged Devices</span>
-          </a>
-        </div>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <button class="nav-item" id="logoutBtn" type="button">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span>
-        </button>
-      </div>
-    </aside>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <div class="main">
-      <header class="topbar">
-        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <h1 class="page-title">Help &amp; Support</h1>
-
-        <div class="topbar-actions">
-          <a class="icon-btn" id="bellBtn" href="notifications.html" aria-label="Notifications">
-            <i class="fa-solid fa-bell"></i>
-            <span class="dot hidden" id="bellDot"></span>
-          </a>
-
-          <div class="user-chip" id="userChip">
-            <div class="avatar">TB</div>
-            <div class="user-meta">
-              <span class="user-name">TravelBuddy</span>
-              <span class="user-role">Sender &amp; Traveler</span>
-            </div>
-            <i class="fa-solid fa-chevron-down"></i>
-
-            <div class="user-menu" id="userMenu">
-              <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
-              <a href="settings.html"><i class="fa-solid fa-sliders"></i> Settings</a>
-              <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
-              <a href="devices.html"><i class="fa-solid fa-laptop-file"></i> Logged Devices</a>
-              <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border);">
-              <a href="../login/login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
-            </div>
-          </div>
-        </div>
-      </header>
 
       <main class="content" id="content">
         <div class="support-head">

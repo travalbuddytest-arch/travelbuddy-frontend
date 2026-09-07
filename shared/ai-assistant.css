@@ -1,9 +1,24 @@
 .tb-ai-widget {
     position: fixed;
-    bottom: 80px; /* Elevated to clear the cookie button */
-    right: 20px;  /* Moved back to right */
-    z-index: 100000;
+    bottom: 80px;
+    right: 24px;
+    z-index: 9999; /* Below critical modals but above content */
     font-family: 'Inter', 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+@media (max-width: 640px) {
+    .tb-ai-widget {
+        bottom: 100px; /* Give more space for mobile bottom bars/cookies */
+        right: 16px;
+    }
+    .tb-ai-bubble {
+        width: 54px;
+        height: 54px;
+        font-size: 22px;
+    }
 }
 
 .tb-ai-bubble {
