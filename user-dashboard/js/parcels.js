@@ -52,7 +52,14 @@
       } catch (e) { localStorage.removeItem(CACHE_KEY); }
     }
 
-    if (!allParcels.length && loadingState) loadingState.classList.remove('hidden');
+    if (!allParcels.length && loadingState) {
+      if (window.TravelBuddySkeleton) {
+        window.TravelBuddySkeleton.show('#parcelsGrid', 'card', 6);
+        loadingState.classList.add('hidden');
+      } else {
+        loadingState.classList.remove('hidden');
+      }
+    }
     if (emptyState) emptyState.classList.add('hidden');
 
     try {

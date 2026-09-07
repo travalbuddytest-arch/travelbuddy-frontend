@@ -52,19 +52,35 @@
 
   function initSidebarEvents() {
     highlightActiveNav();
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebarClose = document.getElementById('sidebarClose');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    if (menuBtn) menuBtn.addEventListener('click', openSidebar);
-    if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
-    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-    document.querySelectorAll('.sidebar .nav-item[href]').forEach((link) => {
-      link.addEventListener('click', () => {
-        if (window.matchMedia('(max-width: 900px)').matches) closeSidebar();
-      });
+
+    // Use Event Delegation on document.body for robust mobile menu handling.
+    // This solves the race condition where HTML injection happens after listener binding.
+    document.body.addEventListener('click', (e) => {
+      const target = e.target;
+
+      // Open Menu
+      if (target.closest('#menuBtn')) {
+        openSidebar();
+      }
+
+      // Close Menu (✕ button or Overlay)
+      if (target.closest('#sidebarClose') || target.closest('#sidebarOverlay')) {
+        closeSidebar();
+      }
+
+      // Close on Nav Link click (Mobile only)
+      if (target.closest('.sidebar .nav-item[href]')) {
+        if (window.matchMedia('(max-width: 900px)').matches) {
+          closeSidebar();
+        }
+      }
+
+      // Logout Button
+      if (target.closest('#logoutBtn')) {
+        logoutNow();
+      }
     });
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) logoutBtn.addEventListener('click', logoutNow);
+
     initUserSidebarCollapse();
   }
 
@@ -1302,6 +1318,13 @@
   }
   */
 
+  function initImageSkeletons() {
+    if (!window.TravelBuddySkeleton) return;
+    document.querySelectorAll('img[data-skeleton="true"]').forEach(img => {
+      window.TravelBuddySkeleton.handleImage(img);
+    });
+  }
+
   loadAsset('/shared/ai-assistant.css', 'css');
   loadAsset('/shared/ai-assistant.js', 'js');
   highlightActiveNav();
@@ -1309,4 +1332,5 @@
   refreshMessageBadge();
   refreshNotifBadge();
   connectNotificationSocket();
+  initImageSkeletons();
 })();

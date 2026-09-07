@@ -119,6 +119,9 @@
 
   async function loadNotifications() {
     if (!notifList) return;
+    if (window.TravelBuddySkeleton) {
+      window.TravelBuddySkeleton.show('#notifList', 'list-item', 10);
+    }
     try {
       const res = await fetch(API_BASE, { headers: authHeaders() });
       const data = parseJsonSafe ? await parseJsonSafe(res) : await res.json();

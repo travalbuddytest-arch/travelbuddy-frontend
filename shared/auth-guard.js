@@ -44,6 +44,21 @@
         }
     } catch (e) {}
 
+    // Pre-load skeleton system early
+    (function loadSkeletonAssets() {
+        var base = guardType === 'admin' ? '../../shared/' : '../shared/';
+        if (window.location.pathname === '/' || window.location.pathname === '/index.html') base = 'shared/';
+
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = base + 'skeleton.css?v=1';
+        document.head.appendChild(css);
+
+        var js = document.createElement('script');
+        js.src = base + 'skeleton.js?v=1';
+        document.head.appendChild(js);
+    })();
+
     function hasSession() {
         try {
             if (guardType === 'admin') {
@@ -103,7 +118,35 @@
     console.log('[AuthGuard] No session in localStorage. Entering CHECKING state...');
 
     try {
-        document.documentElement.style.display = 'none';
+        // Hide the main content to avoid FOUC/Flash of private data
+        document.documentElement.style.visibility = 'hidden';
+
+        // As soon as body is available, show the initial page skeleton
+        var checkInterval = setInterval(function() {
+            if (document.body) {
+                clearInterval(checkInterval);
+                if (!window.TravelBuddyAuthChecked) {
+                    var skeleton = document.createElement('div');
+                    skeleton.id = 'initialPageSkeleton';
+                    skeleton.className = 'tb-skeleton-page-overlay';
+                    skeleton.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:40px">
+                            <div class="tb-skeleton tb-skeleton-circle"></div>
+                            <div class="tb-skeleton" style="width:120px; height:20px"></div>
+                        </div>
+                        <div class="tb-skeleton" style="width:40%; height:32px; margin-bottom:24px"></div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:40px">
+                            <div class="tb-skeleton-kpi tb-skeleton"></div>
+                            <div class="tb-skeleton-kpi tb-skeleton"></div>
+                            <div class="tb-skeleton-kpi tb-skeleton"></div>
+                        </div>
+                        <div class="tb-skeleton" style="width:100%; flex:1; border-radius:12px"></div>
+                    `;
+                    document.body.prepend(skeleton);
+                    document.documentElement.style.visibility = '';
+                }
+            }
+        }, 10);
     } catch (e) { /* no-op */ }
 
     window.resolveTravelBuddyAuth = function (authenticated) {
@@ -111,9 +154,15 @@
         window.TravelBuddyAuthChecked = true;
         clearTimeout(safetyTimeout);
 
+        var skeleton = document.getElementById('initialPageSkeleton');
+
         if (authenticated) {
             console.log('[AuthGuard] Async auth confirmed. Access granted.');
-            document.documentElement.style.display = '';
+            if (skeleton) {
+                skeleton.classList.add('fade-out');
+                setTimeout(function() { skeleton.remove(); }, 300);
+            }
+            document.documentElement.style.visibility = '';
         } else {
             console.log('[AuthGuard] Async auth denied. Redirecting to login.');
             doRedirect();

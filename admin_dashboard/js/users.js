@@ -190,7 +190,11 @@ async function loadKPIs() {
 async function loadUsers() {
   const tbody = $('#usTableBody');
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="16" class="us-empty"><div class="us-skeleton-row"></div><div class="us-skeleton-row"></div><div class="us-skeleton-row"></div></td></tr>`;
+  if (window.TravelBuddySkeleton) {
+    window.TravelBuddySkeleton.show(tbody, 'table-row', 10, [16]);
+  } else {
+    tbody.innerHTML = `<tr><td colspan="16" class="us-empty"><div class="us-skeleton-row"></div><div class="us-skeleton-row"></div><div class="us-skeleton-row"></div></td></tr>`;
+  }
 
   try {
     const p = new URLSearchParams({ page: state.page, limit: PAGE_SIZE });

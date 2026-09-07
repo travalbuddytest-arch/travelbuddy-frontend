@@ -163,6 +163,10 @@
     // Load the client lazily so pages that don't already include it
     // (login/register/home/etc) don't need an extra <script> tag added.
     try {
+      if (window.io) {
+        connectPresenceSocket();
+        return;
+      }
       var s = document.createElement('script');
       s.src = APP_CONFIG.SOCKET_URL + '/socket.io/socket.io.js';
       s.async = true;

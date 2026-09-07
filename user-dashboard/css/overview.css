@@ -344,7 +344,7 @@
   color: transparent !important;
   background: linear-gradient(90deg, #eef3fb 25%, #f8fbff 37%, #eef3fb 63%);
   background-size: 400% 100%;
-  animation: shimmer 1.15s ease-in-out infinite;
+  animation: tb-shimmer 1.15s ease-in-out infinite;
 }
 
 .skeleton-row {
@@ -366,10 +366,6 @@
   margin-top: 8px;
 }
 
-@keyframes shimmer {
-  0% { background-position: 100% 0; }
-  100% { background-position: 0 0; }
-}
 @media (max-width: 1080px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
 }

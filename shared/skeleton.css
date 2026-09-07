@@ -1,0 +1,122 @@
+/**
+ * TravelBuddy — Global Skeleton Loading System
+ * Matches design system defined in shared/design-system.css and user-dashboard/css/common.css
+ */
+
+:root {
+  --skeleton-base: #eef3fb;
+  --skeleton-highlight: #f8fbff;
+  --skeleton-radius: var(--radius-md, 12px);
+}
+
+/* Base shimmer animation */
+@keyframes tb-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.tb-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 37%, var(--skeleton-base) 63%);
+  background-size: 400% 100%;
+  animation: tb-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--skeleton-radius);
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+  border: none !important;
+}
+
+/* Accessibility: Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tb-skeleton {
+    animation: none;
+    background: var(--skeleton-base);
+  }
+}
+
+/* Utility shapes */
+.tb-skeleton-text { height: 1em; margin-bottom: 0.5em; width: 100%; }
+.tb-skeleton-title { height: 1.5em; margin-bottom: 0.75em; width: 60%; }
+.tb-skeleton-circle { border-radius: 50%; aspect-ratio: 1/1; width: 40px; height: 40px; flex-shrink: 0; }
+.tb-skeleton-rect { width: 100%; height: 100%; }
+
+/* Predefined Component Skeletons */
+
+/* KPI / Stat Card */
+.tb-skeleton-kpi {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #E6ECF9;
+  border-radius: var(--radius-lg, 20px);
+  min-height: 88px;
+}
+
+/* Table Row */
+.tb-skeleton-table-row {
+  display: flex;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #E6ECF9;
+}
+
+/* List Item */
+.tb-skeleton-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-sm, 10px);
+}
+
+/* Specialized Dashboard Details */
+.tb-skeleton-details-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: view-in 0.4s ease;
+}
+
+/* Map Placeholder */
+.tb-skeleton-map {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: var(--skeleton-base);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.tb-skeleton-map::after {
+  content: 'Loading Live Map Data...';
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-faint);
+  z-index: 1;
+}
+
+/* Full Page Initial Loader */
+.tb-skeleton-page-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg, #F5F8FF);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.tb-skeleton-page-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}

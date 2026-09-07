@@ -59,6 +59,10 @@
   async function loadTransactions() {
     if (!txTableBody) return;
 
+    if (window.TravelBuddySkeleton) {
+      window.TravelBuddySkeleton.show('#txTableBody', 'table-row', 5, [5]);
+    }
+
     try {
       const type = txTypeSelect?.value || '';
       const status = txStatusSelect?.value || '';

@@ -24,26 +24,35 @@ function initMap() {
     const mapEl = $('opsLeafletMap');
     if (!mapEl || map) return;
 
+    if (window.TravelBuddySkeleton) {
+        window.TravelBuddySkeleton.show(mapEl, 'map');
+    }
+
     // Initialize Leaflet map focused on India
-    map = L.map('opsLeafletMap', {
-        zoomControl: false,
-        attributionControl: false
-    }).setView([20.5937, 78.9629], 5);
+    setTimeout(() => {
+        if (!mapEl) return;
+        if (window.TravelBuddySkeleton) window.TravelBuddySkeleton.hide(mapEl);
 
-    // Dark mode professional tiles
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19
-    }).addTo(map);
+        map = L.map('opsLeafletMap', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([20.5937, 78.9629], 5);
 
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
+        // Dark mode professional tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19
+        }).addTo(map);
 
-    // Initialize Marker Clustering
-    markerClusterGroup = L.markerClusterGroup({
-        showCoverageOnHover: false,
-        spiderfyOnMaxZoom: true,
-        maxClusterRadius: 50
-    });
-    map.addLayer(markerClusterGroup);
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        // Initialize Marker Clustering
+        markerClusterGroup = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            spiderfyOnMaxZoom: true,
+            maxClusterRadius: 50
+        });
+        map.addLayer(markerClusterGroup);
+    }, 100); // Tiny delay to allow skeleton to paint
 }
 
 // ── Data Fetching ─────────────────────────────

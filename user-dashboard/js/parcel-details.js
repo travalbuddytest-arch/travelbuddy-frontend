@@ -252,9 +252,13 @@
       return;
     }
 
-    if (detailsLoading) detailsLoading.classList.remove('hidden');
+    if (window.TravelBuddySkeleton) {
+        window.TravelBuddySkeleton.show('#detailsShell', 'parcel-details');
+    } else if (detailsLoading) {
+        detailsLoading.classList.remove('hidden');
+    }
     if (detailsError) detailsError.classList.add('hidden');
-    if (detailsShell) detailsShell.classList.add('hidden');
+    if (detailsShell && !window.TravelBuddySkeleton) detailsShell.classList.add('hidden');
 
     try {
       const user = await window.TravelBuddy.getCurrentUser();

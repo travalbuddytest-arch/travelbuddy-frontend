@@ -24,7 +24,7 @@
      */
     connect(namespace = '/', token = null) {
       if (typeof io === 'undefined') {
-        console.error('[Realtime] Socket.IO library not found. Real-time features disabled.');
+        console.error('[Realtime] Socket.IO library (io) not found. This may be due to a script loading failure or CSP block. Real-time features disabled.');
         return null;
       }
 

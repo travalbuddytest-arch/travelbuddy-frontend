@@ -602,6 +602,9 @@
   }
 
   async function loadConversations(q = '') {
+    if (window.TravelBuddySkeleton) {
+      window.TravelBuddySkeleton.show('#threadList', 'list-item', 8);
+    }
     const params = new URLSearchParams(window.location.search);
     const parcel = params.get('parcel');
     const conversationId = params.get('conversation');

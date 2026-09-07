@@ -24,6 +24,9 @@
     }
 
     loading.classList.remove('hidden');
+    if (!append && window.TravelBuddySkeleton) {
+      window.TravelBuddySkeleton.show('#activityTimeline', 'list-item', 10);
+    }
     loadMoreWrap.classList.add('hidden');
 
     try {

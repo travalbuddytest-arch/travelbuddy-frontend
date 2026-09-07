@@ -65,9 +65,16 @@
 
   // ---------------- Active Deliveries ----------------
   async function loadActiveDeliveries() {
-    if (deliveriesLoadingState) deliveriesLoadingState.classList.remove('hidden');
+    if (deliveriesLoadingState) {
+      if (window.TravelBuddySkeleton) {
+        window.TravelBuddySkeleton.show('#deliveriesList', 'list-item', 3);
+        deliveriesLoadingState.classList.add('hidden');
+      } else {
+        deliveriesLoadingState.classList.remove('hidden');
+      }
+    }
     if (deliveriesEmptyState) deliveriesEmptyState.classList.add('hidden');
-    if (deliveriesList) deliveriesList.innerHTML = '';
+    // if (deliveriesList) deliveriesList.innerHTML = ''; // Skeleton replaces this
 
     try {
       const res = await fetch(`${API_BASE}/tracking`, { headers: authHeaders() });
@@ -360,7 +367,11 @@
 
       setButtonLoading(routeSearchBtn, true);
       if (pickupResults) {
-        pickupResults.innerHTML = '<li class="skeleton-row"></li><li class="skeleton-row"></li>';
+        if (window.TravelBuddySkeleton) {
+          window.TravelBuddySkeleton.show('#pickupResults', 'card', 2);
+        } else {
+          pickupResults.innerHTML = '<li class="skeleton-row"></li><li class="skeleton-row"></li>';
+        }
       }
 
       try {

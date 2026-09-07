@@ -883,64 +883,30 @@ function updateDateLabel() {
 
 /* ---------- Dashboard Data Loading ---------- */
 function showDashboardSkeleton() {
-  // Skeleton for KPI cards
+  if (window.TravelBuddySkeleton) {
+    window.TravelBuddySkeleton.show('#kpis', 'kpi', 6);
+    window.TravelBuddySkeleton.show('#activity', 'list-item', 5);
+    window.TravelBuddySkeleton.show('#risks', 'list-item', 3);
+
+    // Custom inline skeletons for specialized panels
+    const jrn = document.getElementById('journeys');
+    if (jrn) {
+      jrn.innerHTML = Array(4).fill('').map(() => `
+        <div style="margin-bottom:12px">
+          <div class="tb-skeleton" style="width:40%; height:12px; margin-bottom:6px"></div>
+          <div class="tb-skeleton" style="width:100%; height:8px; border-radius:4px"></div>
+        </div>
+      `).join('');
+    }
+    const chart = document.getElementById('chart');
+    if (chart) {
+      chart.innerHTML = `<div class="tb-skeleton" style="width:100%; height:120px; border-radius:12px"></div>`;
+    }
+    return;
+  }
+
+  // Fallback for old skeleton logic if needed
   const kpisContainer = getEl('kpis');
-  if (kpisContainer) {
-    kpisContainer.innerHTML = Array(6).fill('').map(() => `
-      <article class="kpi skel">
-        <div class="ki skel-box"></div>
-        <div>
-          <span class="skel-line skel-w40"></span>
-          <strong class="skel-line skel-w60 skel-h24"></strong>
-          <small class="skel-line skel-w30"></small>
-        </div>
-      </article>
-    `).join('');
-  }
-  // Skeleton for activity panel
-  const act = document.getElementById('activity');
-  if (act) {
-    act.innerHTML = Array(5).fill('').map(() => `
-      <div class="activity skel-row">
-        <div class="skel-icon"></div>
-        <div>
-          <b class="skel-line skel-w50"></b>
-          <p class="skel-line skel-w70"></p>
-        </div>
-        <div class="skel-line skel-w20"></div>
-      </div>
-    `).join('');
-  }
-  // Skeleton for risk panel
-  const risk = document.getElementById('risks');
-  if (risk) {
-    risk.innerHTML = Array(3).fill('').map(() => `
-      <div class="risk skel-row">
-        <div class="skel-icon"></div>
-        <div>
-          <b class="skel-line skel-w55"></b>
-          <p class="skel-line skel-w60"></p>
-        </div>
-        <div class="skel-badge"></div>
-      </div>
-    `).join('');
-  }
-  // Skeleton for journey distribution
-  const jrn = document.getElementById('journeys');
-  if (jrn) {
-    jrn.innerHTML = Array(4).fill('').map(() => `
-      <div>
-        <span><span class="skel-line skel-w40"></span> <b class="skel-line skel-w10"></b></span>
-        <i><u class="skel-bar"></u></i>
-      </div>
-    `).join('');
-  }
-  // Skeleton for chart
-  const chart = document.getElementById('chart');
-  if (chart) {
-    chart.innerHTML = Array(7).fill('').map(() => `<i class="skel-chart-bar"></i>`).join('');
-  }
-}
 
 function showDashboardError(err) {
   const msg = (err && (err.data && err.data.error || err.message)) || 'Dashboard data unavailable';
@@ -1053,12 +1019,30 @@ function initializeNavigation() {
 }
 
 function initializeSidebarToggle() {
-  menuButton?.addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('show'); });
-  overlay?.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+  // Use event delegation for robust mobile menu handling in the admin dashboard
+  document.body.addEventListener('click', (e) => {
+    const target = e.target;
+
+    // Toggle Sidebar (Open/Overlay)
+    if (target.closest('#menu')) {
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      document.body.classList.add('sidebar-is-open');
+    }
+
+    // Close Sidebar (Overlay click)
+    if (target.closest('#overlay')) {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.classList.remove('sidebar-is-open');
+    }
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && sidebar?.classList.contains('open')) {
       sidebar.classList.remove('open');
       overlay.classList.remove('show');
+      document.body.classList.remove('sidebar-is-open');
     }
   });
 
@@ -1171,6 +1155,9 @@ function initializeAdminMenu() {
 
 /* ---------- Lazy page loader (simple) ---------- */
 async function loadPageFragment(id, targetEl) {
+  if (window.TravelBuddySkeleton) {
+    window.TravelBuddySkeleton.show(targetEl, 'card');
+  }
   try {
     const resp = await fetch(`./${id}.html`, { cache: 'no-store' });
     if (!resp.ok) throw new Error('Not found');

@@ -61,13 +61,19 @@
       document.getElementById('trackPageTitle').textContent = 'Track Parcel';
       document.getElementById('trackPageSubtitle').textContent = 'Track your parcel in real time';
     } else if (viewId === 'details') {
+      if (window.TravelBuddySkeleton) window.TravelBuddySkeleton.hide('#viewDetails');
       viewDetails.classList.remove('hidden');
       trackBottomBar.classList.remove('hidden');
       trackBackBtn.href = '#'; // JS will handle this
       document.getElementById('trackPageTitle').textContent = 'Tracking Status';
       document.getElementById('trackPageSubtitle').textContent = 'Live journey updates';
     } else if (viewId === 'loading') {
-      loading.classList.remove('hidden');
+      if (window.TravelBuddySkeleton) {
+          window.TravelBuddySkeleton.show('#viewDetails', 'tracking');
+          viewDetails.classList.remove('hidden');
+      } else {
+          loading.classList.remove('hidden');
+      }
     }
   }
 

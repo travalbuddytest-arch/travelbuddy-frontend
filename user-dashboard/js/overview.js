@@ -24,13 +24,20 @@
   const CACHE_KEY = 'tb_dashboard_data';
 
   async function loadDashboard() {
-    // 1. Try to load from cache immediately (Stale-While-Revalidate)
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
       try {
         const data = JSON.parse(cached);
         applyDashboardData(data, true);
       } catch (e) { localStorage.removeItem(CACHE_KEY); }
+    } else {
+      // No cache: Show skeletons for initial load
+      if (window.TravelBuddySkeleton) {
+        window.TravelBuddySkeleton.show('#activityList', 'list-item', 5);
+        window.TravelBuddySkeleton.show('#recentMessages', 'list-item', 3);
+        // Stats are already showing 0, we can shimmer them
+        document.querySelectorAll('.stat-card').forEach(card => card.classList.add('is-loading'));
+      }
     }
 
     // 2. Fetch fresh data
@@ -47,6 +54,8 @@
     } catch (err) {
       console.error('Aggregator fetch failed:', err);
       if (!cached) showOverviewError('Could not reach the server.');
+    } finally {
+      document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('is-loading'));
     }
   }
 
