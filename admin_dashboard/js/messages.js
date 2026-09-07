@@ -130,22 +130,15 @@ export function initMessages() {
 // messages REST fallback), instead of admins having to refresh.
 // ══════════════════════════════════════════════
 function connectLiveSocket() {
-  const token = localStorage.getItem('admin_token');
-  if (!token || typeof io === 'undefined') {
-    setLiveDot(false);
-    return;
-  }
+  const socketInstance = TravelBuddySocket.admin;
+  if (!socketInstance) return;
 
-  msgSocket = io(SOCKET_ORIGIN + '/admin', {
-    auth: { token },
-    withCredentials: true,
-    transports: ['websocket', 'polling'],
-  });
+  msgSocket = socketInstance;
 
-  msgSocket.on('connect', () => setLiveDot(true));
-  msgSocket.on('disconnect', () => setLiveDot(false));
-  msgSocket.on('connect_error', () => setLiveDot(false));
-  msgSocket.on('admin:message', (payload) => handleLiveMessage(payload));
+  msgSocket.off('admin:message', handleLiveMessage);
+  msgSocket.on('admin:message', handleLiveMessage);
+
+  setLiveDot(msgSocket.connected);
 }
 
 function setLiveDot(online) {

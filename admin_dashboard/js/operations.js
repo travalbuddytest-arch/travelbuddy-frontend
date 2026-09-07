@@ -76,64 +76,72 @@ async function fetchActiveParcels() {
 
 // ── Real-Time Events ──────────────────────────
 function connectSocket() {
-    const token = localStorage.getItem('admin_token');
-    if (!token) return;
+    const socketInstance = TravelBuddySocket.admin;
+    if (!socketInstance) return;
 
-    socket = io(`${SOCKET_ORIGIN}/admin`, {
-        auth: { token },
-        transports: ['websocket', 'polling']
-    });
+    socket = socketInstance;
 
-    socket.on('connect', () => {
-        console.log('[Live] Admin socket connected');
-        $('opsLiveDot').className = 'ops-dot live';
-        $('opsLiveText').textContent = 'LIVE';
-        lastUpdateTimestamp = Date.now();
-        updateTimeUI();
-    });
+    // Use named functions for events so we can unsubscribe specifically if needed
+    // although for admin dashboard singleton, we mainly want to ensure one set of listeners
+    socket.off('parcel:update', handleParcelUpdate);
+    socket.on('parcel:update', handleParcelUpdate);
 
-    socket.on('connect_error', () => {
-        $('opsLiveDot').className = 'ops-dot';
-        $('opsLiveText').textContent = 'CONNECTING...';
-    });
+    socket.off('traveler:location', handleLocationUpdate);
+    socket.on('traveler:location', handleLocationUpdate);
 
-    socket.on('disconnect', () => {
-        $('opsLiveDot').className = 'ops-dot';
-        $('opsLiveText').textContent = 'OFFLINE';
-    });
-
-    socket.on('parcel:update', (payload) => {
-        console.log('[Live] Parcel update received:', payload);
-        const id = String(payload.id);
-
-        if (['delivered', 'cancelled', 'cancelled_by_sender', 'cancelled_by_traveler'].includes(payload.status)) {
-            parcelsMap.delete(id);
-            removeParcelFromMap(id);
-        } else {
-            // Merge or add
-            const existing = parcelsMap.get(id) || {};
-            parcelsMap.set(id, { ...existing, ...payload });
-            updateParcelOnMap(id);
-        }
-
-        lastUpdateTimestamp = Date.now();
-        renderAll();
-    });
-
-    socket.on('traveler:location', (data) => {
-        const { travelerId, lat, lng } = data;
-        // Find all parcels assigned to this traveler
-        for (const [id, p] of parcelsMap.entries()) {
-            if (String(p.traveler?.id) === String(travelerId)) {
-                p.currentLocation = { lat, lng };
-                p.lastLocationUpdate = new Date().toISOString();
-                moveTravelerMarker(id, lat, lng);
-            }
-        }
-        lastUpdateTimestamp = Date.now();
-        updateTimeUI();
-    });
+    // Initial sync
+    $('opsLiveDot').className = socket.connected ? 'ops-dot live' : 'ops-dot';
+    $('opsLiveText').textContent = socket.connected ? 'LIVE' : 'OFFLINE';
 }
+
+function handleParcelUpdate(payload) {
+    console.log('[Live] Parcel update received:', payload);
+    const id = String(payload.id);
+
+    if (['delivered', 'cancelled', 'cancelled_by_sender', 'cancelled_by_traveler'].includes(payload.status)) {
+        parcelsMap.delete(id);
+        removeParcelFromMap(id);
+    } else {
+        const existing = parcelsMap.get(id) || {};
+        parcelsMap.set(id, { ...existing, ...payload });
+        updateParcelOnMap(id);
+    }
+
+    lastUpdateTimestamp = Date.now();
+    renderAll();
+}
+
+function handleLocationUpdate(data) {
+    const { travelerId, lat, lng } = data;
+    for (const [id, p] of parcelsMap.entries()) {
+        if (String(p.traveler?.id) === String(travelerId)) {
+            p.currentLocation = { lat, lng };
+            p.lastLocationUpdate = new Date().toISOString();
+            moveTravelerMarker(id, lat, lng);
+        }
+    }
+    lastUpdateTimestamp = Date.now();
+    updateTimeUI();
+}
+
+/**
+ * Cleanup function to be called when leaving this page
+ */
+export function destroyOperations() {
+    if (socket) {
+        socket.off('parcel:update', handleParcelUpdate);
+        socket.off('traveler:location', handleLocationUpdate);
+    }
+    if (map) {
+        map.remove();
+        map = null;
+    }
+    parcelsMap.clear();
+    markersMap.clear();
+    routeLines.clear();
+    console.log('[Operations] Cleanup complete.');
+}
+window.destroyOperations = destroyOperations;
 
 // ── Rendering Logic ───────────────────────────
 function renderAll() {

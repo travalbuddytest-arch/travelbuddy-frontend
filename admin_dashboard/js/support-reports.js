@@ -65,29 +65,43 @@
 
     // Socket Connection
     function connectSocket() {
-        const token = localStorage.getItem('admin_token');
-        if (!token || typeof io === 'undefined') return;
+        const socketInstance = window.TravelBuddySocket?.admin;
+        if (!socketInstance) return;
 
-        supportSocket = io(APP_CONFIG.SOCKET_URL + '/admin', {
-            auth: { token },
-            transports: ['websocket', 'polling']
-        });
+        supportSocket = socketInstance;
 
-        supportSocket.on('admin:message', (payload) => {
-            if (payload.conversationId === currentTicketId) {
-                appendMessage(payload);
-            }
-            // Also refresh lists if it's a new ticket or status change
-            loadReports();
+        supportSocket.off('admin:message', handleSupportMessage);
+        supportSocket.on('admin:message', handleSupportMessage);
+
+        supportSocket.off('admin:alert', handleSupportAlert);
+        supportSocket.on('admin:alert', handleSupportAlert);
+    }
+
+    function handleSupportMessage(payload) {
+        if (payload.conversationId === currentTicketId) {
+            appendMessage(payload);
+        }
+        // Also refresh lists if it's a new ticket or status change
+        loadReports();
+        loadTickets();
+    }
+
+    function handleSupportAlert(alert) {
+        if (alert.type === 'support_ticket') {
+            showToast(`New Ticket: ${alert.title}`);
             loadTickets();
-        });
+        }
+    }
 
-        supportSocket.on('admin:alert', (alert) => {
-            if (alert.type === 'support_ticket') {
-                showToast(`New Ticket: ${alert.title}`);
-                loadTickets();
-            }
-        });
+    /**
+     * Cleanup function called by admin.js
+     */
+    window.destroySupportReports = function() {
+        if (supportSocket) {
+            supportSocket.off('admin:message', handleSupportMessage);
+            supportSocket.off('admin:alert', handleSupportAlert);
+        }
+        console.log('[SupportReports] Cleanup complete.');
     }
 
     function renderTickets(tickets) {

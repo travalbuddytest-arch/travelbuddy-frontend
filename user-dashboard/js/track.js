@@ -313,7 +313,7 @@
           }
         }
       }, (err) => {
-        console.error('Firestore tracking error:', err);
+        console.error('[Realtime] Firestore tracking error:', err);
       });
   }
 

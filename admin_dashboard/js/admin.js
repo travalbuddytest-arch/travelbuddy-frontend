@@ -260,11 +260,19 @@ let currentPageId = null;
    them stay in sync instead of each hand-rolling the same DOM toggles. */
 function activatePage(id, { historyMode = 'push', restoreScroll = false } = {}) {
   if (!isValidPage(id)) id = DEFAULT_PAGE;
-  if (!isValidPage(id)) return; // truly nothing to show; bail safely
+  if (!isValidPage(id)) return;
 
   // Persist the scroll position of the page we're leaving before we switch.
   if (currentPageId && currentPageId !== id) {
     saveScrollPosition(currentPageId, window.scrollY || 0);
+
+    // Page-specific cleanup
+    if (currentPageId === 'operations' && typeof window.destroyOperations === 'function') {
+      window.destroyOperations();
+    }
+    if (currentPageId === 'support-reports' && typeof window.destroySupportReports === 'function') {
+      window.destroySupportReports();
+    }
   }
 
   const activeBtn = document.querySelector('nav .active');
@@ -1517,40 +1525,47 @@ function initBellDropdown() {
 function initAdminLiveSocket() {
   const opsBadge = document.getElementById('opsSidebarBadge');
   const liveIndicator = document.querySelector('.tools .live');
-  if (typeof io === 'undefined') return;
+
   const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  if (!token) return;
+  if (!token || !window.TravelBuddySocket) return;
 
-  const liveSocket = io(`${APP_CONFIG.SOCKET_URL}/admin`, {
-    auth: { token },
-    transports: ['websocket', 'polling'],
-  });
+  const liveSocket = TravelBuddySocket.connect('/admin', token);
+  if (!liveSocket) return;
 
-  const updateIndicator = (status) => {
+  const updateIndicator = (state) => {
     if (!liveIndicator) return;
-    const dot = liveIndicator.querySelector('i');
+    const { status, timestamp } = state;
+
     if (status === 'connected') {
         liveIndicator.innerHTML = '<i></i>System Live';
         liveIndicator.classList.remove('offline', 'connecting');
+        liveIndicator.title = `Last heartbeat: ${new Date(timestamp).toLocaleTimeString()}`;
     } else if (status === 'connecting') {
         liveIndicator.innerHTML = '<i></i>Connecting...';
         liveIndicator.classList.add('connecting');
+        liveIndicator.classList.remove('offline');
     } else {
         liveIndicator.innerHTML = '<i></i>Offline';
         liveIndicator.classList.add('offline');
+        liveIndicator.classList.remove('connecting');
     }
   };
 
-  liveSocket.on('connect', () => {
-    updateIndicator('connected');
-    if (opsBadge) {
-        // Initial fetch of stats might be needed if they changed while offline
-        liveSocket.emit('admin:refresh');
+  TravelBuddySocket.onStatus((state) => {
+    if (state.namespace === '/admin') {
+      updateIndicator(state);
     }
   });
 
   liveSocket.on('admin:stats', (stats) => {
-    if (opsBadge && stats && stats.totalActive != null) opsBadge.textContent = stats.totalActive;
+    if (opsBadge && stats && stats.totalActive != null) {
+      opsBadge.textContent = stats.totalActive;
+      // Authoritative KPI update for Command Center
+      if (currentPageId === 'command') {
+        const activeCard = document.querySelector('.kpi[data-page-link="parcels"] strong');
+        if (activeCard) activeCard.textContent = stats.totalActive.toLocaleString();
+      }
+    }
   });
 
   liveSocket.on('admin:alert', (alert) => {
@@ -1559,17 +1574,6 @@ function initAdminLiveSocket() {
       showToast(`⚠️ ${alert.title}: ${alert.description}`);
     }
   });
-
-  liveSocket.on('connect_error', () => {
-    updateIndicator('offline');
-    if (opsBadge) opsBadge.textContent = '—';
-  });
-
-  liveSocket.on('reconnecting', () => {
-    updateIndicator('connecting');
-  });
-
-  window.AdminSocket = liveSocket; // Global access for pages
 }
 
 function hydrateAdminChip() {

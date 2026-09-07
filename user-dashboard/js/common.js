@@ -793,27 +793,21 @@
   }
 
   function connectNotificationSocket() {
-    if (!window.io) return;
-
     const token = getAuthToken();
-    const socket = window.io(APP_CONFIG.SOCKET_URL, {
-      withCredentials: true,
-      auth: token ? { token } : {},
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      transports: ['websocket', 'polling'],
-    });
+    if (!token || !window.TravelBuddySocket) return;
+
+    const socket = TravelBuddySocket.connect('/', token);
+    if (!socket) return;
 
     const updateLiveStatus = (status) => {
-        const existing = document.getElementById('tbLiveStatus');
-        if (!existing) {
-            const el = document.createElement('div');
+        let el = document.getElementById('tbLiveStatus');
+        if (!el) {
+            el = document.createElement('div');
             el.id = 'tbLiveStatus';
             el.className = 'tb-live-status';
             el.innerHTML = '<span class="dot"></span> <span class="text">Live</span>';
             document.body.appendChild(el);
         }
-        const el = document.getElementById('tbLiveStatus');
         const dot = el.querySelector('.dot');
         const text = el.querySelector('.text');
 
@@ -843,7 +837,7 @@
       updateLiveStatus('disconnected');
     });
 
-    socket.on('reconnecting', () => {
+    socket.on('reconnect_attempt', () => {
       updateLiveStatus('connecting');
     });
 
@@ -856,19 +850,14 @@
     socket.on('parcel_status_change', (data) => {
       console.log('[Live] Parcel status change:', data);
       document.dispatchEvent(new CustomEvent('travelbuddy:parcel-status', { detail: data }));
-      // Global toast for status change if it's relevant to the current user
       showToast(`Parcel #${data.parcelId.slice(-6)}: ${data.status.replace(/_/g, ' ')}`, 'info');
     });
 
     socket.on('incoming-call', (payload) => {
-      // messages.html has its own dedicated call modal for this - don't
-      // double-announce it there.
       if (document.getElementById('incomingCallModal')) return;
       showGlobalIncomingCall(payload);
     });
 
-    // The caller hung up, or the call timed out, before this popup was
-    // answered/rejected - dismiss it instead of leaving a dead popup up.
     socket.on('end-call', ({ callId }) => {
       if (activeIncomingCall && String(activeIncomingCall.callId) === String(callId)) hideGlobalIncomingCall();
     });
