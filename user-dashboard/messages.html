@@ -47,26 +47,31 @@
 
               <div class="chat-active hidden" id="chatActive">
                 <div class="chat-header">
-                  <button type="button" class="chat-back" id="chatBackBtn" aria-label="Back to conversations">
-                    <i class="fa-solid fa-arrow-left"></i>
-                  </button>
-                  <button type="button" class="avatar avatar--sm chat-avatar-btn" id="chatAvatar" aria-label="View profile">VT</button>
-                  <div class="chat-identity" id="chatIdentity" role="button" tabindex="0">
-                    <h3 id="chatName">-</h3>
-                    <span id="chatMeta">-</span>
-                  </div>
-                  <button type="button" class="icon-btn call-btn" id="audioCallBtn" aria-label="Start private audio call">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
-                  </button>
-                  <div class="chat-menu-wrap" id="chatMenuWrap">
-                    <button type="button" class="icon-btn" id="chatMenuBtn" aria-label="Chat options" aria-expanded="false">
-                      <i class="fa-solid fa-ellipsis-vertical"></i>
+                  <div class="chat-header-left">
+                    <button type="button" class="chat-back" id="chatBackBtn" aria-label="Back to conversations">
+                      <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <div class="chat-menu" id="chatMenu">
-                      <button type="button" id="chatMenuViewProfile"><i class="fa-solid fa-user"></i><span>View profile</span></button>
-                      <button type="button" id="chatMenuViewParcel"><i class="fa-solid fa-box-open"></i><span>View parcel details</span></button>
-                      <button type="button" id="chatMenuClear"><i class="fa-solid fa-broom"></i><span>Clear chat</span></button>
-                      <button type="button" id="chatMenuDelete" class="danger"><i class="fa-solid fa-trash-can"></i><span>Delete chat</span></button>
+                    <button type="button" class="avatar avatar--sm chat-avatar-btn" id="chatAvatar" aria-label="View profile">VT</button>
+                    <div class="chat-identity" id="chatIdentity" role="button" tabindex="0">
+                      <h3 id="chatName">-</h3>
+                      <span id="chatMeta">-</span>
+                    </div>
+                  </div>
+
+                  <div class="chat-header-actions">
+                    <button type="button" class="icon-btn call-btn" id="audioCallBtn" aria-label="Start private audio call">
+                      <i class="fa-solid fa-mobile-screen-button"></i>
+                    </button>
+                    <div class="chat-menu-wrap" id="chatMenuWrap">
+                      <button type="button" class="icon-btn" id="chatMenuBtn" aria-label="Chat options" aria-expanded="false">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                      </button>
+                      <div class="chat-menu" id="chatMenu">
+                        <button type="button" id="chatMenuViewProfile"><i class="fa-solid fa-user"></i><span>View profile</span></button>
+                        <button type="button" id="chatMenuViewParcel"><i class="fa-solid fa-box-open"></i><span>View parcel details</span></button>
+                        <button type="button" id="chatMenuClear"><i class="fa-solid fa-broom"></i><span>Clear chat</span></button>
+                        <button type="button" id="chatMenuDelete" class="danger"><i class="fa-solid fa-trash-can"></i><span>Delete chat</span></button>
+                      </div>
                     </div>
                   </div>
                 </div>

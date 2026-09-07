@@ -1059,10 +1059,22 @@
   chatMenuBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     chatMenuWrap.classList.toggle('open');
+    const isOpen = chatMenuWrap.classList.contains('open');
+    chatMenuBtn.setAttribute('aria-expanded', isOpen);
   });
 
-  document.addEventListener('click', () => {
-    chatMenuWrap.classList.remove('open');
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#chatMenuWrap')) {
+      chatMenuWrap?.classList.remove('open');
+      chatMenuBtn?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      chatMenuWrap?.classList.remove('open');
+      chatMenuBtn?.setAttribute('aria-expanded', 'false');
+    }
   });
 
   document.getElementById('chatMenuViewProfile')?.addEventListener('click', () => {
