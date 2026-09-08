@@ -112,13 +112,6 @@
 
         <div class="social-row">
           <button type="button" class="btn-social" id="googleBtn">Google</button>
-          <button type="button" class="btn-social btn-social--otp" id="otpBtn">
-            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-              <circle cx="8" cy="15.5" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M11.2 12.3 19 4.5M17 6.5l2 2M14.5 9l2 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            OTP Login
-          </button>
         </div>
 
         
@@ -126,50 +119,6 @@
         <p class="signup-line">New to TravelBuddy? <a href="../register/register.html" class="link-strong" id="createAccount">Create account</a></p>
       </form>
 
-      <form id="otpPhoneForm" class="form hidden" novalidate>
-        <p class="otp-help">Enter the mobile number linked to your TravelBuddy account.</p>
-
-        <div class="field">
-          <label for="countryCode">Country code</label>
-          <div class="select-wrap">
-            <select id="countryCode" name="countryCode" class="country-select" aria-label="Choose country calling code">
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+91" selected>🇮🇳 +91</option>
-              <option value="+61">🇦🇺 +61</option>
-              <option value="+49">🇩🇪 +49</option>
-            </select>
-            <svg class="select-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="phoneNumber">Mobile number</label>
-          <div class="input-wrap">
-            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path d="M6.5 4h11a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11A2.5 2.5 0 0 1 6.5 4z" fill="none" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M12 16.5v.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-              <path d="M9 6.5h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            </svg>
-            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="98765 43210" autocomplete="tel" inputmode="tel" required aria-describedby="phoneError" />
-          </div>
-          <span class="error-msg" id="phoneError" role="alert"></span>
-        </div>
-
-        <button type="button" class="btn-primary" id="sendOtpBtn">
-          <span class="btn-label">Send OTP</span>
-          <span class="spinner" aria-hidden="true"></span>
-        </button>
-      </form>
-
-      <form id="otpVerifyForm" class="form hidden" novalidate>
-        <div class="field">
-          <label>Enter the 6-digit code</label>
-          <div id="loginOtpMount"></div>
-        </div>
-      </form>
     </section>
   </main>
 

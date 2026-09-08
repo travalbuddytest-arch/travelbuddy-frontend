@@ -13,21 +13,9 @@
   const loginBtn = document.getElementById('loginBtn');
   const toast = document.getElementById('toast');
   const googleBtn = document.getElementById('googleBtn');
-  const otpBtn = document.getElementById('otpBtn');
   const forgotLink = document.getElementById('forgotLink');
   const createAccount = document.getElementById('createAccount');
   const backBtn = document.getElementById('backBtn');
-  const otpPhoneForm = document.getElementById('otpPhoneForm');
-  const otpVerifyForm = document.getElementById('otpVerifyForm');
-  const countryCode = document.getElementById('countryCode');
-  const phoneNumberInput = document.getElementById('phoneNumber');
-  const phoneError = document.getElementById('phoneError');
-  const sendOtpBtn = document.getElementById('sendOtpBtn');
-  const loginOtpMount = document.getElementById('loginOtpMount');
-  const pageTitle = document.getElementById('welcomeTitle');
-  const subtitle = document.querySelector('.subtitle');
-  let currentPhoneNumber = '';
-  let loginOtpVerifier = null;
   const LOGIN_STATE_KEY = 'travelBuddyLoginState';
 
   // Where auth-guard.js sent the visitor from before bouncing them here
@@ -230,7 +218,7 @@
       ripple.addEventListener('animationend', () => ripple.remove());
     });
   }
-  [loginBtn, googleBtn, otpBtn].forEach(attachRipple);
+  [loginBtn, googleBtn].forEach(attachRipple);
 
   // ---------- Submit ----------
   form.addEventListener('submit', async function (e) {
@@ -377,17 +365,10 @@
   }
 
   // ---------- Secondary actions ----------
-  otpBtn.addEventListener('click', () => setView('phone'));
   forgotLink.addEventListener('click', () => {
     window.location.href = '../forgot-password/forgot-password.html';
   });
-  sendOtpBtn.addEventListener('click', sendOtp);
   backBtn.addEventListener('click', (e) => {
-    if (backBtn.dataset.view !== 'login') {
-      e.preventDefault();
-      resetLoginOtpVerifier();
-      setView('login');
-    }
   });
 
   // ---------- Keyboard: Enter in email moves to password ----------
@@ -399,195 +380,8 @@
   });
 
   function setView(view) {
-    form.classList.toggle('hidden', view !== 'login');
-    otpPhoneForm.classList.toggle('hidden', view !== 'phone');
-    otpVerifyForm.classList.toggle('hidden', view !== 'verify');
-
-    backBtn.dataset.view = view;
-    if (view === 'login') {
-      pageTitle.textContent = 'Welcome Back';
-      subtitle.textContent = 'Log in to manage your shipments and trips.';
-      backBtn.href = '/';
-      backBtn.setAttribute('aria-label', 'Back to home');
-    } else {
-      backBtn.href = '#';
-      backBtn.setAttribute('aria-label', 'Back to login');
-    }
-
-    if (view === 'phone') {
-      pageTitle.textContent = 'OTP Login';
-      subtitle.textContent = 'Enter your mobile number to receive a one-time code.';
-      phoneNumberInput.focus();
-    }
-
-    if (view === 'verify') {
-      pageTitle.textContent = 'Verify your account';
-      subtitle.textContent = `Enter the 6-digit code sent to ${currentPhoneNumber}`;
-      loginOtpVerifier?.focus();
-    }
-
-    clearFieldError(phoneNumberInput.closest('.field'), phoneError);
   }
 
-  function validatePhone(showError) {
-    const field = phoneNumberInput.closest('.field');
-    const value = phoneNumberInput.value.trim().replace(/\s+/g, '');
-    const cleaned = value.replace(/[^0-9]/g, '');
-
-    if (!cleaned) {
-      if (showError) setFieldError(field, phoneError, 'Mobile number is required.');
-      return false;
-    }
-    if (cleaned.length < 8 || cleaned.length > 15) {
-      if (showError) setFieldError(field, phoneError, 'Enter a valid mobile number.');
-      return false;
-    }
-    clearFieldError(field, phoneError);
-    return true;
-  }
-
-  function getFullPhone() {
-    return `${countryCode.value}${phoneNumberInput.value.trim().replace(/\s+/g, '')}`;
-  }
-
-  function setButtonLoading(button, isLoading) {
-    button.classList.toggle('loading', isLoading);
-    button.disabled = isLoading;
-  }
-
-  async function parseResponse(response) {
-    const contentType = response.headers.get('content-type') || '';
-    if (contentType.includes('application/json')) {
-      return response.json();
-    }
-    const text = await response.text();
-    return { __raw: text };
-  }
-
-  async function sendOtp() {
-    if (!validatePhone(true)) {
-      showToast('Please enter a valid mobile number.', 'error');
-      return;
-    }
-
-    setButtonLoading(sendOtpBtn, true);
-    currentPhoneNumber = getFullPhone();
-
-    try {
-      const response = await fetch(`${API_BASE}/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: currentPhoneNumber }),
-      });
-      const data = await parseResponse(response);
-
-      if (!response.ok) {
-        console.error('sendOtp response:', response.status, response.statusText, data);
-        const message = data.error || data.message || `Server returned ${response.status}`;
-        showToast(message, 'error');
-        return;
-      }
-
-      showToast('OTP sent. Check your phone.', 'success');
-      setView('verify');
-      mountLoginOtpVerifier();
-    } catch (err) {
-      console.error('sendOtp failed:', err);
-      showToast(`Could not reach the server. Is it running? ${err.message || ''}`.trim(), 'error');
-    } finally {
-      setButtonLoading(sendOtpBtn, false);
-    }
-  }
-
-  function resetLoginOtpVerifier() {
-    if (loginOtpVerifier) {
-      loginOtpVerifier.destroy();
-      loginOtpVerifier = null;
-    }
-    loginOtpMount.innerHTML = '';
-  }
-
-  async function verifyLoginOtpCode(code) {
-    try {
-      const response = await fetch(`${API_BASE}/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: currentPhoneNumber, code }),
-      });
-      const data = await parseResponse(response);
-
-      if (!response.ok) {
-        console.error('verifyOtp response:', response.status, response.statusText, data);
-        const toastMessage = data.error || data.message || `Server returned ${response.status}`;
-        showToast(toastMessage, 'error');
-        return { success: false, message: 'Invalid verification code. Please try again.' };
-      }
-
-      try {
-        if (data.token) localStorage.setItem('travelBuddyToken', data.token);
-        const userObj = { ...data.user, role: data.role || 'user' };
-        localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
-        clearLoginState();
-      } catch (storageErr) {
-        console.error('Could not persist login session:', storageErr);
-      }
-
-      return {
-        success: true,
-        user: data.user // Pass user data back to the verifier's success handler if needed
-      };
-    } catch (err) {
-      console.error('verifyOtp failed:', err);
-      const message = `Could not reach the server. Is it running? ${err.message || ''}`.trim();
-      showToast(message, 'error');
-      return { success: false, message };
-    }
-  }
-
-  function mountLoginOtpVerifier() {
-    resetLoginOtpVerifier();
-    loginOtpVerifier = new OtpVerifier(loginOtpMount, {
-      length: 6,
-      resendSeconds: 120,
-      showResend: true,
-      interceptBackButton: false,
-      onComplete: verifyLoginOtpCode,
-      onResend: async () => {
-        try {
-          const response = await fetch(`${API_BASE}/send-otp`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: currentPhoneNumber }),
-          });
-          const data = await parseResponse(response);
-
-          if (!response.ok) {
-            const message = data.error || data.message || `Server returned ${response.status}`;
-            showToast(message, 'error');
-            return { success: false, message };
-          }
-
-          showToast('A new OTP was sent. Check your phone.', 'success');
-          return { success: true };
-        } catch (err) {
-          const message = `Could not reach the server. Is it running? ${err.message || ''}`.trim();
-          showToast(message, 'error');
-          return { success: false, message };
-        }
-      },
-      onVerified: (result) => {
-        window.TravelBuddy.showLoginSuccess({
-          user: result.user || JSON.parse(localStorage.getItem('travelBuddyUser')),
-          method: 'OTP',
-          onComplete: () => {
-            goToDashboard(0);
-          }
-        });
-      },
-    });
-  }
-
-  setView('login');
   initializeGoogleLogin();
 })();
 
