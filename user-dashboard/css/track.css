@@ -5,7 +5,7 @@
 .track-container {
   max-width: 680px;
   margin: 0 auto;
-  padding: 16px 20px 100px;
+  padding: 0 0 100px;
   min-height: 100%;
   position: relative;
 }
@@ -181,7 +181,7 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 480px) {
-  .track-container { padding: 12px 14px 110px; }
+  .track-container { padding: 0 0 110px; }
   .parcel-summary-card, .search-card { padding: 18px; border-radius: 20px; }
   .track-app-header h2 { font-size: 20px; }
   .journey-timeline-v3 { padding-left: 36px; }

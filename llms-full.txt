@@ -11,7 +11,7 @@
 TravelBuddy is a community peer-to-peer delivery platform consisting of:
 1. **Web Application**: Static progressive web app hosted on Firebase Hosting (`https://travalbuddy.web.app`).
 2. **Android Application**: Native Jetpack Compose Android client with Google Maps and real-time Socket.IO tracking.
-3. **Backend API Server**: Node.js Express server on Render (`https://travelbuddy-backend-19l6.onrender.com`) with MongoDB database, Twilio SMS verification, Razorpay escrow payments, and Gemini AI RAG assistant.
+3. **Backend API Server**: Node.js Express server on Render (`https://travelbuddy-backend-19l6.onrender.com`) with MongoDB database, Twilio SMS verification, Razorpay wallet payments, and Gemini AI RAG assistant.
 4. **Model Context Protocol (MCP) Server**: First-party MCP discovery endpoint at `/.well-known/mcp` and live JSON-RPC/SSE endpoint at `/mcp`.
 
 ---
@@ -28,11 +28,11 @@ A parcel post transitions through the following statuses:
 2. `ACCEPTED`:
    - Verified traveler accepts the parcel delivery request.
    - Sender receives real-time notification with traveler details.
-   - Escrow payment is initiated.
+   - Payment is initiated.
 
-3. `PAID` / `ESCROW_LOCKED`:
+3. `PAID`:
    - Sender funds the delivery payment via Razorpay.
-   - Money is held in platform escrow.
+   - Money is securely processed by TravelBuddy.
    - Direct encrypted in-app chat opens between sender and traveler.
 
 4. `PICKED_UP` / `IN_TRANSIT`:
@@ -44,14 +44,14 @@ A parcel post transitions through the following statuses:
    - Traveler reaches the recipient at destination.
    - Recipient inspects the parcel and provides the secret delivery OTP.
    - Traveler submits OTP to API/app.
-   - Escrow funds are immediately transferred to traveler's wallet.
+   - Earnings are immediately transferred to traveler's wallet.
 
 6. `COMPLETED`:
    - Both parties rate each other (1-5 stars with feedback tags).
    - Order archive and digital receipt generated.
 
 7. `CANCELLED` / `DISPUTED`:
-   - If canceled before pickup, escrow is refunded in full to sender.
+   - If canceled before pickup, payment is refunded in full to sender.
    - If a dispute arises in transit, support intervention is flagged (`/api/support/report`).
 
 ---

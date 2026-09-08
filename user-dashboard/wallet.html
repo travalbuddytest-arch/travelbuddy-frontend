@@ -66,7 +66,7 @@
         <header class="tb-page-header">
           <div class="tb-page-title">
             <h2>My Wallet Balance</h2>
-            <p>Secure escrow funds, delivery earnings, and withdrawal tracking.</p>
+            <p>Manage your delivery earnings, top-ups, and withdrawals.</p>
           </div>
           <div class="tb-page-actions">
             <button type="button" class="btn-primary" id="openAddMoneyBtn">
@@ -88,17 +88,6 @@
             <div class="tb-metric-body">
               <div class="tb-metric-value" id="walletAvailableBalance">₹ 0.00</div>
               <span class="tb-metric-sub">Immediately withdrawable</span>
-            </div>
-          </div>
-
-          <div class="tb-metric-card tb-metric-card--warning">
-            <div class="tb-metric-header">
-              <span class="tb-metric-label">In Escrow</span>
-              <div class="tb-metric-icon"><i class="fa-solid fa-lock"></i></div>
-            </div>
-            <div class="tb-metric-body">
-              <div class="tb-metric-value" id="walletLockedBalance">₹ 0.00</div>
-              <span class="tb-metric-sub">Held until delivery handover</span>
             </div>
           </div>
 
@@ -130,7 +119,7 @@
           <div class="tb-panel-head">
             <div class="tb-panel-title">
               <h3>Wallet Transaction History</h3>
-              <p>Audited real-time ledger of top-ups, escrow holds, and earnings.</p>
+              <p>Audited real-time ledger of top-ups, payments, and earnings.</p>
             </div>
             <button type="button" class="btn-ghost" id="txExportBtn">
               <i class="fa-solid fa-download"></i> Export CSV
@@ -142,7 +131,7 @@
               <select id="txTypeSelect" class="tb-select" style="height: 44px; border-radius: 12px;">
                 <option value="">All Types</option>
                 <option value="topup">Wallet Top-up</option>
-                <option value="order_hold">Payment Held</option>
+                <option value="order_payment">Parcel Payment</option>
                 <option value="traveler_earning">Delivery Earning</option>
                 <option value="withdrawal">Withdrawal</option>
                 <option value="order_refund">Refund</option>

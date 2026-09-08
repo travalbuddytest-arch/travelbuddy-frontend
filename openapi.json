@@ -284,7 +284,7 @@
     },
     "/api/payments/create-order": {
       "post": {
-        "summary": "Create Razorpay escrow payment order",
+        "summary": "Create Razorpay wallet payment order",
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,

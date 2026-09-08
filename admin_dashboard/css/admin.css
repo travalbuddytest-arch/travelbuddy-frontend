@@ -37,11 +37,11 @@ html{overflow-x:hidden;}
   --motion-slow: 450ms;
 
   /* Layout & Spacing Tokens (Professional SaaS Dashboard Rhythm) */
-  --container-px: 32px;
-  --content-pt: 28px;
-  --content-pb: 40px;
-  --section-gap: 24px;
-  --grid-gap: 20px;
+  --container-px: 40px;
+  --content-pt: 32px;
+  --content-pb: 48px;
+  --section-gap: 32px;
+  --grid-gap: 24px;
 }
 
 html.sidebar-collapsed body,
@@ -1991,22 +1991,22 @@ header {
 
 @media (max-width: 1200px) {
   :root {
-    --container-px: 28px;
-    --content-pt: 24px;
-    --content-pb: 36px;
-    --section-gap: 22px;
-    --grid-gap: 18px;
+    --container-px: 32px;
+    --content-pt: 28px;
+    --content-pb: 40px;
+    --section-gap: 24px;
+    --grid-gap: 20px;
   }
 }
 
 /* Mobile: sidebar goes fully off-canvas behind a hamburger + backdrop */
 @media (max-width: 900px) {
   :root {
-    --container-px: 22px;
-    --content-pt: 22px;
+    --container-px: 24px;
+    --content-pt: 24px;
     --content-pb: 32px;
     --section-gap: 20px;
-    --grid-gap: 16px;
+    --grid-gap: 18px;
   }
   aside,
   #side,
@@ -2116,10 +2116,10 @@ header {
 @media (max-width: 600px) {
   :root {
     --container-px: 16px;
-    --content-pt: 18px;
+    --content-pt: 20px;
     --content-pb: 28px;
     --section-gap: 18px;
-    --grid-gap: 14px;
+    --grid-gap: 16px;
   }
   header {
     padding: 0 var(--container-px);

@@ -5,7 +5,6 @@
 
   // Metric Elements
   const walletAvailableBalance = document.getElementById('walletAvailableBalance');
-  const walletLockedBalance = document.getElementById('walletLockedBalance');
   const walletTotalEarnings = document.getElementById('walletTotalEarnings');
   const walletPendingWithdrawal = document.getElementById('walletPendingWithdrawal');
 
@@ -30,31 +29,21 @@
   async function loadWalletSummary() {
     const isPrivate = window.TravelBuddy.isPrivacyMode();
     try {
-      const [walletRes, withdrawRes] = await Promise.allSettled([
-        fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() }).then(r => r.json()),
-        fetch(`${API_ORIGIN}/api/withdraw/history`, { headers: authHeaders() }).then(r => r.json())
-      ]);
-
-      const wallet = walletRes.status === 'fulfilled' ? walletRes.value : {};
-      const withdrawals = withdrawRes.status === 'fulfilled' ? (withdrawRes.value.withdrawals || []) : [];
+      const res = await fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() });
+      const wallet = await res.json();
 
       const availablePaise = Number(wallet.walletBalance || 0);
-      const lockedPaise = Number(wallet.lockedBalance || 0);
+      const pendingPaise = Number(wallet.lockedBalance || 0);
       const earningsPaise = Number(wallet.totalEarnings || 0);
 
-      // Sum pending withdrawals in paise
-      const pendingPaise = withdrawals
-        .filter(w => w.status === 'requested' || w.status === 'processing')
-        .reduce((sum, w) => sum + Number(w.amount || 0), 0);
-
       if (walletAvailableBalance) walletAvailableBalance.textContent = isPrivate ? '••••' : formatPaise(availablePaise);
-      if (walletLockedBalance) walletLockedBalance.textContent = isPrivate ? '••••' : formatPaise(lockedPaise);
       if (walletTotalEarnings) walletTotalEarnings.textContent = isPrivate ? '••••' : formatPaise(earningsPaise);
       if (walletPendingWithdrawal) walletPendingWithdrawal.textContent = isPrivate ? '••••' : formatPaise(pendingPaise);
     } catch (err) {
       console.error('Wallet summary load failed:', err);
     }
   }
+
 
   async function loadTransactions() {
     if (!txTableBody) return;

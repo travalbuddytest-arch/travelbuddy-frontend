@@ -503,7 +503,7 @@
       finPaymentStatusTag.textContent = 'Refunded / Cancelled';
     } else {
       finPaymentStatusTag.className = 'tag tag--held';
-      finPaymentStatusTag.textContent = 'Held in Escrow';
+      finPaymentStatusTag.textContent = 'Payment Received';
     }
   }
 
@@ -664,7 +664,7 @@
       actionBanner.className = 'journey-action-box';
       actionBannerTitle.innerHTML = '<i class="fa-solid fa-truck-fast"></i> Parcel in Transit';
       if (isSender) {
-        actionBannerDesc.textContent = 'The parcel is on the way. Once arrived, share the delivery completion OTP or show your QR code to release payment.';
+        actionBannerDesc.textContent = 'The parcel is on the way. Once arrived, share the delivery completion OTP or show your QR code to confirm delivery.';
         actionBannerButtons.innerHTML = `
           <button type="button" class="btn-primary" onclick="window.generateSecureQr('delivery')"><i class="fa-solid fa-qrcode"></i> Show Delivery QR</button>
           <button type="button" class="btn-ghost" id="requestDeliveryOtpBtn"><i class="fa-solid fa-key"></i> Resend Delivery OTP</button>

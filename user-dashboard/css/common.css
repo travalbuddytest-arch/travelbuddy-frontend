@@ -61,10 +61,11 @@ html{overflow-x:hidden;}
   --transition-smooth: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 
   /* --- Dynamic Spacing --- */
-  --content-px: clamp(16px, 4vw, 32px);
-  --content-pt: clamp(16px, 4vw, 32px);
-  --content-pb: clamp(32px, 6vw, 48px);
-  --grid-gap: clamp(16px, 3vw, 24px);
+  --container-px: 40px;
+  --content-pt: 32px;
+  --content-pb: 48px;
+  --grid-gap: 24px;
+  --section-gap: 32px;
 }
 
 html.sidebar-collapsed body,
@@ -768,7 +769,7 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 32px;
+  padding: 0 var(--container-px);
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1602,10 +1603,10 @@ input:focus-visible {
 
 @media (max-width: 1200px) {
   :root {
-    --container-px: 28px;
-    --content-pt: 24px;
-    --content-pb: 36px;
-    --section-gap: 22px;
+    --container-px: 32px;
+    --content-pt: 28px;
+    --content-pb: 40px;
+    --section-gap: 24px;
     --grid-gap: 20px;
   }
 }
@@ -1616,8 +1617,8 @@ input:focus-visible {
 
 @media (max-width: 900px) {
   :root {
-    --container-px: 22px;
-    --content-pt: 22px;
+    --container-px: 24px;
+    --content-pt: 24px;
     --content-pb: 32px;
     --section-gap: 20px;
     --grid-gap: 18px;
@@ -1704,7 +1705,7 @@ input:focus-visible {
 @media (max-width: 640px) {
   :root {
     --container-px: 16px;
-    --content-pt: 18px;
+    --content-pt: 20px;
     --content-pb: 28px;
     --section-gap: 18px;
     --grid-gap: 16px;

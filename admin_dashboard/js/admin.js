@@ -779,7 +779,7 @@ function renderUserDetail(data) {
           <h3>Financial Summary</h3>
           <div class="dp-meta" style="margin-bottom:15px;">
             <div class="dp-meta-item"><span>Available</span><strong>${fmtMoney(u.walletBalance || 0)}</strong></div>
-            <div class="dp-meta-item"><span>Locked</span><strong>${fmtMoney(u.lockedBalance || 0)}</strong></div>
+            <div class="dp-meta-item"><span>Pending</span><strong>${fmtMoney(u.lockedBalance || 0)}</strong></div>
             <div class="dp-meta-item"><span>Withdrawals</span><strong>${(data.withdrawals || []).length}</strong></div>
           </div>
           <h3>Ledger (Last 20)</h3>

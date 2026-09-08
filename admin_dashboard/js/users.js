@@ -682,7 +682,7 @@ function renderPaymentsTab(data) {
   return `
     <div class="us-perf-grid" style="margin-bottom:20px;">
       <div class="us-perf-card"><div class="val">${fmtMoney(data.user.walletBalance)}</div><div class="lbl">Available</div></div>
-      <div class="us-perf-card"><div class="val">${fmtMoney(data.user.lockedBalance)}</div><div class="lbl">Locked</div></div>
+      <div class="us-perf-card"><div class="val">${fmtMoney(data.user.lockedBalance)}</div><div class="lbl">Pending Withdrawal</div></div>
       <div class="us-perf-card"><div class="val">${w.summary.totalCredits ? fmtMoney(w.summary.totalCredits) : '₹0'}</div><div class="lbl">Total In</div></div>
       <div class="us-perf-card"><div class="val">${withdrawals.length}</div><div class="lbl">Withdrawals</div></div>
     </div>

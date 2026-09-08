@@ -410,6 +410,16 @@ body.messages-active .content {
 
 /* ---------- Mobile ---------- */
 @media (max-width: 720px) {
+  #view-messages.active {
+    padding: 0 !important;
+  }
+
+  /* Ensure the content area itself also collapses padding when chat is full screen */
+  body:has(#view-messages.active) .content,
+  body.messages-active .content {
+    padding: 0 !important;
+  }
+
   .messages-shell {
     grid-template-columns: 1fr;
     border: 0;

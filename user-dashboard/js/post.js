@@ -35,9 +35,9 @@
 
   // Wallet and Fee elements
   const freePostNotice = document.getElementById('freePostNotice');
-  const walletEscrowStatus = document.getElementById('walletEscrowStatus');
+  const walletPaymentStatus = document.getElementById('walletPaymentStatus');
   const postWalletBalance = document.getElementById('postWalletBalance');
-  const postRequiredEscrow = document.getElementById('postRequiredEscrow');
+  const postRequiredPayment = document.getElementById('postRequiredPayment');
   const walletShortageWarning = document.getElementById('walletShortageWarning');
   const postShortageText = document.getElementById('postShortageText');
 
@@ -225,18 +225,18 @@
 
       if (isFreePostEligible) {
         freePostNotice.classList.remove('hidden');
-        walletEscrowStatus.classList.add('hidden');
+        walletPaymentStatus.classList.add('hidden');
       } else {
         freePostNotice.classList.add('hidden');
-        walletEscrowStatus.classList.remove('hidden');
-        updateWalletEscrowDisplay();
+        walletPaymentStatus.classList.remove('hidden');
+        updateWalletPaymentDisplay();
       }
     } catch (err) {
       console.error('Wallet check failed:', err);
     }
   }
 
-  function updateWalletEscrowDisplay() {
+  function updateWalletPaymentDisplay() {
     if (isFreePostEligible || !userWalletData) return;
 
     const priceRupees = Number(stepPrice.value || 0);
@@ -244,22 +244,23 @@
     const availablePaise = Number(userWalletData.walletBalance || 0);
 
     postWalletBalance.textContent = formatPaise(availablePaise);
-    postRequiredEscrow.textContent = formatPaise(requiredPaise);
+    postRequiredPayment.textContent = formatPaise(requiredPaise);
 
     if (requiredPaise > availablePaise) {
       const shortagePaise = requiredPaise - availablePaise;
-      walletEscrowStatus.className = 'wallet-status-box is-insufficient';
+      walletPaymentStatus.className = 'wallet-status-box is-insufficient';
       walletShortageWarning.classList.remove('hidden');
       postShortageText.textContent = formatPaise(shortagePaise);
     } else {
-      walletEscrowStatus.className = 'wallet-status-box is-sufficient';
+      walletPaymentStatus.className = 'wallet-status-box is-sufficient';
       walletShortageWarning.classList.add('hidden');
     }
   }
 
   if (stepPrice) {
-    stepPrice.addEventListener('input', updateWalletEscrowDisplay);
+    stepPrice.addEventListener('input', updateWalletPaymentDisplay);
   }
+
 
   function populateReviewSummary() {
     const from = stepFromCity.value.trim();
@@ -276,7 +277,7 @@
     revWeight.textContent = `${weight} kg`;
     revDate.textContent = `${formatDate(date)} · ${timePref}`;
     revPrice.textContent = `₹${price.toLocaleString('en-IN')}`;
-    revPayment.textContent = isFreePostEligible ? 'Free Post (Cash on Delivery)' : 'Wallet Escrow (Held safely)';
+    revPayment.textContent = isFreePostEligible ? 'Free Post (Cash on Delivery)' : 'Wallet Payment (Direct)';
   }
 
   // Navigation Button Handlers

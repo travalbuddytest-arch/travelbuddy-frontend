@@ -196,7 +196,7 @@
           </div>
         </header>
 
-        <div class="tb-panel" style="max-width: 840px; margin: 0 auto 32px; padding: 40px;">
+        <div class="tb-panel" style="max-width: 840px; margin: 0 auto 32px;">
           <!-- Stepper Indicator -->
           <div class="wizard-stepper" id="wizardStepper" style="margin-bottom: 48px; border-bottom: 1px solid var(--tb-border); padding-bottom: 24px;">
             <div class="wizard-step active" data-step="1">
@@ -397,7 +397,7 @@
             <div class="wizard-step-pane" id="stepPane5">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
-                  <h3>Offered Price &amp; Escrow</h3>
+                  <h3>Pricing &amp; Payment</h3>
                   <p>Set the reward for the traveler.</p>
                 </div>
               </div>
@@ -415,14 +415,14 @@
                   </small>
                 </div>
 
-                <div id="walletEscrowStatus" class="tb-panel hidden" style="margin-top: 20px; background: var(--tb-bg); padding: 16px;">
+                <div id="walletPaymentStatus" class="tb-panel hidden" style="margin-top: 20px; background: var(--tb-bg); padding: 16px;">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <span style="font-size:13px; font-weight:600; color:var(--tb-text-muted);">Wallet Balance:</span>
                     <strong id="postWalletBalance" style="font-size:15px; color:var(--tb-text-main);">₹0.00</strong>
                   </div>
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:13px; font-weight:600; color:var(--tb-text-muted);">Required Escrow:</span>
-                    <strong id="postRequiredEscrow" style="font-size:15px; color:var(--tb-primary);">₹0.00</strong>
+                    <span style="font-size:13px; font-weight:600; color:var(--tb-text-muted);">Amount to Pay:</span>
+                    <strong id="postRequiredPayment" style="font-size:15px; color:var(--tb-primary);">₹0.00</strong>
                   </div>
                   <div id="walletShortageWarning" class="hidden" style="color:var(--tb-danger); font-size:12.5px; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top: 12px; border-top: 1px dashed var(--tb-border);">
                     <span><i class="fa-solid fa-circle-exclamation"></i> Shortage of <strong id="postShortageText">₹0.00</strong></span>
@@ -515,7 +515,7 @@
       <button class="modal-close" id="walletTopupClose">&times;</button>
       <h3 class="modal-title" style="color:var(--primary);"><i class="fa-solid fa-wallet"></i> Insufficient Wallet Balance</h3>
       <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:16px;" id="walletTopupMessage">
-        Your 2 free parcel posts have been used. To post this parcel, please top up your wallet with the required escrow amount.
+        Your 2 free parcel posts have been used. To post this parcel, please top up your wallet with the required amount.
       </p>
       <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:20px; display:flex; justify-content:space-between;">
         <div>

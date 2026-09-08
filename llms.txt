@@ -4,7 +4,7 @@
 
 ## What TravelBuddy Does
 
-TravelBuddy operates a decentralized logistics and travel-sharing platform. Senders post parcel delivery requests between specified cities or local areas. Registered and identity-verified travelers browse and accept parcel requests that match their existing travel itinerary. Payments are held in secure escrow until the recipient verifies delivery via a one-time password (OTP).
+TravelBuddy operates a decentralized logistics and travel-sharing platform. Senders post parcel delivery requests between specified cities or local areas. Registered and identity-verified travelers browse and accept parcel requests that match their existing travel itinerary. Payments are securely processed by the platform and released to the traveler once the recipient verifies delivery via a one-time password (OTP).
 
 ## When to Use TravelBuddy
 
@@ -28,7 +28,7 @@ Do not use TravelBuddy for:
 ### Sender
 - Creates a parcel order specifying pickup location, destination, parcel category, dimensions/weight, and proposed price.
 - Reviews matching travelers on the route.
-- Pays into platform escrow.
+- Pays for the delivery via wallet.
 - Hands over package at agreed pickup point and confirms pickup.
 - Receives real-time tracking updates.
 
@@ -56,7 +56,7 @@ Do not use TravelBuddy for:
 - `GET /api/postparcel/:id` — Fetch order details and tracking status.
 - `POST /api/travelroutes/create` — Traveler posts an upcoming route.
 - `GET /api/travelroutes/search` — Search traveler routes.
-- `POST /api/payments/create-order` — Initialize Razorpay escrow order.
+- `POST /api/payments/create-order` — Initialize Razorpay payment order.
 - `POST /api/postparcel/:id/verify-otp` — Verify delivery completion OTP.
 - `POST /api/ai/chat` — Context-aware AI assistant chat endpoint.
 

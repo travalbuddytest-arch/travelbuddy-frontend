@@ -187,7 +187,7 @@ function renderTable() {
     const statusCls = { pending:'pc-st-pending', accepted:'pc-st-accepted', pickup_confirmed:'pc-st-pickup', in_transit:'pc-st-transit', delivered:'pc-st-delivered', cancelled:'pc-st-cancelled' }[p.status] || '';
     const statusLabel = { pending:'Pending', accepted:'Accepted', pickup_confirmed:'Pickup', in_transit:'In Transit', delivered:'Delivered', cancelled:'Cancelled' }[p.status] || p.status;
     const prioCls = { urgent:'pc-prio-urgent', critical:'pc-prio-critical', high_value:'pc-prio-high', fragile:'pc-prio-fragile', medical:'pc-prio-medical', express:'pc-prio-express', medium:'pc-prio-medium' }[p.priority] || '';
-    const payCls = { unpaid:'pc-pay-unpaid', held:'pc-pay-held', released:'pc-pay-released', refunded:'pc-pay-refunded' }[p.paymentStatus] || '';
+    const payCls = { unpaid:'pc-pay-unpaid', paid:'pc-pay-held', released:'pc-pay-released', refunded:'pc-pay-refunded', held:'pc-pay-held' }[p.paymentStatus] || '';
     const progress = { pending:10, accepted:25, pickup_confirmed:50, in_transit:75, delivered:100, cancelled:0 }[p.status] || 0;
     const health = p.healthScore ?? 100;
     const healthCls = health >= 70 ? 'pc-health-good' : health >= 40 ? 'pc-health-warn' : 'pc-health-bad';
@@ -357,7 +357,7 @@ function renderDrawerContent(p, txns) {
     <div class="pc-detail-grid">
       <div class="pc-detail-row"><span>Status</span><span class="pc-pay pc-pay-${p.paymentStatus}">${esc(p.paymentStatus)}</span></div>
       <div class="pc-detail-row"><span>Method</span><span>${esc(p.paymentMethod||'wallet')}</span></div>
-      <div class="pc-detail-row"><span>Held Amount</span><span>${fmtMoney(p.heldAmount)}</span></div>
+      <div class="pc-detail-row"><span>Payment Amount</span><span>${fmtMoney(p.heldAmount)}</span></div>
       <div class="pc-detail-row"><span>Traveller Earning</span><span>${fmtMoney(p.travelerEarning)}</span></div>
       <div class="pc-detail-row"><span>Platform Commission</span><span>${fmtMoney(p.platformCommission)}</span></div>
       ${p.cancellationFee?`<div class="pc-detail-row"><span>Cancellation Fee</span><span class="pc-text-danger">${fmtMoney(p.cancellationFee)}</span></div>`:''}
