@@ -32,143 +32,151 @@
         <section class="view active" id="view-overview">
           <header class="tb-page-header">
             <div class="tb-page-title">
-              <h2 id="overviewGreeting">Welcome back</h2>
-              <p>Manage parcels, find routes, and track your wallet from one place.</p>
+              <h2 id="overviewGreeting">Welcome back, Pankaj</h2>
+              <p>Your logistics hub is ready. Here's a summary of your activity.</p>
             </div>
             <div class="tb-page-actions">
-               <div class="user-chip" style="padding: 8px 16px; border-radius: 12px; background: var(--tb-primary-soft); border-color: var(--tb-primary);">
+               <a href="post.html" class="btn-primary">
+                 <i class="fa-solid fa-plus"></i> Post Parcel
+               </a>
+               <div class="user-chip" style="height: 46px; border-radius: var(--radius-md); background: var(--tb-primary-soft); border: 1.5px solid var(--tb-primary); padding: 0 16px; display: flex; align-items: center; gap: 10px;">
                   <i class="fa-solid fa-wallet" style="color: var(--tb-primary);"></i>
-                  <span id="heroWalletValue" style="font-weight: 700; color: var(--tb-primary);">₹ 0.00</span>
+                  <span id="heroWalletValue" style="font-weight: 800; color: var(--tb-primary); font-size: 15px;">₹ 0.00</span>
                </div>
             </div>
           </header>
 
+          <!-- KPI Metric Grid -->
           <div class="metric-grid">
-            <div class="tb-metric-card">
-              <span class="tb-metric-label">Active Parcels</span>
-              <div class="tb-metric-value" id="statActiveParcels">0</div>
-              <span class="tb-metric-sub">Shipments currently in progress</span>
+            <div class="tb-metric-card tb-metric-card--primary">
+              <div class="tb-metric-header">
+                <span class="tb-metric-label">Active Parcels</span>
+                <div class="tb-metric-icon"><i class="fa-solid fa-box-open"></i></div>
+              </div>
+              <div class="tb-metric-body">
+                <div class="tb-metric-value" id="statActiveParcels">0</div>
+                <span class="tb-metric-sub">Currently in transit</span>
+              </div>
             </div>
-            <div class="tb-metric-card">
-              <span class="tb-metric-label">Completed Deliveries</span>
-              <div class="tb-metric-value" id="statCompletedDeliveries">0</div>
-              <span class="tb-metric-sub">Verified delivered shipments</span>
+
+            <div class="tb-metric-card tb-metric-card--success">
+              <div class="tb-metric-header">
+                <span class="tb-metric-label">Completed</span>
+                <div class="tb-metric-icon"><i class="fa-solid fa-circle-check"></i></div>
+              </div>
+              <div class="tb-metric-body">
+                <div class="tb-metric-value" id="statCompletedDeliveries">0</div>
+                <span class="tb-metric-sub">Verified delivered</span>
+              </div>
             </div>
-            <div class="tb-metric-card">
-              <span class="tb-metric-label">Trips Posted</span>
-              <div class="tb-metric-value" id="statTripsPosted">0</div>
-              <span class="tb-metric-sub">Routes you've shared with others</span>
+
+            <div class="tb-metric-card tb-metric-card--info">
+              <div class="tb-metric-header">
+                <span class="tb-metric-label">Trips Posted</span>
+                <div class="tb-metric-icon"><i class="fa-solid fa-route"></i></div>
+              </div>
+              <div class="tb-metric-body">
+                <div class="tb-metric-value" id="statTripsPosted">0</div>
+                <span class="tb-metric-sub">Routes shared</span>
+              </div>
             </div>
-            <div class="tb-metric-card" style="border-color: var(--tb-success);">
-              <span class="tb-metric-label" style="color: var(--tb-success);">Total Earnings</span>
-              <div class="tb-metric-value" id="statTotalEarnings">₹ 0.00</div>
-              <span class="tb-metric-sub">Lifetime revenue from deliveries</span>
+
+            <div class="tb-metric-card tb-metric-card--warning">
+              <div class="tb-metric-header">
+                <span class="tb-metric-label">Total Earnings</span>
+                <div class="tb-metric-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+              </div>
+              <div class="tb-metric-body">
+                <div class="tb-metric-value" id="statTotalEarnings">₹ 0.00</div>
+                <span class="tb-metric-sub">Lifetime revenue</span>
+              </div>
             </div>
           </div>
 
           <div class="panel-grid">
+            <!-- Recent Activity Panel -->
             <div class="tb-panel">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
                   <h3>Recent Activity</h3>
+                  <p>Real-time updates on your shipments and account.</p>
                 </div>
-                <a class="link-btn" href="activity.html">View all</a>
+                <a class="btn-ghost btn-sm" href="activity.html" style="text-decoration: none;">View All</a>
               </div>
               <ul class="activity-list" id="activityList"></ul>
             </div>
 
+            <!-- Recent Messages Panel -->
             <div class="tb-panel">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
                   <h3>Recent Messages</h3>
+                  <p>Latest conversations with senders and travelers.</p>
                 </div>
-                <a class="link-btn" href="messages.html">Chat</a>
+                <a class="btn-ghost btn-sm" href="messages.html" style="text-decoration: none;">Open Chat</a>
               </div>
               <div class="recent-messages" id="recentMessages"></div>
             </div>
           </div>
 
-          <div class="panel-grid panel-grid--split">
+          <div class="panel-grid">
+            <!-- Quick Actions Panel -->
             <div class="tb-panel">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
                   <h3>Quick Actions</h3>
+                  <p>Jump to frequently used features.</p>
                 </div>
               </div>
-              <div class="quick-actions">
-                <a class="quick-btn" href="post.html">
-                  <i class="fa-solid fa-paper-plane"></i>
-                  <span>Post a Parcel</span>
+              <div class="quick-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <a class="quick-card" href="post.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                  <i class="fa-solid fa-paper-plane" style="color: var(--tb-primary); font-size: 18px;"></i>
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Post a Parcel</span>
                 </a>
-                <a class="quick-btn" href="parcels.html">
-                  <i class="fa-solid fa-boxes-stacked"></i>
-                  <span>My Parcels</span>
+                <a class="quick-card" href="pickup.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                  <i class="fa-solid fa-truck-pickup" style="color: var(--tb-success); font-size: 18px;"></i>
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Carry Parcels</span>
                 </a>
-                <a class="quick-btn" href="pickup.html">
-                  <i class="fa-solid fa-truck-ramp-box"></i>
-                  <span>Pickup &amp; Delivery</span>
+                <a class="quick-card" href="wallet.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                  <i class="fa-solid fa-wallet" style="color: var(--tb-warning); font-size: 18px;"></i>
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">My Wallet</span>
                 </a>
-                <a class="quick-btn" href="wallet.html">
-                  <i class="fa-solid fa-wallet"></i>
-                  <span>Manage Wallet</span>
-                </a>
-                <a class="quick-btn" href="withdraw.html">
-                  <i class="fa-solid fa-money-bill-transfer"></i>
-                  <span>Withdraw</span>
+                <a class="quick-card" href="profile.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                  <i class="fa-solid fa-user-circle" style="color: var(--tb-secondary); font-size: 18px;"></i>
+                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Account Profile</span>
                 </a>
               </div>
             </div>
 
+            <!-- Wallet Snapshot Panel -->
             <div class="tb-panel">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
-                  <h3>Wallet Snapshot</h3>
+                  <h3>Financial Status</h3>
+                  <p>Your current balances and escrow funds.</p>
                 </div>
               </div>
-              <div class="wallet-snapshot">
-                <div class="wallet-metric">
-                  <span class="wallet-metric-icon wallet-metric-icon--blue"><i class="fa-solid fa-wallet"></i></span>
-                  <div>
-                    <span class="wallet-metric-value" id="walletBalanceValue">₹0.00</span>
-                    <span class="wallet-metric-label">Available balance</span>
+              <div class="wallet-snapshot" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="wallet-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--tb-primary-soft); border-radius: 12px; border: 1px solid rgba(13, 110, 253, 0.1);">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--tb-primary);"><i class="fa-solid fa-wallet"></i></div>
+                    <span style="font-size: 13px; font-weight: 600; color: var(--tb-text-muted);">Available</span>
                   </div>
+                  <span id="walletBalanceValue" style="font-size: 16px; font-weight: 800; color: var(--tb-text-main);">₹ 0.00</span>
                 </div>
-                <div class="wallet-metric">
-                  <span class="wallet-metric-icon" style="background:var(--tb-warning-soft);color:var(--tb-warning);"><i class="fa-solid fa-lock"></i></span>
-                  <div>
-                    <span class="wallet-metric-value" id="walletLockedValue">₹0.00</span>
-                    <span class="wallet-metric-label">Locked / In Escrow</span>
+                <div class="wallet-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--tb-warning-soft); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.1);">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--tb-warning);"><i class="fa-solid fa-lock"></i></div>
+                    <span style="font-size: 13px; font-weight: 600; color: var(--tb-text-muted);">In Escrow</span>
                   </div>
-                </div>
-                <div class="wallet-metric">
-                  <span class="wallet-metric-icon wallet-metric-icon--green"><i class="fa-solid fa-hand-holding-dollar"></i></span>
-                  <div>
-                    <span class="wallet-metric-value" id="walletEarningsValue">₹0.00</span>
-                    <span class="wallet-metric-label">Total traveler earnings</span>
-                  </div>
+                  <span id="walletLockedValue" style="font-size: 16px; font-weight: 800; color: var(--tb-text-main);">₹ 0.00</span>
                 </div>
               </div>
-              <div style="display:flex; gap:10px; margin-top:14px;">
-                <a class="btn-primary" href="wallet.html" style="text-decoration:none; flex:1;">
-                  <i class="fa-solid fa-plus"></i> Add Money
-                </a>
-                <a class="btn-ghost" href="withdraw.html" style="text-decoration:none; flex:1; justify-content: center;">
-                  <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
-                </a>
+              <div style="display: flex; gap: 10px; margin-top: 16px;">
+                <a class="btn-primary btn-full btn-sm" href="wallet.html" style="text-decoration: none;">Add Money</a>
+                <a class="btn-secondary btn-full btn-sm" href="withdraw.html" style="text-decoration: none;">Withdraw</a>
               </div>
             </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-head">
-              <h2>Experience Tips</h2>
-              <p class="panel-sub">Small steps that reduce delivery confusion.</p>
-            </div>
-            <ul class="tip-list">
-              <li><i class="fa-solid fa-circle-info"></i><span>Add parcel size, weight, and fragile details before posting.</span></li>
-              <li><i class="fa-solid fa-shield-halved"></i><span>Confirm pickup and drop timing in messages before handoff.</span></li>
-              <li><i class="fa-solid fa-receipt"></i><span>Keep payment inside the platform for a clear transaction record.</span></li>
-            </ul>
           </div>
         </section>
       </main>

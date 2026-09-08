@@ -80,25 +80,48 @@
 
         <!-- Metrics Grid -->
         <div class="metric-grid">
-          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-primary);">
-            <span class="tb-metric-label">Available for Withdrawal</span>
-            <div class="tb-metric-value" id="walletAvailableBalance">₹0.00</div>
-            <span class="tb-metric-sub">Immediately withdrawable to Bank/UPI</span>
+          <div class="tb-metric-card tb-metric-card--primary">
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">Available Balance</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="walletAvailableBalance">₹ 0.00</div>
+              <span class="tb-metric-sub">Immediately withdrawable</span>
+            </div>
           </div>
-          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-warning);">
-            <span class="tb-metric-label">Locked in Escrow</span>
-            <div class="tb-metric-value" id="walletLockedBalance">₹0.00</div>
-            <span class="tb-metric-sub">Held safely until delivery handover</span>
+
+          <div class="tb-metric-card tb-metric-card--warning">
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">In Escrow</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-lock"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="walletLockedBalance">₹ 0.00</div>
+              <span class="tb-metric-sub">Held until delivery handover</span>
+            </div>
           </div>
-          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-success);">
-            <span class="tb-metric-label">Total Lifetime Earnings</span>
-            <div class="tb-metric-value" id="walletTotalEarnings">₹0.00</div>
-            <span class="tb-metric-sub">Earned as an active traveler</span>
+
+          <div class="tb-metric-card tb-metric-card--success">
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">Lifetime Earnings</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="walletTotalEarnings">₹ 0.00</div>
+              <span class="tb-metric-sub">Total revenue from deliveries</span>
+            </div>
           </div>
+
           <div class="tb-metric-card">
-            <span class="tb-metric-label">Pending Withdrawal</span>
-            <div class="tb-metric-value" id="walletPendingWithdrawal">₹0.00</div>
-            <span class="tb-metric-sub">Currently processing by bank</span>
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">Pending Payouts</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="walletPendingWithdrawal">₹ 0.00</div>
+              <span class="tb-metric-sub">Processing by bank</span>
+            </div>
           </div>
         </div>
 
@@ -114,33 +137,22 @@
             </button>
           </div>
 
-          <div class="search-row" style="margin-bottom: 20px;">
-            <div class="field" style="flex: 0 0 200px;">
-              <select id="txTypeSelect" class="tb-select">
+          <div class="search-row" style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch;">
+            <div class="field" style="flex: 0 0 180px; margin: 0;">
+              <select id="txTypeSelect" class="tb-select" style="height: 44px; border-radius: 12px;">
                 <option value="">All Types</option>
                 <option value="topup">Wallet Top-up</option>
                 <option value="order_hold">Payment Held</option>
                 <option value="traveler_earning">Delivery Earning</option>
                 <option value="withdrawal">Withdrawal</option>
                 <option value="order_refund">Refund</option>
-                <option value="cancellation_fee">Cancellation Fee</option>
               </select>
             </div>
 
-            <div class="field" style="flex: 0 0 160px;">
-              <select id="txStatusSelect" class="tb-select">
-                <option value="">All Statuses</option>
-                <option value="completed">Completed</option>
-                <option value="held">Held</option>
-                <option value="released">Released</option>
-                <option value="refunded">Refunded</option>
-              </select>
-            </div>
-
-            <div class="field" style="flex: 1;">
+            <div class="field" style="flex: 1; margin: 0;">
               <div style="position:relative;">
                 <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--tb-text-faint);"></i>
-                <input type="text" id="txSearchInput" class="tb-input" placeholder="Search reference or description..." style="padding-left:40px;" />
+                <input type="text" id="txSearchInput" class="tb-input" placeholder="Search by reference or description..." style="padding-left:40px; height: 44px; border-radius: 12px; background: var(--tb-bg);" />
               </div>
             </div>
           </div>

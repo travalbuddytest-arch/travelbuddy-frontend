@@ -212,29 +212,27 @@
           </div>
         </header>
 
-        <div class="parcels-controls">
-          <div class="filter-bar" id="statusFilterTabs" style="margin-bottom:16px; overflow-x:auto; padding-bottom:8px; border-bottom: 1px solid var(--tb-border);">
-            <button class="filter-pill active" data-status="all" type="button">All Parcels</button>
-            <button class="filter-pill" data-status="active" type="button">Active</button>
-            <button class="filter-pill" data-status="pending" type="button">Pending</button>
-            <button class="filter-pill" data-status="accepted" type="button">Accepted</button>
-            <button class="filter-pill" data-status="awaiting_pickup" type="button">Awaiting Pickup</button>
-            <button class="filter-pill" data-status="in_transit" type="button">In Transit</button>
-            <button class="filter-pill" data-status="delivered" type="button">Delivered</button>
-            <button class="filter-pill" data-status="cancelled" type="button">Cancelled</button>
+        <div class="parcels-controls" style="margin-bottom: 32px; background: #fff; padding: 24px; border-radius: 16px; border: 1px solid var(--tb-border); box-shadow: var(--shadow-sm);">
+          <div class="filter-bar" id="statusFilterTabs" style="margin-bottom:24px; overflow-x:auto; padding-bottom:12px; border-bottom: 1px solid var(--tb-border); display: flex; gap: 8px; flex-wrap: nowrap;">
+            <button class="filter-pill active" data-status="all" type="button" style="white-space: nowrap;">All Parcels</button>
+            <button class="filter-pill" data-status="active" type="button" style="white-space: nowrap;">Active</button>
+            <button class="filter-pill" data-status="pending" type="button" style="white-space: nowrap;">Pending</button>
+            <button class="filter-pill" data-status="accepted" type="button" style="white-space: nowrap;">Accepted</button>
+            <button class="filter-pill" data-status="in_transit" type="button" style="white-space: nowrap;">In Transit</button>
+            <button class="filter-pill" data-status="delivered" type="button" style="white-space: nowrap;">Delivered</button>
           </div>
 
-          <div class="search-row">
-            <div class="field" style="flex: 1;">
+          <div class="search-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <div class="field" style="flex: 1; min-width: 300px; margin: 0;">
               <div style="position:relative;">
                 <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--tb-text-faint);"></i>
-                <input type="text" id="parcelSearchInput" class="tb-input" placeholder="Search by Order ID, description, or city..." style="padding-left:40px;" />
+                <input type="text" id="parcelSearchInput" class="tb-input" placeholder="Search by Order ID, city, or item..." style="padding-left:40px; height: 48px; border-radius: 12px; background: var(--tb-bg);" />
               </div>
             </div>
 
-            <div class="field" style="flex: 0 0 200px;">
-              <select id="roleFilterSelect" class="tb-select" aria-label="Filter by role">
-                <option value="all">All Roles</option>
+            <div class="field" style="flex: 0 0 200px; margin: 0;">
+              <select id="roleFilterSelect" class="tb-select" aria-label="Filter by role" style="height: 48px; border-radius: 12px;">
+                <option value="all">All My Roles</option>
                 <option value="sender">As Sender</option>
                 <option value="traveler">As Traveler</option>
               </select>

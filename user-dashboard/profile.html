@@ -119,31 +119,48 @@
 
         <!-- Metric Grid -->
         <div class="metric-grid" style="margin-bottom:28px;">
-          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-primary);">
-            <span class="tb-metric-label">Parcels Posted</span>
-            <div class="tb-metric-value" id="statsPostedCount">0</div>
-            <span class="tb-metric-sub">Posted as sender</span>
+          <div class="tb-metric-card tb-metric-card--primary">
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">Parcels Posted</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-box-archive"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="statsPostedCount">0</div>
+              <span class="tb-metric-sub">As a sender</span>
+            </div>
           </div>
-          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-success);">
-            <span class="tb-metric-label">Parcels Delivered</span>
-            <div class="tb-metric-value" id="statsDeliveredCount">0</div>
-            <span class="tb-metric-sub">Transported as traveler</span>
+
+          <div class="tb-metric-card tb-metric-card--success">
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">Parcels Delivered</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-truck-fast"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="statsDeliveredCount">0</div>
+              <span class="tb-metric-sub">As a traveler</span>
+            </div>
           </div>
-          <div class="tb-metric-card">
-            <span class="tb-metric-label">Wallet Balance</span>
-            <div class="tb-metric-value" id="statsWalletBalance">₹0.00</div>
-            <span class="tb-metric-sub">Available &amp; held funds</span>
+
+          <div class="tb-metric-card tb-metric-card--warning">
+            <div class="tb-metric-header">
+              <span class="tb-metric-label">Wallet Balance</span>
+              <div class="tb-metric-icon"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <div class="tb-metric-body">
+              <div class="tb-metric-value" id="statsWalletBalance">₹ 0.00</div>
+              <span class="tb-metric-sub">Available funds</span>
+            </div>
           </div>
         </div>
 
         <!-- Trust & Verification Card -->
-        <div class="tb-panel" style="margin-bottom:28px; border-left:4px solid var(--tb-primary);">
+        <div class="tb-panel" style="margin-bottom:28px; border-left:4px solid var(--tb-primary); background: linear-gradient(to right, var(--tb-primary-soft), transparent);">
           <div style="display:flex; justify-content:space-between; align-items:center; gap: 16px; flex-wrap: wrap;">
             <div>
               <h3 style="margin:0 0 4px; font-size:17px; font-weight:800; color:var(--tb-navy);">Trust &amp; Verification</h3>
-              <p style="margin:0; font-size:13px; color:var(--tb-text-muted);">Increase your credibility to get more deliveries.</p>
+              <p style="margin:0; font-size:13px; color:var(--tb-text-muted);">Increase your credibility to get more delivery requests.</p>
             </div>
-            <a href="verification.html" class="btn-ghost" style="height:40px;">
+            <a href="verification.html" class="btn-primary btn-sm" style="text-decoration:none;">
               <i class="fa-solid fa-shield-halved"></i> Manage Documents
             </a>
           </div>
@@ -180,8 +197,8 @@
               <input type="tel" id="inputPhone" class="tb-input" placeholder="+919876543210" />
             </div>
 
-            <button type="submit" class="btn-primary" id="saveProfileBtn" style="align-self:flex-start; margin-top:12px; padding: 0 32px;">
-              <span class="btn-label"><i class="fa-solid fa-check"></i> Save Changes</span>
+            <button type="submit" class="btn-primary" id="saveProfileBtn" style="align-self:flex-start; margin-top:12px; height: 48px; padding: 0 40px;">
+              <span class="btn-label"><i class="fa-solid fa-save"></i> Update Profile</span>
               <span class="spinner"></span>
             </button>
           </form>

@@ -103,33 +103,37 @@
           <div class="tb-panel">
             <div class="tb-panel-head">
               <div class="tb-panel-title">
-                <h3>Request Withdrawal</h3>
-                <p>Enter the amount and destination details.</p>
+                <h3>Request Payout</h3>
+                <p>Funds will be transferred to your selected destination.</p>
               </div>
             </div>
 
             <!-- STEP 1: Enter Amount & Destination -->
             <form id="withdrawRequestForm">
-              <div class="field" style="margin-bottom:20px;">
-                <label for="withdrawAmount">Amount to Withdraw (₹) *</label>
-                <input type="number" id="withdrawAmount" class="tb-input" min="100" max="50000" placeholder="Min ₹100, Max ₹50,000" style="font-size:22px; font-weight:800; height:54px;" required />
-                <div class="quick-amount-row">
-                  <button type="button" class="quick-amount-pill" id="quickAllBtn">All Available</button>
-                  <button type="button" class="quick-amount-pill" data-amount="500">₹500</button>
-                  <button type="button" class="quick-amount-pill" data-amount="1000">₹1,000</button>
-                  <button type="button" class="quick-amount-pill" data-amount="2000">₹2,000</button>
-                  <button type="button" class="quick-amount-pill" data-amount="5000">₹5,000</button>
+              <div class="field" style="margin-bottom:24px;">
+                <label for="withdrawAmount">Withdrawal Amount (₹)</label>
+                <div style="position: relative;">
+                  <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; font-weight: 800; color: var(--tb-text-muted);">₹</span>
+                  <input type="number" id="withdrawAmount" class="tb-input" min="100" max="50000" placeholder="0.00" style="padding-left: 36px; font-size: 24px; font-weight: 800; height: 64px; background: var(--tb-bg); border-radius: 16px;" required />
+                </div>
+                <div class="quick-amount-row" style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" class="quick-amount-pill" id="quickAllBtn" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1.5px solid var(--tb-border); background: #fff; font-size: 12px; font-weight: 700; cursor: pointer;">All Available</button>
+                  <button type="button" class="quick-amount-pill" data-amount="500" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1.5px solid var(--tb-border); background: #fff; font-size: 12px; font-weight: 700; cursor: pointer;">₹500</button>
+                  <button type="button" class="quick-amount-pill" data-amount="1000" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1.5px solid var(--tb-border); background: #fff; font-size: 12px; font-weight: 700; cursor: pointer;">₹1,000</button>
+                  <button type="button" class="quick-amount-pill" data-amount="5000" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1.5px solid var(--tb-border); background: #fff; font-size: 12px; font-weight: 700; cursor: pointer;">₹5,000</button>
                 </div>
               </div>
 
-              <div class="field" style="margin-bottom:20px;">
-                <label>Payout Method</label>
-                <div class="payout-type-selector">
-                  <div class="payout-type-card active" id="typeUpiCard" data-type="upi">
-                    <i class="fa-solid fa-mobile-screen-button"></i> UPI ID
+              <div class="field" style="margin-bottom:24px;">
+                <label>Payout Destination</label>
+                <div class="payout-type-selector" style="display: flex; gap: 12px;">
+                  <div class="payout-type-card active" id="typeUpiCard" data-type="upi" style="flex: 1; padding: 16px; border-radius: 12px; border: 1.5px solid var(--tb-border); cursor: pointer; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 14px; transition: var(--transition-base);">
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--tb-primary-soft); color: var(--tb-primary); display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    UPI ID
                   </div>
-                  <div class="payout-type-card" id="typeBankCard" data-type="bank">
-                    <i class="fa-solid fa-building-columns"></i> Bank Account
+                  <div class="payout-type-card" id="typeBankCard" data-type="bank" style="flex: 1; padding: 16px; border-radius: 12px; border: 1.5px solid var(--tb-border); cursor: pointer; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 14px; transition: var(--transition-base);">
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--tb-secondary-soft); color: var(--tb-secondary); display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-building-columns"></i></div>
+                    Bank
                   </div>
                 </div>
               </div>
@@ -212,12 +216,18 @@
 
           <!-- Right: Summary & Terms -->
           <div style="display:flex; flex-direction:column; gap:22px;">
-            <div class="tb-metric-card" style="border-left: 4px solid var(--tb-primary);">
-              <span class="tb-metric-label">Withdrawable Balance</span>
-              <div class="tb-metric-value" id="availBalanceValue">₹0.00</div>
-              <div style="padding-top:12px; margin-top: 12px; border-top:1px solid var(--tb-border); display:flex; justify-content:space-between; font-size:13px; color:var(--tb-text-muted);">
-                <span>Locked in Escrow</span>
-                <strong id="lockedBalanceValue" style="color:var(--tb-warning);">₹0.00</strong>
+            <div class="tb-metric-card tb-metric-card--primary">
+              <div class="tb-metric-header">
+                <span class="tb-metric-label">Withdrawable</span>
+                <div class="tb-metric-icon"><i class="fa-solid fa-wallet"></i></div>
+              </div>
+              <div class="tb-metric-body">
+                <div class="tb-metric-value" id="availBalanceValue">₹ 0.00</div>
+                <span class="tb-metric-sub">Verified delivery earnings</span>
+              </div>
+              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--tb-border); display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 12px; color: var(--tb-text-faint);">Locked in Escrow</span>
+                <strong id="lockedBalanceValue" style="font-size: 13px; color: var(--tb-warning);">₹ 0.00</strong>
               </div>
             </div>
 

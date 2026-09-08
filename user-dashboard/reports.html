@@ -36,15 +36,17 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="reports-head">
-          <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Trust &amp; Safety Reports</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Track the status of violation reports and safety disputes submitted to our team.</p>
+        <header class="tb-page-header">
+          <div class="tb-page-title">
+            <h2>Trust &amp; Safety Reports</h2>
+            <p>Track the status of violation reports and safety disputes.</p>
           </div>
-          <button type="button" class="btn-primary" id="openSubmitReportBtn" style="background:var(--error); border-color:var(--error);">
-            <i class="fa-solid fa-flag"></i> Submit New Report
-          </button>
-        </div>
+          <div class="tb-page-actions">
+            <button type="button" class="btn-danger btn-sm" id="openSubmitReportBtn">
+              <i class="fa-solid fa-flag"></i> New Report
+            </button>
+          </div>
+        </header>
 
         <div class="panel">
           <div class="panel-head">

@@ -90,28 +90,38 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="main-tab-bar" style="border-bottom-color: var(--tb-border);">
-          <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries" style="font-family: var(--font-main);">
-            <i class="fa-solid fa-truck-ramp-box"></i> Active Deliveries (<span id="activeDeliveriesBadge">0</span>)
+        <div class="main-tab-bar" style="margin-bottom: 32px; border-bottom: 1px solid var(--tb-border); display: flex; gap: 4px; padding-bottom: 0;">
+          <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
+            Active Tasks (<span id="activeDeliveriesBadge">0</span>)
           </button>
-          <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind" style="font-family: var(--font-main);">
-            <i class="fa-solid fa-magnifying-glass"></i> Find Parcels
+          <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
+            Find Parcels
           </button>
-          <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes" style="font-family: var(--font-main);">
-            <i class="fa-solid fa-route"></i> My Routes
+          <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
+            My Routes
           </button>
         </div>
 
+        <style>
+          .main-tab-btn.active {
+            color: var(--tb-primary) !important;
+            border-bottom-color: var(--tb-primary) !important;
+            background: none !important;
+          }
+        </style>
+
         <!-- SECTION 1: ACTIVE DELIVERIES WORKFLOW -->
         <div id="sectionDeliveries">
-          <div class="tb-panel-head">
-            <div class="tb-panel-title">
+          <div class="tb-page-header">
+            <div class="tb-page-title">
               <h3>My Transport Tasks</h3>
-              <p>Complete pickup and delivery confirmations.</p>
+              <p>Verify pickups and confirm deliveries to earn your fees.</p>
             </div>
-            <button type="button" class="btn-ghost" id="refreshDeliveriesBtn">
-              <i class="fa-solid fa-rotate-right"></i> Refresh
-            </button>
+            <div class="tb-page-actions">
+              <button type="button" class="btn-ghost btn-sm" id="refreshDeliveriesBtn">
+                <i class="fa-solid fa-rotate-right"></i> Refresh Tasks
+              </button>
+            </div>
           </div>
 
           <div id="deliveriesLoadingState" style="text-align:center; padding:40px 20px;">

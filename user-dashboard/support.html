@@ -173,34 +173,20 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="support-head">
-          <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">TravelBuddy Support Center</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Find answers to common questions or submit a ticket to our 24/7 support team.</p>
+        <header class="tb-page-header">
+          <div class="tb-page-title">
+            <h2>Support Center</h2>
+            <p>Get assistance with your shipments, payments, and account safety.</p>
           </div>
-          <button type="button" class="btn-primary" id="openCreateTicketBtn">
-            <i class="fa-solid fa-plus"></i> Open Support Ticket
-          </button>
-        </div>
+          <div class="tb-page-actions">
+            <button type="button" class="btn-primary" id="openCreateTicketBtn">
+              <i class="fa-solid fa-plus"></i> Open Support Ticket
+            </button>
+          </div>
+        </header>
 
-        <!-- URGENT HELP SECTION -->
-        <div class="urgent-help-card" id="urgentHelpSection">
-          <div class="urgent-icon">
-            <i class="fa-solid fa-phone-volume"></i>
-          </div>
-          <div class="urgent-content">
-            <h3>Urgent Safety &amp; Fraud Help</h3>
-            <p>For immediate assistance with parcel loss, safety concerns, or fraud, contact our emergency line.</p>
-          </div>
-          <div class="urgent-actions">
-            <a href="tel:8999129779" class="btn-primary" style="background:#E11D48; border-color:#E11D48; text-decoration:none;">
-              <i class="fa-solid fa-phone"></i> Call Now
-            </a>
-          </div>
-        </div>
-
-        <div class="filter-bar" style="margin-bottom:20px;">
-          <button type="button" class="filter-pill active" id="tabFaqBtn">Frequently Asked Questions</button>
+        <div class="filter-bar" style="margin-bottom:24px; border-bottom: 1px solid var(--tb-border); padding-bottom: 12px; display: flex; gap: 8px;">
+          <button type="button" class="filter-pill active" id="tabFaqBtn">Knowledge Base (FAQ)</button>
           <button type="button" class="filter-pill" id="tabTicketsBtn">My Support Tickets (<span id="ticketCountBadge">0</span>)</button>
         </div>
 

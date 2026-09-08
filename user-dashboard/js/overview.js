@@ -36,7 +36,7 @@
         window.TravelBuddySkeleton.show('#activityList', 'list-item', 5);
         window.TravelBuddySkeleton.show('#recentMessages', 'list-item', 3);
         // Stats are already showing 0, we can shimmer them
-        document.querySelectorAll('.stat-card').forEach(card => card.classList.add('is-loading'));
+        document.querySelectorAll('.tb-metric-card').forEach(card => card.classList.add('is-loading'));
       }
     }
 
@@ -55,13 +55,13 @@
       console.error('Aggregator fetch failed:', err);
       if (!cached) showOverviewError('Could not reach the server.');
     } finally {
-      document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('is-loading'));
+      document.querySelectorAll('.tb-metric-card').forEach(card => card.classList.remove('is-loading'));
     }
   }
 
   function showOverviewError(msg) {
     window.showToast(msg, 'error');
-    document.querySelectorAll('.stat-value').forEach(el => {
+    document.querySelectorAll('.tb-metric-value').forEach(el => {
        if (el.textContent === '0' || el.textContent === 'Rs. 0') el.textContent = '---';
     });
   }
@@ -146,16 +146,16 @@
     if (!container) return;
 
     if (!conversations.length) {
-      container.innerHTML = `<p class="empty-state"><i class="fa-solid fa-comments-slash"></i>No messages yet.</p>`;
+      container.innerHTML = `<div class="tb-empty-state" style="padding: 24px;"><i class="fa-solid fa-comments-slash" style="font-size: 24px;"></i><p style="margin: 0; font-size: 13px;">No messages yet.</p></div>`;
       return;
     }
 
     container.innerHTML = conversations.map((c) => `
       <a href="messages.html?conversation=${encodeURIComponent(c.id)}" class="msg-thread-item">
-        <div class="avatar avatar--sm">${escapeHTML(initials(c.other.label))}</div>
+        <div class="avatar avatar--sm" style="width: 36px; height: 36px; border-radius: 10px; font-size: 12px;">${escapeHTML(initials(c.other.label))}</div>
         <div class="msg-thread-info">
-          <div class="msg-thread-name">
-            <strong>${escapeHTML(c.other.label)}</strong>
+          <div class="msg-thread-header">
+            <span class="msg-thread-name">${escapeHTML(c.other.label)}</span>
             <span class="msg-thread-date">${escapeHTML(formatTime(c.lastMessageAt))}</span>
           </div>
           <span class="msg-thread-snippet">${escapeHTML(c.lastMessage || 'Start a conversation')}</span>
@@ -170,7 +170,7 @@
     if (!list) return;
 
     if (!activity.length) {
-      list.innerHTML = `<p class="empty-state"><i class="fa-solid fa-bell-slash"></i>No recent activity yet.</p>`;
+      list.innerHTML = `<div class="tb-empty-state" style="padding: 24px;"><i class="fa-solid fa-bell-slash" style="font-size: 24px;"></i><p style="margin: 0; font-size: 13px;">No recent activity.</p></div>`;
       return;
     }
 
@@ -182,18 +182,20 @@
         const directionClass = item.direction === 'debit' || item.type.includes('WITHDRAWAL') ? 'debit' : 'credit';
         const prefix = item.direction === 'debit' ? '-' : '+';
         const displayAmount = isPrivate ? '••••' : window.TravelBuddy.formatPaise(item.amount);
-        metaHtml = `<span class="activity-amount ${directionClass}">${prefix}${displayAmount}</span>`;
+        metaHtml = `<span class="activity-amount ${directionClass}" style="font-weight: 800; font-size: 13px; color: ${item.direction === 'debit' ? 'var(--tb-danger)' : 'var(--tb-success)'}">${prefix}${displayAmount}</span>`;
       }
+
+      const meta = TYPE_META[item.type] || DEFAULT_META;
 
       return `
       <a href="${item.link || '#'}" class="activity-item" style="animation-delay:${i * 0.06}s; text-decoration:none;">
-        <div class="activity-icon" style="background:#EFF6FF; color:var(--primary)"><i class="fa-solid ${item.icon || 'fa-bell'}"></i></div>
-        <div style="flex:1">
+        <div class="activity-icon" style="background: var(--tb-bg); color: var(--tb-primary)"><i class="fa-solid ${item.icon || meta.icon || 'fa-bell'}"></i></div>
+        <div class="activity-content">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="activity-text"><strong>${escapeHTML(item.title)}</strong></span>
+            <span class="activity-title">${escapeHTML(item.title)}</span>
             ${metaHtml}
           </div>
-          <span class="activity-subtext" style="font-size:12px; color:var(--text-muted); display:block;">${escapeHTML(item.description)}</span>
+          <span class="activity-desc">${escapeHTML(item.description)}</span>
           <span class="activity-time">${escapeHTML(timeAgo(item.timestamp))}</span>
         </div>
       </a>

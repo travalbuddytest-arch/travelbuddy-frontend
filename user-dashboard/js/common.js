@@ -217,16 +217,69 @@
 
   function setButtonLoading(button, isLoading, loadingText) {
     if (!button) return;
-    const label = button.querySelector('.btn-label');
-    if (label && loadingText) {
-      if (!button.dataset.originalLabel) button.dataset.originalLabel = label.innerHTML;
-      label.innerHTML = loadingText;
-    } else if (label && !isLoading && button.dataset.originalLabel) {
-      label.innerHTML = button.dataset.originalLabel;
+    let label = button.querySelector('.btn-label');
+    if (!label) {
+      // Auto-wrap content in btn-label for consistency
+      const content = button.innerHTML;
+      button.innerHTML = `<span class="btn-label">${content}</span><span class="spinner" aria-hidden="true"></span>`;
+      label = button.querySelector('.btn-label');
     }
-    button.classList.toggle('loading', isLoading);
-    button.disabled = isLoading;
+    const spinner = button.querySelector('.spinner');
+
+    if (isLoading) {
+      if (!button.dataset.originalLabel) {
+        button.dataset.originalLabel = label.innerHTML;
+      }
+      if (loadingText) label.innerHTML = loadingText;
+      button.classList.add('btn-loading');
+      button.disabled = true;
+    } else {
+      if (button.dataset.originalLabel) {
+        label.innerHTML = button.dataset.originalLabel;
+      }
+      button.classList.remove('btn-loading');
+      button.disabled = false;
+    }
     button.setAttribute('aria-busy', String(isLoading));
+  }
+
+  /**
+   * Global Form Lock System
+   * Prevents double-submission and interaction while processing.
+   */
+  function FormLock(form, isLocked, options = {}) {
+    if (!form) return;
+    const {
+      submitBtn = form.querySelector('button[type="submit"]'),
+      loadingText = 'Processing...',
+      lockInputs = true
+    } = options;
+
+    if (isLocked) {
+      form.classList.add('form-locked');
+      if (submitBtn) setButtonLoading(submitBtn, true, loadingText);
+      if (lockInputs) {
+        form.querySelectorAll('input, select, textarea, button:not([type="submit"])').forEach(el => {
+          if (!el.hasAttribute('disabled')) {
+            el.setAttribute('data-was-disabled', 'false');
+            el.disabled = true;
+          } else {
+            el.setAttribute('data-was-disabled', 'true');
+          }
+        });
+      }
+    } else {
+      form.classList.remove('form-locked');
+      if (submitBtn) setButtonLoading(submitBtn, false);
+      if (lockInputs) {
+        form.querySelectorAll('input, select, textarea, button').forEach(el => {
+          if (el.getAttribute('data-was-disabled') === 'false') {
+            el.disabled = false;
+          }
+          el.removeAttribute('data-was-disabled');
+        });
+      }
+    }
   }
 
   function formatDate(iso, options) {
@@ -325,6 +378,7 @@
     authHeaders,
     getAuthToken,
     setButtonLoading,
+    FormLock,
     formatDate,
     formatPaise,
     formatRupees: formatPaise,
@@ -408,6 +462,13 @@
 
   function attachRipple(button) {
     button.addEventListener('click', function (e) {
+      // Basic double-submit prevention for all primary buttons
+      if (button.classList.contains('btn-loading') || button.disabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
       const rect = button.getBoundingClientRect();
       const ripple = document.createElement('span');
       const size = Math.max(rect.width, rect.height);
