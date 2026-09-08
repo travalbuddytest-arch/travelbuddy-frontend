@@ -90,24 +90,24 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="main-tab-bar">
-          <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries">
+        <div class="main-tab-bar" style="border-bottom-color: var(--tb-border);">
+          <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries" style="font-family: var(--font-main);">
             <i class="fa-solid fa-truck-ramp-box"></i> Active Deliveries (<span id="activeDeliveriesBadge">0</span>)
           </button>
-          <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind">
-            <i class="fa-solid fa-magnifying-glass"></i> Find Parcels on Route
+          <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind" style="font-family: var(--font-main);">
+            <i class="fa-solid fa-magnifying-glass"></i> Find Parcels
           </button>
-          <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes">
-            <i class="fa-solid fa-route"></i> My Travel Routes
+          <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes" style="font-family: var(--font-main);">
+            <i class="fa-solid fa-route"></i> My Routes
           </button>
         </div>
 
         <!-- SECTION 1: ACTIVE DELIVERIES WORKFLOW -->
         <div id="sectionDeliveries">
-          <div class="panel-head panel-head--row" style="margin-bottom:16px;">
-            <div>
-              <h2 style="font-size:18px; margin:0 0 4px;">My Transport Tasks</h2>
-              <p class="panel-sub">Complete pickup verification, in-transit handover, and delivery confirmations.</p>
+          <div class="tb-panel-head">
+            <div class="tb-panel-title">
+              <h3>My Transport Tasks</h3>
+              <p>Complete pickup and delivery confirmations.</p>
             </div>
             <button type="button" class="btn-ghost" id="refreshDeliveriesBtn">
               <i class="fa-solid fa-rotate-right"></i> Refresh
@@ -133,94 +133,98 @@
 
         <!-- SECTION 2: FIND PARCELS ON ROUTE -->
         <div id="sectionFind" class="hidden">
-          <div class="panel">
-            <div class="panel-head">
-              <h2>Find Parcels on Your Travel Route</h2>
-              <p class="panel-sub">Enter your starting point and destination to find available parcels.</p>
+          <div class="tb-panel">
+            <div class="tb-panel-head">
+              <div class="tb-panel-title">
+                <h3>Find Parcels on Route</h3>
+                <p>Enter your travel path to find matches.</p>
+              </div>
             </div>
 
             <form class="search-row" id="routeSearchForm">
               <div class="field">
                 <label for="routeFrom">Starting City</label>
-                <input type="text" id="routeFrom" placeholder="e.g. Mumbai" required />
+                <input type="text" id="routeFrom" class="tb-input" placeholder="e.g. Mumbai" required />
               </div>
               <div class="field">
                 <label for="routeTo">Destination City</label>
-                <input type="text" id="routeTo" placeholder="e.g. Pune" required />
+                <input type="text" id="routeTo" class="tb-input" placeholder="e.g. Pune" required />
               </div>
-              <button type="submit" class="btn-primary btn-primary--inline" id="routeSearchBtn">
-                <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search Route</span>
+              <button type="submit" class="btn-primary" id="routeSearchBtn">
+                <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
                 <span class="spinner" aria-hidden="true"></span>
               </button>
             </form>
           </div>
 
-          <div class="panel">
-            <div class="panel-head">
-              <h2>Matching Parcels Available</h2>
-              <span class="result-count" id="resultCount"></span>
+          <div class="tb-panel">
+            <div class="tb-panel-head">
+              <div class="tb-panel-title">
+                <h3>Matching Parcels</h3>
+              </div>
+              <span class="tb-badge tb-badge--info" id="resultCount"></span>
             </div>
             <ul class="parcel-list parcel-list--pickup" id="pickupResults"></ul>
-            <p class="empty-state" id="pickupEmpty">
-              <i class="fa-solid fa-box-open"></i>
-              Enter a route above to see parcels waiting for transport.
-            </p>
+            <div id="pickupEmpty" class="tb-empty-state">
+              <div class="tb-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+              <p>Enter a route above to see available parcels.</p>
+            </div>
           </div>
         </div>
 
         <!-- SECTION 3: MY TRAVEL ROUTES -->
         <div id="sectionRoutes" class="hidden">
-          <div class="panel-grid panel-grid--split">
-            <div class="panel">
-              <div class="panel-head">
-                <h2>Post an Upcoming Travel Route</h2>
-                <p class="panel-sub">Publish your upcoming travel plans so senders can match with you directly.</p>
+          <div class="panel-grid">
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Post a Route</h3>
+                  <p>Share your travel plan with senders.</p>
+                </div>
               </div>
 
               <form class="stack-form" id="postRouteForm">
                 <div class="form-row">
                   <div class="field">
                     <label for="routePostFrom">From City</label>
-                    <input type="text" id="routePostFrom" placeholder="e.g. Pune" required />
+                    <input type="text" id="routePostFrom" class="tb-input" placeholder="e.g. Pune" required />
                   </div>
                   <div class="field">
                     <label for="routePostTo">To City</label>
-                    <input type="text" id="routePostTo" placeholder="e.g. Delhi" required />
+                    <input type="text" id="routePostTo" class="tb-input" placeholder="e.g. Delhi" required />
                   </div>
                 </div>
 
                 <div class="field">
                   <label for="routePostDate">Travel Date</label>
-                  <input type="date" id="routePostDate" required />
+                  <input type="date" id="routePostDate" class="tb-input" required />
                 </div>
 
                 <div class="field">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <label style="margin-bottom:0;">Available Capacity</label>
-                    <strong id="capacityValue" style="color:var(--primary); font-size:14px;">5 kg</strong>
+                    <strong id="capacityValue" style="color:var(--tb-primary); font-size:14px;">5 kg</strong>
                   </div>
-                  <input type="range" id="routePostCapacity" min="1" max="100" value="5" style="width:100%; cursor:pointer;" />
-                  <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:11px; color:var(--text-faint);">
-                    <span>1 kg</span>
-                    <span>100 kg</span>
-                  </div>
+                  <input type="range" id="routePostCapacity" min="1" max="100" value="5" style="width:100%; cursor:pointer; accent-color: var(--tb-primary);" />
                 </div>
 
                 <div class="field">
-                  <label for="routePostNotes">Notes (Transport method, luggage space, etc.)</label>
-                  <input type="text" id="routePostNotes" placeholder="e.g. Travelling by flight, can carry up to 5kg" maxlength="200" />
+                  <label for="routePostNotes">Notes (Transport method, etc.)</label>
+                  <input type="text" id="routePostNotes" class="tb-input" placeholder="e.g. Travelling by flight" maxlength="200" />
                 </div>
 
-                <button type="submit" class="btn-primary" id="routePostBtn">
+                <button type="submit" class="btn-primary" id="routePostBtn" style="width:100%;">
                   <span class="btn-label"><i class="fa-solid fa-route"></i> Post Travel Route</span>
                   <span class="spinner" aria-hidden="true"></span>
                 </button>
               </form>
             </div>
 
-            <div class="panel">
-              <div class="panel-head">
-                <h2>My Active Travel Routes</h2>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Active Routes</h3>
+                </div>
               </div>
               <ul class="parcel-list" id="myRouteList"></ul>
             </div>
@@ -240,20 +244,23 @@
       <h3 class="modal-title" id="taskOtpTitle">Enter Verification PIN</h3>
       <p id="taskOtpSub" style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">Enter the 6-digit PIN shared by the counterpart.</p>
       
-      <div class="field" style="margin-bottom:18px;">
-        <input type="text" id="taskOtpInput" maxlength="6" placeholder="• • • • • •" style="text-align:center; font-size:24px; letter-spacing:8px; font-weight:800; height:52px;" autocomplete="one-time-code" />
-      </div>
+      <form id="taskOtpForm">
+        <div class="field" style="margin-bottom:18px;">
+          <input type="text" id="taskOtpInput" maxlength="6" placeholder="• • • • • •" style="text-align:center; font-size:24px; letter-spacing:8px; font-weight:800; height:52px;" autocomplete="one-time-code" required />
+        </div>
 
-      <button type="button" class="btn-primary" id="taskSubmitOtpBtn" style="width:100%;">
-        <span class="btn-label">Verify &amp; Confirm Handover</span>
-        <span class="spinner"></span>
-      </button>
+        <button type="submit" class="btn-primary" id="taskSubmitOtpBtn" style="width:100%;">
+          <span class="btn-label">Verify &amp; Confirm Handover</span>
+          <span class="spinner"></span>
+        </button>
+      </form>
     </div>
   </div>
 
   <script defer src="../shared/config.js?v=1"></script>
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/validation-helper.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
   <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>

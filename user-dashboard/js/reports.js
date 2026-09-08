@@ -155,7 +155,7 @@
         return;
       }
 
-      setButtonLoading(sendReportBtn, true, 'Submitting Report...');
+      window.TravelBuddy.FormLock(submitReportForm, true, { loadingText: 'Submitting Report...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/support/reports`, {
@@ -177,7 +177,7 @@
         console.error(err);
         window.showToast('Network error submitting report.', 'error');
       } finally {
-        setButtonLoading(sendReportBtn, false);
+        window.TravelBuddy.FormLock(submitReportForm, false);
       }
     });
   }

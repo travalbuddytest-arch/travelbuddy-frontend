@@ -317,7 +317,7 @@
         return;
       }
 
-      setButtonLoading(postSubmitFinalBtn, true, 'Publishing...');
+      window.TravelBuddy.FormLock(form, true, { loadingText: 'Publishing...' });
 
       const from = stepFromCity.value.trim();
       const to = stepToCity.value.trim();
@@ -376,7 +376,7 @@
         console.error(err);
         window.showToast('Network error while posting parcel.', 'error');
       } finally {
-        setButtonLoading(postSubmitFinalBtn, false);
+        window.TravelBuddy.FormLock(form, false);
       }
     });
   }

@@ -25,7 +25,7 @@
         return;
       }
 
-      setButtonLoading(submitFeedbackBtn, true, 'Submitting...');
+      window.TravelBuddy.FormLock(feedbackForm, true, { loadingText: 'Submitting...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/settings/feedback`, {
@@ -46,7 +46,7 @@
         console.error(err);
         window.showToast('Could not reach server to submit feedback.', 'error');
       } finally {
-        setButtonLoading(submitFeedbackBtn, false);
+        window.TravelBuddy.FormLock(feedbackForm, false);
       }
     });
   }

@@ -216,7 +216,7 @@
         }
       }
 
-      setButtonLoading(requestOtpBtn, true, 'Sending Email OTP...');
+      TravelBuddy.FormLock(withdrawRequestForm, true, { loadingText: 'Sending Email OTP...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/withdraw/request`, {
@@ -239,7 +239,7 @@
         console.error(err);
         window.showToast('Could not reach server to send OTP.', 'error');
       } finally {
-        setButtonLoading(requestOtpBtn, false);
+        TravelBuddy.FormLock(withdrawRequestForm, false);
       }
     });
   }
@@ -261,7 +261,7 @@
         return;
       }
 
-      setButtonLoading(confirmWithdrawBtn, true, 'Verifying...');
+      TravelBuddy.FormLock(withdrawVerifyForm, true, { loadingText: 'Verifying...' });
 
       const payload = {
         method: currentMethod,
@@ -304,7 +304,7 @@
         console.error(err);
         window.showToast('Network error verifying withdrawal.', 'error');
       } finally {
-        setButtonLoading(confirmWithdrawBtn, false);
+        TravelBuddy.FormLock(withdrawVerifyForm, false);
       }
     });
   }

@@ -191,7 +191,7 @@
         return;
       }
 
-      setButtonLoading(saveProfileBtn, true, 'Saving Changes...');
+      window.TravelBuddy.FormLock(editProfileForm, true, { loadingText: 'Saving Changes...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/auth/me`, {
@@ -213,7 +213,7 @@
         console.error(err);
         window.showToast('Network error saving profile.', 'error');
       } finally {
-        setButtonLoading(saveProfileBtn, false);
+        window.TravelBuddy.FormLock(editProfileForm, false);
       }
     });
   }

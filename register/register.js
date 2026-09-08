@@ -113,8 +113,8 @@
       return;
     }
 
-    continueBtn.classList.add('loading');
-    continueBtn.disabled = true;
+    const lock = window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock;
+    lock(detailsForm, true, { loadingText: 'Creating Account...' });
 
     try {
       const response = await fetch(`${API_BASE}/register`, {
@@ -153,8 +153,8 @@
       // The server could not be reached at all (not running, wrong URL, no internet)
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
-      continueBtn.classList.remove('loading');
-      continueBtn.disabled = false;
+      const lock = window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock;
+      lock(detailsForm, false);
     }
   });
 

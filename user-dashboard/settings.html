@@ -37,14 +37,16 @@
       <main class="content" id="content">
         <div class="settings-container">
           <!-- Security Shortcuts -->
-          <div class="panel">
-            <div class="panel-head">
-              <h3>Account Security</h3>
+          <div class="tb-panel">
+            <div class="tb-panel-head">
+              <div class="tb-panel-title">
+                <h3>Account Security</h3>
+              </div>
             </div>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
-              Manage your login passwords, two-step verification, recovery emails, and active devices.
+            <p style="font-size:13px; color:var(--tb-text-muted); margin-bottom:20px;">
+              Manage your passwords, verification, and recovery options.
             </p>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
               <a href="security.html" class="btn-primary" style="text-decoration:none;">
                 <i class="fa-solid fa-shield-halved"></i> Security Settings
               </a>
@@ -55,40 +57,44 @@
           </div>
 
           <!-- Privacy & Cookies -->
-          <div class="panel">
-            <div class="panel-head">
-              <h3>Privacy & Cookies</h3>
+          <div class="tb-panel">
+            <div class="tb-panel-head">
+              <div class="tb-panel-title">
+                <h3>Privacy & Cookies</h3>
+              </div>
             </div>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
-              Manage your data preferences and cookie settings for this device.
+            <p style="font-size:13px; color:var(--tb-text-muted); margin-bottom:20px;">
+              Manage your data preferences and cookie settings.
             </p>
-            <button type="button" class="btn-ghost" id="manageCookiesBtn" style="width:100%; justify-content:center;">
+            <button type="button" class="btn-ghost" id="manageCookiesBtn" style="width:100%; justify-content:center; height: 48px;">
               <i class="fa-solid fa-cookie-bite"></i> Manage Cookies
             </button>
           </div>
 
           <!-- Rate Us Feedback -->
-          <div class="panel">
-            <div class="panel-head">
-              <h3>Rate Your Experience</h3>
-              <p class="panel-sub">Help us improve TravelBuddy with your honest feedback.</p>
+          <div class="tb-panel">
+            <div class="tb-panel-head">
+              <div class="tb-panel-title">
+                <h3>Rate Your Experience</h3>
+                <p>Help us improve TravelBuddy.</p>
+              </div>
             </div>
 
             <form id="feedbackForm" class="stack-form">
               <div class="field">
-                <label for="feedbackRatingSelect">How would you rate TravelBuddy?</label>
-                <select id="feedbackRatingSelect" class="role-select" style="width:100%;">
-                  <option value="5">⭐⭐⭐⭐⭐ - Excellent (5/5)</option>
-                  <option value="4">⭐⭐⭐⭐ - Good (4/5)</option>
-                  <option value="3">⭐⭐⭐ - Average (3/5)</option>
-                  <option value="2">⭐⭐ - Needs Improvement (2/5)</option>
-                  <option value="1">⭐ - Poor (1/5)</option>
+                <label for="feedbackRatingSelect">How would you rate us?</label>
+                <select id="feedbackRatingSelect" class="tb-select">
+                  <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                  <option value="4">⭐⭐⭐⭐ - Good</option>
+                  <option value="3">⭐⭐⭐ - Average</option>
+                  <option value="2">⭐⭐ - Needs Work</option>
+                  <option value="1">⭐ - Poor</option>
                 </select>
               </div>
 
               <div class="field">
-                <label for="feedbackCommentInput">Feedback or Feature Request</label>
-                <textarea id="feedbackCommentInput" rows="3" placeholder="Tell us what you love or what we could do better..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; outline:none;" required></textarea>
+                <label for="feedbackCommentInput">Feedback or Request</label>
+                <textarea id="feedbackCommentInput" class="tb-textarea" rows="3" placeholder="Tell us what you love or what we could do better..." required></textarea>
               </div>
 
               <button type="submit" class="btn-primary" id="submitFeedbackBtn">
@@ -106,6 +112,7 @@
   <script defer src="../shared/config.js?v=1"></script>
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/validation-helper.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
   <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>

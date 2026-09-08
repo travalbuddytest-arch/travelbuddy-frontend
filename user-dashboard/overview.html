@@ -30,64 +30,58 @@
 
       <main class="content" id="content">
         <section class="view active" id="view-overview">
-          <div class="overview-hero">
-            <div class="overview-copy">
-              <span class="eyebrow">User dashboard</span>
+          <header class="tb-page-header">
+            <div class="tb-page-title">
               <h2 id="overviewGreeting">Welcome back</h2>
-              <p>Manage parcels, find matching routes, continue conversations, and track wallet activity from one place.</p>
+              <p>Manage parcels, find routes, and track your wallet from one place.</p>
             </div>
-            <div class="wallet-chip">
-              <span class="wallet-chip-icon"><i class="fa-solid fa-wallet"></i></span>
-              <div>
-                <span class="wallet-chip-label">Wallet balance</span>
-                <span class="wallet-chip-value" id="heroWalletValue">Rs. 0</span>
-              </div>
+            <div class="tb-page-actions">
+               <div class="user-chip" style="padding: 8px 16px; border-radius: 12px; background: var(--tb-primary-soft); border-color: var(--tb-primary);">
+                  <i class="fa-solid fa-wallet" style="color: var(--tb-primary);"></i>
+                  <span id="heroWalletValue" style="font-weight: 700; color: var(--tb-primary);">₹ 0.00</span>
+               </div>
             </div>
-          </div>
+          </header>
 
-          <div class="stat-grid">
-            <div class="stat-card">
-              <div class="stat-icon stat-icon--blue"><i class="fa-solid fa-box"></i></div>
-              <div class="stat-info">
-                <span class="stat-value" id="statActiveParcels">0</span>
-                <span class="stat-label">Active Parcels</span>
-              </div>
+          <div class="metric-grid">
+            <div class="tb-metric-card">
+              <span class="tb-metric-label">Active Parcels</span>
+              <div class="tb-metric-value" id="statActiveParcels">0</div>
+              <span class="tb-metric-sub">Shipments currently in progress</span>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon stat-icon--green"><i class="fa-solid fa-truck-fast"></i></div>
-              <div class="stat-info">
-                <span class="stat-value" id="statCompletedDeliveries">0</span>
-                <span class="stat-label">Completed Deliveries</span>
-              </div>
+            <div class="tb-metric-card">
+              <span class="tb-metric-label">Completed Deliveries</span>
+              <div class="tb-metric-value" id="statCompletedDeliveries">0</div>
+              <span class="tb-metric-sub">Verified delivered shipments</span>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon stat-icon--purple"><i class="fa-solid fa-route"></i></div>
-              <div class="stat-info">
-                <span class="stat-value" id="statTripsPosted">0</span>
-                <span class="stat-label">Trips Posted</span>
-              </div>
+            <div class="tb-metric-card">
+              <span class="tb-metric-label">Trips Posted</span>
+              <div class="tb-metric-value" id="statTripsPosted">0</div>
+              <span class="tb-metric-sub">Routes you've shared with others</span>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon stat-icon--gold"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-              <div class="stat-info">
-                <span class="stat-value" id="statTotalEarnings">Rs. 0</span>
-                <span class="stat-label">Total Earnings</span>
-              </div>
+            <div class="tb-metric-card" style="border-color: var(--tb-success);">
+              <span class="tb-metric-label" style="color: var(--tb-success);">Total Earnings</span>
+              <div class="tb-metric-value" id="statTotalEarnings">₹ 0.00</div>
+              <span class="tb-metric-sub">Lifetime revenue from deliveries</span>
             </div>
           </div>
 
           <div class="panel-grid">
-            <div class="panel panel--wide">
-              <div class="panel-head panel-head--row">
-                <h2>Recent Activity</h2>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Recent Activity</h3>
+                </div>
                 <a class="link-btn" href="activity.html">View all</a>
               </div>
               <ul class="activity-list" id="activityList"></ul>
             </div>
 
-            <div class="panel">
-              <div class="panel-head panel-head--row">
-                <h2>Recent Messages</h2>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Recent Messages</h3>
+                </div>
                 <a class="link-btn" href="messages.html">Chat</a>
               </div>
               <div class="recent-messages" id="recentMessages"></div>
@@ -95,9 +89,11 @@
           </div>
 
           <div class="panel-grid panel-grid--split">
-            <div class="panel">
-              <div class="panel-head">
-                <h2>Quick Actions</h2>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Quick Actions</h3>
+                </div>
               </div>
               <div class="quick-actions">
                 <a class="quick-btn" href="post.html">
@@ -123,9 +119,11 @@
               </div>
             </div>
 
-            <div class="panel">
-              <div class="panel-head">
-                <h2>Wallet Snapshot</h2>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Wallet Snapshot</h3>
+                </div>
               </div>
               <div class="wallet-snapshot">
                 <div class="wallet-metric">
@@ -136,7 +134,7 @@
                   </div>
                 </div>
                 <div class="wallet-metric">
-                  <span class="wallet-metric-icon wallet-metric-icon--gold" style="background:#FEF3DD;color:#B25E09;"><i class="fa-solid fa-lock"></i></span>
+                  <span class="wallet-metric-icon" style="background:var(--tb-warning-soft);color:var(--tb-warning);"><i class="fa-solid fa-lock"></i></span>
                   <div>
                     <span class="wallet-metric-value" id="walletLockedValue">₹0.00</span>
                     <span class="wallet-metric-label">Locked / In Escrow</span>
@@ -151,10 +149,10 @@
                 </div>
               </div>
               <div style="display:flex; gap:10px; margin-top:14px;">
-                <a class="btn-primary btn-primary--inline" href="wallet.html" style="text-decoration:none; flex:1; text-align:center; display:inline-flex; align-items:center; justify-content:center;">
+                <a class="btn-primary" href="wallet.html" style="text-decoration:none; flex:1;">
                   <i class="fa-solid fa-plus"></i> Add Money
                 </a>
-                <a class="btn-ghost" href="withdraw.html" style="text-decoration:none; flex:1; text-align:center; display:inline-flex; align-items:center; justify-content:center;">
+                <a class="btn-ghost" href="withdraw.html" style="text-decoration:none; flex:1; justify-content: center;">
                   <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
                 </a>
               </div>

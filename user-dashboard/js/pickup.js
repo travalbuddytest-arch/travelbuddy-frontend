@@ -32,6 +32,7 @@
   const taskOtpModalClose = document.getElementById('taskOtpModalClose');
   const taskOtpTitle = document.getElementById('taskOtpTitle');
   const taskOtpSub = document.getElementById('taskOtpSub');
+  const taskOtpForm = document.getElementById('taskOtpForm');
   const taskOtpInput = document.getElementById('taskOtpInput');
   const taskSubmitOtpBtn = document.getElementById('taskSubmitOtpBtn');
 
@@ -232,15 +233,16 @@
     taskOtpInput.focus();
   }
 
-  if (taskSubmitOtpBtn) {
-    taskSubmitOtpBtn.addEventListener('click', async () => {
+  if (taskOtpForm) {
+    taskOtpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
       const pin = taskOtpInput.value.trim();
       if (pin.length !== 6) {
         window.showToast('Please enter a valid 6-digit PIN.', 'warning');
         return;
       }
 
-      setButtonLoading(taskSubmitOtpBtn, true, 'Verifying...');
+      window.TravelBuddy.FormLock(taskOtpForm, true, { loadingText: 'Verifying...' });
       try {
         const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(currentActiveParcelId)}/otp/${currentOtpPurpose}/verify`, {
           method: 'POST',
@@ -261,7 +263,7 @@
         console.error(err);
         window.showToast('Could not reach the server.', 'error');
       } finally {
-        setButtonLoading(taskSubmitOtpBtn, false);
+        window.TravelBuddy.FormLock(taskOtpForm, false);
       }
     });
   }
@@ -365,7 +367,7 @@
         return;
       }
 
-      setButtonLoading(routeSearchBtn, true);
+      window.TravelBuddy.FormLock(routeForm, true);
       if (pickupResults) {
         if (window.TravelBuddySkeleton) {
           window.TravelBuddySkeleton.show('#pickupResults', 'card', 2);
@@ -392,7 +394,7 @@
         window.showToast('Could not reach the server.', 'error');
         renderPickupResults([]);
       } finally {
-        setButtonLoading(routeSearchBtn, false);
+        window.TravelBuddy.FormLock(routeForm, false);
       }
     });
   }

@@ -36,51 +36,51 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="earnings-head">
-          <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">My Delivery Earnings</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Earnings earned by carrying parcels on your planned journeys.</p>
+        <header class="tb-page-header">
+          <div class="tb-page-title">
+            <h2>My Delivery Earnings</h2>
+            <p>Earnings earned by carrying parcels on your planned journeys.</p>
           </div>
-          <div style="display:flex; gap:10px;">
-            <a href="withdraw.html" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center;">
+          <div class="tb-page-actions">
+            <a href="withdraw.html" class="btn-primary" style="text-decoration:none;">
               <i class="fa-solid fa-money-bill-transfer"></i> Withdraw Earnings
             </a>
             <a href="pickup.html" class="btn-ghost" style="text-decoration:none;">
               <i class="fa-solid fa-route"></i> Carry More Parcels
             </a>
           </div>
-        </div>
+        </header>
 
         <!-- Metric Grid -->
-        <div class="metric-grid" style="margin-bottom:24px;">
-          <div class="metric-box metric-box--success">
-            <span class="metric-label">Total Lifetime Earnings</span>
-            <div class="metric-value" id="earnTotalLifetime">₹0.00</div>
-            <span class="metric-sub">Earned across all completed journeys</span>
+        <div class="metric-grid">
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-success);">
+            <span class="tb-metric-label">Total Lifetime Earnings</span>
+            <div class="tb-metric-value" id="earnTotalLifetime">₹0.00</div>
+            <span class="tb-metric-sub">Earned across all completed journeys</span>
           </div>
-          <div class="metric-box metric-box--primary">
-            <span class="metric-label">Withdrawable Available Balance</span>
-            <div class="metric-value" id="earnWithdrawable">₹0.00</div>
-            <span class="metric-sub">Available for payout to Bank/UPI</span>
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-primary);">
+            <span class="tb-metric-label">Available Balance</span>
+            <div class="tb-metric-value" id="earnWithdrawable">₹0.00</div>
+            <span class="tb-metric-sub">Ready for payout to Bank/UPI</span>
           </div>
-          <div class="metric-box">
-            <span class="metric-label">Completed Deliveries</span>
-            <div class="metric-value" id="earnCompletedTrips">0</div>
-            <span class="metric-sub">Verified delivered shipments</span>
+          <div class="tb-metric-card">
+            <span class="tb-metric-label">Completed Deliveries</span>
+            <div class="tb-metric-value" id="earnCompletedTrips">0</div>
+            <span class="tb-metric-sub">Verified delivered shipments</span>
           </div>
-          <div class="metric-box metric-box--warning">
-            <span class="metric-label">Active Transits</span>
-            <div class="metric-value" id="earnActiveTransits">0</div>
-            <span class="metric-sub">Deliveries currently in progress</span>
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-warning);">
+            <span class="tb-metric-label">Active Transits</span>
+            <div class="tb-metric-value" id="earnActiveTransits">0</div>
+            <span class="tb-metric-sub">Deliveries currently in progress</span>
           </div>
         </div>
 
         <!-- Earnings Ledger -->
-        <div class="panel">
-          <div class="panel-head panel-head--row">
-            <div>
-              <h2>Earnings Ledger</h2>
-              <p class="panel-sub">Itemized record of delivery fees credited to your account.</p>
+        <div class="tb-panel">
+          <div class="tb-panel-head">
+            <div class="tb-panel-title">
+              <h3>Earnings Ledger</h3>
+              <p>Itemized record of delivery fees credited to your account.</p>
             </div>
             <button type="button" class="btn-ghost" id="exportEarningsBtn">
               <i class="fa-solid fa-download"></i> Export CSV
@@ -88,7 +88,7 @@
           </div>
 
           <div class="table-container">
-            <table class="data-table" id="earningsTable">
+            <table class="tb-table" id="earningsTable">
               <thead>
                 <tr>
                   <th>Credited Date</th>
@@ -101,7 +101,7 @@
               </thead>
               <tbody id="earningsTableBody">
                 <tr>
-                  <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
+                  <td colspan="6" style="text-align:center; padding:48px; color:var(--tb-text-muted);">
                     <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i> Loading earnings...
                   </td>
                 </tr>

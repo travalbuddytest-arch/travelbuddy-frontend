@@ -100,29 +100,31 @@
       <main class="content" id="content">
         <div class="security-grid">
           <!-- Left: Change Password Form -->
-          <div class="panel">
-            <div class="panel-head">
-              <h2>Change Account Password</h2>
-              <p class="panel-sub">Ensure your account is using a strong, unique password.</p>
+          <div class="tb-panel">
+            <div class="tb-panel-head">
+              <div class="tb-panel-title">
+                <h3>Change Password</h3>
+                <p>Ensure your account is using a strong password.</p>
+              </div>
             </div>
 
             <form id="changePasswordForm" class="stack-form">
               <div class="field">
                 <label for="currentPasswordInput">Current Password *</label>
-                <input type="password" id="currentPasswordInput" placeholder="Enter current password" required />
+                <input type="password" id="currentPasswordInput" class="tb-input" placeholder="Enter current password" required />
               </div>
 
               <div class="field">
                 <label for="newPasswordInput">New Password *</label>
-                <input type="password" id="newPasswordInput" placeholder="Minimum 8 characters" minlength="8" required />
+                <input type="password" id="newPasswordInput" class="tb-input" placeholder="Minimum 8 characters" minlength="8" required />
               </div>
 
               <div class="field">
                 <label for="confirmPasswordInput">Confirm New Password *</label>
-                <input type="password" id="confirmPasswordInput" placeholder="Re-enter new password" minlength="8" required />
+                <input type="password" id="confirmPasswordInput" class="tb-input" placeholder="Re-enter new password" minlength="8" required />
               </div>
 
-              <button type="submit" class="btn-primary" id="savePasswordBtn" style="align-self:flex-start; margin-top:8px;">
+              <button type="submit" class="btn-primary" id="savePasswordBtn" style="align-self:flex-start; margin-top:12px; padding: 0 32px;">
                 <span class="btn-label"><i class="fa-solid fa-key"></i> Update Password</span>
                 <span class="spinner"></span>
               </button>
@@ -130,54 +132,45 @@
           </div>
 
           <!-- Right: Two-Step & Recovery Email -->
-          <div style="display:flex; flex-direction:column; gap:20px;">
+          <div style="display:flex; flex-direction:column; gap:24px;">
             <!-- Two-Step Verification -->
-            <div class="panel">
-              <div class="panel-head" style="margin-bottom:12px;">
-                <h3>Two-Step Authentication (2FA)</h3>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Two-Step Authentication</h3>
+                </div>
               </div>
 
-              <div class="toggle-switch-row">
+              <div class="toggle-switch-row" style="background: var(--tb-bg); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--tb-border);">
                 <div class="switch-label-text">
-                  <strong>Email Verification at Login</strong>
-                  <p>Require an email OTP whenever logging in from a new device.</p>
+                  <strong style="color: var(--tb-navy);">Email Verification</strong>
+                  <p style="font-size: 12px; color: var(--tb-text-muted);">Require an email OTP whenever logging in.</p>
                 </div>
-                <label class="toggle-switch">
+                <label class="tb-toggle">
                   <input type="checkbox" id="toggle2faCheck" />
-                  <span class="toggle-slider"></span>
+                  <span class="tb-toggle-slider"></span>
                 </label>
               </div>
             </div>
 
             <!-- Recovery Email -->
-            <div class="panel">
-              <div class="panel-head" style="margin-bottom:8px;">
-                <h3>Secondary Recovery Email</h3>
-                <p class="panel-sub">Used for account recovery if you lose access to your primary email.</p>
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Recovery Email</h3>
+                  <p>Used if you lose access to your primary email.</p>
+                </div>
               </div>
 
               <form id="recoveryEmailForm" class="stack-form">
                 <div class="field">
-                  <input type="email" id="recoveryEmailInput" placeholder="backup@example.com" required />
+                  <input type="email" id="recoveryEmailInput" class="tb-input" placeholder="backup@example.com" required />
                 </div>
-                <button type="submit" class="btn-primary btn-primary--inline" id="saveRecoveryBtn">
+                <button type="submit" class="btn-primary" id="saveRecoveryBtn" style="width: 100%;">
                   <span class="btn-label">Save Recovery Email</span>
                   <span class="spinner"></span>
                 </button>
               </form>
-            </div>
-
-            <!-- Logged Devices Shortcut -->
-            <div class="panel" style="background:#F8FAFC;">
-              <div class="panel-head" style="margin-bottom:8px;">
-                <h4 style="margin:0; font-size:14px; font-weight:700;"><i class="fa-solid fa-laptop-file" style="color:var(--primary); margin-right:6px;"></i>Active Logged Devices</h4>
-              </div>
-              <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
-                View all web browsers and mobile phones where your TravelBuddy account is currently signed in.
-              </p>
-              <a href="devices.html" class="btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">
-                Manage Active Devices <i class="fa-solid fa-arrow-right" style="margin-left:6px;"></i>
-              </a>
             </div>
           </div>
         </div>
@@ -188,6 +181,7 @@
   <script defer src="../shared/config.js?v=1"></script>
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/validation-helper.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
   <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>

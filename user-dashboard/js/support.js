@@ -208,7 +208,7 @@
         return;
       }
 
-      setButtonLoading(submitTicketBtn, true, 'Creating Ticket...');
+      window.TravelBuddy.FormLock(createTicketForm, true, { loadingText: 'Creating Ticket...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/support/tickets`, {
@@ -230,7 +230,7 @@
         console.error(err);
         window.showToast('Network error creating ticket.', 'error');
       } finally {
-        setButtonLoading(submitTicketBtn, false);
+        window.TravelBuddy.FormLock(createTicketForm, false);
       }
     });
   }

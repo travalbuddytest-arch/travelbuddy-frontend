@@ -165,24 +165,27 @@
               <button class="modal-close" id="reviewModalClose">&times;</button>
               <h3 class="modal-title"><i class="fa-solid fa-star"></i> Rate Your Experience</h3>
               <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">How was your experience with <span id="reviewTargetName">the user</span>?</p>
-              <div style="text-align:center; margin-bottom:16px;">
-                <div class="rating-stars" id="starRatingBox">
-                  <i class="fa-solid fa-star" data-rating="1"></i>
-                  <i class="fa-solid fa-star" data-rating="2"></i>
-                  <i class="fa-solid fa-star" data-rating="3"></i>
-                  <i class="fa-solid fa-star" data-rating="4"></i>
-                  <i class="fa-solid fa-star" data-rating="5"></i>
+
+              <form id="reviewForm">
+                <div style="text-align:center; margin-bottom:16px;">
+                  <div class="rating-stars" id="starRatingBox">
+                    <i class="fa-solid fa-star" data-rating="1"></i>
+                    <i class="fa-solid fa-star" data-rating="2"></i>
+                    <i class="fa-solid fa-star" data-rating="3"></i>
+                    <i class="fa-solid fa-star" data-rating="4"></i>
+                    <i class="fa-solid fa-star" data-rating="5"></i>
+                  </div>
+                  <span id="starRatingLabel" style="font-size:13px; font-weight:700; color:var(--primary);">Select a rating</span>
                 </div>
-                <span id="starRatingLabel" style="font-size:13px; font-weight:700; color:var(--primary);">Select a rating</span>
-              </div>
-              <div class="field" style="margin-bottom:18px;">
-                <label for="reviewComment">Review Comments</label>
-                <textarea id="reviewComment" rows="3" placeholder="Share details about punctuality, care of items, and communication..." style="border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 14px; font-family:var(--font); font-size:13px; width:100%; outline:none;"></textarea>
-              </div>
-              <button type="button" class="btn-primary" id="submitReviewBtn" style="width:100%;">
-                <span class="btn-label">Submit Review</span>
-                <span class="spinner"></span>
-              </button>
+                <div class="field" style="margin-bottom:18px;">
+                  <label for="reviewComment">Review Comments</label>
+                  <textarea id="reviewComment" class="tb-textarea" rows="3" placeholder="Share details about punctuality, care of items, and communication..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" id="submitReviewBtn" style="width:100%;">
+                  <span class="btn-label">Submit Review</span>
+                  <span class="spinner"></span>
+                </button>
+              </form>
             </div>
           </div>
 
@@ -236,6 +239,7 @@
     <script defer src="../shared/socket-client.js?v=1"></script>
     <script defer src="../shared/auth-cookie-client.js?v=1"></script>
     <script defer src="../shared/analytics-client.js?v=1"></script>
+    <script defer src="../shared/validation-helper.js?v=1"></script>
     <script defer src="../shared/date-utils.js"></script>
 <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>

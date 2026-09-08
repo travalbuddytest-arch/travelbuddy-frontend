@@ -47,6 +47,7 @@
   const reviewModal = document.getElementById('reviewModal');
   const reviewModalClose = document.getElementById('reviewModalClose');
   const reviewTargetName = document.getElementById('reviewTargetName');
+  const reviewForm = document.getElementById('reviewForm');
   const starRatingBox = document.getElementById('starRatingBox');
   const starRatingLabel = document.getElementById('starRatingLabel');
   const reviewComment = document.getElementById('reviewComment');
@@ -598,6 +599,8 @@
       chatInput.focus();
     } catch (err) {
       window.showToast(err.message, 'error');
+    } finally {
+      window.TravelBuddy.FormLock(chatForm, false);
     }
   }
 
@@ -937,6 +940,8 @@
     if ((!content && !pendingPhoto) || !activeConversationId) return;
     socket?.emit('typing:stop', { conversationId: activeConversationId });
 
+    window.TravelBuddy.FormLock(chatForm, true, { submitBtn: document.getElementById('chatSendBtn') });
+
     if (pendingPhoto) {
       const photoPayload = {
         conversationId: activeConversationId,
@@ -976,6 +981,8 @@
       }
     } catch (err) {
       window.showToast(err.message, 'error');
+    } finally {
+      window.TravelBuddy.FormLock(chatForm, false);
     }
   }
 
@@ -1182,34 +1189,37 @@
     }
   });
 
-  submitReviewBtn?.addEventListener('click', async () => {
-    if (!currentRating) return window.showToast('Please select a star rating.', 'warning');
-    const conv = activeConversation();
-    if (!conv) return;
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentRating) return window.showToast('Please select a star rating.', 'warning');
+      const conv = activeConversation();
+      if (!conv) return;
 
-    window.TravelBuddy.setButtonLoading(submitReviewBtn, true, 'Submitting...');
-    try {
-      const res = await fetch(`${API_ORIGIN}/api/postparcel/review`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify({
-          parcelId: conv.parcel.id,
-          rating: currentRating,
-          comment: reviewComment.value.trim()
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not submit review.');
-      window.showToast('Review submitted successfully!', 'success');
-      reviewModal.classList.add('hidden');
-      // Hide review button from UI if needed
-      document.getElementById('chatReviewBtn')?.remove();
-    } catch (err) {
-      window.showToast(err.message, 'error');
-    } finally {
-      window.TravelBuddy.setButtonLoading(submitReviewBtn, false);
-    }
-  });
+      window.TravelBuddy.FormLock(reviewForm, true, { loadingText: 'Submitting...' });
+      try {
+        const res = await fetch(`${API_ORIGIN}/api/postparcel/review`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({
+            parcelId: conv.parcel.id,
+            rating: currentRating,
+            comment: reviewComment.value.trim()
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not submit review.');
+        window.showToast('Review submitted successfully!', 'success');
+        reviewModal.classList.add('hidden');
+        // Hide review button from UI if needed
+        document.getElementById('chatReviewBtn')?.remove();
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        window.TravelBuddy.FormLock(reviewForm, false);
+      }
+    });
+  }
 
   reviewModalClose?.addEventListener('click', () => reviewModal.classList.add('hidden'));
 

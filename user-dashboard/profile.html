@@ -91,7 +91,7 @@
 
       <main class="content" id="content">
         <!-- Hero Card -->
-        <div class="profile-hero-card">
+        <div class="profile-hero-card" style="border-radius: var(--radius-xl);">
           <div class="profile-avatar-wrap">
             <div class="profile-large-avatar" id="heroAvatar">TB</div>
             <label class="avatar-edit-badge" for="photoFileInput" title="Upload new photo">
@@ -101,85 +101,87 @@
           </div>
 
           <div class="profile-meta-head">
-            <h2>
+            <h2 style="color: var(--tb-navy);">
               <span id="heroFullName">User Name</span>
-              <i class="fa-solid fa-circle-check" id="heroVerifiedBadge" style="color:var(--primary); font-size:18px;" title="Verified Profile"></i>
+              <i class="fa-solid fa-circle-check" id="heroVerifiedBadge" style="color:var(--tb-primary); font-size:18px;" title="Verified Profile"></i>
             </h2>
-            <p style="margin:0 0 8px; font-size:13.5px; color:var(--text-muted);" id="heroEmail">user@example.com</p>
-            <div style="display:flex; gap:14px; font-size:12.5px; color:var(--text-faint); flex-wrap:wrap;">
-              <span><i class="fa-solid fa-star" style="color:#F59E0B;"></i> <strong id="heroRating" style="color:var(--text-main);">0.0</strong> (<span id="heroRatingCount">0</span> reviews)</span>
-              <span><i class="fa-regular fa-calendar"></i> Member since <span id="heroMemberSince">2026</span></span>
+            <p style="margin:0 0 12px; font-size:14px; color:var(--tb-text-muted);" id="heroEmail">user@example.com</p>
+            <div style="display:flex; gap:16px; font-size:13px; color:var(--tb-text-faint); flex-wrap:wrap;">
+              <span><i class="fa-solid fa-star" style="color:#F59E0B; margin-right: 4px;"></i><strong id="heroRating" style="color:var(--tb-text-main);">0.0</strong> (<span id="heroRatingCount">0</span> reviews)</span>
+              <span><i class="fa-regular fa-calendar" style="margin-right: 4px;"></i>Member since <span id="heroMemberSince">2026</span></span>
             </div>
           </div>
 
-          <button type="button" class="btn-ghost" id="removePhotoBtn" style="font-size:12px; display:none;">
+          <button type="button" class="btn-ghost" id="removePhotoBtn" style="font-size:12px; display:none; border-color: var(--tb-danger); color: var(--tb-danger);">
             <i class="fa-solid fa-trash"></i> Remove Photo
           </button>
         </div>
 
         <!-- Metric Grid -->
-        <div class="metric-grid" style="margin-bottom:24px;">
-          <div class="metric-box metric-box--primary">
-            <span class="metric-label">Parcels Posted</span>
-            <div class="metric-value" id="statsPostedCount">0</div>
-            <span class="metric-sub">Posted as sender</span>
+        <div class="metric-grid" style="margin-bottom:28px;">
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-primary);">
+            <span class="tb-metric-label">Parcels Posted</span>
+            <div class="tb-metric-value" id="statsPostedCount">0</div>
+            <span class="tb-metric-sub">Posted as sender</span>
           </div>
-          <div class="metric-box metric-box--success">
-            <span class="metric-label">Parcels Delivered</span>
-            <div class="metric-value" id="statsDeliveredCount">0</div>
-            <span class="metric-sub">Transported as traveler</span>
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-success);">
+            <span class="tb-metric-label">Parcels Delivered</span>
+            <div class="tb-metric-value" id="statsDeliveredCount">0</div>
+            <span class="tb-metric-sub">Transported as traveler</span>
           </div>
-          <div class="metric-box">
-            <span class="metric-label">Wallet Balance</span>
-            <div class="metric-value" id="statsWalletBalance">₹0.00</div>
-            <span class="metric-sub">Available &amp; held funds</span>
+          <div class="tb-metric-card">
+            <span class="tb-metric-label">Wallet Balance</span>
+            <div class="tb-metric-value" id="statsWalletBalance">₹0.00</div>
+            <span class="tb-metric-sub">Available &amp; held funds</span>
           </div>
         </div>
 
         <!-- Trust & Verification Card -->
-        <div class="panel" style="margin-bottom:24px; border-left:4px solid var(--primary);">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="tb-panel" style="margin-bottom:28px; border-left:4px solid var(--tb-primary);">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap: 16px; flex-wrap: wrap;">
             <div>
-              <h3 style="margin:0 0 4px; font-size:16px; font-weight:800; color:var(--text-main);">Trust &amp; Verification</h3>
-              <p style="margin:0; font-size:12.5px; color:var(--text-muted);">Increase your credibility to get more deliveries.</p>
+              <h3 style="margin:0 0 4px; font-size:17px; font-weight:800; color:var(--tb-navy);">Trust &amp; Verification</h3>
+              <p style="margin:0; font-size:13px; color:var(--tb-text-muted);">Increase your credibility to get more deliveries.</p>
             </div>
-            <a href="verification.html" class="btn-ghost" style="height:38px; padding:0 12px; font-size:12px;">
+            <a href="verification.html" class="btn-ghost" style="height:40px;">
               <i class="fa-solid fa-shield-halved"></i> Manage Documents
             </a>
           </div>
         </div>
 
         <!-- Edit Profile Form -->
-        <div class="panel" style="max-width:700px;">
-          <div class="panel-head">
-            <h2>Personal Information</h2>
-            <p class="panel-sub">Update your account profile details.</p>
+        <div class="tb-panel" style="max-width:720px;">
+          <div class="tb-panel-head">
+            <div class="tb-panel-title">
+              <h3>Personal Information</h3>
+              <p>Update your account profile details.</p>
+            </div>
           </div>
 
           <form id="editProfileForm" class="stack-form">
             <div class="form-row">
               <div class="field">
                 <label for="inputFirstName">First Name *</label>
-                <input type="text" id="inputFirstName" placeholder="First Name" required />
+                <input type="text" id="inputFirstName" class="tb-input" placeholder="First Name" required />
               </div>
               <div class="field">
                 <label for="inputLastName">Last Name *</label>
-                <input type="text" id="inputLastName" placeholder="Last Name" required />
+                <input type="text" id="inputLastName" class="tb-input" placeholder="Last Name" required />
               </div>
             </div>
 
             <div class="field">
               <label for="inputEmail">Email Address (Read-only)</label>
-              <input type="email" id="inputEmail" readonly style="background:#F8FAFC; color:var(--text-muted); cursor:not-allowed;" />
+              <input type="email" id="inputEmail" class="tb-input" readonly style="background:var(--tb-bg); color:var(--tb-text-muted); cursor:not-allowed;" />
             </div>
 
             <div class="field">
-              <label for="inputPhone">Mobile Number (with country code)</label>
-              <input type="tel" id="inputPhone" placeholder="+919876543210" />
+              <label for="inputPhone">Mobile Number</label>
+              <input type="tel" id="inputPhone" class="tb-input" placeholder="+919876543210" />
             </div>
 
-            <button type="submit" class="btn-primary" id="saveProfileBtn" style="align-self:flex-start; margin-top:8px;">
-              <span class="btn-label"><i class="fa-solid fa-check"></i> Save Profile Changes</span>
+            <button type="submit" class="btn-primary" id="saveProfileBtn" style="align-self:flex-start; margin-top:12px; padding: 0 32px;">
+              <span class="btn-label"><i class="fa-solid fa-check"></i> Save Changes</span>
               <span class="spinner"></span>
             </button>
           </form>
@@ -191,6 +193,7 @@
   <script defer src="../shared/config.js?v=1"></script>
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/validation-helper.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
   <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>

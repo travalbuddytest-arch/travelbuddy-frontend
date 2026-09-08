@@ -189,7 +189,14 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="wizard-card">
+        <header class="tb-page-header">
+          <div class="tb-page-title">
+            <h2>Post a Parcel</h2>
+            <p>Share details about your package to find a matching traveler.</p>
+          </div>
+        </header>
+
+        <div class="tb-panel" style="max-width: 800px; margin: 0 auto 32px;">
           <!-- Stepper Indicator -->
           <div class="wizard-stepper" id="wizardStepper">
             <div class="wizard-step active" data-step="1">
@@ -221,21 +228,23 @@
           <form id="multiStepPostForm" novalidate>
             <!-- STEP 1: ITEM INFO -->
             <div class="wizard-step-pane active" id="stepPane1">
-              <div class="panel-head">
-                <h2>Step 1: Parcel Information</h2>
-                <p class="panel-sub">Describe what needs to be transported by the traveler.</p>
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Item Information</h3>
+                  <p>Describe what needs to be transported.</p>
+                </div>
               </div>
 
               <div class="stack-form">
                 <div class="field">
                   <label for="stepDesc">Parcel Description *</label>
-                  <input type="text" id="stepDesc" placeholder="e.g. Box of clothes, official documents, electronic gadget" required />
+                  <input type="text" id="stepDesc" class="tb-input" placeholder="e.g. Box of clothes, official documents" required />
                 </div>
 
                 <div class="form-row">
                   <div class="field">
                     <label for="stepCategory">Category *</label>
-                    <select id="stepCategory" class="role-select" style="width:100%;">
+                    <select id="stepCategory" class="tb-select">
                       <option value="Documents">Documents &amp; Certificates</option>
                       <option value="Clothes & Lifestyle">Clothes &amp; Lifestyle</option>
                       <option value="Electronics">Electronics &amp; Gadgets</option>
@@ -248,14 +257,14 @@
 
                   <div class="field">
                     <label for="stepWeight">Weight (in kg) *</label>
-                    <input type="number" id="stepWeight" min="0.1" max="50" step="0.1" placeholder="e.g. 2.0" required />
+                    <input type="number" id="stepWeight" class="tb-input" min="0.1" max="50" step="0.1" placeholder="e.g. 2.0" required />
                   </div>
                 </div>
               </div>
 
               <div class="wizard-actions">
                 <div></div>
-                <button type="button" class="btn-primary btn-primary--inline" id="step1NextBtn">
+                <button type="button" class="btn-primary" id="step1NextBtn">
                   Next: Pickup Details <i class="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
@@ -263,25 +272,27 @@
 
             <!-- STEP 2: PICKUP DETAILS -->
             <div class="wizard-step-pane" id="stepPane2">
-              <div class="panel-head">
-                <h2>Step 2: Pickup Location</h2>
-                <p class="panel-sub">Where will the traveler collect the parcel?</p>
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Pickup Location</h3>
+                  <p>Where will the traveler collect the parcel?</p>
+                </div>
               </div>
 
               <div class="stack-form">
                 <div class="field">
                   <label for="stepFromCity">Pickup City *</label>
-                  <input type="text" id="stepFromCity" placeholder="e.g. Mumbai, Bangalore, Delhi" required />
+                  <input type="text" id="stepFromCity" class="tb-input" placeholder="e.g. Mumbai, Bangalore, Delhi" required />
                 </div>
 
                 <div class="field">
                   <label for="stepPickupAddress">Pickup Address / Landmark (Optional)</label>
-                  <input type="text" id="stepPickupAddress" placeholder="e.g. Near Dadar Railway Station, Terminal 2" />
+                  <input type="text" id="stepPickupAddress" class="tb-input" placeholder="e.g. Near Dadar Railway Station" />
                 </div>
 
                 <div class="field">
-                  <label for="stepPickupNotes">Pickup Instructions / Contact Note</label>
-                  <input type="text" id="stepPickupNotes" placeholder="e.g. Call 10 mins before arrival" />
+                  <label for="stepPickupNotes">Pickup Instructions (Optional)</label>
+                  <input type="text" id="stepPickupNotes" class="tb-input" placeholder="e.g. Call 10 mins before arrival" />
                 </div>
               </div>
 
@@ -289,7 +300,7 @@
                 <button type="button" class="btn-ghost" id="step2PrevBtn">
                   <i class="fa-solid fa-arrow-left"></i> Previous
                 </button>
-                <button type="button" class="btn-primary btn-primary--inline" id="step2NextBtn">
+                <button type="button" class="btn-primary" id="step2NextBtn">
                   Next: Delivery Details <i class="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
@@ -297,40 +308,41 @@
 
             <!-- STEP 3: DELIVERY DETAILS -->
             <div class="wizard-step-pane" id="stepPane3">
-              <div class="panel-head">
-                <h2>Step 3: Delivery Location</h2>
-                <p class="panel-sub">Where is the final drop-off destination?</p>
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Delivery Location</h3>
+                  <p>Where is the final drop-off destination?</p>
+                </div>
               </div>
 
               <div class="stack-form">
                 <div class="field">
                   <label for="stepToCity">Destination City *</label>
-                  <input type="text" id="stepToCity" placeholder="e.g. Pune, Chennai, Hyderabad" required />
+                  <input type="text" id="stepToCity" class="tb-input" placeholder="e.g. Pune, Chennai, Hyderabad" required />
                 </div>
 
-                <!-- Match Stats (NEW) -->
-                <div id="routeMatchStats" class="hidden" style="margin-bottom: 20px; background: #f0f7ff; border: 1px solid #d0e7ff; border-radius: 12px; padding: 16px;">
-                   <h4 style="font-size: 13px; color: #1e293b; margin: 0 0 10px;"><i class="fa-solid fa-users-viewfinder"></i> Real-time Traveler Match</h4>
-                   <div style="display: flex; gap: 15px;">
-                      <div><span style="font-size: 11px; color: #64748b; display: block;">TRAVELERS FOUND</span><strong id="matchFoundCount" style="font-size: 16px; color: #3b82f6;">0</strong></div>
-                      <div><span style="font-size: 11px; color: #64748b; display: block;">AVAILABLE TODAY</span><strong id="matchTodayCount" style="font-size: 16px; color: #10b981;">0</strong></div>
-                      <div><span style="font-size: 11px; color: #64748b; display: block;">MIN. REWARD</span><strong id="matchMinPrice" style="font-size: 16px; color: #1e293b;">₹150</strong></div>
+                <div id="routeMatchStats" class="hidden" style="margin-bottom: 20px; background: var(--tb-info-soft); border: 1px solid rgba(59,130,246,0.2); border-radius: var(--radius-md); padding: 16px;">
+                   <h4 style="font-size: 13px; color: var(--tb-navy); margin: 0 0 10px;"><i class="fa-solid fa-users-viewfinder"></i> Real-time Traveler Match</h4>
+                   <div style="display: flex; gap: 20px;">
+                      <div><span style="font-size: 11px; color: var(--tb-text-muted); display: block; text-transform: uppercase; font-weight: 700;">Travelers</span><strong id="matchFoundCount" style="font-size: 18px; color: var(--tb-primary);">0</strong></div>
+                      <div><span style="font-size: 11px; color: var(--tb-text-muted); display: block; text-transform: uppercase; font-weight: 700;">Available Today</span><strong id="matchTodayCount" style="font-size: 18px; color: var(--tb-success);">0</strong></div>
+                      <div><span style="font-size: 11px; color: var(--tb-text-muted); display: block; text-transform: uppercase; font-weight: 700;">Min. Reward</span><strong id="matchMinPrice" style="font-size: 18px; color: var(--tb-navy);">₹150</strong></div>
                    </div>
                 </div>
 
                 <div class="field">
                   <label for="stepDeliveryAddress">Delivery Address / Landmark (Optional)</label>
-                  <input type="text" id="stepDeliveryAddress" placeholder="e.g. Near Shivajinagar Bus Stand" />
+                  <input type="text" id="stepDeliveryAddress" class="tb-input" placeholder="e.g. Near Shivajinagar Bus Stand" />
                 </div>
 
                 <div class="form-row">
                   <div class="field">
-                    <label for="stepRecipientName">Recipient Contact Name (Optional)</label>
-                    <input type="text" id="stepRecipientName" placeholder="e.g. Rahul Sharma" />
+                    <label for="stepRecipientName">Recipient Name (Optional)</label>
+                    <input type="text" id="stepRecipientName" class="tb-input" placeholder="e.g. Rahul Sharma" />
                   </div>
                   <div class="field">
                     <label for="stepRecipientPhone">Recipient Phone (Optional)</label>
-                    <input type="tel" id="stepRecipientPhone" placeholder="e.g. 9876543210" />
+                    <input type="tel" id="stepRecipientPhone" class="tb-input" placeholder="e.g. 9876543210" />
                   </div>
                 </div>
               </div>
@@ -339,7 +351,7 @@
                 <button type="button" class="btn-ghost" id="step3PrevBtn">
                   <i class="fa-solid fa-arrow-left"></i> Previous
                 </button>
-                <button type="button" class="btn-primary btn-primary--inline" id="step3NextBtn">
+                <button type="button" class="btn-primary" id="step3NextBtn">
                   Next: Timing <i class="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
@@ -347,20 +359,22 @@
 
             <!-- STEP 4: TIMING -->
             <div class="wizard-step-pane" id="stepPane4">
-              <div class="panel-head">
-                <h2>Step 4: Timing &amp; Schedule</h2>
-                <p class="panel-sub">When should the parcel be picked up and delivered?</p>
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Timing &amp; Schedule</h3>
+                  <p>When should the parcel be picked up?</p>
+                </div>
               </div>
 
               <div class="stack-form">
                 <div class="field">
                   <label for="stepDate">Pickup Date *</label>
-                  <input type="date" id="stepDate" required />
+                  <input type="date" id="stepDate" class="tb-input" required />
                 </div>
 
                 <div class="field">
                   <label for="stepTimePreference">Preferred Time Window</label>
-                  <select id="stepTimePreference" class="role-select" style="width:100%;">
+                  <select id="stepTimePreference" class="tb-select">
                     <option value="Anytime">Anytime during the day</option>
                     <option value="Morning (8:00 AM - 12:00 PM)">Morning (8:00 AM - 12:00 PM)</option>
                     <option value="Afternoon (12:00 PM - 5:00 PM)">Afternoon (12:00 PM - 5:00 PM)</option>
@@ -373,7 +387,7 @@
                 <button type="button" class="btn-ghost" id="step4PrevBtn">
                   <i class="fa-solid fa-arrow-left"></i> Previous
                 </button>
-                <button type="button" class="btn-primary btn-primary--inline" id="step4NextBtn">
+                <button type="button" class="btn-primary" id="step4NextBtn">
                   Next: Price &amp; Payment <i class="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
@@ -381,36 +395,38 @@
 
             <!-- STEP 5: PRICE AND PAYMENT -->
             <div class="wizard-step-pane" id="stepPane5">
-              <div class="panel-head">
-                <h2>Step 5: Offered Price &amp; Escrow</h2>
-                <p class="panel-sub">Set the reward for the traveler who carries your parcel.</p>
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Offered Price &amp; Escrow</h3>
+                  <p>Set the reward for the traveler.</p>
+                </div>
               </div>
 
               <div class="stack-form">
-                <div id="freePostNotice" class="free-post-badge hidden">
-                  <i class="fa-solid fa-gift"></i> Free Post Eligible! You pay the traveler directly in cash after delivery.
+                <div id="freePostNotice" class="tb-badge tb-badge--success hidden" style="margin-bottom: 16px; padding: 8px 16px;">
+                  <i class="fa-solid fa-gift"></i> Free Post Eligible! Pay traveler directly in cash.
                 </div>
 
                 <div class="field">
-                  <label for="stepPrice">Offer Amount (in ₹) *</label>
-                  <input type="number" id="stepPrice" min="50" step="10" placeholder="e.g. 450" required />
-                  <small style="color:var(--text-muted); font-size:12px; margin-top:4px;">
-                    Suggested rate: ₹150 - ₹250 per kg depending on route distance.
+                  <label for="stepPrice">Offer Amount (₹) *</label>
+                  <input type="number" id="stepPrice" class="tb-input" min="50" step="10" placeholder="e.g. 450" style="font-size: 20px; font-weight: 800; height: 54px;" required />
+                  <small style="color:var(--tb-text-muted); font-size:12px; margin-top:4px;">
+                    Suggested: ₹150 - ₹250 per kg.
                   </small>
                 </div>
 
-                <div id="walletEscrowStatus" class="wallet-status-box hidden">
+                <div id="walletEscrowStatus" class="tb-panel hidden" style="margin-top: 20px; background: var(--tb-bg); padding: 16px;">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:13px; font-weight:600; color:var(--text-muted);">Available Wallet Balance:</span>
-                    <strong id="postWalletBalance" style="font-size:15px; color:var(--text-main);">₹0.00</strong>
+                    <span style="font-size:13px; font-weight:600; color:var(--tb-text-muted);">Wallet Balance:</span>
+                    <strong id="postWalletBalance" style="font-size:15px; color:var(--tb-text-main);">₹0.00</strong>
                   </div>
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:13px; font-weight:600; color:var(--text-muted);">Required Escrow Amount:</span>
-                    <strong id="postRequiredEscrow" style="font-size:15px; color:var(--primary);">₹0.00</strong>
+                    <span style="font-size:13px; font-weight:600; color:var(--tb-text-muted);">Required Escrow:</span>
+                    <strong id="postRequiredEscrow" style="font-size:15px; color:var(--tb-primary);">₹0.00</strong>
                   </div>
-                  <div id="walletShortageWarning" class="hidden" style="color:var(--error); font-size:12.5px; font-weight:600; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                  <div id="walletShortageWarning" class="hidden" style="color:var(--tb-danger); font-size:12.5px; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top: 12px; border-top: 1px dashed var(--tb-border);">
                     <span><i class="fa-solid fa-circle-exclamation"></i> Shortage of <strong id="postShortageText">₹0.00</strong></span>
-                    <a href="wallet.html" target="_blank" class="btn-primary" style="padding:4px 12px; font-size:12px; height:auto; text-decoration:none;">Add Money</a>
+                    <a href="wallet.html" target="_blank" class="btn-primary" style="padding:6px 14px; font-size:11px; height:auto; text-decoration:none;">Add Money</a>
                   </div>
                 </div>
               </div>
@@ -419,7 +435,7 @@
                 <button type="button" class="btn-ghost" id="step5PrevBtn">
                   <i class="fa-solid fa-arrow-left"></i> Previous
                 </button>
-                <button type="button" class="btn-primary btn-primary--inline" id="step5NextBtn">
+                <button type="button" class="btn-primary" id="step5NextBtn">
                   Next: Review &amp; Confirm <i class="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
@@ -427,9 +443,11 @@
 
             <!-- STEP 6: REVIEW AND CONFIRM -->
             <div class="wizard-step-pane" id="stepPane6">
-              <div class="panel-head">
-                <h2>Step 6: Review &amp; Post</h2>
-                <p class="panel-sub">Double-check all details before publishing your parcel request.</p>
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Review &amp; Post</h3>
+                  <p>Double-check all details before publishing.</p>
+                </div>
               </div>
 
               <div class="summary-grid">
@@ -451,7 +469,7 @@
                 </div>
                 <div class="summary-item">
                   <label>Offered Price</label>
-                  <strong id="revPrice" style="color:var(--success); font-size:16px;">-</strong>
+                  <strong id="revPrice" style="color:var(--tb-success); font-size:18px;">-</strong>
                 </div>
                 <div class="summary-item">
                   <label>Payment Method</label>
@@ -459,9 +477,9 @@
                 </div>
               </div>
 
-              <div class="field" style="flex-direction:row; align-items:center; gap:10px; margin-bottom:14px;">
-                <input type="checkbox" id="termsAgreeCheck" style="width:18px; height:18px; cursor:pointer;" required />
-                <label for="termsAgreeCheck" style="font-size:12.5px; color:var(--text-muted); cursor:pointer;">
+              <div class="field" style="flex-direction:row; align-items:flex-start; gap:12px; margin: 20px 0;">
+                <input type="checkbox" id="termsAgreeCheck" style="width:20px; height:20px; cursor:pointer; margin-top: 2px;" required />
+                <label for="termsAgreeCheck" style="font-size:13px; color:var(--tb-text-muted); cursor:pointer; line-height: 1.5;">
                   I certify that this parcel does not contain hazardous, illegal, or prohibited materials as per TravelBuddy safety guidelines.
                 </label>
               </div>
@@ -470,7 +488,7 @@
                 <button type="button" class="btn-ghost" id="step6PrevBtn">
                   <i class="fa-solid fa-arrow-left"></i> Previous
                 </button>
-                <button type="submit" class="btn-primary btn-primary--inline" id="postSubmitFinalBtn">
+                <button type="submit" class="btn-primary" id="postSubmitFinalBtn" style="padding: 0 32px;">
                   <span class="btn-label"><i class="fa-solid fa-paper-plane"></i> Publish Parcel</span>
                   <span class="spinner" aria-hidden="true"></span>
                 </button>
@@ -521,6 +539,7 @@
   <script defer src="../shared/config.js?v=1"></script>
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>
+  <script defer src="../shared/validation-helper.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
   <script defer src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
   <script defer src="js/common.js?v=4"></script>

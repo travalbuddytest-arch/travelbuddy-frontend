@@ -95,7 +95,7 @@
         return;
       }
 
-      setButtonLoading(routePostBtn, true);
+      window.TravelBuddy.FormLock(routePostForm, true, { loadingText: 'Posting Route...' });
       try {
         const res = await fetch(API_BASE, {
           method: 'POST',
@@ -116,7 +116,7 @@
         console.error(err);
         window.showToast('Could not reach the server.', 'error');
       } finally {
-        setButtonLoading(routePostBtn, false);
+        window.TravelBuddy.FormLock(routePostForm, false);
       }
     });
   }

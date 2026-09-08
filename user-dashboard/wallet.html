@@ -63,84 +63,90 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="wallet-head">
-          <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">My Wallet Balance</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Secure escrow funds, delivery earnings, and withdrawal tracking.</p>
+        <header class="tb-page-header">
+          <div class="tb-page-title">
+            <h2>My Wallet Balance</h2>
+            <p>Secure escrow funds, delivery earnings, and withdrawal tracking.</p>
           </div>
-          <div class="wallet-head-actions">
+          <div class="tb-page-actions">
             <button type="button" class="btn-primary" id="openAddMoneyBtn">
               <i class="fa-solid fa-plus"></i> Add Money
             </button>
             <a href="withdraw.html" class="btn-ghost" style="text-decoration:none;">
               <i class="fa-solid fa-money-bill-transfer"></i> Withdraw Funds
             </a>
-            <a href="payment-methods.html" class="btn-ghost" style="text-decoration:none;">
-              <i class="fa-solid fa-credit-card"></i> Payout Methods
-            </a>
           </div>
-        </div>
+        </header>
 
         <!-- Metrics Grid -->
-        <div class="metric-grid" style="margin-bottom: 24px;">
-          <div class="metric-box metric-box--primary">
-            <span class="metric-label">Available for Withdrawal</span>
-            <div class="metric-value" id="walletAvailableBalance">₹0.00</div>
-            <span class="metric-sub">Immediately withdrawable to Bank/UPI</span>
+        <div class="metric-grid">
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-primary);">
+            <span class="tb-metric-label">Available for Withdrawal</span>
+            <div class="tb-metric-value" id="walletAvailableBalance">₹0.00</div>
+            <span class="tb-metric-sub">Immediately withdrawable to Bank/UPI</span>
           </div>
-          <div class="metric-box metric-box--warning">
-            <span class="metric-label">Locked in Escrow</span>
-            <div class="metric-value" id="walletLockedBalance">₹0.00</div>
-            <span class="metric-sub">Held safely until delivery handover</span>
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-warning);">
+            <span class="tb-metric-label">Locked in Escrow</span>
+            <div class="tb-metric-value" id="walletLockedBalance">₹0.00</div>
+            <span class="tb-metric-sub">Held safely until delivery handover</span>
           </div>
-          <div class="metric-box metric-box--success">
-            <span class="metric-label">Total Lifetime Earnings</span>
-            <div class="metric-value" id="walletTotalEarnings">₹0.00</div>
-            <span class="metric-sub">Earned as an active traveler</span>
+          <div class="tb-metric-card" style="border-left: 4px solid var(--tb-success);">
+            <span class="tb-metric-label">Total Lifetime Earnings</span>
+            <div class="tb-metric-value" id="walletTotalEarnings">₹0.00</div>
+            <span class="tb-metric-sub">Earned as an active traveler</span>
           </div>
-          <div class="metric-box">
-            <span class="metric-label">Pending Withdrawal</span>
-            <div class="metric-value" id="walletPendingWithdrawal">₹0.00</div>
-            <span class="metric-sub">Currently processing by bank</span>
+          <div class="tb-metric-card">
+            <span class="tb-metric-label">Pending Withdrawal</span>
+            <div class="tb-metric-value" id="walletPendingWithdrawal">₹0.00</div>
+            <span class="tb-metric-sub">Currently processing by bank</span>
           </div>
         </div>
 
         <!-- Transactions Section -->
-        <div class="panel">
-          <div class="panel-head panel-head--row">
-            <div>
-              <h2 style="font-size:18px; margin:0 0 4px;">Wallet Transaction History</h2>
-              <p class="panel-sub">Audited real-time ledger of top-ups, escrow holds, earnings, and payouts.</p>
+        <div class="tb-panel">
+          <div class="tb-panel-head">
+            <div class="tb-panel-title">
+              <h3>Wallet Transaction History</h3>
+              <p>Audited real-time ledger of top-ups, escrow holds, and earnings.</p>
             </div>
             <button type="button" class="btn-ghost" id="txExportBtn">
               <i class="fa-solid fa-download"></i> Export CSV
             </button>
           </div>
 
-          <div class="filter-bar" style="margin-bottom: 16px;">
-            <select id="txTypeSelect" class="role-select" style="min-width: 160px;">
-              <option value="">All Transaction Types</option>
-              <option value="topup">Wallet Top-up</option>
-              <option value="order_hold">Payment Held in Escrow</option>
-              <option value="traveler_earning">Delivery Earning</option>
-              <option value="withdrawal">Withdrawal</option>
-              <option value="order_refund">Refund</option>
-              <option value="cancellation_fee">Cancellation Fee</option>
-            </select>
+          <div class="search-row" style="margin-bottom: 20px;">
+            <div class="field" style="flex: 0 0 200px;">
+              <select id="txTypeSelect" class="tb-select">
+                <option value="">All Types</option>
+                <option value="topup">Wallet Top-up</option>
+                <option value="order_hold">Payment Held</option>
+                <option value="traveler_earning">Delivery Earning</option>
+                <option value="withdrawal">Withdrawal</option>
+                <option value="order_refund">Refund</option>
+                <option value="cancellation_fee">Cancellation Fee</option>
+              </select>
+            </div>
 
-            <select id="txStatusSelect" class="role-select">
-              <option value="">All Statuses</option>
-              <option value="completed">Completed</option>
-              <option value="held">Held</option>
-              <option value="released">Released</option>
-              <option value="refunded">Refunded</option>
-            </select>
+            <div class="field" style="flex: 0 0 160px;">
+              <select id="txStatusSelect" class="tb-select">
+                <option value="">All Statuses</option>
+                <option value="completed">Completed</option>
+                <option value="held">Held</option>
+                <option value="released">Released</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </div>
 
-            <input type="text" id="txSearchInput" class="parcels-search-input" placeholder="Search reference or description..." style="flex:1; min-width:200px;" />
+            <div class="field" style="flex: 1;">
+              <div style="position:relative;">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--tb-text-faint);"></i>
+                <input type="text" id="txSearchInput" class="tb-input" placeholder="Search reference or description..." style="padding-left:40px;" />
+              </div>
+            </div>
           </div>
 
           <div class="table-container">
-            <table class="data-table" id="txTable">
+            <table class="tb-table" id="txTable">
               <thead>
                 <tr>
                   <th>Date &amp; Time</th>
@@ -152,7 +158,7 @@
               </thead>
               <tbody id="txTableBody">
                 <tr>
-                  <td colspan="5" style="text-align:center; padding:30px; color:var(--text-muted);">
+                  <td colspan="5" style="text-align:center; padding:48px; color:var(--tb-text-muted);">
                     <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i> Loading transactions...
                   </td>
                 </tr>
@@ -166,29 +172,31 @@
 
   <!-- Add Money Modal -->
   <div class="modal-overlay hidden" id="addMoneyModal">
-    <div class="modal-card" style="max-width:440px;">
-      <button class="modal-close" id="addMoneyClose">&times;</button>
-      <h3 class="modal-title"><i class="fa-solid fa-wallet" style="color:var(--primary);"></i> Add Money to Wallet</h3>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
-        Instant top-up via UPI, Debit Card, Credit Card, or Netbanking using secure Razorpay checkout.
-      </p>
-
-      <div class="field" style="margin-bottom:10px;">
-        <label for="addMoneyAmount">Amount to Add (in ₹)</label>
-        <input type="number" id="addMoneyAmount" min="1" max="100000" placeholder="e.g. 500" style="font-size:18px; font-weight:700; height:48px;" required />
+    <div class="modal-card" style="max-width:440px; padding: 0; overflow: hidden;">
+      <div style="background: var(--tb-primary-soft); padding: 32px 32px 24px; position: relative;">
+        <button class="modal-close" id="addMoneyClose" style="top: 20px; right: 20px;">&times;</button>
+        <h3 class="modal-title" style="margin: 0;"><i class="fa-solid fa-wallet" style="color:var(--tb-primary);"></i> Add Money</h3>
+        <p style="font-size:13px; color:var(--tb-text-muted); margin: 8px 0 0;">Secure top-up using UPI or Cards.</p>
       </div>
 
-      <div class="amount-presets">
-        <button type="button" class="preset-btn" data-val="200">+₹200</button>
-        <button type="button" class="preset-btn active" data-val="500">+₹500</button>
-        <button type="button" class="preset-btn" data-val="1000">+₹1,000</button>
-        <button type="button" class="preset-btn" data-val="2000">+₹2,000</button>
-      </div>
+      <div style="padding: 24px 32px 32px;">
+        <div class="field" style="margin-bottom:16px;">
+          <label for="addMoneyAmount">Amount (₹)</label>
+          <input type="number" id="addMoneyAmount" class="tb-input" min="1" max="100000" placeholder="500" style="font-size:20px; font-weight:800; height:54px;" required />
+        </div>
 
-      <button type="button" class="btn-primary" id="proceedPaymentBtn" style="width:100%;">
-        <span class="btn-label"><i class="fa-solid fa-lock"></i> Proceed to Secure Payment</span>
-        <span class="spinner"></span>
-      </button>
+        <div class="amount-presets">
+          <button type="button" class="preset-btn" data-val="200">+₹200</button>
+          <button type="button" class="preset-btn active" data-val="500">+₹500</button>
+          <button type="button" class="preset-btn" data-val="1000">+₹1,000</button>
+          <button type="button" class="preset-btn" data-val="2000">+₹2,000</button>
+        </div>
+
+        <button type="button" class="btn-primary" id="proceedPaymentBtn" style="width:100%; height: 54px;">
+          <span class="btn-label"><i class="fa-solid fa-shield-lock"></i> Secure Payment</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
     </div>
   </div>
 

@@ -197,23 +197,23 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="parcels-head">
-          <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Parcel Shipments &amp; Deliveries</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Real-time overview of all parcels you've posted or accepted to transport.</p>
+        <header class="tb-page-header">
+          <div class="tb-page-title">
+            <h2>Shipments &amp; Deliveries</h2>
+            <p>Real-time overview of all parcels you've posted or accepted.</p>
           </div>
-          <div class="parcels-head-actions">
-            <a href="post.html" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; padding: 0 18px;">
+          <div class="tb-page-actions">
+            <a href="post.html" class="btn-primary" style="text-decoration:none;">
               <i class="fa-solid fa-plus"></i> Post a Parcel
             </a>
             <a href="pickup.html" class="btn-ghost" style="text-decoration:none;">
               <i class="fa-solid fa-route"></i> Carry a Parcel
             </a>
           </div>
-        </div>
+        </header>
 
         <div class="parcels-controls">
-          <div class="filter-bar" id="statusFilterTabs" style="margin-bottom:0; overflow-x:auto; padding-bottom:4px;">
+          <div class="filter-bar" id="statusFilterTabs" style="margin-bottom:16px; overflow-x:auto; padding-bottom:8px; border-bottom: 1px solid var(--tb-border);">
             <button class="filter-pill active" data-status="all" type="button">All Parcels</button>
             <button class="filter-pill" data-status="active" type="button">Active</button>
             <button class="filter-pill" data-status="pending" type="button">Pending</button>
@@ -224,17 +224,21 @@
             <button class="filter-pill" data-status="cancelled" type="button">Cancelled</button>
           </div>
 
-          <div class="parcels-search-row">
-            <div class="parcels-search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="parcelSearchInput" class="parcels-search-input" placeholder="Search by Order ID, description, or city..." />
+          <div class="search-row">
+            <div class="field" style="flex: 1;">
+              <div style="position:relative;">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--tb-text-faint);"></i>
+                <input type="text" id="parcelSearchInput" class="tb-input" placeholder="Search by Order ID, description, or city..." style="padding-left:40px;" />
+              </div>
             </div>
 
-            <select id="roleFilterSelect" class="role-select" aria-label="Filter by role">
-              <option value="all">Role: All Roles</option>
-              <option value="sender">Role: As Sender</option>
-              <option value="traveler">Role: As Traveler</option>
-            </select>
+            <div class="field" style="flex: 0 0 200px;">
+              <select id="roleFilterSelect" class="tb-select" aria-label="Filter by role">
+                <option value="all">All Roles</option>
+                <option value="sender">As Sender</option>
+                <option value="traveler">As Traveler</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -245,10 +249,12 @@
         </div>
 
         <div id="parcelsEmptyState" class="tb-empty-state hidden">
-          <i class="fa-solid fa-boxes-packing"></i>
+          <div class="tb-empty-icon">
+            <i class="fa-solid fa-boxes-packing"></i>
+          </div>
           <h3 id="emptyStateTitle">No Parcels Found</h3>
           <p id="emptyStateMessage">You haven't posted or accepted any parcels matching the current filters.</p>
-          <a href="post.html" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; margin: 0 auto;">
+          <a href="post.html" class="btn-primary" style="text-decoration:none;">
             <i class="fa-solid fa-plus"></i> Post Your First Parcel
           </a>
         </div>

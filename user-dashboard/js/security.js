@@ -64,7 +64,7 @@
         return;
       }
 
-      setButtonLoading(savePasswordBtn, true, 'Updating Password...');
+      window.TravelBuddy.FormLock(changePasswordForm, true, { loadingText: 'Updating Password...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/auth/me/password`, {
@@ -85,7 +85,7 @@
         console.error(err);
         window.showToast('Network error updating password.', 'error');
       } finally {
-        setButtonLoading(savePasswordBtn, false);
+        window.TravelBuddy.FormLock(changePasswordForm, false);
       }
     });
   }
@@ -130,7 +130,7 @@
         return;
       }
 
-      setButtonLoading(saveRecoveryBtn, true, 'Saving...');
+      window.TravelBuddy.FormLock(recoveryEmailForm, true, { loadingText: 'Saving...' });
 
       try {
         const res = await fetch(`${API_ORIGIN}/api/settings/recovery-email`, {
@@ -150,7 +150,7 @@
         console.error(err);
         window.showToast('Network error saving recovery email.', 'error');
       } finally {
-        setButtonLoading(saveRecoveryBtn, false);
+        window.TravelBuddy.FormLock(recoveryEmailForm, false);
       }
     });
   }

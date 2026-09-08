@@ -234,8 +234,7 @@
       return;
     }
 
-    loginBtn.classList.add('loading');
-    loginBtn.disabled = true;
+    TravelBuddy.FormLock(form, true, { loadingText: 'Logging in...' });
 
     try {
       // Single unified endpoint for both users and admins - the backend
@@ -297,8 +296,7 @@
     } catch (err) {
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
-      loginBtn.classList.remove('loading');
-      loginBtn.disabled = false;
+      TravelBuddy.FormLock(form, false);
     }
   });
 
@@ -378,6 +376,20 @@
       passwordInput.focus();
     }
   });
+
+  function setButtonLoading(button, isLoading) {
+    button.classList.toggle('loading', isLoading);
+    button.disabled = isLoading;
+  }
+
+  async function parseResponse(response) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      return response.json();
+    }
+    const text = await response.text();
+    return { __raw: text };
+  }
 
   function setView(view) {
   }
