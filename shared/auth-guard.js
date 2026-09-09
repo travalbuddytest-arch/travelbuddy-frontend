@@ -76,13 +76,17 @@
 
             var hasUserToken = Boolean(localStorage.getItem('travelBuddyToken'));
             var userData = localStorage.getItem('travelBuddyUser');
-            if (!hasUserToken || !userData) return false;
+            // FIX: Be more lenient. If a token exists, don't immediately redirect.
+            // Allow common.js a chance to refresh the user profile.
+            if (!hasUserToken) return false;
+            if (!userData) return true; // Session exists but user data is missing (common.js will refresh)
 
             try {
                 var user = JSON.parse(userData);
-                return user && (user.role === 'user' || user.role === 'traveler' || user.role === 'sender');
+                // If role is missing, we still grant access but common.js will fix the object.
+                return !user.role || (user.role === 'user' || user.role === 'traveler' || user.role === 'sender');
             } catch (e) {
-                return false;
+                return true; // Malformed JSON but token exists; let common.js handle it
             }
         } catch (e) {
             return false;
@@ -171,10 +175,10 @@
 
     var safetyTimeout = setTimeout(function () {
         if (!window.TravelBuddyAuthChecked) {
-            console.warn('[AuthGuard] Auth check timed out (3s). Redirecting to login.');
+            console.warn('[AuthGuard] Auth check timed out (8s). Redirecting to login.');
             doRedirect();
         }
-    }, 3000);
+    }, 8000);
 
     function doRedirect() {
         var loginUrl = guardType === 'admin' ? '../../login/login.html' : '../login/login.html';

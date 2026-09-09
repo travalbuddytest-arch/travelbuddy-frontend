@@ -12,21 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <!-- Socket.IO Client for Live Operations - served by our own backend
-         Socket.IO is loaded from the production backend, not a
-         CDN. Avoids failures on networks that block external CDNs. -->
-    <script src="../../shared/config.js?v=1"></script>
-    <script src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
-    <script src="../../shared/socket-client.js?v=1"></script>
-
-    <!-- Map Provider: Leaflet + MarkerCluster + AntPath -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-ant-path@1.3.0/dist/leaflet-ant-path.min.js"></script>
-
     <!-- Admin Styles -->
     <link rel="stylesheet" href="../css/admin.css">
     <link rel="stylesheet" href="../../shared/skeleton.css?v=1">
@@ -61,7 +46,6 @@
         <nav>
             <label>CONTROL</label>
             <button class="active" data-page="command" data-tooltip="Command Center"><i class="fa-solid fa-grid-2"></i><span>Command Center</span></button>
-            <button data-page="operations" data-tooltip="Live Operations"><i class="fa-solid fa-satellite-dish"></i><span>Live Operations <em id="opsSidebarBadge">—</em></span></button>
             <button data-page="trips" data-tooltip="Traveler Trips"><i class="fa-solid fa-route"></i><span>Traveler Trips</span></button>
             <button data-page="parcels" data-tooltip="Parcels"><i class="fa-solid fa-box"></i><span>Parcels</span></button>
 
@@ -128,7 +112,6 @@
 
         <!-- Pages are lazy-loaded from ./pages/{id}.html -->
         <section class="page active" id="command" data-loaded="false"></section>
-        <section class="page" id="operations" data-loaded="false"></section>
         <section class="page" id="trips" data-loaded="false"></section>
         <section class="page" id="parcels" data-loaded="false"></section>
         <section class="page" id="users" data-loaded="false"></section>

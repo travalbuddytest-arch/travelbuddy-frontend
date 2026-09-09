@@ -492,15 +492,6 @@ button:active {
   animation: tb-shimmerSweep 1.4s ease-in-out infinite;
 }
 
-/* ---------- Map / route pins (Live Operations) ---------- */
-
-.pin {
-  animation: tb-float 2.4s ease-in-out infinite;
-}
-
-.route {
-  animation: tb-fadeIn 0.5s ease both;
-}
 
 /* ---------- Misc micro-interactions ---------- */
 

@@ -5,7 +5,6 @@
 /* ---------- Configuration & Data ---------- */
 const dashboardInfo = {
   command: ['Command Center', 'Live overview of your TravelBuddy platform'],
-  operations: ['Live Operations', 'Monitor active parcel journeys in real time'],
   trips: ['Traveler Trips', 'Manage and monitor all traveler routes posted on the platform'],
   parcels: ['Parcel Control', 'Search, inspect and manage every parcel journey'],
   users: ['User Management', 'Complete user profiles, activity and account controls'],
@@ -266,13 +265,7 @@ function activatePage(id, { historyMode = 'push', restoreScroll = false } = {}) 
   if (currentPageId && currentPageId !== id) {
     saveScrollPosition(currentPageId, window.scrollY || 0);
 
-    // Page-specific cleanup
-    if (currentPageId === 'operations' && typeof window.destroyOperations === 'function') {
-      window.destroyOperations();
-    }
     if (currentPageId === 'support-reports' && typeof window.destroySupportReports === 'function') {
-      window.destroySupportReports();
-    }
   }
 
   const activeBtn = document.querySelector('nav .active');
@@ -1417,15 +1410,10 @@ initAdminProfileModal();
 /* ---------- Sidebar live badge + notification bell ----------
    One persistent connection to the /admin Socket.IO namespace, opened at
    dashboard load, does two jobs:
-   1. admin:stats -> keeps the "Live Operations" sidebar count current.
-   2. admin:alert -> the same events postParcel.js already emits for the
-      Operations activity feed (delivered, pickup confirmed, cancelled,
+   1. admin:stats -> updates the active parcel counts in the sidebar/Command Center.
+   2. admin:alert -> the same events postParcel.js already emits (delivered, pickup confirmed, cancelled,
       etc.) now also feed the notification bell.
-   Note: if the admin opens the Operations page, that page opens its own
-   separate socket too — so two connections can be open at once. Harmless,
-   just not maximally efficient; worth consolidating later if it matters.
-
-   Bell state is kept in memory only (resets on page reload / not shared
+   Note: bell state is kept in memory only (resets on page reload / not shared
    across admins). If you want it to persist and survive refresh, the
    Notification model + notifyUser service already built for the user
    dashboard could be extended to admins instead — this is the quick,
@@ -1515,7 +1503,6 @@ function initBellDropdown() {
 }
 
 function initAdminLiveSocket() {
-  const opsBadge = document.getElementById('opsSidebarBadge');
   const liveIndicator = document.querySelector('.tools .live');
 
   const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
@@ -1550,8 +1537,7 @@ function initAdminLiveSocket() {
   });
 
   liveSocket.on('admin:stats', (stats) => {
-    if (opsBadge && stats && stats.totalActive != null) {
-      opsBadge.textContent = stats.totalActive;
+    if (stats && stats.totalActive != null) {
       // Authoritative KPI update for Command Center
       if (currentPageId === 'command') {
         const activeCard = document.querySelector('.kpi[data-page-link="parcels"] strong');

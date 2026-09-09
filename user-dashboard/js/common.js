@@ -527,32 +527,44 @@
   async function refreshCurrentUser() {
     // Return cached user immediately while refreshing
     const cached = parseStoredUser();
+    const hasToken = Boolean(localStorage.getItem('travelBuddyToken'));
+
     if (cached && cached.id) {
        personalizeUser();
+       // If we have a cached user AND a token, we consider the user authenticated
+       // for the purpose of the initial guard check.
        if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
+    } else if (!hasToken) {
+       // No token and no cached user? Definitely logged out.
+       if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
+       return {};
     }
 
     try {
       const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() }, 30000); // 30s cache
       const data = await res.json();
       if (!res.ok) {
-        // Redundant 401 handling removed: centralized in shared/auth-cookie-client.js
         if (res.status === 401 && window.resolveTravelBuddyAuth) {
           window.resolveTravelBuddyAuth(false);
         }
         return cached; // Return cached on error if refresh failed
       }
-      saveStoredUser(data.user);
+
+      // FIX: Merge new data with cached data to preserve 'role' if API doesn't return it
+      const mergedUser = { ...cached, ...data.user };
+      saveStoredUser(mergedUser);
       personalizeUser();
-      populateProfileForms(data.user);
+      populateProfileForms(mergedUser);
+
+      // Success: ensure auth is resolved
       if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
-      return data.user;
+      return mergedUser;
     } catch (err) {
       console.error('Profile refresh failed:', err);
-      // We don't resolve(false) here because a network error shouldn't
-      // necessarily boot the user if they have a cached session,
-      // but if the guard is waiting, we might need to decide.
-      // Let's allow the safety timeout to handle true network failures.
+      // On network failure, we trust the cached user if it exists.
+      if (cached && cached.id && window.resolveTravelBuddyAuth) {
+         window.resolveTravelBuddyAuth(true);
+      }
       return cached;
     }
   }
