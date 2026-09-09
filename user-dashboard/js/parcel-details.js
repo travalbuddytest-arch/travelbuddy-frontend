@@ -207,7 +207,12 @@
       console.error('Failed to load parcel details:', err);
       showError('Could not reach the server to load parcel details.');
     } finally {
-      if (detailsLoading()) detailsLoading().classList.add('hidden');
+      const loader = detailsLoading();
+      if (loader) loader.classList.add('hidden');
+      // Ensure skeleton is hidden even on error
+      if (window.TravelBuddySkeleton) {
+          window.TravelBuddySkeleton.hide('#detailsShell');
+      }
     }
   }
 
