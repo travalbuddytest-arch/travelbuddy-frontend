@@ -70,7 +70,7 @@
 
       // Close on Nav Link click (Mobile only)
       if (target.closest('.sidebar .nav-item[href]')) {
-        if (window.matchMedia('(max-width: 991px)').matches) {
+        if (window.matchMedia('(max-width: 1199px)').matches) {
           closeSidebar();
         }
       }

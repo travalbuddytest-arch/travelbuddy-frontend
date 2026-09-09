@@ -134,7 +134,7 @@
     if (!sidebar || !toggleBtn) return null;
 
     function isDesktop() {
-      return window.innerWidth >= 992;
+      return window.innerWidth >= 1200;
     }
 
     function getStoredPreference() {
