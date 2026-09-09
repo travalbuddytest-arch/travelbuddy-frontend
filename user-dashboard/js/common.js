@@ -984,6 +984,9 @@
     s.classList.add('open');
     o.classList.add('show');
     document.body.classList.add('sidebar-is-open');
+    s.setAttribute('aria-hidden', 'false');
+    const menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
   }
 
   function closeSidebar() {
@@ -992,6 +995,9 @@
     s.classList.remove('open');
     o.classList.remove('show');
     document.body.classList.remove('sidebar-is-open');
+    s.setAttribute('aria-hidden', 'true');
+    const menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
   }
 
   function initUserSidebarCollapse() {
