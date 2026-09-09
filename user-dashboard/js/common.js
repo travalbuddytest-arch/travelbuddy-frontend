@@ -70,7 +70,7 @@
 
       // Close on Nav Link click (Mobile only)
       if (target.closest('.sidebar .nav-item[href]')) {
-        if (window.matchMedia('(max-width: 900px)').matches) {
+        if (window.matchMedia('(max-width: 991px)').matches) {
           closeSidebar();
         }
       }
@@ -322,8 +322,12 @@
     document.querySelectorAll('.sidebar .nav-item').forEach((item) => {
       const href = item.getAttribute('href') || '';
       const targetFile = href.split('/').pop().split('?')[0];
-      if (targetFile && currentPath.toLowerCase() === targetFile.toLowerCase()) {
+      const isActive = targetFile && currentPath.toLowerCase() === targetFile.toLowerCase();
+
+      if (isActive) {
         item.classList.add('active');
+        // Highlighting for the parent section heading
+        item.closest('.nav-group')?.classList.add('has-active');
       } else if (targetFile && !item.hasAttribute('data-keep-active')) {
         item.classList.remove('active');
       }

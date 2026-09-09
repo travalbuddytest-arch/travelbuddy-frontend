@@ -27,7 +27,7 @@
   }
 
   function showTooltip(target, text) {
-    if (!text || window.innerWidth <= 900) return;
+    if (!text || window.innerWidth < 992) return;
     var tt = getTooltipEl();
     tt.textContent = text;
     tt.classList.add('visible');
@@ -93,7 +93,7 @@
       // Only show tooltip for nav items if sidebar is collapsed.
       // Toggle button always shows tooltip on desktop.
       if (!isCollapsed && !isToggle) return;
-      if (window.innerWidth <= 900) return;
+      if (window.innerWidth < 992) return;
 
       var text = isToggle
         ? (isCollapsed ? 'Expand sidebar' : 'Collapse sidebar')
@@ -133,7 +133,7 @@
     if (!sidebar || !toggleBtn) return null;
 
     function isDesktop() {
-      return window.innerWidth > 900;
+      return window.innerWidth >= 992;
     }
 
     function getStoredPreference() {
