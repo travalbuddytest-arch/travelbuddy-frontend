@@ -319,6 +319,9 @@
 
   function highlightActiveNav() {
     const currentPath = window.location.pathname.split('/').pop() || 'overview.html';
+    // Clear previous active states first
+    document.querySelectorAll('.nav-group').forEach(g => g.classList.remove('has-active'));
+
     document.querySelectorAll('.sidebar .nav-item').forEach((item) => {
       const href = item.getAttribute('href') || '';
       const targetFile = href.split('/').pop().split('?')[0];

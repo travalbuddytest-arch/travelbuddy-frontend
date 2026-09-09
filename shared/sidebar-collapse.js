@@ -130,6 +130,7 @@
 
     var sidebar = document.getElementById(sidebarId);
     var toggleBtn = document.getElementById(toggleBtnId);
+    var closeBtn = sidebar ? sidebar.querySelector('.sidebar-close') : null;
     if (!sidebar || !toggleBtn) return null;
 
     function isDesktop() {
@@ -156,6 +157,10 @@
       toggleBtn.setAttribute('aria-label', label);
       toggleBtn.setAttribute('title', label);
       toggleBtn.dataset.tooltip = label;
+
+      if (closeBtn) {
+        closeBtn.dataset.tooltip = isDesktop() ? label : 'Close menu';
+      }
 
       var icon = toggleBtn.querySelector('i');
       if (icon) {
@@ -202,6 +207,18 @@
       e.stopPropagation();
       toggle();
     });
+
+    // Close button (X) click listener for desktop collapse
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function (e) {
+        if (isDesktop()) {
+          e.stopPropagation();
+          e.preventDefault();
+          toggle();
+        }
+        // Mobile "Close" logic remains handled by document.body listener in common.js
+      });
+    }
 
     // Handle responsive resize between desktop & mobile
     var resizeTimer = null;

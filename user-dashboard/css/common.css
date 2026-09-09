@@ -548,17 +548,19 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
 .nav-group-title {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--tb-text-faint);
-  padding: 6px 14px 2px;
+  padding: 12px 14px 4px;
   user-select: none;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
+  display: block;
 }
 
 .nav-group.has-active .nav-group-title {
-  color: var(--tb-navy);
+  color: var(--tb-primary);
   font-weight: 800;
+  letter-spacing: 0.12em;
 }
 
 .nav-item {
@@ -655,6 +657,28 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
     display: none !important;
   }
   .sidebar-close {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid var(--tb-border);
+    background: var(--tb-surface);
+    color: var(--tb-text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .sidebar-close:hover {
+    background: var(--tb-danger-soft);
+    color: var(--tb-danger);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  /* Hide close button when already collapsed on desktop */
+  body.sidebar-collapsed .sidebar-close,
+  html.sidebar-collapsed .sidebar-close {
     display: none !important;
   }
 }
