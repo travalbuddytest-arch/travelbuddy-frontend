@@ -13,14 +13,9 @@
   const otpForm = document.getElementById('otpForm');
   const resetForm = document.getElementById('resetForm');
 
-  const otpMethod = document.getElementById('otpMethod');
   const emailField = document.getElementById('emailField');
-  const phoneField = document.getElementById('phoneField');
   const emailInput = document.getElementById('email');
-  const phoneInput = document.getElementById('phone');
-  const countryCode = document.getElementById('countryCode');
   const emailError = document.getElementById('emailError');
-  const phoneError = document.getElementById('phoneError');
   const sendOtpBtn = document.getElementById('sendOtpBtn');
 
   const forgotOtpMount = document.getElementById('forgotOtpMount');
@@ -31,7 +26,6 @@
   const confirmPasswordError = document.getElementById('confirmPasswordError');
   const setPasswordBtn = document.getElementById('setPasswordBtn');
 
-  let currentMethod = 'email';
   let currentIdentifier = '';
   let resetToken = '';
   let toastTimer;
@@ -73,34 +67,17 @@
   }
 
   function validateIdentifier(showError) {
-    currentMethod = otpMethod.value;
-
-    if (currentMethod === 'email') {
-      const value = emailInput.value.trim().toLowerCase();
-      if (!value) {
-        if (showError) setFieldError(emailField, emailError, 'Email is required.');
-        return false;
-      }
-      if (!EMAIL_RE.test(value)) {
-        if (showError) setFieldError(emailField, emailError, 'Enter a valid email address.');
-        return false;
-      }
-      clearFieldError(emailField, emailError);
-      currentIdentifier = value;
-      return true;
-    }
-
-    const phone = getFullPhone();
-    if (!phoneInput.value.trim()) {
-      if (showError) setFieldError(phoneInput.closest('.field'), phoneError, 'Mobile number is required.');
+    const value = emailInput.value.trim().toLowerCase();
+    if (!value) {
+      if (showError) setFieldError(emailField, emailError, 'Email is required.');
       return false;
     }
-    if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
-      if (showError) setFieldError(phoneInput.closest('.field'), phoneError, 'Enter a valid mobile number.');
+    if (!EMAIL_RE.test(value)) {
+      if (showError) setFieldError(emailField, emailError, 'Enter a valid email address.');
       return false;
     }
-    clearFieldError(phoneInput.closest('.field'), phoneError);
-    currentIdentifier = phone;
+    clearFieldError(emailField, emailError);
+    currentIdentifier = value;
     return true;
   }
 
@@ -139,15 +116,15 @@
 
     if (view === 'request') {
       pageTitle.textContent = 'Forgot Password';
-      pageSubtitle.textContent = 'Choose where you want to receive your OTP.';
+      pageSubtitle.textContent = 'Enter your email address to receive an OTP to reset your password.';
       backBtn.href = '../login/login.html';
       destroyForgotOtpVerifier();
-      setTimeout(() => (otpMethod.value === 'email' ? emailInput : phoneInput).focus({ preventScroll: true }), 100);
+      setTimeout(() => emailInput.focus({ preventScroll: true }), 100);
     }
 
     if (view === 'otp') {
       pageTitle.textContent = 'Verify OTP';
-      pageSubtitle.textContent = `Enter the code sent to ${currentMethod === 'email' ? currentIdentifier : currentIdentifier}.`;
+      pageSubtitle.textContent = `Enter the code sent to ${currentIdentifier}.`;
       backBtn.href = '#';
       mountForgotOtpVerifier();
     }
@@ -177,9 +154,7 @@
     if (!isResend) setButtonLoading(sendOtpBtn, true);
 
     try {
-      const body = currentMethod === 'email'
-        ? { method: 'email', email: currentIdentifier }
-        : { method: 'phone', phone: currentIdentifier };
+      const body = { email: currentIdentifier };
 
       const response = await fetch(`${API_BASE}/forgot-password/send-otp`, {
         method: 'POST',
@@ -218,9 +193,7 @@
 
   async function verifyOtp(code) {
     try {
-      const body = currentMethod === 'email'
-        ? { method: 'email', email: currentIdentifier, otp: code }
-        : { method: 'phone', phone: currentIdentifier, otp: code };
+      const body = { email: currentIdentifier, otp: code };
 
       const response = await fetch(`${API_BASE}/forgot-password/verify-otp`, {
         method: 'POST',
@@ -318,12 +291,8 @@
   }
   [sendOtpBtn, setPasswordBtn].forEach(attachRipple);
 
-  otpMethod.addEventListener('change', toggleMethodFields);
   emailInput.addEventListener('input', () => {
     if (emailField.classList.contains('has-error')) validateIdentifier(true);
-  });
-  phoneInput.addEventListener('input', () => {
-    if (phoneInput.closest('.field').classList.contains('has-error')) validateIdentifier(true);
   });
 
   requestForm.addEventListener('submit', (e) => {
