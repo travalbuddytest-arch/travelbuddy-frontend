@@ -36,48 +36,50 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <header class="tb-page-header">
-          <div class="tb-page-title">
-            <h2>Trust &amp; Safety Reports</h2>
-            <p>Track the status of violation reports and safety disputes.</p>
-          </div>
-          <div class="tb-page-actions">
-            <button type="button" class="btn-danger btn-sm" id="openSubmitReportBtn">
-              <i class="fa-solid fa-flag"></i> New Report
-            </button>
-          </div>
-        </header>
+        <div class="dashboard-container">
+          <header class="tb-page-header">
+            <div class="tb-page-title">
+              <h2>Trust &amp; Safety Reports</h2>
+              <p>Track the status of violation reports and safety disputes.</p>
+            </div>
+            <div class="tb-page-actions">
+              <button type="button" class="btn-danger btn-sm" id="openSubmitReportBtn">
+                <i class="fa-solid fa-flag"></i> New Report
+              </button>
+            </div>
+          </header>
 
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Submitted Reports</h2>
-          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Submitted Reports</h2>
+            </div>
 
-          <div id="reportsLoading" style="text-align:center; padding:30px;">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
-            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading your reports...</p>
-          </div>
+            <div id="reportsLoading" style="text-align:center; padding:30px;">
+              <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+              <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading your reports...</p>
+            </div>
 
-          <div id="reportsEmpty" class="tb-empty-state hidden">
-            <i class="fa-solid fa-shield-halved"></i>
-            <h3>No Reports Filed</h3>
-            <p>You have not submitted any dispute or safety reports. If you encounter any fraudulent or inappropriate activity, please report it immediately.</p>
-          </div>
+            <div id="reportsEmpty" class="tb-empty-state hidden">
+              <i class="fa-solid fa-shield-halved"></i>
+              <h3>No Reports Filed</h3>
+              <p>You have not submitted any dispute or safety reports. If you encounter any fraudulent or inappropriate activity, please report it immediately.</p>
+            </div>
 
-          <div class="table-container" id="reportsTableWrap">
-            <table class="data-table" id="reportsTable">
-              <thead>
-                <tr>
-                  <th>Date Filed</th>
-                  <th>Target</th>
-                  <th>Reason</th>
-                  <th>Description</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="reportsTableBody"></tbody>
-            </table>
+            <div class="table-container" id="reportsTableWrap">
+              <table class="data-table" id="reportsTable">
+                <thead>
+                  <tr>
+                    <th>Date Filed</th>
+                    <th>Target</th>
+                    <th>Reason</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="reportsTableBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </main>

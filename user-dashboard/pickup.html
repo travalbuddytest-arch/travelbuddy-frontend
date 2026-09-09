@@ -90,141 +90,79 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="main-tab-bar" style="margin-bottom: 32px; border-bottom: 1px solid var(--tb-border); display: flex; gap: 4px; padding-bottom: 0;">
-          <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
-            Active Tasks (<span id="activeDeliveriesBadge">0</span>)
-          </button>
-          <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
-            Find Parcels
-          </button>
-          <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
-            My Routes
-          </button>
-        </div>
-
-        <style>
-          .main-tab-btn.active {
-            color: var(--tb-primary) !important;
-            border-bottom-color: var(--tb-primary) !important;
-            background: none !important;
-          }
-        </style>
-
-        <!-- SECTION 1: ACTIVE DELIVERIES WORKFLOW -->
-        <div id="sectionDeliveries">
-          <div class="tb-page-header">
-            <div class="tb-page-title">
-              <h3>My Transport Tasks</h3>
-              <p>Verify pickups and confirm deliveries to earn your fees.</p>
-            </div>
-            <div class="tb-page-actions">
-              <button type="button" class="btn-ghost btn-sm" id="refreshDeliveriesBtn">
-                <i class="fa-solid fa-rotate-right"></i> Refresh Tasks
-              </button>
-            </div>
-          </div>
-
-          <div id="deliveriesLoadingState" style="text-align:center; padding:40px 20px;">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:28px; color:var(--primary);"></i>
-            <p style="margin-top:10px; font-size:13.5px; color:var(--text-muted);">Loading active tasks...</p>
-          </div>
-
-          <div id="deliveriesEmptyState" class="tb-empty-state hidden">
-            <i class="fa-solid fa-box-open"></i>
-            <h3>No Active Delivery Tasks</h3>
-            <p>You have no parcels currently assigned for transport. Search matching parcels along your travel routes to start earning!</p>
-            <button type="button" class="btn-primary" id="emptyFindParcelsBtn" style="margin:0 auto;">
-              <i class="fa-solid fa-magnifying-glass"></i> Find Parcels to Carry
+        <div class="dashboard-container">
+          <div class="main-tab-bar" style="margin-bottom: 32px; border-bottom: 1px solid var(--tb-border); display: flex; gap: 4px; padding-bottom: 0;">
+            <button type="button" class="main-tab-btn active" id="tabDeliveriesBtn" data-target="sectionDeliveries" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
+              Active Tasks (<span id="activeDeliveriesBadge">0</span>)
+            </button>
+            <button type="button" class="main-tab-btn" id="tabFindBtn" data-target="sectionFind" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
+              Find Parcels
+            </button>
+            <button type="button" class="main-tab-btn" id="tabRoutesBtn" data-target="sectionRoutes" style="padding: 12px 20px; border-radius: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--tb-text-muted); transition: all 0.2s;">
+              My Routes
             </button>
           </div>
 
-          <div id="deliveriesList"></div>
-        </div>
+          <style>
+            .main-tab-btn.active {
+              color: var(--tb-primary) !important;
+              border-bottom-color: var(--tb-primary) !important;
+              background: none !important;
+            }
+          </style>
 
-        <!-- SECTION 2: FIND PARCELS ON ROUTE -->
-        <div id="sectionFind" class="hidden">
-          <div class="tb-panel">
-            <div class="tb-panel-head">
-              <div class="tb-panel-title">
-                <h3>Find Parcels on Route</h3>
-                <p>Enter your travel path to find matches.</p>
+          <!-- SECTION 1: ACTIVE DELIVERIES WORKFLOW -->
+          <div id="sectionDeliveries">
+            <div class="tb-page-header">
+              <div class="tb-page-title">
+                <h3>My Transport Tasks</h3>
+                <p>Verify pickups and confirm deliveries to earn your fees.</p>
+              </div>
+              <div class="tb-page-actions">
+                <button type="button" class="btn-ghost btn-sm" id="refreshDeliveriesBtn">
+                  <i class="fa-solid fa-rotate-right"></i> Refresh Tasks
+                </button>
               </div>
             </div>
 
-            <form class="search-row" id="routeSearchForm">
-              <div class="field">
-                <label for="routeFrom">Starting City</label>
-                <input type="text" id="routeFrom" class="tb-input" placeholder="e.g. Mumbai" required />
-              </div>
-              <div class="field">
-                <label for="routeTo">Destination City</label>
-                <input type="text" id="routeTo" class="tb-input" placeholder="e.g. Pune" required />
-              </div>
-              <button type="submit" class="btn-primary" id="routeSearchBtn">
-                <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
-                <span class="spinner" aria-hidden="true"></span>
+            <div id="deliveriesLoadingState" style="text-align:center; padding:40px 20px;">
+              <i class="fa-solid fa-circle-notch fa-spin" style="font-size:28px; color:var(--primary);"></i>
+              <p style="margin-top:10px; font-size:13.5px; color:var(--text-muted);">Loading active tasks...</p>
+            </div>
+
+            <div id="deliveriesEmptyState" class="tb-empty-state hidden">
+              <i class="fa-solid fa-box-open"></i>
+              <h3>No Active Delivery Tasks</h3>
+              <p>You have no parcels currently assigned for transport. Search matching parcels along your travel routes to start earning!</p>
+              <button type="button" class="btn-primary" id="emptyFindParcelsBtn" style="margin:0 auto;">
+                <i class="fa-solid fa-magnifying-glass"></i> Find Parcels to Carry
               </button>
-            </form>
+            </div>
+
+            <div id="deliveriesList"></div>
           </div>
 
-          <div class="tb-panel">
-            <div class="tb-panel-head">
-              <div class="tb-panel-title">
-                <h3>Matching Parcels</h3>
-              </div>
-              <span class="tb-badge tb-badge--info" id="resultCount"></span>
-            </div>
-            <ul class="parcel-list parcel-list--pickup" id="pickupResults"></ul>
-            <div id="pickupEmpty" class="tb-empty-state">
-              <div class="tb-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-              <p>Enter a route above to see available parcels.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- SECTION 3: MY TRAVEL ROUTES -->
-        <div id="sectionRoutes" class="hidden">
-          <div class="panel-grid">
+          <!-- SECTION 2: FIND PARCELS ON ROUTE -->
+          <div id="sectionFind" class="hidden">
             <div class="tb-panel">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
-                  <h3>Post a Route</h3>
-                  <p>Share your travel plan with senders.</p>
+                  <h3>Find Parcels on Route</h3>
+                  <p>Enter your travel path to find matches.</p>
                 </div>
               </div>
 
-              <form class="stack-form" id="postRouteForm">
-                <div class="form-row">
-                  <div class="field">
-                    <label for="routePostFrom">From City</label>
-                    <input type="text" id="routePostFrom" class="tb-input" placeholder="e.g. Pune" required />
-                  </div>
-                  <div class="field">
-                    <label for="routePostTo">To City</label>
-                    <input type="text" id="routePostTo" class="tb-input" placeholder="e.g. Delhi" required />
-                  </div>
-                </div>
-
+              <form class="search-row" id="routeSearchForm">
                 <div class="field">
-                  <label for="routePostDate">Travel Date</label>
-                  <input type="date" id="routePostDate" class="tb-input" required />
+                  <label for="routeFrom">Starting City</label>
+                  <input type="text" id="routeFrom" class="tb-input" placeholder="e.g. Mumbai" required />
                 </div>
-
                 <div class="field">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <label style="margin-bottom:0;">Available Capacity</label>
-                    <strong id="capacityValue" style="color:var(--tb-primary); font-size:14px;">5 kg</strong>
-                  </div>
-                  <input type="range" id="routePostCapacity" min="1" max="100" value="5" style="width:100%; cursor:pointer; accent-color: var(--tb-primary);" />
+                  <label for="routeTo">Destination City</label>
+                  <input type="text" id="routeTo" class="tb-input" placeholder="e.g. Pune" required />
                 </div>
-
-                <div class="field">
-                  <label for="routePostNotes">Notes (Transport method, etc.)</label>
-                  <input type="text" id="routePostNotes" class="tb-input" placeholder="e.g. Travelling by flight" maxlength="200" />
-                </div>
-
-                <button type="submit" class="btn-primary" id="routePostBtn" style="width:100%;">
-                  <span class="btn-label"><i class="fa-solid fa-route"></i> Post Travel Route</span>
+                <button type="submit" class="btn-primary" id="routeSearchBtn">
+                  <span class="btn-label"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
                   <span class="spinner" aria-hidden="true"></span>
                 </button>
               </form>
@@ -233,10 +171,74 @@
             <div class="tb-panel">
               <div class="tb-panel-head">
                 <div class="tb-panel-title">
-                  <h3>Active Routes</h3>
+                  <h3>Matching Parcels</h3>
                 </div>
+                <span class="tb-badge tb-badge--info" id="resultCount"></span>
               </div>
-              <ul class="parcel-list" id="myRouteList"></ul>
+              <ul class="parcel-list parcel-list--pickup" id="pickupResults"></ul>
+              <div id="pickupEmpty" class="tb-empty-state">
+                <div class="tb-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <p>Enter a route above to see available parcels.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: MY TRAVEL ROUTES -->
+          <div id="sectionRoutes" class="hidden">
+            <div class="panel-grid">
+              <div class="tb-panel">
+                <div class="tb-panel-head">
+                  <div class="tb-panel-title">
+                    <h3>Post a Route</h3>
+                    <p>Share your travel plan with senders.</p>
+                  </div>
+                </div>
+
+                <form class="stack-form" id="postRouteForm">
+                  <div class="form-row">
+                    <div class="field">
+                      <label for="routePostFrom">From City</label>
+                      <input type="text" id="routePostFrom" class="tb-input" placeholder="e.g. Pune" required />
+                    </div>
+                    <div class="field">
+                      <label for="routePostTo">To City</label>
+                      <input type="text" id="routePostTo" class="tb-input" placeholder="e.g. Delhi" required />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="routePostDate">Travel Date</label>
+                    <input type="date" id="routePostDate" class="tb-input" required />
+                  </div>
+
+                  <div class="field">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                      <label style="margin-bottom:0;">Available Capacity</label>
+                      <strong id="capacityValue" style="color:var(--tb-primary); font-size:14px;">5 kg</strong>
+                    </div>
+                    <input type="range" id="routePostCapacity" min="1" max="100" value="5" style="width:100%; cursor:pointer; accent-color: var(--tb-primary);" />
+                  </div>
+
+                  <div class="field">
+                    <label for="routePostNotes">Notes (Transport method, etc.)</label>
+                    <input type="text" id="routePostNotes" class="tb-input" placeholder="e.g. Travelling by flight" maxlength="200" />
+                  </div>
+
+                  <button type="submit" class="btn-primary" id="routePostBtn" style="width:100%;">
+                    <span class="btn-label"><i class="fa-solid fa-route"></i> Post Travel Route</span>
+                    <span class="spinner" aria-hidden="true"></span>
+                  </button>
+                </form>
+              </div>
+
+              <div class="tb-panel">
+                <div class="tb-panel-head">
+                  <div class="tb-panel-title">
+                    <h3>Active Routes</h3>
+                  </div>
+                </div>
+                <ul class="parcel-list" id="myRouteList"></ul>
+              </div>
             </div>
           </div>
         </div>

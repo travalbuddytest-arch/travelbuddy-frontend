@@ -127,7 +127,7 @@
     }
 
     currentStep = step;
-    window.scrollTo({ top: 100, behavior: 'smooth' });
+    document.getElementById('wizardStepper')?.scrollIntoView({ behavior: 'smooth' });
 
     if (step === 5) {
       checkWalletStatus();

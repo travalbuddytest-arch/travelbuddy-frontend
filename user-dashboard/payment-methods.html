@@ -79,59 +79,61 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="methods-head">
-          <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Saved Payment &amp; Payout Accounts</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Manage bank accounts and UPI IDs used for automatic withdrawals and payments.</p>
-          </div>
-          <button type="button" class="btn-primary" id="openAddMethodBtn">
-            <i class="fa-solid fa-plus"></i> Add Payment Method
-          </button>
-        </div>
-
-        <!-- Section 1: Payout Destinations -->
-        <div class="panel" style="margin-bottom: 24px;">
-          <div class="panel-head">
-            <h2>Withdrawal Payout Accounts</h2>
-            <p class="panel-sub">Verified bank accounts and UPI IDs where your earnings and refunds are deposited.</p>
+        <div class="dashboard-container">
+          <div class="methods-head">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">Saved Payment &amp; Payout Accounts</h2>
+              <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Manage bank accounts and UPI IDs used for automatic withdrawals and payments.</p>
+            </div>
+            <button type="button" class="btn-primary" id="openAddMethodBtn">
+              <i class="fa-solid fa-plus"></i> Add Payment Method
+            </button>
           </div>
 
-          <div id="payoutMethodsLoading" style="text-align:center; padding:30px;">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
-            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading payout methods...</p>
+          <!-- Section 1: Payout Destinations -->
+          <div class="panel" style="margin-bottom: 24px;">
+            <div class="panel-head">
+              <h2>Withdrawal Payout Accounts</h2>
+              <p class="panel-sub">Verified bank accounts and UPI IDs where your earnings and refunds are deposited.</p>
+            </div>
+
+            <div id="payoutMethodsLoading" style="text-align:center; padding:30px;">
+              <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+              <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading payout methods...</p>
+            </div>
+
+            <div id="payoutMethodsEmpty" class="tb-empty-state hidden">
+              <i class="fa-solid fa-building-columns"></i>
+              <h3>No Payout Destinations Saved</h3>
+              <p>Add a bank account or UPI ID so you can quickly withdraw your delivery earnings.</p>
+              <a href="withdraw.html" class="btn-primary" style="margin: 0 auto; display:inline-flex; text-decoration:none;">
+                <i class="fa-solid fa-plus"></i> Add in Withdrawal Page
+              </a>
+            </div>
+
+            <div class="methods-grid" id="payoutMethodsGrid"></div>
           </div>
 
-          <div id="payoutMethodsEmpty" class="tb-empty-state hidden">
-            <i class="fa-solid fa-building-columns"></i>
-            <h3>No Payout Destinations Saved</h3>
-            <p>Add a bank account or UPI ID so you can quickly withdraw your delivery earnings.</p>
-            <a href="withdraw.html" class="btn-primary" style="margin: 0 auto; display:inline-flex; text-decoration:none;">
-              <i class="fa-solid fa-plus"></i> Add in Withdrawal Page
-            </a>
+          <!-- Section 2: Saved Payment Instruments -->
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Saved Payment Instruments</h2>
+              <p class="panel-sub">Saved cards and UPI apps for quick wallet top-ups.</p>
+            </div>
+
+            <div id="paymentMethodsLoading" style="text-align:center; padding:30px;">
+              <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+              <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading payment instruments...</p>
+            </div>
+
+            <div id="paymentMethodsEmpty" class="tb-empty-state hidden">
+              <i class="fa-solid fa-credit-card"></i>
+              <h3>No Payment Methods Saved</h3>
+              <p>Saved debit cards and UPI handles will appear here for fast checkout.</p>
+            </div>
+
+            <div class="methods-grid" id="paymentMethodsGrid"></div>
           </div>
-
-          <div class="methods-grid" id="payoutMethodsGrid"></div>
-        </div>
-
-        <!-- Section 2: Saved Payment Instruments -->
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Saved Payment Instruments</h2>
-            <p class="panel-sub">Saved cards and UPI apps for quick wallet top-ups.</p>
-          </div>
-
-          <div id="paymentMethodsLoading" style="text-align:center; padding:30px;">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
-            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading payment instruments...</p>
-          </div>
-
-          <div id="paymentMethodsEmpty" class="tb-empty-state hidden">
-            <i class="fa-solid fa-credit-card"></i>
-            <h3>No Payment Methods Saved</h3>
-            <p>Saved debit cards and UPI handles will appear here for fast checkout.</p>
-          </div>
-
-          <div class="methods-grid" id="paymentMethodsGrid"></div>
         </div>
       </main>
     </div>

@@ -61,21 +61,30 @@
       font-size: 13px;
       transition: transform 0.18s ease;
     }
-    .avatar-edit-badge:hover {
-      transform: scale(1.1);
-    }
-    .profile-meta-head {
-      flex: 1;
-      min-width: 220px;
-    }
-    .profile-meta-head h2 {
-      margin: 0 0 4px;
-      font-size: 22px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .avatar-edit-badge:hover { transform: scale(1.1); }
+    .profile-meta-head { flex: 1; min-width: 220px; }
+    .profile-meta-head h2 { margin: 0 0 4px; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
+    .profile-section-title { font-size: 18px; font-weight: 800; color: var(--tb-navy); margin: 32px 0 16px; border-bottom: 1.5px solid var(--tb-border); padding-bottom: 8px; }
+    .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-bottom: 32px; }
+    .profile-card { background: var(--tb-surface); border: 1px solid var(--tb-border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card); transition: var(--transition-smooth); display: flex; flex-direction: column; gap: 16px; }
+    .profile-card:hover { box-shadow: var(--shadow-md); border-color: rgba(13,110,253,0.2); }
+    .profile-card-head { display: flex; align-items: center; gap: 12px; }
+    .profile-card-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; background: var(--tb-bg); color: var(--tb-primary); flex-shrink: 0; }
+    .profile-card-info h4 { font-size: 15px; font-weight: 700; color: var(--tb-navy); margin: 0 0 2px; }
+    .profile-card-info p { font-size: 12.5px; color: var(--tb-text-muted); margin: 0; }
+
+    .status-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--tb-bg); border-radius: 12px; border: 1px solid var(--tb-border); }
+    .status-label { font-size: 13px; font-weight: 600; color: var(--tb-text-muted); }
+    .status-value { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+    .address-list, .device-list, .activity-list { display: flex; flex-direction: column; gap: 10px; }
+    .address-item, .device-item { padding: 12px; background: var(--tb-bg); border-radius: 12px; border: 1px solid var(--tb-border); display: flex; align-items: center; gap: 12px; position: relative; }
+    .address-info, .device-info { flex: 1; min-width: 0; }
+    .address-info strong, .device-info strong { display: block; font-size: 13.5px; color: var(--tb-text-main); margin-bottom: 2px; }
+    .address-info span, .device-info span { display: block; font-size: 12px; color: var(--tb-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .action-group { display: flex; gap: 10px; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -90,120 +99,300 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <!-- Hero Card -->
-        <div class="profile-hero-card" style="border-radius: var(--radius-xl);">
-          <div class="profile-avatar-wrap">
-            <div class="profile-large-avatar" id="heroAvatar">TB</div>
-            <label class="avatar-edit-badge" for="photoFileInput" title="Upload new photo">
-              <i class="fa-solid fa-camera"></i>
-            </label>
-            <input type="file" id="photoFileInput" accept="image/jpeg, image/png" style="display:none;" />
-          </div>
+        <div class="dashboard-container">
+          <!-- Hero Card -->
+          <div class="profile-hero-card">
+            <div class="profile-avatar-wrap">
+              <div class="profile-large-avatar" id="heroAvatar">TB</div>
+              <label class="avatar-edit-badge" for="photoFileInput" title="Upload new photo">
+                <i class="fa-solid fa-camera"></i>
+              </label>
+              <input type="file" id="photoFileInput" accept="image/jpeg, image/png" style="display:none;" />
+            </div>
 
-          <div class="profile-meta-head">
-            <h2 style="color: var(--tb-navy);">
-              <span id="heroFullName">User Name</span>
-              <i class="fa-solid fa-circle-check" id="heroVerifiedBadge" style="color:var(--tb-primary); font-size:18px;" title="Verified Profile"></i>
-            </h2>
-            <p style="margin:0 0 12px; font-size:14px; color:var(--tb-text-muted);" id="heroEmail">user@example.com</p>
-            <div style="display:flex; gap:16px; font-size:13px; color:var(--tb-text-faint); flex-wrap:wrap;">
-              <span><i class="fa-solid fa-star" style="color:#F59E0B; margin-right: 4px;"></i><strong id="heroRating" style="color:var(--tb-text-main);">0.0</strong> (<span id="heroRatingCount">0</span> reviews)</span>
-              <span><i class="fa-regular fa-calendar" style="margin-right: 4px;"></i>Member since <span id="heroMemberSince">2026</span></span>
-            </div>
-          </div>
-
-          <button type="button" class="btn-ghost" id="removePhotoBtn" style="font-size:12px; display:none; border-color: var(--tb-danger); color: var(--tb-danger);">
-            <i class="fa-solid fa-trash"></i> Remove Photo
-          </button>
-        </div>
-
-        <!-- Metric Grid -->
-        <div class="metric-grid" style="margin-bottom:28px;">
-          <div class="tb-metric-card tb-metric-card--primary">
-            <div class="tb-metric-header">
-              <span class="tb-metric-label">Parcels Posted</span>
-              <div class="tb-metric-icon"><i class="fa-solid fa-box-archive"></i></div>
-            </div>
-            <div class="tb-metric-body">
-              <div class="tb-metric-value" id="statsPostedCount">0</div>
-              <span class="tb-metric-sub">As a sender</span>
-            </div>
-          </div>
-
-          <div class="tb-metric-card tb-metric-card--success">
-            <div class="tb-metric-header">
-              <span class="tb-metric-label">Parcels Delivered</span>
-              <div class="tb-metric-icon"><i class="fa-solid fa-truck-fast"></i></div>
-            </div>
-            <div class="tb-metric-body">
-              <div class="tb-metric-value" id="statsDeliveredCount">0</div>
-              <span class="tb-metric-sub">As a traveler</span>
-            </div>
-          </div>
-
-          <div class="tb-metric-card tb-metric-card--warning">
-            <div class="tb-metric-header">
-              <span class="tb-metric-label">Wallet Balance</span>
-              <div class="tb-metric-icon"><i class="fa-solid fa-wallet"></i></div>
-            </div>
-            <div class="tb-metric-body">
-              <div class="tb-metric-value" id="statsWalletBalance">₹ 0.00</div>
-              <span class="tb-metric-sub">Available funds</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Trust & Verification Card -->
-        <div class="tb-panel" style="margin-bottom:28px; border-left:4px solid var(--tb-primary); background: linear-gradient(to right, var(--tb-primary-soft), transparent);">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap: 16px; flex-wrap: wrap;">
-            <div>
-              <h3 style="margin:0 0 4px; font-size:17px; font-weight:800; color:var(--tb-navy);">Trust &amp; Verification</h3>
-              <p style="margin:0; font-size:13px; color:var(--tb-text-muted);">Increase your credibility to get more delivery requests.</p>
-            </div>
-            <a href="verification.html" class="btn-primary btn-sm" style="text-decoration:none;">
-              <i class="fa-solid fa-shield-halved"></i> Manage Documents
-            </a>
-          </div>
-        </div>
-
-        <!-- Edit Profile Form -->
-        <div class="tb-panel" style="max-width:720px;">
-          <div class="tb-panel-head">
-            <div class="tb-panel-title">
-              <h3>Personal Information</h3>
-              <p>Update your account profile details.</p>
-            </div>
-          </div>
-
-          <form id="editProfileForm" class="stack-form">
-            <div class="form-row">
-              <div class="field">
-                <label for="inputFirstName">First Name *</label>
-                <input type="text" id="inputFirstName" class="tb-input" placeholder="First Name" required />
-              </div>
-              <div class="field">
-                <label for="inputLastName">Last Name *</label>
-                <input type="text" id="inputLastName" class="tb-input" placeholder="Last Name" required />
+            <div class="profile-meta-head">
+              <h2 style="color: var(--tb-navy);">
+                <span id="heroFullName">User Name</span>
+                <i class="fa-solid fa-circle-check" id="heroVerifiedBadge" style="color:var(--tb-primary); font-size:18px; display:none;" title="Verified Profile"></i>
+              </h2>
+              <p style="margin:0 0 12px; font-size:14px; color:var(--tb-text-muted);" id="heroEmail">user@example.com</p>
+              <div style="display:flex; gap:16px; font-size:13px; color:var(--tb-text-faint); flex-wrap:wrap;">
+                <span><i class="fa-solid fa-star" style="color:#F59E0B; margin-right: 4px;"></i><strong id="heroRating" style="color:var(--tb-text-main);">0.0</strong> (<span id="heroRatingCount">0</span> reviews)</span>
+                <span><i class="fa-regular fa-calendar" style="margin-right: 4px;"></i>Member since <span id="heroMemberSince">2026</span></span>
               </div>
             </div>
 
-            <div class="field">
-              <label for="inputEmail">Email Address (Read-only)</label>
-              <input type="email" id="inputEmail" class="tb-input" readonly style="background:var(--tb-bg); color:var(--tb-text-muted); cursor:not-allowed;" />
-            </div>
-
-            <div class="field">
-              <label for="inputPhone">Mobile Number</label>
-              <input type="tel" id="inputPhone" class="tb-input" placeholder="+919876543210" />
-            </div>
-
-            <button type="submit" class="btn-primary" id="saveProfileBtn" style="align-self:flex-start; margin-top:12px; height: 48px; padding: 0 40px;">
-              <span class="btn-label"><i class="fa-solid fa-save"></i> Update Profile</span>
-              <span class="spinner"></span>
+            <button type="button" class="btn-ghost" id="removePhotoBtn" style="font-size:12px; display:none; border-color: var(--tb-danger); color: var(--tb-danger);">
+              <i class="fa-solid fa-trash"></i> Remove Photo
             </button>
-          </form>
+          </div>
+
+          <!-- Section 1: Personal Information -->
+          <h3 class="profile-section-title">Personal Information</h3>
+          <div class="tb-panel" style="max-width: 720px;">
+            <form id="editProfileForm" class="stack-form">
+              <div class="form-row">
+                <div class="field">
+                  <label for="inputFirstName">First Name *</label>
+                  <input type="text" id="inputFirstName" class="tb-input" placeholder="First Name" required />
+                </div>
+                <div class="field">
+                  <label for="inputLastName">Last Name *</label>
+                  <input type="text" id="inputLastName" class="tb-input" placeholder="Last Name" required />
+                </div>
+              </div>
+              <div class="field">
+                <label for="inputEmail">Email Address (Read-only)</label>
+                <input type="email" id="inputEmail" class="tb-input" readonly style="background:var(--tb-bg); color:var(--tb-text-muted); cursor:not-allowed;" />
+              </div>
+              <div class="field">
+                <label for="inputPhone">Mobile Number</label>
+                <input type="tel" id="inputPhone" class="tb-input" placeholder="+919876543210" />
+              </div>
+              <button type="submit" class="btn-primary" id="saveProfileBtn" style="align-self:flex-start; margin-top:12px; height: 48px; padding: 0 40px;">
+                <span class="btn-label"><i class="fa-solid fa-save"></i> Update Profile</span>
+                <span class="spinner"></span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Section 2: Account & Security -->
+          <h3 class="profile-section-title">Account & Security</h3>
+          <div class="profile-grid">
+            <!-- Security Settings -->
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="profile-card-info">
+                  <h4>Security Settings</h4>
+                  <p>Protect your account and login access.</p>
+                </div>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Two-Step Authentication</span>
+                <span id="status2fa" class="status-value">-</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Recovery Email</span>
+                <span id="statusRecovery" class="status-value">-</span>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn-secondary btn-full btn-sm" onclick="window.openSecurityModal()">Manage Security</button>
+              </div>
+            </div>
+
+            <!-- Logged Devices -->
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                <div class="profile-card-info">
+                  <h4>Logged Devices</h4>
+                  <p>Sessions currently active on your account.</p>
+                </div>
+              </div>
+              <div id="deviceSummaryList" class="device-list">
+                <!-- Short list of 2 devices -->
+                <p style="font-size:12px; color:var(--tb-text-faint);">Loading sessions...</p>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn-ghost btn-full btn-sm" onclick="window.openDevicesModal()">View All Sessions</button>
+              </div>
+            </div>
+
+            <!-- Trust & Verification -->
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-user-check"></i></div>
+                <div class="profile-card-info">
+                  <h4>Trust & Verification</h4>
+                  <p>View your identity verification status.</p>
+                </div>
+              </div>
+              <div id="kycStatusGrid" style="display:flex; flex-direction:column; gap:8px;">
+                <div class="status-row">
+                  <span class="status-label">Government ID</span>
+                  <span id="kycGovIdStatus" class="tag tag--pending">Loading</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Face Verification</span>
+                  <span id="kycFaceStatus" class="tag tag--pending">Loading</span>
+                </div>
+              </div>
+              <div class="action-group">
+                <a href="verification.html" class="btn-primary btn-full btn-sm" style="text-decoration:none;">Complete Verification</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Personal -->
+          <h3 class="profile-section-title">Personal</h3>
+          <div class="profile-grid">
+            <!-- Saved Addresses -->
+            <div class="profile-card" style="grid-column: span 1.5;">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="profile-card-info">
+                  <h4>Saved Addresses</h4>
+                  <p>Manage your frequent pickup and delivery spots.</p>
+                </div>
+              </div>
+              <div id="savedAddressesList" class="address-list">
+                <p style="font-size:12px; color:var(--tb-text-faint);">Loading addresses...</p>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn-primary btn-sm" onclick="window.openAddressModal()">+ Add New Address</button>
+              </div>
+            </div>
+
+            <!-- Ratings & Reviews -->
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-star"></i></div>
+                <div class="profile-card-info">
+                  <h4>Ratings & Reviews</h4>
+                  <p>See what others have said about you.</p>
+                </div>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Average Rating</span>
+                <strong id="avgRatingValue" style="font-size:18px; color:var(--tb-navy);">0.0</strong>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn-secondary btn-full btn-sm" onclick="window.openReviewsModal()">View Review History</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Activity & Help -->
+          <h3 class="profile-section-title">Activity & Help</h3>
+          <div class="profile-grid">
+            <!-- My Reports -->
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-flag"></i></div>
+                <div class="profile-card-info">
+                  <h4>My Reports</h4>
+                  <p>Disputes or safety reports submitted by you.</p>
+                </div>
+              </div>
+              <div id="reportsSummary" style="font-size:13px; color:var(--tb-text-muted);">
+                You have submitted <strong id="submittedReportsCount">0</strong> reports.
+              </div>
+              <div class="action-group">
+                <a href="reports.html" class="btn-secondary btn-full btn-sm" style="text-decoration:none;">Manage Reports</a>
+              </div>
+            </div>
+
+            <!-- Support & Help -->
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="profile-card-icon"><i class="fa-solid fa-headset"></i></div>
+                <div class="profile-card-info">
+                  <h4>Support & Help</h4>
+                  <p>Need assistance? We're here to help.</p>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                 <a href="support.html" class="address-item" style="text-decoration:none;">
+                   <i class="fa-solid fa-circle-question"></i>
+                   <div class="address-info"><strong>Help Center & FAQ</strong></div>
+                   <i class="fa-solid fa-chevron-right"></i>
+                 </a>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn-primary btn-full btn-sm" onclick="window.location.href='support.html#tickets'">Open New Ticket</button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- ADDRESS MODAL -->
+  <div class="modal-overlay hidden" id="addressModal">
+    <div class="modal-card">
+      <button class="modal-close" id="addressModalClose">&times;</button>
+      <h3 class="modal-title">Save New Address</h3>
+      <form id="addressForm" class="stack-form">
+        <div class="field">
+          <label>Label (e.g. Home, Office)</label>
+          <input type="text" id="addrLabel" class="tb-input" placeholder="Home" required />
+        </div>
+        <div class="field">
+          <label>Full Address</label>
+          <input type="text" id="addrFull" class="tb-input" placeholder="Flat No, Building, Street" required />
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="addrCity" class="tb-input" placeholder="Mumbai" required />
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+          <input type="checkbox" id="addrDefault" style="width:18px; height:18px;" />
+          <label for="addrDefault" style="font-size:13px;">Set as default address</label>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:12px;">Save Address</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DEVICES MODAL -->
+  <div class="modal-overlay hidden" id="devicesModal">
+    <div class="modal-card" style="max-width:600px;">
+      <button class="modal-close" id="devicesModalClose">&times;</button>
+      <h3 class="modal-title">Logged Devices</h3>
+      <div id="fullDeviceList" class="device-list">
+        <!-- JS Injected List -->
+      </div>
+      <button type="button" class="btn-danger btn-full" id="logoutAllOthersBtn" style="margin-top:20px;">Log Out Other Devices</button>
+    </div>
+  </div>
+
+  <!-- SECURITY MODAL -->
+  <div class="modal-overlay hidden" id="securityModal">
+    <div class="modal-card">
+      <button class="modal-close" id="securityModalClose">&times;</button>
+      <h3 class="modal-title">Security & Access</h3>
+
+      <div class="status-row" style="margin-bottom:12px;">
+        <div class="switch-label-text">
+          <strong>Two-Step Verification</strong>
+          <p style="font-size:11px;">Require email OTP at login</p>
+        </div>
+        <label class="tb-toggle">
+          <input type="checkbox" id="profile2faToggle" />
+          <span class="tb-toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
+        <label>Recovery Email</label>
+        <div style="display:flex; gap:8px;">
+          <input type="email" id="recoveryEmailInput" class="tb-input" style="flex:1;" placeholder="backup@example.com" />
+          <button type="button" class="btn-secondary btn-sm" id="saveRecoveryBtn">Save</button>
+        </div>
+      </div>
+
+      <div style="border-top:1.5px solid var(--tb-border); padding-top:16px;">
+        <h4 style="font-size:14px; margin-bottom:12px;">Change Password</h4>
+        <form id="profilePasswordForm" class="stack-form">
+          <div class="field"><input type="password" id="oldPass" class="tb-input" placeholder="Current Password" required /></div>
+          <div class="field"><input type="password" id="newPass" class="tb-input" placeholder="New Password" required /></div>
+          <button type="submit" class="btn-primary btn-sm">Update Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS MODAL -->
+  <div class="modal-overlay hidden" id="reviewsModal">
+    <div class="modal-card" style="max-width:560px;">
+      <button class="modal-close" id="reviewsModalClose">&times;</button>
+      <h3 class="modal-title">Ratings & Reviews</h3>
+      <div id="fullReviewsList" class="activity-list">
+        <!-- JS Injected List -->
+      </div>
     </div>
   </div>
 

@@ -35,73 +35,75 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <div class="settings-container">
-          <!-- Security Shortcuts -->
-          <div class="tb-panel">
-            <div class="tb-panel-head">
-              <div class="tb-panel-title">
-                <h3>Account Security</h3>
+        <div class="dashboard-container">
+          <div class="settings-container">
+            <!-- Security Shortcuts -->
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Account Security</h3>
+                </div>
               </div>
-            </div>
-            <p style="font-size:13px; color:var(--tb-text-muted); margin-bottom:20px;">
-              Manage your passwords, verification, and recovery options.
-            </p>
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
-              <a href="security.html" class="btn-primary" style="text-decoration:none;">
-                <i class="fa-solid fa-shield-halved"></i> Security Settings
-              </a>
-              <a href="devices.html" class="btn-ghost" style="text-decoration:none;">
-                <i class="fa-solid fa-laptop-file"></i> Active Sessions
-              </a>
-            </div>
-          </div>
-
-          <!-- Privacy & Cookies -->
-          <div class="tb-panel">
-            <div class="tb-panel-head">
-              <div class="tb-panel-title">
-                <h3>Privacy Preferences</h3>
-                <p>Manage your data and tracking settings.</p>
-              </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <button type="button" class="btn-secondary btn-full" id="manageCookiesBtn">
-                <i class="fa-solid fa-cookie-bite"></i> Cookie Preferences
-              </button>
-            </div>
-          </div>
-
-          <!-- Rate Us Feedback -->
-          <div class="tb-panel">
-            <div class="tb-panel-head">
-              <div class="tb-panel-title">
-                <h3>Rate Your Experience</h3>
-                <p>Help us improve TravelBuddy.</p>
+              <p style="font-size:13px; color:var(--tb-text-muted); margin-bottom:20px;">
+                Manage your passwords, verification, and recovery options.
+              </p>
+              <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <a href="security.html" class="btn-primary" style="text-decoration:none;">
+                  <i class="fa-solid fa-shield-halved"></i> Security Settings
+                </a>
+                <a href="devices.html" class="btn-ghost" style="text-decoration:none;">
+                  <i class="fa-solid fa-laptop-file"></i> Active Sessions
+                </a>
               </div>
             </div>
 
-            <form id="feedbackForm" class="stack-form">
-              <div class="field">
-                <label for="feedbackRatingSelect">How would you rate us?</label>
-                <select id="feedbackRatingSelect" class="tb-select">
-                  <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-                  <option value="4">⭐⭐⭐⭐ - Good</option>
-                  <option value="3">⭐⭐⭐ - Average</option>
-                  <option value="2">⭐⭐ - Needs Work</option>
-                  <option value="1">⭐ - Poor</option>
-                </select>
+            <!-- Privacy & Cookies -->
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Privacy Preferences</h3>
+                  <p>Manage your data and tracking settings.</p>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button type="button" class="btn-secondary btn-full" id="manageCookiesBtn">
+                  <i class="fa-solid fa-cookie-bite"></i> Cookie Preferences
+                </button>
+              </div>
+            </div>
+
+            <!-- Rate Us Feedback -->
+            <div class="tb-panel">
+              <div class="tb-panel-head">
+                <div class="tb-panel-title">
+                  <h3>Rate Your Experience</h3>
+                  <p>Help us improve TravelBuddy.</p>
+                </div>
               </div>
 
-              <div class="field">
-                <label for="feedbackCommentInput">Feedback or Request</label>
-                <textarea id="feedbackCommentInput" class="tb-textarea" rows="3" placeholder="Tell us what you love or what we could do better..." required></textarea>
-              </div>
+              <form id="feedbackForm" class="stack-form">
+                <div class="field">
+                  <label for="feedbackRatingSelect">How would you rate us?</label>
+                  <select id="feedbackRatingSelect" class="tb-select">
+                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ - Good</option>
+                    <option value="3">⭐⭐⭐ - Average</option>
+                    <option value="2">⭐⭐ - Needs Work</option>
+                    <option value="1">⭐ - Poor</option>
+                  </select>
+                </div>
 
-              <button type="submit" class="btn-primary" id="submitFeedbackBtn">
-                <span class="btn-label"><i class="fa-solid fa-paper-plane"></i> Submit Feedback</span>
-                <span class="spinner"></span>
-              </button>
-            </form>
+                <div class="field">
+                  <label for="feedbackCommentInput">Feedback or Request</label>
+                  <textarea id="feedbackCommentInput" class="tb-textarea" rows="3" placeholder="Tell us what you love or what we could do better..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitFeedbackBtn">
+                  <span class="btn-label"><i class="fa-solid fa-paper-plane"></i> Submit Feedback</span>
+                  <span class="spinner"></span>
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </main>

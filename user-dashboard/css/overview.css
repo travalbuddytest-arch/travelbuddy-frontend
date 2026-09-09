@@ -2,26 +2,7 @@
    OVERVIEW PAGE
 ============================================================ */
 
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--grid-gap);
-  margin-bottom: var(--grid-gap);
-}
-
-/* Panel Layout */
-.panel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: var(--grid-gap);
-  margin-bottom: var(--grid-gap);
-}
-
-@media (max-width: 1080px) {
-  .panel-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* Panel Layout is now handled by common.css .panel-grid */
 
 /* Activity List */
 .activity-list {

@@ -447,7 +447,6 @@ body.messages-active .content {
     inset: 0;
     z-index: 500;
     height: 100dvh;
-    width: 100vw;
     background: #f9fafb;
   }
 

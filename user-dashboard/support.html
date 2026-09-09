@@ -173,66 +173,68 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <header class="tb-page-header">
-          <div class="tb-page-title">
-            <h2>Support Center</h2>
-            <p>Get assistance with your shipments, payments, and account safety.</p>
-          </div>
-          <div class="tb-page-actions">
-            <button type="button" class="btn-primary" id="openCreateTicketBtn">
-              <i class="fa-solid fa-plus"></i> Open Support Ticket
-            </button>
-          </div>
-        </header>
+        <div class="dashboard-container">
+          <header class="tb-page-header">
+            <div class="tb-page-title">
+              <h2>Support Center</h2>
+              <p>Get assistance with your shipments, payments, and account safety.</p>
+            </div>
+            <div class="tb-page-actions">
+              <button type="button" class="btn-primary" id="openCreateTicketBtn">
+                <i class="fa-solid fa-plus"></i> Open Support Ticket
+              </button>
+            </div>
+          </header>
 
-        <div class="filter-bar" style="margin-bottom:24px; border-bottom: 1px solid var(--tb-border); padding-bottom: 12px; display: flex; gap: 8px;">
-          <button type="button" class="filter-pill active" id="tabFaqBtn">Knowledge Base (FAQ)</button>
-          <button type="button" class="filter-pill" id="tabTicketsBtn">My Support Tickets (<span id="ticketCountBadge">0</span>)</button>
-        </div>
-
-        <!-- TAB 1: FAQS & ARTICLES -->
-        <div id="sectionFaq">
-          <div class="search-row" style="margin-bottom:18px;">
-            <input type="text" id="faqSearchInput" class="parcels-search-input" placeholder="Search questions, policies, or topics..." />
+          <div class="filter-bar" style="margin-bottom:24px; border-bottom: 1px solid var(--tb-border); padding-bottom: 12px; display: flex; gap: 8px;">
+            <button type="button" class="filter-pill active" id="tabFaqBtn">Knowledge Base (FAQ)</button>
+            <button type="button" class="filter-pill" id="tabTicketsBtn">My Support Tickets (<span id="ticketCountBadge">0</span>)</button>
           </div>
 
-          <div id="faqLoading" style="text-align:center; padding:30px;">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
-            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading FAQs...</p>
+          <!-- TAB 1: FAQS & ARTICLES -->
+          <div id="sectionFaq">
+            <div class="search-row" style="margin-bottom:18px;">
+              <input type="text" id="faqSearchInput" class="parcels-search-input" placeholder="Search questions, policies, or topics..." />
+            </div>
+
+            <div id="faqLoading" style="text-align:center; padding:30px;">
+              <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+              <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading FAQs...</p>
+            </div>
+
+            <div id="faqList"></div>
           </div>
 
-          <div id="faqList"></div>
-        </div>
+          <!-- TAB 2: MY TICKETS -->
+          <div id="sectionTickets" class="hidden">
+            <div id="ticketsLoading" style="text-align:center; padding:30px;">
+              <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
+              <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading tickets...</p>
+            </div>
 
-        <!-- TAB 2: MY TICKETS -->
-        <div id="sectionTickets" class="hidden">
-          <div id="ticketsLoading" style="text-align:center; padding:30px;">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i>
-            <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Loading tickets...</p>
-          </div>
+            <div id="ticketsEmpty" class="tb-empty-state hidden">
+              <i class="fa-solid fa-headset"></i>
+              <h3>No Support Tickets</h3>
+              <p>You haven't opened any support requests yet. If you need help with a parcel, trip, or payment, open a ticket!</p>
+              <button type="button" class="btn-primary" id="emptyOpenTicketBtn" style="margin: 0 auto;">
+                <i class="fa-solid fa-plus"></i> Create New Ticket
+              </button>
+            </div>
 
-          <div id="ticketsEmpty" class="tb-empty-state hidden">
-            <i class="fa-solid fa-headset"></i>
-            <h3>No Support Tickets</h3>
-            <p>You haven't opened any support requests yet. If you need help with a parcel, trip, or payment, open a ticket!</p>
-            <button type="button" class="btn-primary" id="emptyOpenTicketBtn" style="margin: 0 auto;">
-              <i class="fa-solid fa-plus"></i> Create New Ticket
-            </button>
-          </div>
-
-          <div class="table-container" id="ticketsTableWrap">
-            <table class="data-table" id="ticketsTable">
-              <thead>
-                <tr>
-                  <th>Ticket ID / Created</th>
-                  <th>Subject</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="ticketsTableBody"></tbody>
-            </table>
+            <div class="table-container" id="ticketsTableWrap">
+              <table class="data-table" id="ticketsTable">
+                <thead>
+                  <tr>
+                    <th>Ticket ID / Created</th>
+                    <th>Subject</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="ticketsTableBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </main>

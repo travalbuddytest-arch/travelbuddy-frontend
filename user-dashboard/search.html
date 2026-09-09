@@ -23,6 +23,7 @@
 
         .recent-section { margin-top: 30px; }
         .recent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .recent-header h3 { font-size: 16px; font-weight: 700; margin: 0; }
         .recent-list { display: flex; flex-direction: column; gap: 8px; }
         .recent-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: all 0.2s; }
         .recent-item:hover { transform: translateY(-1px); border-color: var(--primary); box-shadow: var(--shadow-card); }
@@ -58,52 +59,54 @@
             <div id="tbAppTopbarInclude"></div>
 
             <main class="content" id="content">
-                <div class="search-inner-container">
-                    <div class="search-header">
-                        <a href="overview.html" class="icon-btn back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-                        <div class="search-bar-wrap">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="searchInput" placeholder="Search city, route or parcel..." autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div id="initialContent">
-                        <div class="recent-section" id="recentSearchesSection" style="display: none;">
-                            <div class="recent-header">
-                                <h3 style="font-size: 16px; font-weight: 700; margin: 0;">Recent Searches</h3>
-                                <button id="clearAllBtn" style="color: var(--primary); background: none; border: none; cursor: pointer; font-weight: 600; font-size: 13px;">Clear All</button>
-                            </div>
-                            <div class="recent-list" id="recentList">
-                                <!-- Recent searches here -->
+                <div class="dashboard-container">
+                    <div class="search-inner-container">
+                        <div class="search-header">
+                            <a href="overview.html" class="icon-btn back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+                            <div class="search-bar-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="searchInput" placeholder="Search city, route or parcel..." autocomplete="off">
                             </div>
                         </div>
 
-                        <div class="popular-section" style="margin-top: 30px;">
-                            <h3 style="font-size: 16px; font-weight: 700; margin: 0 0 15px;">Popular Cities</h3>
-                            <div class="popular-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
-                                <button type="button" class="pop-chip">Mumbai</button>
-                                <button type="button" class="pop-chip">Pune</button>
-                                <button type="button" class="pop-chip">Delhi</button>
-                                <button type="button" class="pop-chip">Bangalore</button>
+                        <div id="initialContent">
+                            <div class="recent-section" id="recentSearchesSection" style="display: none;">
+                                <div class="recent-header">
+                                    <h3>Recent Searches</h3>
+                                    <button id="clearAllBtn" style="color: var(--primary); background: none; border: none; cursor: pointer; font-weight: 600; font-size: 13px;">Clear All</button>
+                                </div>
+                                <div class="recent-list" id="recentList">
+                                    <!-- Recent searches here -->
+                                </div>
+                            </div>
+
+                            <div class="popular-section" style="margin-top: 30px;">
+                                <h3 style="font-size: 16px; font-weight: 700; margin: 0 0 15px;">Popular Cities</h3>
+                                <div class="popular-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+                                    <button type="button" class="pop-chip">Mumbai</button>
+                                    <button type="button" class="pop-chip">Pune</button>
+                                    <button type="button" class="pop-chip">Delhi</button>
+                                    <button type="button" class="pop-chip">Bangalore</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="resultsContent" style="display: none;">
-                        <div class="results-section" id="resultsList">
-                            <!-- Search results here -->
+                        <div id="resultsContent" style="display: none;">
+                            <div class="results-section" id="resultsList">
+                                <!-- Search results here -->
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="loadingState" style="display: none; text-align: center; margin-top: 50px;">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: var(--primary);"></i>
-                        <p style="margin-top: 10px; color: var(--text-muted); font-size: 13.5px;">Searching platform...</p>
-                    </div>
+                        <div id="loadingState" style="display: none; text-align: center; margin-top: 50px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: var(--primary);"></i>
+                            <p style="margin-top: 10px; color: var(--text-muted); font-size: 13.5px;">Searching platform...</p>
+                        </div>
 
-                    <div id="emptyState" style="display: none; text-align: center; margin-top: 50px;">
-                        <i class="fa-solid fa-search" style="font-size: 40px; color: var(--text-faint); margin-bottom: 14px; display: block;"></i>
-                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">No results found</h3>
-                        <p style="color: var(--text-muted); font-size: 13.5px;">Try searching for a different city or parcel ID.</p>
+                        <div id="emptyState" style="display: none; text-align: center; margin-top: 50px;">
+                            <i class="fa-solid fa-search" style="font-size: 40px; color: var(--text-faint); margin-bottom: 14px; display: block;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">No results found</h3>
+                            <p style="color: var(--text-muted); font-size: 13.5px;">Try searching for a different city or parcel ID.</p>
+                        </div>
                     </div>
                 </div>
             </main>

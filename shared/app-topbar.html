@@ -1,36 +1,36 @@
 <header class="topbar">
-  <button class="menu-btn" id="menuBtn" aria-label="Open menu" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--tb-bg); border: 1px solid var(--tb-border);">
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu">
     <i class="fa-solid fa-bars-staggered"></i>
   </button>
 
-  <h1 class="page-title" id="pageTitle" style="font-size: 18px; font-weight: 700; color: var(--tb-navy); margin: 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">Dashboard</h1>
+  <h1 class="page-title" id="pageTitle">Dashboard</h1>
 
-  <div class="topbar-actions" style="width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 16px;">
-    <div class="search-wrap" style="flex: 1; max-width: 400px; position: relative;">
-      <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--tb-text-faint); font-size: 14px;"></i>
-      <input type="text" placeholder="Search parcels, routes, or transactions..." id="globalSearch" class="tb-input" style="padding-left: 40px; background: var(--tb-bg); border-radius: 12px; height: 44px; font-size: 13px;" />
+  <div class="topbar-actions">
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search parcels, routes, or transactions..." id="globalSearch" class="tb-input" />
     </div>
 
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <a class="icon-btn" id="bellBtn" href="/user-dashboard/notifications.html" aria-label="Notifications" style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--tb-bg); border: 1px solid var(--tb-border); position: relative; color: var(--tb-text-muted); text-decoration: none;">
+    <div class="topbar-buttons">
+      <a class="icon-btn" id="bellBtn" href="/user-dashboard/notifications.html" aria-label="Notifications">
         <i class="fa-solid fa-bell"></i>
-        <span class="dot" id="bellDot" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; background: var(--tb-danger); border-radius: 50%; border: 2px solid #fff;"></span>
+        <span class="dot" id="bellDot"></span>
       </a>
 
-      <div class="user-chip" id="userChip" style="height: 44px; padding: 4px 12px 4px 4px; border-radius: 12px; background: var(--tb-surface); border: 1px solid var(--tb-border); display: flex; align-items: center; gap: 10px; cursor: pointer; transition: var(--transition-base); position: relative;">
-        <div class="avatar" style="width: 34px; height: 34px; border-radius: 10px; background: var(--tb-primary); color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center;">TB</div>
-        <div class="user-meta" style="display: flex; flex-direction: column; line-height: 1.2;">
-          <span class="user-name" style="font-size: 13px; font-weight: 700; color: var(--tb-text-main); white-space: nowrap;">Loading...</span>
-          <span class="user-role" style="font-size: 11px; color: var(--tb-text-faint);">Member</span>
+      <div class="user-chip" id="userChip">
+        <div class="avatar">TB</div>
+        <div class="user-meta">
+          <span class="user-name">Loading...</span>
+          <span class="user-role">Member</span>
         </div>
-        <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--tb-text-faint);"></i>
+        <i class="fa-solid fa-chevron-down"></i>
 
-        <div class="user-menu" id="userMenu" style="position: absolute; top: calc(100% + 8px); right: 0; width: 220px; background: #fff; border-radius: 16px; border: 1px solid var(--tb-border); box-shadow: var(--shadow-premium); padding: 8px; display: none; flex-direction: column; gap: 4px; z-index: 1000;">
-          <a href="/user-dashboard/profile.html" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--tb-text-main); text-decoration: none; font-size: 13px; transition: background 0.2s;"><i class="fa-solid fa-user-circle" style="color: var(--tb-primary);"></i> My Profile</a>
-          <a href="/user-dashboard/wallet.html" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--tb-text-main); text-decoration: none; font-size: 13px; transition: background 0.2s;"><i class="fa-solid fa-wallet" style="color: var(--tb-success);"></i> My Wallet</a>
-          <a href="/user-dashboard/settings.html" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--tb-text-main); text-decoration: none; font-size: 13px; transition: background 0.2s;"><i class="fa-solid fa-cog" style="color: var(--tb-secondary);"></i> Settings</a>
-          <hr style="margin: 4px 0; border: none; border-top: 1px solid var(--tb-border);">
-          <a href="#" id="topbarLogoutLink" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--tb-danger); text-decoration: none; font-size: 13px; transition: background 0.2s;"><i class="fa-solid fa-power-off"></i> Log out</a>
+        <div class="user-menu" id="userMenu">
+          <a href="/user-dashboard/profile.html"><i class="fa-solid fa-user-circle"></i> My Profile</a>
+          <a href="/user-dashboard/wallet.html"><i class="fa-solid fa-wallet"></i> My Wallet</a>
+          <a href="/user-dashboard/settings.html"><i class="fa-solid fa-cog"></i> Settings</a>
+          <hr>
+          <a href="#" id="topbarLogoutLink"><i class="fa-solid fa-power-off"></i> Log out</a>
         </div>
       </div>
     </div>

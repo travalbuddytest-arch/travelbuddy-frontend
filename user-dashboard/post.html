@@ -189,16 +189,17 @@
       <div id="tbAppTopbarInclude"></div>
 
       <main class="content" id="content">
-        <header class="tb-page-header">
+        <div class="dashboard-container">
+          <header class="tb-page-header">
           <div class="tb-page-title">
             <h2>Post a Parcel</h2>
             <p>Share details about your package to find a matching traveler.</p>
           </div>
         </header>
 
-        <div class="tb-panel" style="max-width: 840px; margin: 0 auto 32px;">
+        <div class="tb-panel wizard-card">
           <!-- Stepper Indicator -->
-          <div class="wizard-stepper" id="wizardStepper" style="margin-bottom: 48px; border-bottom: 1px solid var(--tb-border); padding-bottom: 24px;">
+          <div class="wizard-stepper" id="wizardStepper">
             <div class="wizard-step active" data-step="1">
               <div class="wizard-step-circle" style="width: 32px; height: 32px; font-size: 13px; font-weight: 700;">1</div>
               <span class="wizard-step-title" style="font-weight: 700; margin-top: 8px;">Item</span>
@@ -504,6 +505,7 @@
             <p class="panel-sub">These travelers have already posted travel plans matching your parcel's route.</p>
           </div>
           <ul class="parcel-list" id="routeRecommendationsList"></ul>
+        </div>
         </div>
       </main>
     </div>
