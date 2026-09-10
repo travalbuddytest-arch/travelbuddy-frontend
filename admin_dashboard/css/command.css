@@ -105,3 +105,4 @@ html{overflow-x:hidden;}
   }
   .btn.primary i { font-size: 14px; }
 }
+n@media (max-width: 350px) {n  .kpis { grid-template-columns: 1fr; }n  .welcome h3 { font-size: 12px; }n}

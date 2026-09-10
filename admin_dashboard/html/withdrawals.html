@@ -1,0 +1,41 @@
+<div class="withdrawals-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-money-bill-transfer"></i> Fund Withdrawals</h3>
+        <button class="btn secondary sm" id="refreshWithdrawals"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <select id="withdrawalStatusFilter">
+            <option value="all">All Withdrawals</option>
+            <option value="pending" selected>Pending Review</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+        </select>
+        <input type="text" id="withdrawalSearch" placeholder="Search by ID or User...">
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Requested</th>
+                    <th>Reference ID</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="withdrawals-list">
+                <!-- Data loads here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="withdrawalPagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/wallet.css">
+<script type="module" src="../js/withdrawals.js"></script>

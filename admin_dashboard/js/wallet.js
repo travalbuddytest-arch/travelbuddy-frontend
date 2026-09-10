@@ -35,6 +35,9 @@ const TYPE_LABELS = {
   platform_commission: 'Platform Commission',
   cancellation_fee: 'Cancellation Fee',
   cancellation_compensation: 'Cancellation Compensation',
+  sender_cancellation_refund: 'Cancellation Refund',
+  system_cancellation_refund: 'System Refund',
+  withdrawal: 'Withdrawal',
 };
 
 function getFilters() {
@@ -313,9 +316,7 @@ function wireFilterControls() {
   $('#wlClearFilters')?.addEventListener('click', clearAllFilters);
 }
 
-const fmtMoney = n => '₹' + ((n||0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-async function loadWallet() {
+function wireFilterControls() {
   const ledger = document.getElementById('walletLedger');
   const summary = document.getElementById('walletSummary');
   const pagination = document.getElementById('walletPagination');

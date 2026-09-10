@@ -1,0 +1,51 @@
+<div class="audit-logs-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-clipboard-list"></i> System Audit Logs</h3>
+        <button class="btn secondary sm" id="refreshAudit"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label>Actor Role</label>
+            <select id="auditRoleFilter">
+                <option value="Admin" selected>Admin Only</option>
+                <option value="User">User Only</option>
+                <option value="all">All Actors</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Action Search</label>
+            <input type="text" id="auditActionSearch" placeholder="Action name or target...">
+        </div>
+        <div class="filter-group">
+            <label>Date Range</label>
+            <div class="date-range">
+                <input type="date" id="auditDateFrom">
+                <span>to</span>
+                <input type="date" id="auditDateTo">
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Actor</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                    <th>IP / Details</th>
+                </tr>
+            </thead>
+            <tbody id="audit-list">
+                <!-- Logs load here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="auditPagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/admin.css">
+<script type="module" src="../js/audit-logs.js"></script>

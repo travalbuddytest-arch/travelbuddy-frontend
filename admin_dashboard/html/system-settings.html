@@ -1,0 +1,39 @@
+<div class="system-settings-container">
+    <h3><i class="fa-solid fa-gears"></i> System Settings & Configuration</h3>
+    <p>Administrative environment overview and global platform controls.</p>
+
+    <div class="settings-grid">
+        <div class="panel">
+            <div class="head"><h4>Platform Environment</h4></div>
+            <div class="setting-list" id="envInfo">
+                <div class="setting-item"><span>Environment:</span><strong id="sysEnv">—</strong></div>
+                <div class="setting-item"><span>API Version:</span><strong>v1.2.4-stable</strong></div>
+                <div class="setting-item"><span>Node.js:</span><strong id="sysNode">—</strong></div>
+                <div class="setting-item"><span>Uptime:</span><strong id="sysUptime">—</strong></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="head"><h4>Global Controls</h4></div>
+            <div class="setting-list">
+                <div class="setting-item">
+                    <div>
+                        <strong>Maintenance Mode</strong>
+                        <p>Disable all user access to the platform.</p>
+                    </div>
+                    <label class="tb-toggle"><input type="checkbox" disabled><span class="tb-toggle-slider"></span></label>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <strong>New Signups</strong>
+                        <p>Allow or block new user registrations.</p>
+                    </div>
+                    <label class="tb-toggle"><input type="checkbox" checked disabled><span class="tb-toggle-slider"></span></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="../css/system.css">
+<script type="module" src="../js/system-settings.js"></script>

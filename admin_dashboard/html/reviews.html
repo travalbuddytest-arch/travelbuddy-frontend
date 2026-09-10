@@ -1,0 +1,39 @@
+<div class="reviews-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-star"></i> Platform Reviews & Ratings</h3>
+        <button class="btn secondary sm" id="refreshReviews"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <select id="reviewScoreFilter">
+            <option value="all">All Ratings</option>
+            <option value="low">Low (1-2 Stars)</option>
+            <option value="mid">Mid (3 Stars)</option>
+            <option value="high">High (4-5 Stars)</option>
+        </select>
+        <input type="text" id="reviewUserSearch" placeholder="Search User (From or To)...">
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>From User</th>
+                    <th>To User</th>
+                    <th>Score</th>
+                    <th>Comment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="reviews-list">
+                <!-- Reviews load here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="reviewPagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/admin.css">
+<script type="module" src="../js/reviews.js"></script>

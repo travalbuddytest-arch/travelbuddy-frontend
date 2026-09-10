@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../../shared/vendor/leaflet.css" />
 
     <!-- Admin Styles -->
     <link rel="stylesheet" href="../css/admin.css">
@@ -18,6 +19,8 @@
     <script src="../../shared/skeleton.js?v=1"></script>
     <!-- AI Assistant -->
     <link rel="stylesheet" href="../../shared/ai-assistant.css">
+    <script src="../../shared/config.js?v=1"></script>
+    <script src="../../shared/auth-cookie-client.js?v=1"></script>
     <!-- Global animation layer: adds motion/entrance/hover effects across
          the whole admin dashboard, including every lazy-loaded page. -->
     <link rel="stylesheet" href="../css/animations.css">
@@ -44,22 +47,42 @@
         </div>
 
         <nav>
-            <label>CONTROL</label>
+            <label>OVERVIEW</label>
             <button class="active" data-page="command" data-tooltip="Command Center"><i class="fa-solid fa-grid-2"></i><span>Command Center</span></button>
-            <button data-page="trips" data-tooltip="Traveler Trips"><i class="fa-solid fa-route"></i><span>Traveler Trips</span></button>
-            <button data-page="parcels" data-tooltip="Parcels"><i class="fa-solid fa-box"></i><span>Parcels</span></button>
 
-            <label>MANAGEMENT</label>
+            <label>USER MANAGEMENT</label>
             <button data-page="users" data-tooltip="Users"><i class="fa-solid fa-users"></i><span>Users</span></button>
             <button data-page="active-users" data-tooltip="Active Users"><i class="fa-solid fa-user-clock"></i><span>Active Users</span></button>
+            <button data-page="user-activity" data-tooltip="User Activity"><i class="fa-solid fa-clock-rotate-left"></i><span>User Activity</span></button>
+            <button data-page="verification" data-tooltip="Verification"><i class="fa-solid fa-user-shield"></i><span>Verification</span></button>
+
+            <label>LOGISTICS</label>
+            <button data-page="parcels" data-tooltip="Parcels"><i class="fa-solid fa-box"></i><span>Parcels</span></button>
+            <button data-page="live-tracking" data-tooltip="Live Parcel Tracking"><i class="fa-solid fa-map-location-dot"></i><span>Live Tracking</span></button>
+            <button data-page="trips" data-tooltip="Traveler Trips"><i class="fa-solid fa-route"></i><span>Traveler Trips</span></button>
             <button data-page="cancellations" data-tooltip="Parcel Outcomes"><i class="fa-solid fa-truck-ramp-box"></i><span>Parcel Outcomes</span></button>
-            <button data-page="wallet" data-tooltip="Wallet &amp; Payments"><i class="fa-solid fa-wallet"></i><span>Wallet &amp; Payments</span></button>
-            <button data-page="messages" data-tooltip="Users Activity"><i class="fa-solid fa-comments"></i><span>Users Activity</span></button>
+            <button data-page="incidents" data-tooltip="Parcel Incidents"><i class="fa-solid fa-triangle-exclamation"></i><span>Parcel Incidents</span></button>
+
+            <label>FINANCIAL</label>
+            <button data-page="wallet" data-tooltip="Wallet"><i class="fa-solid fa-wallet"></i><span>Wallet</span></button>
+            <button data-page="withdrawals" data-tooltip="Withdrawals"><i class="fa-solid fa-money-bill-transfer"></i><span>Withdrawals</span></button>
+
+            <label>COMMUNICATION</label>
+            <button data-page="messages" data-tooltip="Messages"><i class="fa-solid fa-comments"></i><span>Messages</span></button>
             <button data-page="support-reports" data-tooltip="Support &amp; Reports"><i class="fa-solid fa-headset"></i><span>Support &amp; Reports</span></button>
+            <button data-page="notifications" data-tooltip="Notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></button>
+
+            <label>TRUST &amp; SAFETY</label>
+            <button data-page="reviews" data-tooltip="Reviews"><i class="fa-solid fa-star"></i><span>Reviews</span></button>
+            <button data-page="reports-disputes" data-tooltip="Reports &amp; Disputes"><i class="fa-solid fa-scale-balanced"></i><span>Reports &amp; Disputes</span></button>
 
             <label>INSIGHTS</label>
             <button data-page="analytics" data-tooltip="Analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></button>
+            <button data-page="audit-logs" data-tooltip="Audit Logs"><i class="fa-solid fa-clipboard-list"></i><span>Audit Logs</span></button>
+
+            <label>SYSTEM</label>
             <button data-page="system" data-tooltip="System Health"><i class="fa-solid fa-heart-pulse"></i><span>System Health</span></button>
+            <button data-page="system-settings" data-tooltip="System"><i class="fa-solid fa-gears"></i><span>System</span></button>
         </nav>
 
         <div class="admin" id="adminChip">
@@ -112,16 +135,26 @@
 
         <!-- Pages are lazy-loaded from ./pages/{id}.html -->
         <section class="page active" id="command" data-loaded="false"></section>
-        <section class="page" id="trips" data-loaded="false"></section>
-        <section class="page" id="parcels" data-loaded="false"></section>
         <section class="page" id="users" data-loaded="false"></section>
         <section class="page" id="active-users" data-loaded="false"></section>
+        <section class="page" id="user-activity" data-loaded="false"></section>
+        <section class="page" id="verification" data-loaded="false"></section>
+        <section class="page" id="parcels" data-loaded="false"></section>
+        <section class="page" id="live-tracking" data-loaded="false"></section>
+        <section class="page" id="trips" data-loaded="false"></section>
         <section class="page" id="cancellations" data-loaded="false"></section>
+        <section class="page" id="incidents" data-loaded="false"></section>
         <section class="page" id="wallet" data-loaded="false"></section>
+        <section class="page" id="withdrawals" data-loaded="false"></section>
         <section class="page" id="messages" data-loaded="false"></section>
         <section class="page" id="support-reports" data-loaded="false"></section>
+        <section class="page" id="notifications" data-loaded="false"></section>
+        <section class="page" id="reviews" data-loaded="false"></section>
+        <section class="page" id="reports-disputes" data-loaded="false"></section>
         <section class="page" id="analytics" data-loaded="false"></section>
+        <section class="page" id="audit-logs" data-loaded="false"></section>
         <section class="page" id="system" data-loaded="false"></section>
+        <section class="page" id="system-settings" data-loaded="false"></section>
     </main>
 
     <!-- Search Modal -->
@@ -216,6 +249,12 @@
     <script src="../../shared/sidebar-collapse.js"></script>
     <script src="../js/admin.js"></script>
     <script src="../../shared/date-utils.js"></script>
+    <script src="https://travelbuddy-backend-19l6.onrender.com/socket.io/socket.io.js"></script>
+    <script src="../../shared/socket-client.js?v=1"></script>
+    <script src="../../shared/vendor/leaflet.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../../shared/firebase-config.js?v=1"></script>
     <script src="../../shared/ai-assistant.js"></script>
     <!-- Small, safe click-ripple effect used across the whole dashboard -->
     <script src="../js/animations.js"></script>

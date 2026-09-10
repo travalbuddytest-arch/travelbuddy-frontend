@@ -424,4 +424,6 @@ function escHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+window.openThread = openThread;
+
 try { initMessages(); } catch (e) { console.warn('messages init failed', e); }

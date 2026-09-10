@@ -1,0 +1,46 @@
+<div class="live-tracking-container">
+    <div class="tracking-sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-truck-fast"></i> In-Transit Parcels</h3>
+            <button class="btn secondary sm" id="refreshInTransit"><i class="fa-solid fa-arrows-rotate"></i></button>
+        </div>
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="trackingSearch" placeholder="Search order ID...">
+        </div>
+        <div class="parcel-list" id="inTransitList">
+            <!-- Loaded via JS -->
+            <div class="loading-state">Loading parcels...</div>
+        </div>
+    </div>
+
+    <div class="map-main">
+        <div id="liveTrackingMap"></div>
+        <div class="map-overlay hidden" id="trackingDetails">
+            <div class="tracking-card">
+                <div class="card-head">
+                    <span class="status-pill live"><i></i>LIVE</span>
+                    <h4 id="detOrderId">Order #—</h4>
+                    <button class="close-btn" id="closeDet">&times;</button>
+                </div>
+                <div class="card-body">
+                    <div class="info-row"><span>Traveler:</span><strong id="detTraveler">—</strong></div>
+                    <div class="info-row"><span>From:</span><span id="detFrom">—</span></div>
+                    <div class="info-row"><span>To:</span><span id="detTo">—</span></div>
+                    <hr>
+                    <div class="telemetry">
+                        <div class="tel-item"><i class="fa-solid fa-gauge-high"></i><span id="detSpeed">0 km/h</span></div>
+                        <div class="tel-item"><i class="fa-solid fa-clock"></i><span id="detLastUpdate">Never</span></div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn primary full sm" id="btnViewParcel">View Full Details</button>
+                        <button class="btn secondary full sm" id="btnContactUsers">Message Participants</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="../css/operations.css">
+<script type="module" src="../js/live-tracking.js"></script>

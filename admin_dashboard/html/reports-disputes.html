@@ -1,0 +1,44 @@
+<div class="reports-disputes-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-scale-balanced"></i> Reports & Disputes</h3>
+        <button class="btn secondary sm" id="refreshDisputes"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <select id="disputeStatusFilter">
+            <option value="open">Open Disputes</option>
+            <option value="under_review">Under Review</option>
+            <option value="resolved">Resolved</option>
+            <option value="all">All Cases</option>
+        </select>
+        <select id="disputeTypeFilter">
+            <option value="all">All Types</option>
+            <option value="parcel">Parcel Related</option>
+            <option value="user">User Conduct</option>
+            <option value="trip">Trip Related</option>
+        </select>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Reported</th>
+                    <th>Reporter</th>
+                    <th>Type</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="disputes-list">
+                <!-- Data loads here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="disputePagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/support-reports.css">
+<script type="module" src="../js/reports-disputes.js"></script>

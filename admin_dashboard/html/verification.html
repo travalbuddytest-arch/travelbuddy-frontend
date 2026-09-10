@@ -1,0 +1,45 @@
+<div class="verification-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-user-shield"></i> User Verification (KYC)</h3>
+        <button class="btn secondary" id="refreshVerification"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label>Status</label>
+            <select id="verificationStatusFilter">
+                <option value="pending" selected>Pending Review</option>
+                <option value="verified">Verified</option>
+                <option value="rejected">Rejected</option>
+                <option value="all">All</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Search User</label>
+            <input type="text" id="verificationSearch" placeholder="Name or Email...">
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Joined</th>
+                    <th>User</th>
+                    <th>ID Type</th>
+                    <th>ID Status</th>
+                    <th>Selfie Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="verification-list">
+                <!-- KYC records load here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="verificationPagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/users.css">
+<script type="module" src="../js/verification.js"></script>

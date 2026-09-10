@@ -2283,3 +2283,4 @@ header {
 }
 @media (max-width: 1180px) { #usModalOverlay .us-modal { min-width: 0; } }
 @media (max-width: 640px)  { #usModalOverlay .us-modal { width: 100%; min-width: 0; } }
+n/* ── Ultra-Small Devices (320px) ──────────────── */n@media (max-width: 350px) {n  :root { --container-px: 10px; }n  header { padding: 0 10px; gap: 4px; }n  .title h1 { font-size: 13px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }n  .tools { gap: 4px; }n  .search { width: 38px; height: 38px; }n  .bell { width: 38px; height: 38px; }n  #menu { width: 38px; height: 38px; }n}

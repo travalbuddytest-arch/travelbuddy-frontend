@@ -1,0 +1,43 @@
+<div class="notifications-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-bell"></i> Platform Notifications</h3>
+        <button class="btn secondary sm" id="refreshNotifications"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <select id="notifTypeFilter">
+            <option value="all">All Types</option>
+            <option value="parcel_status">Parcel Status</option>
+            <option value="wallet_added">Wallet Top-up</option>
+            <option value="message">Message</option>
+        </select>
+        <input type="text" id="notifUserSearch" placeholder="Search Recipient...">
+        <select id="notifReadFilter">
+            <option value="all">All Status</option>
+            <option value="unread">Unread</option>
+            <option value="read">Read</option>
+        </select>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Recipient</th>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="notifications-list">
+                <!-- Notifications load here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="notifPagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/admin.css">
+<script type="module" src="../js/notifications.js"></script>

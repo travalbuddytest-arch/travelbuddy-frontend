@@ -9,7 +9,7 @@ const PAGE_SIZE = 20;
 /* ── State ─────────────────────────────── */
 let state = {
   page: 1, total: 0, search: '', sort: 'newest',
-  filters: { status: 'all', priority: 'all', category: 'all', payment: 'all', from: '', to: '', dateFrom: '', dateTo: '' },
+  filters: { status: 'all', priority: 'all', category: 'all', payment: 'all', from: '', to: '', dateFrom: '', dateTo: '', issues: 'all' },
   selected: new Set(), parcels: [], stats: null,
   filtersVisible: false, analyticsVisible: false, auditVisible: false,
 };
@@ -149,6 +149,7 @@ function buildQuery() {
   if (state.filters.to) p.set('to', state.filters.to);
   if (state.filters.dateFrom) p.set('dateFrom', state.filters.dateFrom);
   if (state.filters.dateTo) p.set('dateTo', state.filters.dateTo);
+  if (state.filters.issues !== 'all') p.set('issues', state.filters.issues);
   p.set('sort', state.sort);
   return p.toString();
 }
@@ -238,6 +239,8 @@ function renderPagination() {
 /* ══════════════════════════════════════════════
    DETAIL DRAWER
    ══════════════════════════════════════════════ */
+let modalCache = null;
+
 async function openDrawer(parcelId) {
   const overlay = $('#pcDrawerOverlay');
   const drawer = $('#pcDrawer');
@@ -253,6 +256,7 @@ async function openDrawer(parcelId) {
 
   try {
     const data = await api(`/api/admin/parcels/detail/${parcelId}`);
+    modalCache = data;
     const p = data.parcel;
     const txns = data.walletTransactions || [];
     if (title) title.textContent = `Parcel ${p.orderId || ''}`;
@@ -288,19 +292,12 @@ function renderDrawerContent(p, txns) {
     </div>
   </div>`;
 
-  // Quick actions — full lifecycle status transitions
+  // Quick actions
   const isActive = p.status !== 'delivered' && p.status !== 'cancelled';
-  const canPickup = p.status === 'accepted';
-  const canTransit = p.status === 'pickup_confirmed';
-  const canDeliver = p.status === 'in_transit';
   h += `<div class="pc-drawer-section pc-drawer-actions">
-    <button class="pc-btn pc-btn-sm pc-btn-success" data-drawer-action="approve" data-id="${p._id}" ${p.status!=='pending'?'disabled':''}><i class="fa-solid fa-check"></i> Approve</button>
-    <button class="pc-btn pc-btn-sm pc-btn-info" data-drawer-action="pickup" data-id="${p._id}" ${!canPickup?'disabled':''}><i class="fa-solid fa-hand-holding-box"></i> Pickup</button>
-    <button class="pc-btn pc-btn-sm pc-btn-primary" data-drawer-action="transit" data-id="${p._id}" ${!canTransit?'disabled':''}><i class="fa-solid fa-truck-fast"></i> Transit</button>
-    <button class="pc-btn pc-btn-sm pc-btn-success" data-drawer-action="deliver" data-id="${p._id}" ${!canDeliver?'disabled':''}><i class="fa-solid fa-circle-check"></i> Deliver</button>
+    <button class="pc-btn pc-btn-sm pc-btn-primary" onclick="window.location.hash='#live-tracking?id=${p._id}'"><i class="fa-solid fa-map-location-dot"></i> Live Track</button>
     <button class="pc-btn pc-btn-sm pc-btn-danger" data-drawer-action="cancel" data-id="${p._id}" ${!isActive?'disabled':''}><i class="fa-solid fa-ban"></i> Cancel</button>
     <button class="pc-btn pc-btn-sm" data-drawer-action="timeline" data-id="${p._id}"><i class="fa-solid fa-timeline"></i> Timeline</button>
-    <button class="pc-btn pc-btn-sm" data-drawer-action="notes" data-id="${p._id}"><i class="fa-solid fa-note-sticky"></i> Note</button>
   </div>`;
 
   // Parcel info
@@ -312,78 +309,21 @@ function renderDrawerContent(p, txns) {
       <div class="pc-detail-row"><span>Description</span><span>${esc(p.description||'—')}</span></div>
       <div class="pc-detail-row"><span>Created</span><span>${fmtDateTime(p.createdAt)}</span></div>
       <div class="pc-detail-row"><span>Updated</span><span>${fmtDateTime(p.updatedAt)}</span></div>
-      ${p.dimensions?.length?`<div class="pc-detail-row"><span>Dimensions</span><span>${p.dimensions.length}×${p.dimensions.width}×${p.dimensions.height} ${p.dimensions.unit||'cm'}</span></div>`:''}
-      ${p.vehicleType?`<div class="pc-detail-row"><span>Vehicle</span><span>${esc(p.vehicleType)}</span></div>`:''}
-      ${p.isFragile?'<div class="pc-detail-row"><span>Fragile</span><span class="pc-tag pc-tag-warn">Yes</span></div>':''}
-      ${p.isExpress?'<div class="pc-detail-row"><span>Express</span><span class="pc-tag pc-tag-info">Yes</span></div>':''}
     </div>
   </div>`;
 
-  // Sender info
-  h += `<div class="pc-drawer-section"><h4>Sender</h4>
+  // Related Entities
+  h += `<div class="pc-drawer-section"><h4>Participants</h4>
     <div class="pc-detail-grid">
-      <div class="pc-detail-row"><span>Name</span><span>${esc(senderName)}</span></div>
-      <div class="pc-detail-row"><span>Email</span><span>${esc(sender.email||'—')}</span></div>
-      <div class="pc-detail-row"><span>Phone</span><span>${esc(sender.phone||'—')}</span></div>
-      <div class="pc-detail-row"><span>Wallet</span><span>${fmtMoney(sender.walletBalance)}</span></div>
-      <div class="pc-detail-row"><span>Rating</span><span>⭐ ${(sender.rating||0).toFixed(1)}</span></div>
+      <div class="pc-detail-row"><span>Sender</span><a href="javascript:void(0)" onclick="window.fetchUserDetail('${sender._id}')">${esc(senderName)}</a></div>
+      <div class="pc-detail-row"><span>Traveler</span>${traveler._id ? `<a href="javascript:void(0)" onclick="window.fetchUserDetail('${traveler._id}')">${esc(travelerName)}</a>` : '—'}</div>
     </div>
   </div>`;
 
-  // Traveller info
-  if (travelerName !== '—') {
-    h += `<div class="pc-drawer-section"><h4>Traveller</h4>
-      <div class="pc-detail-grid">
-        <div class="pc-detail-row"><span>Name</span><span>${esc(travelerName)}</span></div>
-        <div class="pc-detail-row"><span>Email</span><span>${esc(traveler.email||'—')}</span></div>
-        <div class="pc-detail-row"><span>Phone</span><span>${esc(traveler.phone||'—')}</span></div>
-        <div class="pc-detail-row"><span>Rating</span><span>⭐ ${(traveler.rating||0).toFixed(1)} (${traveler.ratingCount||0} reviews)</span></div>
-        <div class="pc-detail-row"><span>Earnings</span><span>${fmtMoney(p.travelerEarning)}</span></div>
-      </div>
-    </div>`;
-  }
-
-  // Route
-  h += `<div class="pc-drawer-section"><h4>Route</h4>
-    <div class="pc-route-visual">
-      <div class="pc-route-point"><i class="fa-solid fa-circle-dot"></i><div><strong>${esc(cap(p.fromCity||''))}</strong><small>${esc(p.fromAddress||'')}</small></div></div>
-      <div class="pc-route-line"><div class="pc-route-progress" style="width:${p.progress||0}%"></div></div>
-      <div class="pc-route-point"><i class="fa-solid fa-location-dot"></i><div><strong>${esc(cap(p.toCity||''))}</strong><small>${esc(p.toAddress||'')}</small></div></div>
-    </div>
-  </div>`;
-
-  // Payment
-  h += `<div class="pc-drawer-section"><h4>Payment</h4>
-    <div class="pc-detail-grid">
-      <div class="pc-detail-row"><span>Status</span><span class="pc-pay pc-pay-${p.paymentStatus}">${esc(p.paymentStatus)}</span></div>
-      <div class="pc-detail-row"><span>Method</span><span>${esc(p.paymentMethod||'wallet')}</span></div>
-      <div class="pc-detail-row"><span>Payment Amount</span><span>${fmtMoney(p.heldAmount)}</span></div>
-      <div class="pc-detail-row"><span>Traveller Earning</span><span>${fmtMoney(p.travelerEarning)}</span></div>
-      <div class="pc-detail-row"><span>Platform Commission</span><span>${fmtMoney(p.platformCommission)}</span></div>
-      ${p.cancellationFee?`<div class="pc-detail-row"><span>Cancellation Fee</span><span class="pc-text-danger">${fmtMoney(p.cancellationFee)}</span></div>`:''}
-    </div>
-  </div>`;
-
-  // OTP
-  if (p.journeyOtp && p.journeyOtp.purpose) {
-    h += `<div class="pc-drawer-section"><h4>OTP</h4>
-      <div class="pc-detail-grid">
-        <div class="pc-detail-row"><span>Purpose</span><span>${esc(p.journeyOtp.purpose)}</span></div>
-        <div class="pc-detail-row"><span>Attempts</span><span class="${p.journeyOtp.attempts>=3?'pc-text-danger':''}">${p.journeyOtp.attempts||0}</span></div>
-        <div class="pc-detail-row"><span>Expires</span><span>${fmtDateTime(p.journeyOtp.expiresAt)}</span></div>
-      </div>
-    </div>`;
-  }
-
-  // Insurance
-  if (p.isInsured) {
-    h += `<div class="pc-drawer-section"><h4>Insurance</h4>
-      <div class="pc-detail-grid">
-        <div class="pc-detail-row"><span>Insured</span><span class="pc-tag pc-tag-success">Yes</span></div>
-        <div class="pc-detail-row"><span>Coverage</span><span>${fmtMoney(p.insuranceAmount)}</span></div>
-        <div class="pc-detail-row"><span>Provider</span><span>${esc(p.insuranceProvider||'—')}</span></div>
-        <div class="pc-detail-row"><span>Claim Status</span><span>${esc(p.insuranceClaimStatus||'none')}</span></div>
-      </div>
+  // Communication & Reports
+  if (modalCache && modalCache.conversations?.length) {
+    h += `<div class="pc-drawer-section"><h4>Conversations</h4>
+      <div class="pc-mini-list">${modalCache.conversations.map(c => `<div class="mini-item">Conversation #${c._id.slice(-6)} <button class="btn-text" onclick="window.openThread('${c._id}')">View</button></div>`).join('')}</div>
     </div>`;
   }
 
@@ -395,23 +335,6 @@ function renderDrawerContent(p, txns) {
     h += '<div class="pc-empty-sm">No notes yet</div>';
   }
   h += `<div class="pc-note-form"><textarea id="pcNoteInput" placeholder="Add a note…" rows="2"></textarea><button class="pc-btn pc-btn-sm pc-btn-primary" data-drawer-action="save-note" data-id="${p._id}">Save Note</button></div></div>`;
-
-  // Wallet transactions
-  if (txns.length > 0) {
-    h += `<div class="pc-drawer-section"><h4>Wallet Transactions</h4>
-      <div class="pc-txn-list">${txns.map(tx => `<div class="pc-txn"><div><strong>${esc(tx.type||'')}</strong><small>${esc(tx.description||'')}</small></div><div><span class="pc-pay pc-pay-${tx.status}">${esc(tx.status)}</span><span class="${tx.direction==='credit'?'pc-text-success':'pc-text-danger'}">${tx.direction==='credit'?'+':'-'}${fmtMoney(tx.amount)}</span></div></div>`).join('')}</div>
-    </div>`;
-  }
-
-  // Fraud score
-  if (p.fraudScore > 0) {
-    h += `<div class="pc-drawer-section"><h4>Fraud Assessment</h4>
-      <div class="pc-detail-grid">
-        <div class="pc-detail-row"><span>Risk Score</span><span class="pc-health ${p.fraudScore>=30?'pc-health-bad':p.fraudScore>=15?'pc-health-warn':'pc-health-good'}">${p.fraudScore}/100</span></div>
-        ${p.fraudFlags?.length?`<div class="pc-detail-row"><span>Flags</span><span>${p.fraudFlags.map(f=>`<span class="pc-tag pc-tag-warn">${esc(f)}</span>`).join(' ')}</span></div>`:''}
-      </div>
-    </div>`;
-  }
 
   return h;
 }
@@ -649,7 +572,7 @@ export default function initParcels() {
   });
 
   // Filter changes
-  ['pcFilterStatus','pcFilterPriority','pcFilterCategory','pcFilterPayment'].forEach(id => {
+  ['pcFilterStatus','pcFilterPriority','pcFilterCategory','pcFilterPayment', 'pcFilterIssues'].forEach(id => {
     $(`#${id}`)?.addEventListener('change', e => {
       const key = id.replace('pcFilter','').toLowerCase();
       state.filters[key] = e.target.value;

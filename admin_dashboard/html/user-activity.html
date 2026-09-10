@@ -1,0 +1,50 @@
+<div class="user-activity-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> User Activity</h3>
+        <button class="btn secondary" id="refreshActivity"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label>Action</label>
+            <select id="activityActionFilter">
+                <option value="">All Actions</option>
+                <option value="user_login">Login</option>
+                <option value="user_registered">Registration</option>
+                <option value="parcel_posted">Parcel Posted</option>
+                <option value="parcel_accepted">Parcel Accepted</option>
+                <option value="withdrawal_requested">Withdrawal Request</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>User Search</label>
+            <input type="text" id="activityUserSearch" placeholder="Name or Email...">
+        </div>
+        <div class="filter-group">
+            <label>From Date</label>
+            <input type="date" id="activityDateFrom">
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody id="activity-list">
+                <!-- Activity logs load here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination" id="activityPagination"></div>
+</div>
+
+<link rel="stylesheet" href="../css/users.css">
+<script type="module" src="../js/user-activity.js"></script>

@@ -1,8 +1,19 @@
 (function() {
+    const API_ORIGIN = APP_CONFIG.API_BASE_URL;
     const reportsList = document.getElementById('reports-list');
     const ticketsList = document.getElementById('tickets-list');
+    const disputesList = document.getElementById('disputes-list');
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
+
+    async function apiGet(url) {
+      const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw { status: res.status, data };
+      return data;
+    }
 
     // Tab Switching
     tabBtns.forEach(btn => {
@@ -10,14 +21,17 @@
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+            const targetTab = document.getElementById(`${btn.dataset.tab}-tab`);
+            if (targetTab) targetTab.classList.add('active');
 
             if (btn.dataset.tab === 'reports') loadReports();
-            else loadTickets();
+            else if (btn.dataset.tab === 'tickets') loadTickets();
+            else if (btn.dataset.tab === 'disputes') loadDisputes();
         });
     });
 
     async function loadReports() {
+        if (!reportsList) return;
         reportsList.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
         try {
             const status = document.getElementById('report-status-filter').value;
@@ -27,6 +41,34 @@
         } catch (err) {
             reportsList.innerHTML = '<tr><td colspan="7">Error loading reports.</td></tr>';
         }
+    }
+
+    async function loadDisputes() {
+        if (!disputesList) return;
+        disputesList.innerHTML = '<tr><td colspan="6">Loading disputes...</td></tr>';
+        try {
+            const data = await apiGet('/api/admin/reports-disputes?status=open');
+            renderDisputes(data.reports);
+        } catch (err) {
+            disputesList.innerHTML = '<tr><td colspan="6">Error loading disputes.</td></tr>';
+        }
+    }
+
+    function renderDisputes(reports) {
+      if (!reports || reports.length === 0) {
+        disputesList.innerHTML = '<tr><td colspan="6">No active disputes found.</td></tr>';
+        return;
+      }
+      disputesList.innerHTML = reports.map(r => `
+        <tr>
+          <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+          <td>${escHtml(r.fromUser?.firstName)} ${escHtml(r.fromUser?.lastName)}</td>
+          <td><span class="status-tag info">${escHtml(r.targetType)}</span></td>
+          <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis">${escHtml(r.reason)}</td>
+          <td><span class="status-tag danger">${escHtml(r.status)}</span></td>
+          <td><button class="btn sm secondary" onclick="window.investigateParcel('${r.targetParcelId?._id || r.targetParcelId}')">Investigate</button></td>
+        </tr>
+      `).join('');
     }
 
     async function loadTickets() {

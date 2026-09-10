@@ -5,16 +5,26 @@
 /* ---------- Configuration & Data ---------- */
 const dashboardInfo = {
   command: ['Command Center', 'Live overview of your TravelBuddy platform'],
-  trips: ['Traveler Trips', 'Manage and monitor all traveler routes posted on the platform'],
-  parcels: ['Parcel Control', 'Search, inspect and manage every parcel journey'],
   users: ['User Management', 'Complete user profiles, activity and account controls'],
   'active-users': ['Active Users', "Who's on TravelBuddy right now, and who visited recently"],
+  'user-activity': ['User Activity', 'Real-time feed of all user actions across the platform'],
+  verification: ['Verification', 'Review and manage user KYC submissions'],
+  parcels: ['Parcel Control', 'Search, inspect and manage every parcel journey'],
+  'live-tracking': ['Live Parcel Tracking', 'Authorized live location monitoring for active parcels'],
+  trips: ['Traveler Trips', 'Manage and monitor all traveler routes posted on the platform'],
   cancellations: ['Parcel Outcomes', 'Deliveries and cancellations side by side — success rate, fees, revenue and reasons'],
-  wallet: ['Wallet & Payments', 'Financial ledger, settlements and refunds'],
-  messages: ['Users Activity', 'Every conversation on the platform — messages, calls and activity'],
-  'support-reports': ['Support & Reports', 'Manage user reports and support tickets'],
+  incidents: ['Parcel Incidents', 'Investigation hub for suspected theft, loss, or serious disputes'],
+  wallet: ['Wallet', 'Financial ledger, platform revenue, and transaction history'],
+  withdrawals: ['Withdrawals', 'Process and manage user fund withdrawal requests'],
+  messages: ['Messages', 'Oversight of user conversations for support and safety'],
+  'support-reports': ['Support & Reports', 'Manage user support tickets and general reports'],
+  notifications: ['Notifications', 'Review platform notification activity and delivery'],
+  reviews: ['Reviews', 'Oversight and moderation of user ratings and reviews'],
+  'reports-disputes': ['Reports & Disputes', 'Resolution center for user, parcel and safety reports'],
   analytics: ['Analytics', 'Platform growth, performance and behavioral insights'],
-  system: ['System Health', 'API, database, email and OTP monitoring'],
+  'audit-logs': ['Audit Logs', 'Complete trail of administrative actions performed'],
+  system: ['System Health', 'API, database, and background service monitoring'],
+  'system-settings': ['System Settings', 'Platform-wide configuration and environment overview'],
 };
 
 const infoCards = {
@@ -32,6 +42,31 @@ const infoCards = {
     ['fa-circle-dot', 'Who\'s Online', 'See every user connected to TravelBuddy right now.'],
     ['fa-clock-rotate-left', 'Visit Log', 'Browse recent site visits sorted by most recent activity.'],
     ['fa-chart-line', 'Traffic Timeline', 'Spot when visits peak across the day.'],
+  ],
+  'user-activity': [
+    ['fa-eye', 'Activity Stream', 'Monitor login, posting and payment events as they happen.'],
+    ['fa-fingerprint', 'IP Tracking', 'Trace actions back to originating IP addresses.'],
+    ['fa-filter', 'Deep Filtering', 'Filter logs by specific actions or user email.'],
+  ],
+  verification: [
+    ['fa-id-card', 'Identity Review', 'Inspect government-issued ID documents and selfies.'],
+    ['fa-check-double', 'Instant Approval', 'One-click verification for trusted submissions.'],
+    ['fa-ban', 'Rejection Flow', 'Provide clear reasons when rejecting verification attempts.'],
+  ],
+  'live-tracking': [
+    ['fa-map-location-dot', 'Real-Time Map', 'Watch parcels move across the country via Firestore.'],
+    ['fa-gauge-high', 'Speed & Telemetry', 'Monitor traveler speed and last-update freshness.'],
+    ['fa-shield-halved', 'Authorized Access', 'Strict admin-only access to live location data.'],
+  ],
+  incidents: [
+    ['fa-magnifying-glass', 'Investigations', 'Resolve theft, loss and damage reports with full context.'],
+    ['fa-link', 'Contextual Links', 'Jump directly to tracking, messages and user profiles.'],
+    ['fa-scale-balanced', 'Resolution', 'Finalize incidents with audited administrative decisions.'],
+  ],
+  withdrawals: [
+    ['fa-money-check-dollar', 'Payout Queue', 'Process pending fund withdrawal requests efficiently.'],
+    ['fa-building-columns', 'Bank Verification', 'Verify provided account details before sending funds.'],
+    ['fa-check-to-slot', 'Audit Trail', 'Every approval or rejection is logged with a mandatory note.'],
   ],
   cancellations: [
     ['fa-circle-check', 'Delivery Success Rate', 'Compare delivered vs. cancelled outcomes over the last 30 days.'],
@@ -245,7 +280,8 @@ window.AdminNav = {
 };
 
 function resolveInitialPage() {
-  const fromHash = (location.hash || '').replace(/^#/, '').split('?')[0];
+  const hash = (location.hash || '').replace(/^#/, '');
+  const fromHash = hash.split('?')[0];
   if (isValidPage(fromHash)) return fromHash;
   const fromStorage = getSavedPage();
   if (isValidPage(fromStorage)) return fromStorage;
@@ -266,6 +302,8 @@ function activatePage(id, { historyMode = 'push', restoreScroll = false } = {}) 
     saveScrollPosition(currentPageId, window.scrollY || 0);
 
     if (currentPageId === 'support-reports' && typeof window.destroySupportReports === 'function') {
+      window.destroySupportReports();
+    }
   }
 
   const activeBtn = document.querySelector('nav .active');
@@ -285,6 +323,13 @@ function activatePage(id, { historyMode = 'push', restoreScroll = false } = {}) 
 
   if (target.dataset.loaded === 'false') {
     loadPageFragment(id, target);
+  } else {
+    // If already loaded, re-run initialization if an init function exists on window.
+    // Named pattern: window.init{CamelCaseId}
+    const initName = 'init' + id.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+    if (typeof window[initName] === 'function') {
+      try { window[initName](); } catch (e) { console.warn(`Re-init failed for ${id}`, e); }
+    }
   }
 
   currentPageId = id;
@@ -658,6 +703,9 @@ function renderUserDetail(data) {
       <button class="drawer-tab" data-tab="parcels">Parcels</button>
       <button class="drawer-tab" data-tab="trips">Trips</button>
       <button class="drawer-tab" data-tab="wallet">Wallet</button>
+      <button class="drawer-tab" data-tab="verification">KYC</button>
+      <button class="drawer-tab" data-tab="security">Security</button>
+      <button class="drawer-tab" data-tab="reviews">Reviews</button>
       <button class="drawer-tab" data-tab="admin">Admin</button>
     </div>
 
@@ -795,6 +843,43 @@ function renderUserDetail(data) {
         </div>
       </div>
 
+      <!-- Verification Tab -->
+      <div class="tab-pane" id="tab-verification">
+        <div class="drawer-section">
+          <h3>Verification Status</h3>
+          <div class="detail-row"><span>Government ID</span><span class="status-tag ${u.verification.governmentId}">${u.verification.governmentId}</span></div>
+          <div class="detail-row"><span>Face Verification</span><span class="status-tag ${u.verification.selfie}">${u.verification.selfie}</span></div>
+          <div class="detail-row"><span>Address Proof</span><span class="status-tag ${u.verification.address}">${u.verification.address}</span></div>
+          <p style="font-size:9px;color:var(--m);margin-top:10px;">Review documents in the Documents section of the user profile.</p>
+        </div>
+      </div>
+
+      <!-- Security Tab -->
+      <div class="tab-pane" id="tab-security">
+        <div class="drawer-section">
+          <h3>Security Settings</h3>
+          <div class="detail-row"><span>2FA Enabled</span><strong>${u.twoStepEnabled ? 'Yes' : 'No'}</strong></div>
+          <div class="detail-row"><span>Recovery Email</span><span>${escHtml(u.recoveryEmail || '—')}</span></div>
+          <div class="detail-row"><span>Active Sessions</span><strong>${(u.devices || []).length}</strong></div>
+        </div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div class="tab-pane" id="tab-reviews">
+        <div class="drawer-section">
+          <h3>Reviews Received</h3>
+          ${data.reviewsReceived?.length ? data.reviewsReceived.map(r => `
+            <div class="tl-item">
+              <div class="tl-content">
+                <span class="tl-time">${new Date(r.createdAt).toLocaleDateString()}</span>
+                <span class="tl-label">★ ${r.score} — From ${escHtml(r.fromUserId?.firstName)}</span>
+                <p style="font-size:10px;margin-top:4px;">${escHtml(r.comment)}</p>
+              </div>
+            </div>
+          `).join('') : '<div class="drawer-empty">No reviews yet</div>'}
+        </div>
+      </div>
+
       <!-- Admin Tab -->
       <div class="tab-pane" id="tab-admin">
         <div class="drawer-section">
@@ -900,6 +985,8 @@ function showDashboardSkeleton() {
 
   // Fallback for old skeleton logic if needed
   const kpisContainer = getEl('kpis');
+  if (kpisContainer) kpisContainer.innerHTML = '';
+}
 
 function showDashboardError(err) {
   const msg = (err && (err.data && err.data.error || err.message)) || 'Dashboard data unavailable';
@@ -1082,24 +1169,23 @@ function initializeSearch() {
 
 function initializeInteractions() {
   document.addEventListener('click', (e) => {
-    const risk = e.target.closest('.risk');
+    const risk = e.target.closest('.risk-item');
     if (risk) {
-      const orderId = risk.dataset.orderId;
-      if (orderId) goToParcel(orderId);
-      else showToast('Demo action opened');
+      // Handled by inline onclick in command.js but this is a fallback
       return;
     }
-    const card = e.target.closest('.card');
-    if (card) showToast('Demo action opened');
+    const card = e.target.closest('.kpi');
+    if (card) {
+        // Handled by inline onclick in command.js
+        return;
+    }
   });
 
   // Refresh button lives inside the lazy-loaded command.html fragment, so
-  // use delegation rather than binding once at startup (the element may
-  // not exist yet, or may be re-created on re-render).
+  // use delegation rather than binding once at startup.
   document.addEventListener('click', (e) => {
     if (e.target.closest('#refreshCommand')) {
       if (typeof loadCommandData === 'function') loadCommandData();
-      showToast('Dashboard refreshed');
     }
   });
 }
@@ -1568,6 +1654,8 @@ function hydrateAdminChip() {
     }
   } catch (e) {}
 }
+
+window.fetchUserDetail = fetchUserDetail;
 
 /* ---------- Initialize Dashboard ---------- */
 function initializeDashboard() {

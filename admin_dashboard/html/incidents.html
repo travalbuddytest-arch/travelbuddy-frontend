@@ -1,0 +1,44 @@
+<div class="incidents-container">
+    <div class="header-row">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Parcel Incidents & Theft Investigation</h3>
+        <button class="btn primary sm" id="createNewIncident"><i class="fa-solid fa-plus"></i> Manual Flag</button>
+    </div>
+
+    <div class="incident-summary-cards">
+        <div class="mini-card critical"><span>Under Investigation</span><strong>—</strong></div>
+        <div class="mini-card warning"><span>Overdue Delivery</span><strong>—</strong></div>
+        <div class="mini-card muted"><span>Resolved (30d)</span><strong>—</strong></div>
+    </div>
+
+    <div class="filters">
+        <select id="incidentStatusFilter">
+            <option value="open">Open Cases</option>
+            <option value="investigating">Under Investigation</option>
+            <option value="resolved">Resolved</option>
+            <option value="all">All Cases</option>
+        </select>
+        <input type="text" id="incidentSearch" placeholder="Search Order ID or User...">
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Reported</th>
+                    <th>Order ID</th>
+                    <th>Issue Type</th>
+                    <th>Participants</th>
+                    <th>Last Location</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="incidents-list">
+                <!-- Incidents load here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<link rel="stylesheet" href="../css/support-reports.css">
+<script type="module" src="../js/incidents.js"></script>
