@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    if (!window.TravelBuddy) window.TravelBuddy = {};
+    window.TravelBuddy = window.TravelBuddy || {};
 
     /**
      * Show premium login success animation.

@@ -234,7 +234,7 @@
       return;
     }
 
-    TravelBuddy.FormLock(form, true, { loadingText: 'Logging in...' });
+    (window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock)(form, true, { loadingText: 'Logging in...' });
 
     try {
       // Single unified endpoint for both users and admins - the backend

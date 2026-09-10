@@ -172,7 +172,7 @@
   // (Temporal Dead Zone) throws ReferenceError, which was the root cause of
   // the "Cannot access 'profilePhotoCacheBust' before initialization" error.
   let profilePhotoCacheBust = null;
-  const API_ORIGIN = APP_CONFIG.API_BASE_URL;
+  const API_ORIGIN = "https://travelbuddy-backend-19l6.onrender.com/api/";
 
   function showToast(message, type) {
     if (!toast) return;
