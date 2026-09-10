@@ -296,7 +296,7 @@
     } catch (err) {
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
-      TravelBuddy.FormLock(form, false);
+      (window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock)(form, false);
     }
   });
 

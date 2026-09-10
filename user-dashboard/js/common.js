@@ -379,7 +379,8 @@
     }
   }
 
-  window.TravelBuddy = {
+  window.TravelBuddy = window.TravelBuddy || {};
+  Object.assign(window.TravelBuddy, {
     API_ORIGIN,
     escapeHTML,
     authHeaders,
@@ -394,7 +395,7 @@
     highlightActiveNav,
     isPrivacyMode,
     setPrivacyMode,
-  };
+  });
 
   const fetchCache = new Map();
   const inFlightRequests = new Map();
