@@ -1451,7 +1451,7 @@ input:focus-visible {
   transition: all 0.2s ease;
   white-space: nowrap;
 }
-.tab-btn.active, .filter-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px -2px rgba(13,110,253,0.35); }
+.tab-btn.active, .filter-pill.active { background: var(--primary);  border-color: var(--primary); box-shadow: 0 4px 12px -2px rgba(13,110,253,0.35); }
 .tab-btn:not(.active):hover, .filter-pill:not(.active):hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
 
 .filter-bar {
@@ -1580,7 +1580,6 @@ input:focus-visible {
 .wizard-step.active .wizard-step-circle {
   border-color: var(--primary);
   background: var(--primary);
-  color: #fff;
   box-shadow: 0 0 0 4px rgba(13,110,253,0.18);
 }
 
