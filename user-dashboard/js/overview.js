@@ -1,26 +1,8 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/postparcel`;
-  const NOTIF_BASE = `${API_ORIGIN}/api/notifications`;
-  const ACTIVITY_LIMIT = 6;
-
-  // Same type -> icon/label mapping used on the Notifications page, so
-  // "Recent Activity" here is just a live, capped view of real notifications
-  // instead of the old hardcoded dummy list.
-  const TYPE_META = {
-    parcel_posted: { icon: 'fa-box', color: '#0D6EFD', label: 'Parcel posted' },
-    parcel_accepted: { icon: 'fa-handshake', color: '#17A673', label: 'Parcel accepted' },
-    parcel_status: { icon: 'fa-truck-fast', color: '#F5A524', label: 'Delivery update' },
-    message: { icon: 'fa-message', color: '#7C5CFC', label: 'New message' },
-    wallet_added: { icon: 'fa-indian-rupee-sign', color: '#17A673', label: 'Wallet updated' },
-    reward_added: { icon: 'fa-gift', color: '#17A673', label: 'Reward added' },
-  };
-  const DEFAULT_META = { icon: 'fa-bell', color: '#0D6EFD', label: 'Update' };
-
-  let activity = [];
-
   const CACHE_KEY = 'tb_dashboard_data';
 
   async function loadDashboard() {
@@ -33,8 +15,6 @@
     } else {
       // No cache: Show skeletons for initial load
       if (window.TravelBuddySkeleton) {
-        window.TravelBuddySkeleton.show('#activityList', 'list-item', 5);
-        window.TravelBuddySkeleton.show('#recentMessages', 'list-item', 3);
         // Stats are already showing 0, we can shimmer them
         document.querySelectorAll('.tb-metric-card').forEach(card => card.classList.add('is-loading'));
       }
@@ -103,17 +83,6 @@
       if (earningsEl) earningsEl.textContent = window.TravelBuddy.formatPaise(data.stats.totalEarnings || 0);
     }
 
-    // Apply Activity
-    if (data.activity) {
-      activity = data.activity;
-      renderActivity();
-    }
-
-    // Apply Recent Messages
-    if (data.recentMessages) {
-       renderRecentMessages(data.recentMessages);
-    }
-
     // Apply Wallet
     const heroValue = document.getElementById('heroWalletValue');
     const balanceValue = document.getElementById('walletBalanceValue');
@@ -141,88 +110,9 @@
      if (window.TravelBuddy.setNotifBadge) window.TravelBuddy.setNotifBadge(count);
   }
 
-  function renderRecentMessages(conversations) {
-    const container = document.getElementById('recentMessages');
-    if (!container) return;
-
-    if (!conversations.length) {
-      container.innerHTML = `<div class="tb-empty-state" style="padding: 24px;"><i class="fa-solid fa-comments-slash" style="font-size: 24px;"></i><p style="margin: 0; font-size: 13px;">No messages yet.</p></div>`;
-      return;
-    }
-
-    container.innerHTML = conversations.map((c) => `
-      <a href="messages.html?conversation=${encodeURIComponent(c.id)}" class="msg-thread-item">
-        <div class="avatar avatar--sm" style="width: 36px; height: 36px; border-radius: 10px; font-size: 12px;">${escapeHTML(initials(c.other.label))}</div>
-        <div class="msg-thread-info">
-          <div class="msg-thread-header">
-            <span class="msg-thread-name">${escapeHTML(c.other.label)}</span>
-            <span class="msg-thread-date">${escapeHTML(formatTime(c.lastMessageAt))}</span>
-          </div>
-          <span class="msg-thread-snippet">${escapeHTML(c.lastMessage || 'Start a conversation')}</span>
-        </div>
-        ${c.unreadCount ? `<span class="msg-unread-dot"></span>` : ''}
-      </a>
-    `).join('');
-  }
-
-  function renderActivity() {
-    const list = document.getElementById('activityList');
-    if (!list) return;
-
-    if (!activity.length) {
-      list.innerHTML = `<div class="tb-empty-state" style="padding: 24px;"><i class="fa-solid fa-bell-slash" style="font-size: 24px;"></i><p style="margin: 0; font-size: 13px;">No recent activity.</p></div>`;
-      return;
-    }
-
-    const isPrivate = window.TravelBuddy.isPrivacyMode();
-
-    list.innerHTML = activity.slice(0, ACTIVITY_LIMIT).map((item, i) => {
-      let metaHtml = '';
-      if (item.amount) {
-        const directionClass = item.direction === 'debit' || item.type.includes('WITHDRAWAL') ? 'debit' : 'credit';
-        const prefix = item.direction === 'debit' ? '-' : '+';
-        const displayAmount = isPrivate ? '••••' : window.TravelBuddy.formatPaise(item.amount);
-        metaHtml = `<span class="activity-amount ${directionClass}" style="font-weight: 800; font-size: 13px; color: ${item.direction === 'debit' ? 'var(--tb-danger)' : 'var(--tb-success)'}">${prefix}${displayAmount}</span>`;
-      }
-
-      const meta = TYPE_META[item.type] || DEFAULT_META;
-
-      return `
-      <a href="${item.link || '#'}" class="activity-item" style="animation-delay:${i * 0.06}s; text-decoration:none;">
-        <div class="activity-icon" style="background: var(--tb-bg); color: var(--tb-primary)"><i class="fa-solid ${item.icon || meta.icon || 'fa-bell'}"></i></div>
-        <div class="activity-content">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="activity-title">${escapeHTML(item.title)}</span>
-            ${metaHtml}
-          </div>
-          <span class="activity-desc">${escapeHTML(item.description)}</span>
-          <span class="activity-time">${escapeHTML(timeAgo(item.timestamp))}</span>
-        </div>
-      </a>
-    `;
-    }).join('');
-  }
-
-  async function loadActivity() {
-    const list = document.getElementById('activityList');
-    if (!list) return;
-    try {
-      const res = await fetch(`${API_ORIGIN}/api/activity/history?limit=${ACTIVITY_LIMIT}`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return;
-      activity = data.items || [];
-      renderActivity();
-    } catch (err) {
-      console.error('load activity failed:', err);
-    }
-  }
-
-  // Real-time: common.js's shared socket dispatches this the instant a new
-  // notification arrives, so a fresh action shows up here without a refresh.
+  // Real-time updates
   document.addEventListener('travelbuddy:notification', (e) => {
     if (!e.detail) return;
-    activity.unshift(e.detail);
-    renderActivity();
     if (e.detail.type === 'wallet_added' || e.detail.type === 'reward_added') {
       loadWallet();
       loadStats();
@@ -327,73 +217,6 @@
   document.addEventListener('travelbuddy:privacy-toggled', () => {
     loadWallet();
     loadStats();
-    renderActivity();
-  });
-
-  function formatTime(iso) {
-    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(iso);
-    if (!iso) return '';
-    const date = new Date(iso);
-    if (Number.isNaN(date.getTime())) return '';
-    const today = new Date();
-    if (date.toDateString() === today.toDateString()) {
-      return date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
-    }
-    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-  }
-
-  function initials(name) {
-    return (name || 'User').split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
-  }
-
-  function timeAgo(iso) {
-    if (!iso) return '';
-    const seconds = Math.floor((new Date() - new Date(iso)) / 1000);
-    if (seconds < 60) return 'just now';
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}d ago`;
-    return new Date(iso).toLocaleDateString();
-  }
-
-  async function loadRecentMessages() {
-    const container = document.getElementById('recentMessages');
-    if (!container) return;
-
-    try {
-      const res = await fetch(`${API_ORIGIN}/api/messages/conversations?limit=3`, { headers: authHeaders() });
-      const data = await res.json();
-      if (!res.ok) return;
-
-      const conversations = data.conversations || [];
-      if (!conversations.length) {
-        container.innerHTML = `<p class="empty-state"><i class="fa-solid fa-comments-slash"></i>No messages yet.</p>`;
-        return;
-      }
-
-      container.innerHTML = conversations.slice(0, 3).map((c) => `
-        <a href="messages.html?conversation=${encodeURIComponent(c.id)}" class="msg-thread-item">
-          <div class="avatar avatar--sm">${escapeHTML(initials(c.other.label))}</div>
-          <div class="msg-thread-info">
-            <div class="msg-thread-name">
-              <strong>${escapeHTML(c.other.label)}</strong>
-              <span class="msg-thread-date">${escapeHTML(formatTime(c.lastMessageAt))}</span>
-            </div>
-            <span class="msg-thread-snippet">${escapeHTML(c.lastMessage || 'Start a conversation')}</span>
-          </div>
-          ${c.unreadCount ? `<span class="msg-unread-dot"></span>` : ''}
-        </a>
-      `).join('');
-    } catch (err) {
-      console.error('load recent messages failed:', err);
-    }
-  }
-
-  document.addEventListener('travelbuddy:privacy-toggled', () => {
-    loadDashboard();
   });
 
   loadDashboard();
