@@ -10,9 +10,14 @@ window.fetch = async (input, init = {}) => {
   if (isTravelBuddyApi) {
     if (response.status === 401) {
       // 401 Unauthorized: Session is invalid/expired. Logout.
+      // HARDENING: Only redirect if we are not already on the login page
+      // AND if this wasn't a background refresh that we can handle more gracefully.
       if (!window.location.pathname.includes('login.html')) {
+        console.warn('[Auth] Received 401. Logging out and redirecting.');
         window.TravelBuddyAuth.logout();
-        window.location.href = '../login/login.html?reason=session_expired';
+
+        const returnTo = window.location.pathname + window.location.search + window.location.hash;
+        window.location.href = `../login/login.html?reason=session_expired\u0026redirect=${encodeURIComponent(returnTo)}`;
       }
     } else if (response.status === 403) {
       // 403 Forbidden: Permission denied for this resource. DO NOT logout.

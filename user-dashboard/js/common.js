@@ -533,47 +533,72 @@
   personalizeUser();
 
   async function refreshCurrentUser() {
-    // Return cached user immediately while refreshing
+    // 1. Get cached user and token status
     const cached = parseStoredUser();
     const hasToken = Boolean(localStorage.getItem('travelBuddyToken'));
 
+    // 2. Return cached user immediately if available to unblock page rendering
     if (cached && cached.id) {
        personalizeUser();
-       // If we have a cached user AND a token, we consider the user authenticated
-       // for the purpose of the initial guard check.
        if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
+
+       // Start background refresh
+       backgroundRefreshUser(cached);
+       return cached;
     } else if (!hasToken) {
-       // No token and no cached user? Definitely logged out.
        if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
        return {};
     }
 
+    // 3. No cache, must wait for network
+    return await backgroundRefreshUser(cached);
+  }
+
+  /**
+   * Performs a background profile refresh from the API.
+   * If a cached user exists, it resolves auth immediately and updates in background.
+   */
+  async function backgroundRefreshUser(cached) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s network timeout
+
     try {
-      const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() }, 30000); // 30s cache
+      const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, {
+        headers: authHeaders(),
+        signal: controller.signal
+      }, 30000);
+
+      clearTimeout(timeoutId);
       const data = await res.json();
+
       if (!res.ok) {
-        if (res.status === 401 && window.resolveTravelBuddyAuth) {
-          window.resolveTravelBuddyAuth(false);
+        if (res.status === 401) {
+          // If we got a 401, the session is actually dead.
+          if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
+          return {};
         }
-        return cached; // Return cached on error if refresh failed
+        return cached || {};
       }
 
-      // FIX: Merge new data with cached data to preserve 'role' if API doesn't return it
       const mergedUser = { ...cached, ...data.user };
-      saveStoredUser(mergedUser);
-      personalizeUser();
-      populateProfileForms(mergedUser);
+      const hasChanged = JSON.stringify(cached) !== JSON.stringify(mergedUser);
 
-      // Success: ensure auth is resolved
+      if (hasChanged) {
+        saveStoredUser(mergedUser);
+        personalizeUser();
+        populateProfileForms(mergedUser);
+        document.dispatchEvent(new CustomEvent('travelbuddy:user-refreshed', { detail: { user: mergedUser } }));
+      }
+
       if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
       return mergedUser;
     } catch (err) {
-      console.error('Profile refresh failed:', err);
-      // On network failure, we trust the cached user if it exists.
+      clearTimeout(timeoutId);
+      console.warn('Profile background refresh failed:', err.name === 'AbortError' ? 'Timeout' : err.message);
       if (cached && cached.id && window.resolveTravelBuddyAuth) {
          window.resolveTravelBuddyAuth(true);
       }
-      return cached;
+      return cached || {};
     }
   }
   window.TravelBuddy.getCurrentUser = refreshCurrentUser;

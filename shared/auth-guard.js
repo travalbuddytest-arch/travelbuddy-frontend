@@ -154,7 +154,7 @@
     } catch (e) { /* no-op */ }
 
     window.resolveTravelBuddyAuth = function (authenticated) {
-        if (window.TravelBuddyAuthChecked) return;
+        if (window.TravelBuddyAuthChecked && authenticated) return; // Already resolved ok
         window.TravelBuddyAuthChecked = true;
         clearTimeout(safetyTimeout);
 
@@ -164,7 +164,7 @@
             console.log('[AuthGuard] Async auth confirmed. Access granted.');
             if (skeleton) {
                 skeleton.classList.add('fade-out');
-                setTimeout(function() { skeleton.remove(); }, 300);
+                setTimeout(function() { if (skeleton.parentNode) skeleton.remove(); }, 300);
             }
             document.documentElement.style.visibility = '';
         } else {
@@ -175,10 +175,26 @@
 
     var safetyTimeout = setTimeout(function () {
         if (!window.TravelBuddyAuthChecked) {
-            console.warn('[AuthGuard] Auth check timed out (8s). Redirecting to login.');
-            doRedirect();
+            console.warn('[AuthGuard] Auth check timed out (12s).');
+            const skeleton = document.getElementById('initialPageSkeleton');
+            if (skeleton) {
+                skeleton.innerHTML = `
+                    <div style="text-align: center; color: var(--text-main, #0f172a); max-width: 400px; margin: auto;">
+                        <i class="fa-solid fa-cloud-exclamation" style="font-size: 48px; color: var(--error, #dc3545); margin-bottom: 20px;"></i>
+                        <h2 style="font-weight: 800; margin-bottom: 10px;">Connection Timeout</h2>
+                        <p style="opacity: 0.7; margin-bottom: 24px;">We're having trouble verifying your session. This could be due to a slow connection.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="window.location.reload()" style="background: var(--primary, #0d6efd); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Retry Connection</button>
+                            <button onclick="window.TravelBuddyAuthChecked=true; window.location.replace('../login/login.html')" style="background: transparent; color: var(--text-muted, #64748b); border: 1px solid var(--border, #e2e8f0); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Go to Login</button>
+                        </div>
+                    </div>
+                `;
+                skeleton.style.display = 'flex';
+                skeleton.style.alignItems = 'center';
+                skeleton.style.justifyContent = 'center';
+            }
         }
-    }, 8000);
+    }, 12000);
 
     function doRedirect() {
         var loginUrl = guardType === 'admin' ? '../../login/login.html' : '../login/login.html';

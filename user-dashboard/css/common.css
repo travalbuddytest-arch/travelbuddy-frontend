@@ -939,7 +939,17 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
 
 @media (max-width: 640px) {
   .page-title {
-    font-size: 17px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .page-title {
+    font-size: 14px;
+    max-width: 120px;
+  }
+  .user-chip {
+    padding: 2px;
   }
 }
 
