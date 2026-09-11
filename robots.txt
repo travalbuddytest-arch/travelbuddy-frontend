@@ -1,23 +1,26 @@
 User-agent: *
-Allow: /
-
+Disallow: /api/
 Disallow: /user-dashboard/
 Disallow: /admin_dashboard/
-Disallow: /api/
 Disallow: /login/
 Disallow: /register/
 Disallow: /forgot-password/
-Disallow: /post-parcel/
-Disallow: /send-parcel/
-Disallow: /carry-parcel/
-Disallow: /parcel-delivery/
-Disallow: /how-travelbuddy-works/
-Disallow: /safety/
-Disallow: /faq/
 Disallow: /developers/
 Disallow: /llms.txt
 Disallow: /llms-full.txt
 Disallow: /openapi.json
 Disallow: /openapi.yaml
+
+Allow: /
+Allow: /about/
+Allow: /support/
+Allow: /contact/
+Allow: /post-your-parcel/
+Allow: /get-local-courier/
+Allow: /delivery-shortly/
+Allow: /reach-every-customer/
+Allow: /trusted-local-connections/
+Allow: /affordable-for-everyone/
+Allow: /legal/
 
 Sitemap: https://travalbuddy.web.app/sitemap.xml

@@ -26,6 +26,42 @@
   </url>
 
   <url>
+    <loc>https://travalbuddy.web.app/post-your-parcel/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/get-local-courier/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/delivery-shortly/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/reach-every-customer/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/trusted-local-connections/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://travalbuddy.web.app/affordable-for-everyone/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://travalbuddy.web.app/legal/privacy.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
