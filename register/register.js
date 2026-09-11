@@ -37,6 +37,7 @@
   let currentPhone = '';
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const PHONE_RE = /^[0-9\s-]{7,15}$/;
+  const PASSWORD_RE = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
   function setError(input, message) {
     const field = input.closest('.field');
@@ -65,8 +66,15 @@
     const v = regPassword.value;
     if (!v) { setError(regPassword, 'Password is required.'); return false; }
     if (v.length < 8) { setError(regPassword, 'Password must be at least 8 characters.'); return false; }
+    if (!PASSWORD_RE.test(v)) { setError(regPassword, 'Use at least one letter and one number.'); return false; }
     clearError(regPassword); return true;
   }
+
+  // Anti-Paste Protection
+  regPassword.addEventListener('paste', (e) => {
+    e.preventDefault();
+    showToast('For security, please type your password manually.', 'error');
+  });
   function validatePhoneField() {
     const v = phone.value.trim();
     if (!v) { setError(phone, 'Phone number is required.'); return false; }

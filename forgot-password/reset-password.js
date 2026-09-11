@@ -19,6 +19,8 @@
   let toastTimer;
   let resetToken = '';
 
+  const PASSWORD_RE = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
   function showToast(message, type) {
     clearTimeout(toastTimer);
     toast.textContent = message;
@@ -69,8 +71,14 @@
     const pwd = newPasswordInput.value;
     const conf = confirmPasswordInput.value;
 
-    if (!pwd || pwd.length < 8) {
+    if (!pwd) {
+      setFieldError(newPasswordInput, newPasswordError, 'Password is required.');
+      valid = false;
+    } else if (pwd.length < 8) {
       setFieldError(newPasswordInput, newPasswordError, 'Password must be at least 8 characters.');
+      valid = false;
+    } else if (!PASSWORD_RE.test(pwd)) {
+      setFieldError(newPasswordInput, newPasswordError, 'Use at least one letter and one number.');
       valid = false;
     } else {
       clearFieldError(newPasswordInput, newPasswordError);
@@ -141,6 +149,14 @@
       button.textContent = isShowing ? 'Show' : 'Hide';
       button.setAttribute('aria-pressed', !isShowing);
     });
+  });
+
+  // Anti-Paste Protection
+  [newPasswordInput, confirmPasswordInput].forEach(input => {
+      input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          showToast('For security, please type your password manually.', 'error');
+      });
   });
 
   resetForm.addEventListener('submit', handleSubmit);
