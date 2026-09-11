@@ -96,62 +96,96 @@
 
 
           <div class="panel-grid">
-            <!-- Quick Actions Panel -->
-            <div class="tb-panel">
-              <div class="tb-panel-head">
-                <div class="tb-panel-title">
-                  <h3>Quick Actions</h3>
-                  <p>Jump to frequently used features.</p>
+            <!-- Left Column: Activity & Quick Actions -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Quick Actions Panel -->
+                <div class="tb-panel">
+                  <div class="tb-panel-head">
+                    <div class="tb-panel-title">
+                      <h3>Quick Actions</h3>
+                      <p>Jump to frequently used features.</p>
+                    </div>
+                  </div>
+                  <div class="quick-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <a class="quick-card" href="post.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                      <i class="fa-solid fa-paper-plane" style="color: var(--tb-primary); font-size: 18px;"></i>
+                      <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Post a Parcel</span>
+                    </a>
+                    <a class="quick-card" href="pickup.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                      <i class="fa-solid fa-truck-pickup" style="color: var(--tb-success); font-size: 18px;"></i>
+                      <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Carry Parcels</span>
+                    </a>
+                    <a class="quick-card" href="wallet.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                      <i class="fa-solid fa-wallet" style="color: var(--tb-warning); font-size: 18px;"></i>
+                      <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">My Wallet</span>
+                    </a>
+                    <a class="quick-card" href="profile.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
+                      <i class="fa-solid fa-user-circle" style="color: var(--tb-secondary); font-size: 18px;"></i>
+                      <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Account Profile</span>
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div class="quick-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <a class="quick-card" href="post.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
-                  <i class="fa-solid fa-paper-plane" style="color: var(--tb-primary); font-size: 18px;"></i>
-                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Post a Parcel</span>
-                </a>
-                <a class="quick-card" href="pickup.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
-                  <i class="fa-solid fa-truck-pickup" style="color: var(--tb-success); font-size: 18px;"></i>
-                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Carry Parcels</span>
-                </a>
-                <a class="quick-card" href="wallet.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
-                  <i class="fa-solid fa-wallet" style="color: var(--tb-warning); font-size: 18px;"></i>
-                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">My Wallet</span>
-                </a>
-                <a class="quick-card" href="profile.html" style="padding: 16px; border-radius: 12px; border: 1px solid var(--tb-border); background: var(--tb-bg); text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: var(--transition-base);">
-                  <i class="fa-solid fa-user-circle" style="color: var(--tb-secondary); font-size: 18px;"></i>
-                  <span style="font-size: 13px; font-weight: 700; color: var(--tb-text-main);">Account Profile</span>
-                </a>
-              </div>
+
+                <!-- Activity Timeline Panel -->
+                <div class="tb-panel">
+                    <div class="tb-panel-head">
+                        <div class="tb-panel-title">
+                            <h3>Recent Activity</h3>
+                            <p>Updates on your parcels and account.</p>
+                        </div>
+                        <a href="notifications.html" class="link-btn">View All</a>
+                    </div>
+                    <div id="activityTimeline" class="activity-list">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
             </div>
 
-            <!-- Wallet Snapshot Panel -->
-            <div class="tb-panel">
-              <div class="tb-panel-head">
-                <div class="tb-panel-title">
-                  <h3>Financial Status</h3>
-                  <p>Your current balances and pending withdrawals.</p>
-                </div>
-              </div>
-              <div class="wallet-snapshot" style="display: flex; flex-direction: column; gap: 12px;">
-                <div class="wallet-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--tb-primary-soft); border-radius: 12px; border: 1px solid rgba(13, 110, 253, 0.1);">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--tb-primary);"><i class="fa-solid fa-wallet"></i></div>
-                    <span style="font-size: 13px; font-weight: 600; color: var(--tb-text-muted);">Available</span>
+            <!-- Right Column: Financials & Messages -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Wallet Snapshot Panel -->
+                <div class="tb-panel">
+                  <div class="tb-panel-head">
+                    <div class="tb-panel-title">
+                      <h3>Financial Status</h3>
+                      <p>Your current balances and pending withdrawals.</p>
+                    </div>
                   </div>
-                  <span id="walletBalanceValue" style="font-size: 16px; font-weight: 800; color: var(--tb-text-main);">₹ 0.00</span>
-                </div>
-                <div class="wallet-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--tb-warning-soft); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.1);">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--tb-warning);"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                    <span style="font-size: 13px; font-weight: 600; color: var(--tb-text-muted);">Pending Payout</span>
+                  <div class="wallet-snapshot" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="wallet-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--tb-primary-soft); border-radius: 12px; border: 1px solid rgba(13, 110, 253, 0.1);">
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--tb-primary);"><i class="fa-solid fa-wallet"></i></div>
+                        <span style="font-size: 13px; font-weight: 600; color: var(--tb-text-muted);">Available</span>
+                      </div>
+                      <span id="walletBalanceValue" style="font-size: 16px; font-weight: 800; color: var(--tb-text-main);">₹ 0.00</span>
+                    </div>
+                    <div class="wallet-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--tb-warning-soft); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.1);">
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--tb-warning);"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <span style="font-size: 13px; font-weight: 600; color: var(--tb-text-muted);">Pending Payout</span>
+                      </div>
+                      <span id="walletLockedValue" style="font-size: 16px; font-weight: 800; color: var(--tb-text-main);">₹ 0.00</span>
+                    </div>
                   </div>
-                  <span id="walletLockedValue" style="font-size: 16px; font-weight: 800; color: var(--tb-text-main);">₹ 0.00</span>
+                  <div style="display: flex; gap: 10px; margin-top: 16px;">
+                    <a class="btn-primary btn-full btn-sm" href="wallet.html" style="text-decoration: none;">Add Money</a>
+                    <a class="btn-secondary btn-full btn-sm" href="withdraw.html" style="text-decoration: none;">Withdraw</a>
+                  </div>
                 </div>
-              </div>
-              <div style="display: flex; gap: 10px; margin-top: 16px;">
-                <a class="btn-primary btn-full btn-sm" href="wallet.html" style="text-decoration: none;">Add Money</a>
-                <a class="btn-secondary btn-full btn-sm" href="withdraw.html" style="text-decoration: none;">Withdraw</a>
-              </div>
+
+                <!-- Recent Messages Panel -->
+                <div class="tb-panel">
+                    <div class="tb-panel-head">
+                        <div class="tb-panel-title">
+                            <h3>Recent Messages</h3>
+                            <p>Direct chats with travelers and senders.</p>
+                        </div>
+                        <a href="messages.html" class="link-btn">View Inbox</a>
+                    </div>
+                    <div id="recentMessages" class="recent-messages">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
             </div>
           </div>
         </section>

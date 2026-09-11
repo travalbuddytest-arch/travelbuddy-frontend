@@ -815,6 +815,7 @@ body.nav-open{
     text-align: left;
 }
 
+/* One Platform cards */
 .way-card {
     padding: 44px 36px;
     background: var(--tb-bg);
@@ -829,23 +830,18 @@ body.nav-open{
     overflow: hidden;
 }
 
-.way-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(13,110,253,0.06), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
 .way-card:hover {
-    transform: translateY(-8px) translateZ(10px);
+    transform: translateY(-8px) translateZ(20px);
     box-shadow: var(--tb-shadow-l3);
     border-color: rgba(13, 110, 253, 0.2);
 }
 
-.way-card:hover::before {
-    opacity: 1;
+.way-card h3 {
+    transform: translateZ(30px);
+}
+
+.way-card p, .way-card .way-checklist, .way-card .way-btn {
+    transform: translateZ(25px);
 }
 
 .way-card.highlight {
@@ -1161,14 +1157,25 @@ body.nav-open{
     border: 1px solid var(--tb-border, #e6ecf9);
     border-radius: var(--tb-radius-md, 16px);
     box-shadow: 0 4px 16px rgba(18, 32, 58, 0.04);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease;
+    transform-style: preserve-3d;
+    transition: transform 0.4s var(--tb-transition),
+                box-shadow 0.4s var(--tb-transition),
+                border-color 0.4s var(--tb-transition);
 }
 
 .why-card:hover,
 .why-card:focus-within {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(18, 32, 58, 0.09);
+    transform: translateY(-8px) translateZ(15px);
+    box-shadow: 0 20px 40px rgba(18, 32, 58, 0.12);
     border-color: rgba(13, 110, 253, 0.3);
+}
+
+.why-card h3 {
+    transform: translateZ(20px);
+}
+
+.why-card p {
+    transform: translateZ(10px);
 }
 
 .why-icon {

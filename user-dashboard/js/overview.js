@@ -96,6 +96,71 @@
       if (balanceValue) balanceValue.textContent = balanceText;
       if (lockedValue) lockedValue.textContent = lockedText;
     }
+
+    // Apply Activity Timeline
+    renderActivityTimeline(data.activity || []);
+
+    // Apply Recent Messages
+    renderRecentMessages(data.recentMessages || []);
+  }
+
+  function renderActivityTimeline(activities) {
+    const container = document.getElementById('activityTimeline');
+    if (!container) return;
+
+    if (!activities || activities.length === 0) {
+      container.innerHTML = `
+        <div class="tb-empty-state" style="padding: 30px 0; border: none; box-shadow: none; background: transparent;">
+          <i class="fa-solid fa-clock-rotate-left tb-empty-icon" style="font-size: 2rem;"></i>
+          <h3 class="tb-empty-title" style="font-size: 1rem;">No Recent Activity</h3>
+          <p class="tb-empty-desc" style="font-size: 0.8rem;">Your journey updates will appear here.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = activities.map(act => `
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fa-solid ${act.icon || 'fa-bell'}"></i>
+        </div>
+        <div class="activity-content">
+          <strong class="activity-title">${window.TravelBuddy.escapeHTML(act.title)}</strong>
+          <span class="activity-desc">${window.TravelBuddy.escapeHTML(act.description)}</span>
+          <span class="activity-time">${window.TravelBuddy.formatDate(act.timestamp)}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderRecentMessages(messages) {
+    const container = document.getElementById('recentMessages');
+    if (!container) return;
+
+    if (!messages || messages.length === 0) {
+      container.innerHTML = `
+        <div class="tb-empty-state" style="padding: 30px 0; border: none; box-shadow: none; background: transparent;">
+          <i class="fa-solid fa-comments tb-empty-icon" style="font-size: 2rem;"></i>
+          <h3 class="tb-empty-title" style="font-size: 1rem;">No Messages</h3>
+          <p class="tb-empty-desc" style="font-size: 0.8rem;">Connect with travelers or senders via chat.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = messages.map(msg => `
+      <a href="messages.html?conversation=${msg.id}" class="msg-thread-item">
+        <div class="avatar avatar--sm">${(msg.other?.label || 'TB')[0].toUpperCase()}</div>
+        <div class="msg-thread-info">
+          <div class="msg-thread-header">
+            <span class="msg-thread-name">${window.TravelBuddy.escapeHTML(msg.other?.label)}</span>
+            <span class="msg-thread-date">${window.TravelBuddy.formatDate(msg.lastMessageAt)}</span>
+          </div>
+          <span class="msg-thread-snippet">${window.TravelBuddy.escapeHTML(msg.lastMessage || 'No messages yet')}</span>
+        </div>
+        ${msg.unreadCount > 0 ? '<span class="msg-unread-dot"></span>' : ''}
+      </a>
+    `).join('');
   }
 
   function saveStoredUser(user) {

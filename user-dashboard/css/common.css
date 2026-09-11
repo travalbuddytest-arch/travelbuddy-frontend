@@ -600,9 +600,23 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
 }
 
 .nav-item.active {
-  background: linear-gradient(120deg, var(--primary), var(--secondary));
+  background: linear-gradient(120deg, var(--tb-primary), #3b82f6);
   color: #fff;
   box-shadow: 0 8px 18px -8px rgba(13, 110, 253, 0.55);
+  transform: scale(1.02);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: #fff;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 10px rgba(255,255,255,0.8);
 }
 
 .nav-badge {

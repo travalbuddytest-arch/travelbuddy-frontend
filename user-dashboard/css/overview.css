@@ -4,42 +4,96 @@
 
 /* Panel Layout is now handled by common.css .panel-grid */
 
-/* Activity List */
+/* KPI Metric Grid */
+.tb-metric-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--tb-border);
+  background: #fff;
+  transition: all 0.4s var(--tb-transition);
+}
+
+.tb-metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--tb-shadow-l2);
+  border-color: rgba(13, 110, 253, 0.2);
+}
+
+.tb-metric-card--primary { background: linear-gradient(135deg, #fff 0%, #eef5ff 100%); }
+.tb-metric-card--success { background: linear-gradient(135deg, #fff 0%, #f0fff4 100%); }
+.tb-metric-card--info { background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%); }
+.tb-metric-card--warning { background: linear-gradient(135deg, #fff 0%, #fffaf0 100%); }
+
+.tb-metric-card::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: currentColor;
+  opacity: 0.03;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Activity Timeline */
 .activity-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  position: relative;
+}
+
+.activity-list::before {
+  content: '';
+  position: absolute;
+  left: 31px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  background: var(--tb-border);
+  opacity: 0.5;
 }
 
 .activity-item {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 12px;
+  gap: 20px;
+  padding: 16px;
   border-radius: var(--radius-md);
-  transition: var(--transition-base);
+  transition: all 0.3s ease;
   border: 1px solid transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .activity-item:hover {
   background: var(--tb-primary-soft);
-  border-color: rgba(13, 110, 253, 0.1);
+  transform: translateX(5px);
 }
 
 .activity-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
   flex-shrink: 0;
-  background: var(--tb-bg);
+  background: #fff;
   color: var(--tb-primary);
+  border: 2px solid var(--tb-primary-soft);
+  box-shadow: 0 0 0 4px #fff;
+}
+
+.activity-item:hover .activity-icon {
+  border-color: var(--tb-primary);
+  background: var(--tb-primary);
+  color: #fff;
 }
 
 .activity-content {

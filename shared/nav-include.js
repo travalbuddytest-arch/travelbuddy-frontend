@@ -157,6 +157,32 @@
     // Run after a short delay to ensure body is ready
     setTimeout(initAppPromoBanner, 0);
 
+    // Global Scroll Progress Bar Injection & Logic
+    function initScrollProgress() {
+        if (document.getElementById('tbScrollProgress')) return;
+        const progressEl = document.createElement('div');
+        progressEl.id = 'tbScrollProgress';
+        document.body.prepend(progressEl);
+
+        let ticking = false;
+        function updateProgress() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progressEl.style.width = scrolled + "%";
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                requestAnimationFrame(updateProgress);
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    setTimeout(initScrollProgress, 0);
+
     // Premium Background Injection
     setTimeout(function injectBackground() {
         if (document.querySelector('.tb-bg-system')) return;

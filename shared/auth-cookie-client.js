@@ -42,7 +42,6 @@ window.TravelBuddyAuth={
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            ...(localStorage.getItem('travelBuddyToken') ? { Authorization: `Bearer ${localStorage.getItem('travelBuddyToken')}` } : {}),
           },
           body: JSON.stringify({ token: fcmToken }),
         });
@@ -52,6 +51,8 @@ window.TravelBuddyAuth={
     localStorage.removeItem('travelBuddyToken');
     localStorage.removeItem('travelBuddyUser');
     localStorage.removeItem('travelBuddyFcmToken');
+    localStorage.removeItem('travelBuddyAdminToken');
+    localStorage.removeItem('admin_token');
     if (window.TravelBuddy && window.TravelBuddy.clearClientCache) {
       window.TravelBuddy.clearClientCache();
     }
@@ -68,7 +69,7 @@ window.TravelBuddyAuth={
     try{
       const fcmToken=localStorage.getItem('travelBuddyFcmToken');
       if(fcmToken){
-        await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/notifications/device-token`,{method:'DELETE',credentials:'include',headers:{'Content-Type':'application/json',...(localStorage.getItem('travelBuddyAdminToken')?{Authorization:`Bearer ${localStorage.getItem('travelBuddyAdminToken')}`}:{})},body:JSON.stringify({token:fcmToken})});
+        await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/notifications/device-token`,{method:'DELETE',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:fcmToken})});
       }
     }catch(e){}
     try{await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/admin/logout`,{method:'POST',credentials:'include'});}catch(e){}

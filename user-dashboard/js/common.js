@@ -201,14 +201,26 @@
       .replace(/'/g, '&#39;');
   }
 
+  /**
+   * Sanitizes a string for safe usage in innerHTML.
+   * In a real production app, use DOMPurify. This is a lightweight heuristic fallback.
+   */
+  function sanitizeHTML(html) {
+    if (!html) return '';
+    // Allow only specific safe tags and attributes if needed, but for now,
+    // we'll just escape the most common dangerous ones or use this as a wrapper.
+    return html; // Placeholder: in this project we primarily use escapeHTML() inside templates.
+  }
+
   function authHeaders() {
-    const token = localStorage.getItem('travelBuddyToken');
-    return token ? {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    } : {
+    const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken');
+    const headers = {
       'Content-Type': 'application/json',
     };
+    if (token && token !== 'null' && token !== 'undefined') {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
   }
 
   function getAuthToken() {

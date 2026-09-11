@@ -265,17 +265,12 @@
 
       try {
         if (data.role === 'admin') {
-          if (data.token) {
-            localStorage.setItem('admin_token', data.token);
-            localStorage.setItem('travelBuddyAdminToken', data.token);
-          }
           if (data.admin) {
             const adminObj = { ...data.admin, role: 'admin' };
             localStorage.setItem('admin_user', JSON.stringify(adminObj));
             localStorage.setItem('travelBuddyAdmin', JSON.stringify(adminObj));
           }
         } else {
-          if (data.token) localStorage.setItem('travelBuddyToken', data.token);
           if (data.user) {
             const userObj = { ...data.user, role: data.role || 'user' };
             localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
@@ -314,7 +309,6 @@
         return;
       }
       try {
-        if (data.token) localStorage.setItem('travelBuddyToken', data.token);
         const userObj = { ...data.user, role: data.role || 'user' };
         localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
         clearLoginState();
