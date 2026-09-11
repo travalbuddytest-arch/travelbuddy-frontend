@@ -4,32 +4,12 @@
   const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/auth`;
 
   const toast = document.getElementById('toast');
-  const backBtn = document.getElementById('backBtn');
-  const brandHeader = document.getElementById('brandHeader');
-  const pageTitle = document.getElementById('pageTitle');
-  const pageSubtitle = document.getElementById('pageSubtitle');
-
   const requestForm = document.getElementById('requestForm');
-  const otpForm = document.getElementById('otpForm');
-  const resetForm = document.getElementById('resetForm');
-
-  const emailField = document.getElementById('emailField');
   const emailInput = document.getElementById('email');
   const emailError = document.getElementById('emailError');
-  const sendOtpBtn = document.getElementById('sendOtpBtn');
+  const sendBtn = document.getElementById('sendBtn');
 
-  const forgotOtpMount = document.getElementById('forgotOtpMount');
-
-  const newPassword = document.getElementById('newPassword');
-  const confirmPassword = document.getElementById('confirmPassword');
-  const newPasswordError = document.getElementById('newPasswordError');
-  const confirmPasswordError = document.getElementById('confirmPasswordError');
-  const setPasswordBtn = document.getElementById('setPasswordBtn');
-
-  let currentIdentifier = '';
-  let resetToken = '';
   let toastTimer;
-  let forgotOtpVerifier = null;
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -40,304 +20,75 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  function setButtonLoading(button, isLoading) {
-    button.classList.toggle('loading', isLoading);
-    button.disabled = isLoading;
+  function setButtonLoading(isLoading) {
+    sendBtn.classList.toggle('loading', isLoading);
+    sendBtn.disabled = isLoading;
+    emailInput.disabled = isLoading;
   }
 
-  async function parseResponse(response) {
-    const contentType = response.headers.get('content-type') || '';
-    if (contentType.includes('application/json')) return response.json();
-    const text = await response.text();
-    return { error: text || `Server returned ${response.status}` };
-  }
-
-  function setFieldError(field, errorEl, message) {
-    field.classList.add('has-error');
-    errorEl.textContent = message;
-  }
-
-  function clearFieldError(field, errorEl) {
-    field.classList.remove('has-error');
-    errorEl.textContent = '';
-  }
-
-  function getFullPhone() {
-    return `${countryCode.value}${phoneInput.value.trim().replace(/[\s-]/g, '')}`;
-  }
-
-  function validateIdentifier(showError) {
-    const value = emailInput.value.trim().toLowerCase();
+  function validateEmail() {
+    const value = emailInput.value.trim();
     if (!value) {
-      if (showError) setFieldError(emailField, emailError, 'Email is required.');
+      setFieldError('Please enter your email address.');
       return false;
     }
     if (!EMAIL_RE.test(value)) {
-      if (showError) setFieldError(emailField, emailError, 'Enter a valid email address.');
+      setFieldError('Please enter a valid email address.');
       return false;
     }
-    clearFieldError(emailField, emailError);
-    currentIdentifier = value;
+    clearFieldError();
     return true;
   }
 
-  function validatePasswords(showError) {
-    let ok = true;
-
-    if (!newPassword.value) {
-      if (showError) setFieldError(newPassword.closest('.field'), newPasswordError, 'New password is required.');
-      ok = false;
-    } else if (newPassword.value.length < 8) {
-      if (showError) setFieldError(newPassword.closest('.field'), newPasswordError, 'Password must be at least 8 characters.');
-      ok = false;
-    } else {
-      clearFieldError(newPassword.closest('.field'), newPasswordError);
-    }
-
-    if (!confirmPassword.value) {
-      if (showError) setFieldError(confirmPassword.closest('.field'), confirmPasswordError, 'Confirm password is required.');
-      ok = false;
-    } else if (confirmPassword.value !== newPassword.value) {
-      if (showError) setFieldError(confirmPassword.closest('.field'), confirmPasswordError, 'Passwords do not match.');
-      ok = false;
-    } else {
-      clearFieldError(confirmPassword.closest('.field'), confirmPasswordError);
-    }
-
-    return ok;
+  function setFieldError(message) {
+    emailInput.closest('.field').classList.add('has-error');
+    emailError.textContent = message;
+    emailError.style.display = 'block';
   }
 
-  function setView(view) {
-    requestForm.classList.toggle('hidden', view !== 'request');
-    otpForm.classList.toggle('hidden', view !== 'otp');
-    resetForm.classList.toggle('hidden', view !== 'reset');
-    brandHeader.classList.toggle('compact', view === 'reset');
-    backBtn.dataset.view = view;
-
-    if (view === 'request') {
-      pageTitle.textContent = 'Forgot Password';
-      pageSubtitle.textContent = 'Enter your email address to receive an OTP to reset your password.';
-      backBtn.href = '../login/login.html';
-      destroyForgotOtpVerifier();
-      setTimeout(() => emailInput.focus({ preventScroll: true }), 100);
-    }
-
-    if (view === 'otp') {
-      pageTitle.textContent = 'Verify OTP';
-      pageSubtitle.textContent = `Enter the code sent to ${currentIdentifier}.`;
-      backBtn.href = '#';
-      mountForgotOtpVerifier();
-    }
-
-    if (view === 'reset') {
-      pageTitle.textContent = 'Set New Password';
-      pageSubtitle.textContent = 'Create a new password for your account.';
-      backBtn.href = '#';
-      setTimeout(() => newPassword.focus({ preventScroll: true }), 100);
-    }
+  function clearFieldError() {
+    emailInput.closest('.field').classList.remove('has-error');
+    emailError.textContent = '';
+    emailError.style.display = 'none';
   }
 
-  function toggleMethodFields() {
-    const byEmail = otpMethod.value === 'email';
-    emailField.classList.toggle('hidden', !byEmail);
-    phoneField.classList.toggle('hidden', byEmail);
-    clearFieldError(emailField, emailError);
-    clearFieldError(phoneInput.closest('.field'), phoneError);
-  }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!validateEmail()) return;
 
-  async function sendOtp(isResend) {
-    if (!validateIdentifier(true)) {
-      showToast('Please fix the highlighted field.', 'error');
-      return;
-    }
+    setButtonLoading(true);
 
-    if (!isResend) setButtonLoading(sendOtpBtn, true);
+    const email = emailInput.value.trim().toLowerCase();
 
     try {
-      const body = { email: currentIdentifier };
-
-      const response = await fetch(`${API_BASE}/forgot-password/send-otp`, {
+      const response = await fetch(`${API_BASE}/forgot-password/request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ email }),
       });
-      const data = await parseResponse(response);
 
-      if (!response.ok) {
-        const message = data.error || 'Could not send OTP.';
-        showToast(message, 'error');
-        if (isResend) return { success: false, message };
+      // We don't really care about the response body status for success vs account-not-found
+      // because we show a generic message either way for security.
+      // But we do care about server errors or validation errors.
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok && response.status !== 404) {
+        showToast(data.error || 'Something went wrong. Please try again.', 'error');
+        setButtonLoading(false);
         return;
       }
 
-      if (data.otp) {
-        showToast(`Development OTP: ${data.otp}`, 'success');
-      } else {
-        showToast(data.message || 'OTP sent successfully.', 'success');
-      }
+      // Redirect to check-email page, passing email as param for UI
+      window.location.href = `check-email.html?email=${encodeURIComponent(email)}`;
 
-      if (!isResend) setView('otp');
-      if (isResend) {
-        return { success: true };
-      }
     } catch (err) {
-      const message = 'Could not reach the server. Is it running?';
-      showToast(message, 'error');
-      if (isResend) return { success: false, message };
-    } finally {
-      if (!isResend) setButtonLoading(sendOtpBtn, false);
-    }
-
-    return { success: true };
-  }
-
-  async function verifyOtp(code) {
-    try {
-      const body = { email: currentIdentifier, otp: code };
-
-      const response = await fetch(`${API_BASE}/forgot-password/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await parseResponse(response);
-
-      if (!response.ok) {
-        showToast(data.error || 'OTP verification failed.', 'error');
-        return { success: false, message: 'Invalid verification code. Please try again.' };
-      }
-
-      resetToken = data.resetToken;
-      showToast('OTP verified. Set your new password.', 'success');
-      return { success: true };
-    } catch (err) {
-      const message = 'Could not reach the server. Is it running?';
-      showToast(message, 'error');
-      return { success: false, message };
+      showToast('Could not reach the server. Please check your connection.', 'error');
+      setButtonLoading(false);
     }
   }
 
-  async function resetPassword() {
-    if (!validatePasswords(true)) {
-      showToast('Please fix the highlighted fields.', 'error');
-      return;
-    }
-    if (!resetToken) {
-      showToast('Reset session expired. Request OTP again.', 'error');
-      setView('request');
-      return;
-    }
+  requestForm.addEventListener('submit', handleSubmit);
+  emailInput.addEventListener('input', clearFieldError);
 
-    setButtonLoading(setPasswordBtn, true);
-
-    try {
-      const response = await fetch(`${API_BASE}/forgot-password/reset`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resetToken, newPassword: newPassword.value }),
-      });
-      const data = await parseResponse(response);
-
-      if (!response.ok) {
-        showToast(data.error || 'Could not set password.', 'error');
-        return;
-      }
-
-      showToast('Password successfully set. Redirecting to login...', 'success');
-      setTimeout(() => {
-        window.location.href = '../login/login.html';
-      }, 1400);
-    } catch (err) {
-      showToast('Could not reach the server. Is it running?', 'error');
-    } finally {
-      setButtonLoading(setPasswordBtn, false);
-    }
-  }
-
-  function destroyForgotOtpVerifier() {
-    if (forgotOtpVerifier) {
-      forgotOtpVerifier.destroy();
-      forgotOtpVerifier = null;
-    }
-    if (forgotOtpMount) forgotOtpMount.innerHTML = '';
-  }
-
-  function mountForgotOtpVerifier() {
-    destroyForgotOtpVerifier();
-    forgotOtpVerifier = new OtpVerifier(forgotOtpMount, {
-      length: 6,
-      resendSeconds: 30,
-      showResend: true,
-      interceptBackButton: false,
-      onComplete: verifyOtp,
-      onResend: () => sendOtp(true),
-      onVerified: () => setView('reset'),
-    });
-  }
-
-  // ---------- Ripple effect ----------
-  function attachRipple(button) {
-    button.addEventListener('click', function (e) {
-      const rect = button.getBoundingClientRect();
-      const ripple = document.createElement('span');
-      const size = Math.max(rect.width, rect.height);
-      ripple.className = 'ripple';
-      ripple.style.width = ripple.style.height = size + 'px';
-      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-      button.appendChild(ripple);
-      ripple.addEventListener('animationend', () => ripple.remove());
-    });
-  }
-  [sendOtpBtn, setPasswordBtn].forEach(attachRipple);
-
-  emailInput.addEventListener('input', () => {
-    if (emailField.classList.contains('has-error')) validateIdentifier(true);
-  });
-
-  requestForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    sendOtp(false);
-  });
-
-  otpForm.addEventListener('submit', (e) => e.preventDefault());
-
-  resetForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    resetPassword();
-  });
-
-  backBtn.addEventListener('click', (e) => {
-    const view = backBtn.dataset.view;
-    if (view === 'otp') {
-      e.preventDefault();
-      setView('request');
-    }
-    if (view === 'reset') {
-      e.preventDefault();
-      setView('otp');
-    }
-  });
-
-  document.querySelectorAll('.toggle-password').forEach((button) => {
-    button.addEventListener('click', () => {
-      const input = document.getElementById(button.dataset.target);
-      const showing = input.type === 'text';
-      input.type = showing ? 'password' : 'text';
-      button.textContent = showing ? 'Show' : 'Hide';
-      button.setAttribute('aria-pressed', String(!showing));
-      button.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
-      input.focus({ preventScroll: true });
-    });
-  });
-
-  newPassword.addEventListener('input', () => {
-    if (newPassword.closest('.field').classList.contains('has-error')) validatePasswords(true);
-  });
-  confirmPassword.addEventListener('input', () => {
-    if (confirmPassword.closest('.field').classList.contains('has-error')) validatePasswords(true);
-  });
-
-  toggleMethodFields();
-  setView('request');
 })();
