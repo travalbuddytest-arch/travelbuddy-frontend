@@ -148,12 +148,12 @@
       currentEmail = regEmail.value.trim().toLowerCase();
       currentPhone = `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`;
       document.getElementById('emailOtpLabel').textContent = `Enter the 6-digit code we sent to your email: ${currentEmail}.`;
-      document.getElementById('phoneOtpLabel').textContent = `Enter the 6-digit code we sent to your mobile number: ${currentPhone}.`;
+      // document.getElementById('phoneOtpLabel').textContent = `Enter the 6-digit code we sent to your mobile number: ${currentPhone}.`;
 
-      if (data.emailOtp || data.phoneOtp) {
-        showToast(`Development OTPs — Email: ${data.emailOtp || 'sent'}, Mobile: ${data.phoneOtp || 'sent'}`, 'success');
+      if (data.emailOtp) {
+        showToast(`Development OTP — Email: ${data.emailOtp}`, 'success');
       } else {
-        showToast(data.message || 'Verification codes sent.', 'success');
+        showToast(data.message || 'Verification code sent.', 'success');
       }
       goToPanel('verify');
       mountOtpVerifiers();
@@ -168,26 +168,21 @@
 
   // ---------- OTP (OtpVerifier component: wobble + success-morph + resend timer + back nav) ----------
   const emailOtpMount = document.getElementById('emailOtpMount');
-  const phoneOtpMount = document.getElementById('phoneOtpMount');
+  // const phoneOtpMount = document.getElementById('phoneOtpMount');
 
   let emailOtpVerifier = null;
-  let phoneOtpVerifier = null;
+  // let phoneOtpVerifier = null;
 
-  // Both channels are verified together against one endpoint, so we buffer
-  // whichever code finishes first (it wobbles while it waits) and only call
-  // the API once both are complete.
-  const otpState = { emailCode: null, phoneCode: null, emailResolve: null, phoneResolve: null, verifying: false };
+  // Registration now only requires email verification.
+  const otpState = { emailCode: null, emailResolve: null, verifying: false };
 
   function tryVerifyOtp() {
-    if (otpState.emailCode == null || otpState.phoneCode == null) return;
-    if (otpState.emailCode.length < 6 || otpState.phoneCode.length < 6) return;
+    if (otpState.emailCode == null || otpState.emailCode.length < 6) return;
     if (otpState.verifying) return;
     otpState.verifying = true;
 
     const emailOtp = otpState.emailCode;
-    const phoneOtp = otpState.phoneCode;
     const emailResolve = otpState.emailResolve;
-    const phoneResolve = otpState.phoneResolve;
 
     (async () => {
       try {
@@ -198,38 +193,24 @@
             email: currentEmail || regEmail.value.trim().toLowerCase(),
             phone: currentPhone || `${countryCode.value}${phone.value.trim().replace(/[\s-]/g, '')}`,
             emailOtp,
-            phoneOtp,
+            phoneOtp: '000000', // Backend now ignores this but we send a dummy to avoid breakage if any
           }),
         });
         const data = await response.json();
 
         if (!response.ok) {
-          // e.g. "Incorrect code." or "Code expired." — point the message at
-          // whichever box it refers to; the account still wasn't created,
-          // so both boxes shake and reset for re-entry.
-          const errLower = (data.error || '').toLowerCase();
-          let emailMsg = 'Invalid verification code. Please try again.';
-          let phoneMsg = 'Invalid verification code. Please try again.';
-          if (errLower.includes('email')) phoneMsg = 'Verification failed.';
-          else if (errLower.includes('mobile') || errLower.includes('phone')) emailMsg = 'Verification failed.';
-
           showToast(data.error || 'Verification failed.', 'error');
-          emailResolve({ success: false, message: emailMsg });
-          phoneResolve({ success: false, message: phoneMsg });
+          emailResolve({ success: false, message: 'Invalid verification code.' });
         } else {
           showToast('Welcome to TravelBuddy! Your account has been created.', 'success');
           emailResolve({ success: true });
-          phoneResolve({ success: true });
         }
       } catch (err) {
         showToast('Could not reach the server. Is it running?', 'error');
         emailResolve({ success: false, message: 'Could not reach the server.' });
-        phoneResolve({ success: false, message: 'Could not reach the server.' });
       } finally {
         otpState.emailCode = null;
-        otpState.phoneCode = null;
         otpState.emailResolve = null;
-        otpState.phoneResolve = null;
         otpState.verifying = false;
       }
     })();
@@ -242,11 +223,9 @@
 
   function destroyOtpVerifiers() {
     if (emailOtpVerifier) { emailOtpVerifier.destroy(); emailOtpVerifier = null; }
-    if (phoneOtpVerifier) { phoneOtpVerifier.destroy(); phoneOtpVerifier = null; }
+    // if (phoneOtpVerifier) { phoneOtpVerifier.destroy(); phoneOtpVerifier = null; }
     otpState.emailCode = null;
-    otpState.phoneCode = null;
     otpState.emailResolve = null;
-    otpState.phoneResolve = null;
     otpState.verifying = false;
   }
 
@@ -261,7 +240,6 @@
       onComplete: (code) => new Promise((resolve) => {
         otpState.emailCode = code;
         otpState.emailResolve = resolve;
-        if (otpState.phoneCode == null && phoneOtpVerifier) phoneOtpVerifier.focus();
         tryVerifyOtp();
       }),
       onResend: async () => {
@@ -280,17 +258,12 @@
             return { success: false, message: data.error || 'Could not resend code.' };
           }
 
-          if (data.emailOtp || data.phoneOtp) {
-            showToast(`Development OTPs — Email: ${data.emailOtp || 'sent'}, Mobile: ${data.phoneOtp || 'sent'}`, 'success');
+          if (data.emailOtp) {
+            showToast(`Development OTP — Email: ${data.emailOtp}`, 'success');
           } else {
-            showToast(data.message || 'New codes have been sent.', 'success');
+            showToast(data.message || 'New code has been sent.', 'success');
           }
 
-          // One resend covers both channels — mirror the reset/timer on the phone box too.
-          if (phoneOtpVerifier) {
-            phoneOtpVerifier.reset();
-            phoneOtpVerifier.startResendTimer();
-          }
           return { success: true };
         } catch (err) {
           return { success: false, message: 'Could not reach the server. Is it running?' };
@@ -304,6 +277,7 @@
       },
     });
 
+    /*
     phoneOtpVerifier = new OtpVerifier(phoneOtpMount, {
       length: 6,
       resendSeconds: 120,
@@ -315,6 +289,7 @@
         tryVerifyOtp();
       }),
     });
+    */
   }
 
   document.getElementById('goBack2').addEventListener('click', goBackFromOtp);
