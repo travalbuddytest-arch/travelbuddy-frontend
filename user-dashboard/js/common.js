@@ -407,6 +407,7 @@
     highlightActiveNav,
     isPrivacyMode,
     setPrivacyMode,
+    showToast,
   });
 
   const fetchCache = new Map();

@@ -7,6 +7,120 @@ html {
   scroll-padding-top: var(--topbar-h);
 }
 
+:root {
+  /* --- Professional Color Palette --- */
+  --tb-primary: #0D6EFD;
+  --tb-primary-hover: #0a58ca;
+  --tb-primary-soft: rgba(13, 110, 253, 0.06);
+  --tb-primary-light: #eef5ff;
+
+  --tb-secondary: #64748B;
+  --tb-secondary-hover: #475569;
+  --tb-secondary-soft: rgba(100, 116, 139, 0.06);
+
+  --tb-success: #10B981;
+  --tb-success-soft: #ECFDF5;
+  --tb-warning: #F59E0B;
+  --tb-warning-soft: #FFFBEB;
+  --tb-danger: #EF4444;
+  --tb-danger-soft: #FEF2F2;
+  --tb-info: #3B82F6;
+  --tb-info-soft: #EFF6FF;
+
+  /* --- Neutral & Surface Palette --- */
+  --tb-bg: #F8FAFC;
+  --tb-surface: #FFFFFF;
+  --tb-surface-elevated: #FFFFFF;
+  --tb-border: #E2E8F0;
+  --tb-border-hover: #CBD5E1;
+  --tb-border-strong: #CBD5E1;
+
+  --tb-text-main: #0F172A;
+  --tb-text-muted: #475569;
+  --tb-text-faint: #94A3B8;
+  --tb-navy: #0B213F;
+
+  /* --- Layout Constants --- */
+  --sidebar-w: 260px;
+  --sidebar-w-collapsed: 80px;
+  --sidebar-current-w: var(--sidebar-w);
+  --topbar-h: 72px;
+
+  /* --- Design Tokens --- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-premium: 0 10px 30px -12px rgba(20, 38, 66, 0.08);
+  --shadow-hover: 0 20px 40px -12px rgba(13, 110, 253, 0.12);
+
+  --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* --- Dynamic Spacing --- */
+  --container-px: 40px;
+  --content-pt: 32px;
+  --content-pb: 48px;
+  --grid-gap: 24px;
+  --section-gap: 32px;
+
+  /* --- Legacy & Semantic Aliases for Compatibility --- */
+  --primary: var(--tb-primary);
+  --secondary: var(--tb-secondary);
+  --surface: var(--tb-surface);
+  --border: var(--tb-border);
+  --text-main: var(--tb-text-main);
+  --text-muted: var(--tb-text-muted);
+  --text-faint: var(--tb-text-faint);
+  --bg: var(--tb-bg);
+  --error: var(--tb-danger);
+  --error-bg: var(--tb-danger-soft);
+  --success: var(--tb-success);
+  --warning: var(--tb-warning);
+  --info: var(--tb-info);
+  --font: var(--font-main);
+
+  /* --- Z-index Layer System --- */
+  --z-sticky: 100;
+  --z-drawer-overlay: 190;
+  --z-drawer: 200;
+  --z-dropdown: 500;
+  --z-modal-backdrop: 1000;
+  --z-toast: 3000;
+}
+
+[id] {
+  scroll-margin-top: calc(var(--topbar-h) + 30px);
+}
+
+html.sidebar-collapsed body,
+body.sidebar-collapsed {
+  --sidebar-current-w: var(--sidebar-w-collapsed);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { width: 100%; max-width: 100%; margin: 0; min-height: 100%; overflow-x: hidden; }
+img, video, svg, canvas { max-width: 100%; }
+img { height: auto; }
+
+/* Keep the dashboard responsive for people who request reduced motion and
+   avoid continuous paint work on lower-powered mobile devices. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   font-family: var(--font-main);
   background: var(--tb-bg);
@@ -14,7 +128,7 @@ body {
   -webkit-font-smoothing: antialiased;
   position: relative;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   overflow-x: hidden;
   min-height: 100vh;
   /* Use dvh for modern mobile browsers to avoid address bar jumps */
@@ -874,7 +988,7 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--tb-border);
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -935,6 +1049,7 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   transform: translateY(-50%);
   color: var(--tb-text-faint);
   font-size: 14px;
+  z-index: 5;
 }
 
 .search-wrap input {
@@ -1876,14 +1991,25 @@ input:focus-visible {
 
   .search-wrap {
     max-width: 44px;
+    min-width: 44px;
+    flex-shrink: 0;
     transition: max-width 0.3s ease;
+    overflow: hidden;
   }
   .search-wrap:focus-within {
-    max-width: 200px;
+    max-width: calc(100vw - 80px);
     position: absolute;
     right: var(--container-px);
     z-index: 10;
     background: #fff;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lg);
+  }
+  .search-wrap i {
+    z-index: 2;
+  }
+  .search-wrap input {
+    width: 100%;
   }
   .search-wrap input::placeholder {
     color: transparent;

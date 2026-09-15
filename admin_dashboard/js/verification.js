@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    const { apiGet, apiPatch, showToast } = window;
+    const { apiGet, apiPatch, showToast, API_ORIGIN } = window;
 
     let state = {
         users: [],
@@ -135,6 +135,11 @@
         });
     }
 
+    function getDocUrl(filename) {
+        if (!filename) return '';
+        return `${API_ORIGIN}/api/admin/docs/${filename}`;
+    }
+
     async function openReview(userId) {
         const user = state.users.find(u => u._id === userId);
         if (!user) return;
@@ -148,21 +153,21 @@
             <div class="vd-review-grid">
                 <div class="vd-doc-box">
                     <span class="vd-doc-label">Face Selfie</span>
-                    <div class="vd-img-wrap" onclick="window.open('/api/admin/docs/${user.kyc.selfie.url}', '_blank')">
-                        <img src="/api/admin/docs/${user.kyc.selfie.url}" alt="Selfie" />
+                    <div class="vd-img-wrap" onclick="window.open('${getDocUrl(user.kyc.selfie.url)}', '_blank')">
+                        <img src="${getDocUrl(user.kyc.selfie.url)}" alt="Selfie" />
                     </div>
                 </div>
                 <div class="vd-doc-box">
                     <span class="vd-doc-label">Government ID</span>
-                    <div class="vd-img-wrap" onclick="window.open('/api/admin/docs/${user.kyc.governmentId.url}', '_blank')">
-                        <img src="/api/admin/docs/${user.kyc.governmentId.url}" alt="ID" />
+                    <div class="vd-img-wrap" onclick="window.open('${getDocUrl(user.kyc.governmentId.url)}', '_blank')">
+                        <img src="${getDocUrl(user.kyc.governmentId.url)}" alt="ID" />
                     </div>
                 </div>
                 ${user.kyc.selfieWithId?.url ? `
                 <div class="vd-doc-box">
-                    <span class="vd-doc-label">Selfie with ID</span>
-                    <div class="vd-img-wrap" onclick="window.open('/api/admin/docs/${user.kyc.selfieWithId.url}', '_blank')">
-                        <img src="/api/admin/docs/${user.kyc.selfieWithId.url}" alt="Selfie with ID" />
+                    <span class="vd-doc-label">ID + Face Selfie</span>
+                    <div class="vd-img-wrap" onclick="window.open('${getDocUrl(user.kyc.selfieWithId.url)}', '_blank')">
+                        <img src="${getDocUrl(user.kyc.selfieWithId.url)}" alt="Selfie with ID" />
                     </div>
                 </div>
                 ` : ''}

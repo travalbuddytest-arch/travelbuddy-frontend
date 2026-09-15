@@ -111,6 +111,7 @@ function fmtMoney(n) {
 }
 
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
+window.API_ORIGIN = API_ORIGIN;
 
 async function apiGet(url) {
   const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');

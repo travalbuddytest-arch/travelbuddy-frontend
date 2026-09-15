@@ -59,11 +59,11 @@ img { height:auto; }
 }
 
 /* ---------- QUICK CARDS ---------- */
-.ct-cards-wrap{ padding:0 var(--container-px); margin-top:-10px; position:relative; z-index:2; }
+.ct-cards-wrap{ padding:0 var(--container-px); margin-top: 50px; position:relative; z-index:2; }
 
 /* ---------- PROCESS ---------- */
 .ct-process {
-    padding: clamp(2rem, 5vh, 3.5rem) 0;
+    padding: clamp(3rem, 8vh, 5rem) 0;
     background: var(--tb-bg-alt, #f8f9fb);
     text-align: center;
 }
@@ -80,18 +80,16 @@ img { height:auto; }
 }
 .ct-cards{
     max-width:1200px; margin:0 auto;
-    display:grid; grid-template-columns:repeat(2, 1fr); gap:24px;
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;
 }
 
 @media(min-width: 901px) {
     .ct-card:nth-child(3) {
-        grid-column: span 2;
-        flex-direction: row;
-        align-items: center;
-        gap: 30px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
     }
-    .ct-card:nth-child(3) .ct-card-icon { margin-bottom: 0; }
-    .ct-card:nth-child(3) .ct-card-cta { margin-left: auto; }
+    .ct-card:nth-child(3) .ct-card-cta { margin-left: 0; }
 }
 
 @media(max-width:900px){
