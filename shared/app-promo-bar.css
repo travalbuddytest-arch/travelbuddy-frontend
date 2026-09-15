@@ -13,7 +13,7 @@
     height: var(--tb-promo-height);
     background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
     color: #ffffff;
-    z-index: 1100;
+    z-index: var(--z-sticky, 1100);
     display: flex;
     align-items: center;
     justify-content: center;

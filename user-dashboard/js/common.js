@@ -1130,65 +1130,67 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <div class="profile-head">
-          <div class="avatar profile-avatar" id="profileAvatar">TB</div>
-          <div>
-            <h2 class="modal-title" id="profileModalTitle">My Profile</h2>
-            <p class="profile-email" id="profileEmailText">Signed in user</p>
+        <div class="profile-modal-scroll">
+          <div class="profile-head">
+            <div class="avatar profile-avatar" id="profileAvatar">TB</div>
+            <div>
+              <h2 class="modal-title" id="profileModalTitle">My Profile</h2>
+              <p class="profile-email" id="profileEmailText">Signed in user</p>
+            </div>
           </div>
+
+          <div class="profile-tabs" role="tablist">
+            <button class="tab-btn active" type="button" data-profile-tab="profile">Profile</button>
+            <button class="tab-btn" type="button" data-profile-tab="details">Details</button>
+            <button class="tab-btn" type="button" data-profile-tab="settings">Settings</button>
+          </div>
+
+          <section class="profile-tab-panel profile-photo-only" id="profileTabProfile">
+            <div class="profile-photo-focus">
+              <div class="avatar profile-avatar profile-avatar-large" id="profilePhotoPreview">TB</div>
+              <div class="profile-photo-actions">
+                <label class="btn-ghost profile-photo-btn" for="profilePhotoInput"><i class="fa-solid fa-camera"></i><span id="profilePhotoActionText">Add Photo</span></label>
+                <input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden>
+                <button type="button" class="btn-ghost" id="removeProfilePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button>
+              </div>
+              <p class="profile-photo-help">Your photo is saved to your TravelBuddy account and shown in your profile avatar.</p>
+            </div>
+          </section>
+
+          <section class="profile-tab-panel hidden" id="profileTabDetails">
+            <form class="stack-form" id="dashboardProfileForm">
+              <div class="form-row">
+                <div class="field"><label for="profileFirstName">First Name</label><input type="text" id="profileFirstName" required /></div>
+                <div class="field"><label for="profileLastName">Last Name</label><input type="text" id="profileLastName" required /></div>
+              </div>
+              <div class="field"><label for="profileEmail">Email</label><input type="email" id="profileEmail" disabled /></div>
+              <div class="field"><label for="profilePhone">Mobile Number</label><input type="tel" id="profilePhone" placeholder="+919876543210" /></div>
+              <button type="submit" class="btn-primary"><span class="btn-label"><i class="fa-solid fa-bookmark"></i> Save Profile</span><span class="spinner" aria-hidden="true"></span></button>
+            </form>
+          </section>
+
+          <section class="profile-tab-panel hidden" id="profileTabSettings">
+            <form class="stack-form" id="dashboardPasswordForm">
+              <div class="field">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" autocomplete="current-password" />
+              </div>
+              <div class="field">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" autocomplete="new-password" />
+              </div>
+              <button type="submit" class="btn-primary">
+                <span class="btn-label"><i class="fa-solid fa-key"></i> Change Password</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+            </form>
+            <div class="profile-danger">
+              <button type="button" class="btn-ghost" id="profileLogoutBtn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log out
+              </button>
+            </div>
+          </section>
         </div>
-
-        <div class="profile-tabs" role="tablist">
-          <button class="tab-btn active" type="button" data-profile-tab="profile">Profile</button>
-          <button class="tab-btn" type="button" data-profile-tab="details">Details</button>
-          <button class="tab-btn" type="button" data-profile-tab="settings">Settings</button>
-        </div>
-
-        <section class="profile-tab-panel profile-photo-only" id="profileTabProfile">
-          <div class="profile-photo-focus">
-            <div class="avatar profile-avatar profile-avatar-large" id="profilePhotoPreview">TB</div>
-            <div class="profile-photo-actions">
-              <label class="btn-ghost profile-photo-btn" for="profilePhotoInput"><i class="fa-solid fa-camera"></i><span id="profilePhotoActionText">Add Photo</span></label>
-              <input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden>
-              <button type="button" class="btn-ghost" id="removeProfilePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button>
-            </div>
-            <p class="profile-photo-help">Your photo is saved to your TravelBuddy account and shown in your profile avatar.</p>
-          </div>
-        </section>
-
-        <section class="profile-tab-panel hidden" id="profileTabDetails">
-          <form class="stack-form" id="dashboardProfileForm">
-            <div class="form-row">
-              <div class="field"><label for="profileFirstName">First Name</label><input type="text" id="profileFirstName" required /></div>
-              <div class="field"><label for="profileLastName">Last Name</label><input type="text" id="profileLastName" required /></div>
-            </div>
-            <div class="field"><label for="profileEmail">Email</label><input type="email" id="profileEmail" disabled /></div>
-            <div class="field"><label for="profilePhone">Mobile Number</label><input type="tel" id="profilePhone" placeholder="+919876543210" /></div>
-            <button type="submit" class="btn-primary"><span class="btn-label"><i class="fa-solid fa-bookmark"></i> Save Profile</span><span class="spinner" aria-hidden="true"></span></button>
-          </form>
-        </section>
-
-        <section class="profile-tab-panel hidden" id="profileTabSettings">
-          <form class="stack-form" id="dashboardPasswordForm">
-            <div class="field">
-              <label for="currentPassword">Current Password</label>
-              <input type="password" id="currentPassword" autocomplete="current-password" />
-            </div>
-            <div class="field">
-              <label for="newPassword">New Password</label>
-              <input type="password" id="newPassword" autocomplete="new-password" />
-            </div>
-            <button type="submit" class="btn-primary">
-              <span class="btn-label"><i class="fa-solid fa-key"></i> Change Password</span>
-              <span class="spinner" aria-hidden="true"></span>
-            </button>
-          </form>
-          <div class="profile-danger">
-            <button type="button" class="btn-ghost" id="profileLogoutBtn">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i> Log out
-            </button>
-          </div>
-        </section>
       </div>
     `;
 

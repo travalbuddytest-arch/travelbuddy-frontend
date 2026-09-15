@@ -25,6 +25,7 @@
 
 .footer-container{
     width: 100%;
+    max-width: 1320px;
     margin: 0 auto;
     min-width: 0;
     padding: var(--section-padding) var(--container-px) 0;

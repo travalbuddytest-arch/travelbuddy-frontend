@@ -214,13 +214,13 @@
         </header>
 
         <div class="parcels-controls" style="margin-bottom: 32px; background: #fff; padding: 24px; border-radius: 16px; border: 1px solid var(--tb-border); box-shadow: var(--shadow-sm);">
-          <div class="filter-bar" id="statusFilterTabs" style="margin-bottom:24px; overflow-x:auto; padding-bottom:12px; border-bottom: 1px solid var(--tb-border); display: flex; gap: 8px; flex-wrap: nowrap;">
-            <button class="filter-pill active" data-status="all" type="button" style="white-space: nowrap;">All Parcels</button>
-            <button class="filter-pill" data-status="active" type="button" style="white-space: nowrap;">Active</button>
-            <button class="filter-pill" data-status="pending" type="button" style="white-space: nowrap;">Pending</button>
-            <button class="filter-pill" data-status="accepted" type="button" style="white-space: nowrap;">Accepted</button>
-            <button class="filter-pill" data-status="in_transit" type="button" style="white-space: nowrap;">In Transit</button>
-            <button class="filter-pill" data-status="delivered" type="button" style="white-space: nowrap;">Delivered</button>
+          <div class="tab-row" id="statusFilterTabs" style="margin-bottom:24px; border-bottom: 1px solid var(--tb-border);">
+            <button class="tab-btn active" data-status="all" type="button">All Parcels</button>
+            <button class="tab-btn" data-status="active" type="button">Active</button>
+            <button class="tab-btn" data-status="pending" type="button">Pending</button>
+            <button class="tab-btn" data-status="accepted" type="button">Accepted</button>
+            <button class="tab-btn" data-status="in_transit" type="button">In Transit</button>
+            <button class="tab-btn" data-status="delivered" type="button">Delivered</button>
           </div>
 
           <div class="search-row" style="display: flex; gap: 12px; flex-wrap: wrap;">

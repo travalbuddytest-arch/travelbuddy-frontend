@@ -112,16 +112,16 @@
 
       return `
         <tr>
-          <td style="font-size:12.5px; color:var(--text-muted);">${escapeHTML(dateStr)}</td>
-          <td>
+          <td data-label="Date & Time" style="font-size:12.5px; color:var(--text-muted);">${escapeHTML(dateStr)}</td>
+          <td data-label="Description">
             <strong style="display:block; font-size:13.5px; color:var(--text-main);">${escapeHTML(tx.description || 'Transaction')}</strong>
             <span style="font-size:11.5px; font-family:monospace; color:var(--text-faint);">${escapeHTML(tx.referenceId || '')}</span>
           </td>
-          <td style="text-transform:capitalize; font-size:13px;">${escapeHTML(typeLabel)}</td>
-          <td style="font-weight:800; font-size:14px; ${colorStyle}">
+          <td data-label="Type" style="text-transform:capitalize; font-size:13px;">${escapeHTML(typeLabel)}</td>
+          <td data-label="Amount" style="font-weight:800; font-size:14px; ${colorStyle}">
             ${sign}${displayAmount}
           </td>
-          <td>${statusBadge(tx.status || 'completed')}</td>
+          <td data-label="Status">${statusBadge(tx.status || 'completed')}</td>
         </tr>
       `;
     }).join('');

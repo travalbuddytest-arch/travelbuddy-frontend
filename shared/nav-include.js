@@ -74,13 +74,33 @@
     }
 
     function highlightActiveLink() {
-        var currentPage = document.body.getAttribute('data-page');
-        if (currentPage) {
-            var links = document.querySelectorAll('#mainNav a[data-page]');
-            for (var i = 0; i < links.length; i++) {
-                if (links[i].getAttribute('data-page') === currentPage) {
-                    links[i].classList.add('active');
-                }
+        var bodyPage = document.body.getAttribute('data-page');
+        var path = window.location.pathname.toLowerCase();
+
+        // Normalize path: remove .html, remove trailing slashes, remove /index
+        var normalizedPath = path.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+        if (normalizedPath.endsWith('/index')) normalizedPath = normalizedPath.slice(0, -6) || '/';
+
+        var links = document.querySelectorAll('#mainNav a[data-page]');
+        var foundByPath = false;
+
+        for (var i = 0; i < links.length; i++) {
+            var link = links[i];
+            var linkPage = link.getAttribute('data-page');
+            var href = link.getAttribute('href') || '';
+            var normalizedHref = href.toLowerCase().replace(/\.html$/, '').replace(/\/$/, '') || '/';
+            if (normalizedHref.endsWith('/index')) normalizedHref = normalizedHref.slice(0, -6) || '/';
+
+            // Priority 1: Match by normalized pathname (most robust for SEO/Firebase rewrites)
+            if (normalizedPath === normalizedHref) {
+                link.classList.add('active');
+                foundByPath = true;
+            }
+            // Priority 2: Match by data-page attribute (fallback if paths don't align)
+            else if (!foundByPath && bodyPage && linkPage === bodyPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
             }
         }
     }

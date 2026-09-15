@@ -1,0 +1,73 @@
+<link rel="stylesheet" href="../css/admin.css">
+<!-- Using parcels.css for consistent table and KPI styles -->
+<link rel="stylesheet" href="../css/parcels.css">
+
+<section id="contact-messages-panel" class="panel pc-panel">
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <div class="pc-kpi-grid" id="cmKpiGrid">
+    <div class="pc-kpi" data-status="all"><div class="pc-kpi-icon"><i class="fa-solid fa-envelope"></i></div><div class="pc-kpi-data"><span>Total Inquiries</span><strong class="cm-count" id="cmCountTotal">0</strong><small>Lifetime</small></div></div>
+    <div class="pc-kpi" data-status="unread"><div class="pc-kpi-icon pending"><i class="fa-solid fa-envelope-circle-check"></i></div><div class="pc-kpi-data"><span>Unread</span><strong class="cm-count" id="cmCountUnread">0</strong><small>Needs attention</small></div></div>
+    <div class="pc-kpi" data-status="in_progress"><div class="pc-kpi-icon accepted"><i class="fa-solid fa-spinner fa-spin"></i></div><div class="pc-kpi-data"><span>In Progress</span><strong class="cm-count" id="cmCountInProgress">0</strong><small>Being handled</small></div></div>
+    <div class="pc-kpi" data-status="replied"><div class="pc-kpi-icon delivered"><i class="fa-solid fa-reply"></i></div><div class="pc-kpi-data"><span>Replied</span><strong class="cm-count" id="cmCountReplied">0</strong><small>Responses sent</small></div></div>
+    <div class="pc-kpi" data-status="closed"><div class="pc-kpi-icon cancelled"><i class="fa-solid fa-check-double"></i></div><div class="pc-kpi-data"><span>Closed</span><strong class="cm-count" id="cmCountClosed">0</strong><small>Resolved</small></div></div>
+  </div>
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="pc-toolbar">
+    <div class="pc-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="cmSearch" placeholder="Search by name, email, subject, or message content..." aria-label="Search inquiries">
+    </div>
+    <div class="pc-toolbar-actions">
+      <button class="pc-btn pc-btn-icon" id="cmRefreshBtn" title="Refresh" aria-label="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <select id="cmStatusFilter" class="pc-select" aria-label="Filter by status">
+        <option value="all">All Statuses</option>
+        <option value="unread">Unread</option>
+        <option value="read">Read</option>
+        <option value="in_progress">In Progress</option>
+        <option value="replied">Replied</option>
+        <option value="closed">Closed</option>
+      </select>
+      <span class="pc-badge" id="cmResultCount">0 inquiries</span>
+    </div>
+  </div>
+
+  <!-- ═══ DATA TABLE ═══ -->
+  <div class="pc-table-wrap">
+    <table class="pc-table" id="cmTable" role="grid" aria-label="Contact inquiries table">
+      <thead>
+        <tr>
+          <th class="sortable" data-col="fullName">Name</th>
+          <th class="sortable" data-col="email">Email</th>
+          <th>Subject</th>
+          <th class="sortable" data-col="createdAt">Submitted</th>
+          <th>User Type</th>
+          <th>Status</th>
+          <th class="pc-th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="cmTableBody">
+        <tr><td colspan="7" class="pc-empty"><div class="pc-skeleton-row"></div><div class="pc-skeleton-row"></div><div class="pc-skeleton-row"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ PAGINATION ═══ -->
+  <div class="pc-pagination" id="cmPagination"></div>
+
+  <!-- ═══ INQUIRY DETAILS DRAWER ═══ -->
+  <div class="pc-drawer-overlay hidden" id="cmDrawerOverlay">
+    <aside class="pc-drawer" id="cmDrawer" role="dialog" aria-modal="true" aria-label="Inquiry details">
+      <div class="pc-drawer-header">
+        <h2 id="cmDrawerTitle">Inquiry Details</h2>
+        <button class="pc-btn pc-btn-icon" id="cmDrawerClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pc-drawer-body" id="cmDrawerBody">
+        <div class="pc-loading">Loading…</div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="../js/contact-messages.js"></script>
+</section>

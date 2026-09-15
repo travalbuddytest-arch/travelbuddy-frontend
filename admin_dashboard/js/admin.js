@@ -8,7 +8,7 @@ const dashboardInfo = {
   users: ['User Management', 'Complete user profiles, activity and account controls'],
   'active-users': ['Active Users', "Who's on TravelBuddy right now, and who visited recently"],
   'user-activity': ['User Activity', 'Real-time feed of all user actions across the platform'],
-  verification: ['Verification', 'Review and manage user KYC submissions'],
+  verification: ['Identity Verification', 'Review and approve user identity documents'],
   parcels: ['Parcel Control', 'Search, inspect and manage every parcel journey'],
   'live-tracking': ['Live Parcel Tracking', 'Authorized live location monitoring for active parcels'],
   trips: ['Traveler Trips', 'Manage and monitor all traveler routes posted on the platform'],
@@ -18,6 +18,7 @@ const dashboardInfo = {
   withdrawals: ['Withdrawals', 'Process and manage user fund withdrawal requests'],
   messages: ['Messages', 'Oversight of user conversations for support and safety'],
   'support-reports': ['Support & Reports', 'Manage user support tickets and general reports'],
+  'contact-messages': ['Contact Messages', 'Manage inquiries submitted via the public contact form'],
   notifications: ['Notifications', 'Review platform notification activity and delivery'],
   reviews: ['Reviews', 'Oversight and moderation of user ratings and reviews'],
   'reports-disputes': ['Reports & Disputes', 'Resolution center for user, parcel and safety reports'],
@@ -88,6 +89,11 @@ const infoCards = {
     ['fa-server', 'API Health', 'Monitor response time and backend availability.'],
     ['fa-database', 'Database Health', 'Track MongoDB connection and status.'],
     ['fa-envelope-circle-check', 'OTP & Email', 'Watch email delivery and OTP failures.'],
+  ],
+  'contact-messages': [
+    ['fa-envelope-open-text', 'Public Inquiries', 'Manage messages from potential customers and visitors.'],
+    ['fa-user-tag', 'Lead Tracking', 'Identify inquiries from registered vs. anonymous users.'],
+    ['fa-check-double', 'Status Control', 'Track inquiries from Unread to Closed with admin notes.'],
   ],
 };
 

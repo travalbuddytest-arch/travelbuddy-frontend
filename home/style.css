@@ -105,12 +105,12 @@ img{
 }
 
 .hero-title {
-    font-size: clamp(2.25rem, 3.6vw, 3.75rem);
+    font-size: clamp(2rem, 8vw, 3.75rem);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.02em;
     color: var(--tb-navy, #0b213f);
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
 }
 
 .hero-title .text-brand {
@@ -459,12 +459,18 @@ img{
 
 @media (max-width: 576px) {
     .tb-hero-section {
-        padding-block: 1.5rem;
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .hero-container {
+        gap: 2rem;
     }
 
     .hero-cta-group {
         flex-direction: column;
         width: 100%;
+        gap: 12px;
     }
 
     .hero-primary-btn, .hero-secondary-btn {

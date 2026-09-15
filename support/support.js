@@ -1,7 +1,5 @@
 // =========================================================
-// TravelBuddy — Support Page
-// Self-contained (does NOT load ../home/script.js) so its own Buddy AI
-// instance below doesn't double up with the one on the Home page.
+// TravelBuddy — Support Page (Public Informational)
 // =========================================================
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -15,15 +13,6 @@ const SP_CATS = {
     safety:   { label: 'Safety',                icon: 'fa-shield-halved' },
     refunds:  { label: 'Refunds',               icon: 'fa-rotate-left' }
 };
-
-const SP_TOPICS = [
-    { cat: 'parcels',  title: 'Sending a parcel',            desc: 'Posting a parcel, choosing a category, and editing details before a traveler accepts.', count: 9 },
-    { cat: 'trips',    title: 'Travelers & live tracking',    desc: 'Adding a trip, matching with parcels, and watching a delivery move in real time.', count: 11 },
-    { cat: 'payments', title: 'Payments & wallet',            desc: 'Accepted methods, payment holds, receipts, and where your balance lives.', count: 8 },
-    { cat: 'account',  title: 'Account & verification',       desc: 'Login issues, ID verification, and keeping your profile up to date.', count: 7 },
-    { cat: 'safety',   title: 'Safety & trust',                desc: 'How travelers are verified, OTP handovers, and reporting a problem.', count: 6 },
-    { cat: 'refunds',  title: 'Refunds & cancellations',      desc: 'Cancellation rules by stage, and how long refunds take to land.', count: 9 }
-];
 
 const SP_FAQS = [
     { cat:'parcels', q:'How do I send a parcel with TravelBuddy?', a:'Log in, open “Post a Parcel,” and add your pickup and destination details, then choose a parcel category. TravelBuddy shows matching travelers already heading your way — review one and confirm to lock in the delivery.' },
@@ -49,25 +38,6 @@ const SP_FAQS = [
     { cat:'refunds', q:'Can I cancel a parcel I posted myself?', a:'Yes, free of charge any time before a traveler accepts it. Once accepted, check the cancellation policy on the parcel for any applicable fee.' }
 ];
 
-/* ============ TOPIC CARDS ============ */
-const topicsGrid = document.getElementById('spTopicsGrid');
-if (topicsGrid) {
-    SP_TOPICS.forEach(t => {
-        const el = document.createElement('button');
-        el.type = 'button';
-        el.className = 'card sp-reveal';
-        el.dataset.cat = t.cat;
-        el.innerHTML = `
-            <i class="fa-solid ${SP_CATS[t.cat].icon}" aria-hidden="true"></i>
-            <h3>${t.title}</h3>
-            <p>${t.desc}</p>
-            <span class="sp-card-count">${t.count} articles <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-        `;
-        el.addEventListener('click', () => { setActiveTab(t.cat); scrollToFaq(); });
-        topicsGrid.appendChild(el);
-    });
-}
-
 /* ============ FAQ RENDER ============ */
 const faqList = document.getElementById('spFaqList');
 function renderFaqs() {
@@ -78,8 +48,6 @@ function renderFaqs() {
         const item = document.createElement('div');
         item.className = 'faq-item';
         item.dataset.cat = f.cat;
-        item.dataset.q = f.q.toLowerCase();
-        item.dataset.a = f.a.toLowerCase();
         item.innerHTML = `
             <button class="faq-question" aria-expanded="false">
                 <span>${f.q}</span>
@@ -103,7 +71,6 @@ function renderFaqs() {
     };
 
     if (spCurrentCat === 'all' && !spCurrentQuery) {
-        // Group by category (Issue 17 & 19)
         const cats = [...new Set(SP_FAQS.map(f => f.cat))];
         cats.forEach(catKey => {
             const catFaqs = SP_FAQS.filter(f => f.cat === catKey);
@@ -117,7 +84,6 @@ function renderFaqs() {
             catFaqs.forEach(f => faqList.appendChild(renderItem(f)));
         });
     } else {
-        // Flat list for filtered results
         SP_FAQS.forEach(f => {
             const matchesCat = spCurrentCat === 'all' || f.cat === spCurrentCat;
             const matchesQuery = !spCurrentQuery || f.q.toLowerCase().includes(spCurrentQuery) || f.a.toLowerCase().includes(spCurrentQuery);
@@ -130,20 +96,15 @@ function renderFaqs() {
     const visibleCount = faqList.querySelectorAll('.faq-item').length;
     document.getElementById('spFaqEmpty')?.classList.toggle('show', visibleCount === 0);
 }
-renderFaqs();
 
 /* ============ FILTERING (tabs + search) ============ */
 let spCurrentCat = 'all';
 let spCurrentQuery = '';
 
-function applyFilters() {
-    renderFaqs();
-}
-
 function setActiveTab(cat) {
     spCurrentCat = cat;
     document.querySelectorAll('.sp-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
-    applyFilters();
+    renderFaqs();
 }
 
 document.getElementById('spTabs')?.addEventListener('click', e => {
@@ -171,103 +132,34 @@ document.getElementById('spSearchForm')?.addEventListener('submit', e => {
 });
 spSearchInput?.addEventListener('input', () => {
     spCurrentQuery = spSearchInput.value.trim().toLowerCase();
-    applyFilters();
+    renderFaqs();
 });
 
-/* ============ SCROLL REVEAL ============ */
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, idx) => {
-        if (entry.isIntersecting) {
-            entry.target.style.transitionDelay = Math.min(idx % 6, 5) * 0.07 + 's';
-            entry.target.classList.add('sp-in-view');
-            revealObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.15 });
-document.querySelectorAll('.sp-reveal').forEach(el => revealObserver.observe(el));
+/* ============ AUTH-AWARE REDIRECTION ============ */
+function handleGetHelp() {
+    const token = localStorage.getItem('travelBuddyToken');
+    const dashboardSupportUrl = '/user-dashboard/support.html';
 
-/* ============ COUNTERS ============ */
-function animateCounters() {
-    document.querySelectorAll('.sp-count').forEach(el => {
-        const target = parseInt(el.dataset.count, 10);
-        const suffix = el.dataset.suffix || '';
-        if (reduceMotion) { el.textContent = target + suffix; return; }
-        let cur = 0;
-        const step = Math.max(1, Math.round(target / 36));
-        const iv = setInterval(() => {
-            cur += step;
-            if (cur >= target) { cur = target; clearInterval(iv); }
-            el.textContent = cur + suffix;
-        }, 28);
-    });
-}
-const statsEl = document.querySelector('.sp-stats');
-if (statsEl) {
-    const statsObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => { if (entry.isIntersecting) { animateCounters(); statsObserver.disconnect(); } });
-    }, { threshold: 0.4 });
-    statsObserver.observe(statsEl);
+    if (token) {
+        // User is logged in, send directly to dashboard support
+        window.location.href = dashboardSupportUrl;
+    } else {
+        // User is logged out, send to login with redirect back to support
+        window.location.href = `/login/login.html?redirect=${encodeURIComponent(dashboardSupportUrl)}`;
+    }
 }
 
-/* ============ ROUTE ANIMATION ============ */
-const routeCard = document.querySelector('.sp-route-card');
-if (routeCard) {
-    const routeObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => entry.target.classList.toggle('sp-in-view', entry.isIntersecting));
-    }, { threshold: 0.3 });
-    routeObserver.observe(routeCard);
-}
-
-/* ============ TICKET FORM ============ */
-const ticketForm = document.getElementById('spTicketForm');
-const submitBtn = document.getElementById('spSubmitBtn');
-
-function setFieldError(id, msg) {
-    const field = document.getElementById(id);
-    if (!field) return;
-    field.classList.toggle('sp-error', !!msg);
-    field.querySelector('.sp-field-msg').textContent = msg || '';
-}
-
-ticketForm?.addEventListener('submit', e => {
-    e.preventDefault();
-    let valid = true;
-
-    const name = document.getElementById('tfName').value.trim();
-    const email = document.getElementById('tfEmail').value.trim();
-    const topic = document.getElementById('tfTopic').value;
-    const message = document.getElementById('tfMsg').value.trim();
-
-    if (!name) { setFieldError('fName', 'Enter your name'); valid = false; } else setFieldError('fName', '');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setFieldError('fEmail', 'Enter a valid email'); valid = false; } else setFieldError('fEmail', '');
-    if (!topic) { setFieldError('fTopic', 'Choose a topic'); valid = false; } else setFieldError('fTopic', '');
-    if (message.length < 10) { setFieldError('fMsg', 'Add a few more details (10+ characters)'); valid = false; } else setFieldError('fMsg', '');
-
-    if (!valid) return;
-
-    submitBtn.classList.add('sp-loading');
-    submitBtn.disabled = true;
-
-    setTimeout(() => {
-        submitBtn.classList.remove('sp-loading');
-        submitBtn.disabled = false;
-        const ticket = 'TB-' + Math.floor(100000 + Math.random() * 899999);
-        document.getElementById('spTicketNum').textContent = ticket;
-        document.getElementById('spSuccess').classList.add('sp-show');
-        ticketForm.reset();
-        showToast(`Ticket ${ticket} submitted`);
-    }, 1100);
+document.querySelectorAll('.get-help-cta').forEach(btn => {
+    btn.addEventListener('click', handleGetHelp);
 });
 
 /* ============ DIRECT CHANNELS ============ */
-document.getElementById('spEmailChannel')?.addEventListener('click', e => {
-    e.preventDefault();
-    navigator.clipboard?.writeText('support@travelbuddy.com').catch(() => {});
-    showToast('Email address copied');
-});
 document.getElementById('spLiveChatBtn')?.addEventListener('click', () => {
     if (window.TBAiAssistant) window.TBAiAssistant.open();
 });
+
+/* ============ INITIALIZE ============ */
+renderFaqs();
 
 /* ============ TOAST ============ */
 let spToastTimer;

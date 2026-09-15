@@ -445,7 +445,7 @@ body.messages-active .content {
     display: flex;
     position: fixed;
     inset: 0;
-    z-index: 500;
+    z-index: var(--z-modal, 500);
     height: 100dvh;
     background: #f9fafb;
   }
@@ -458,7 +458,9 @@ body.messages-active .content {
   .chat-back { display: block; }
 
   .chat-input-row {
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px));
+    background: #fff;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
   }
 
   .msg-bubble { max-width: 85%; }

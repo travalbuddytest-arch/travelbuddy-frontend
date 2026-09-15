@@ -5,28 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support &amp; Help Center | TravelBuddy</title>
 
-    <script src="../shared/auth-guard.js" data-guard="user"></script>
-
-    <meta name="description" content="Get help with sending parcels, finding travelers, payments, tracking, safety and refunds on TravelBuddy — or chat with Buddy AI and our support team.">
+    <meta name="description" content="Learn how TravelBuddy support works. Get assistance with your account, parcels, trips and more. Sign in to access your Support Center.">
     <link rel="canonical" href="https://travalbuddy.web.app/support/support.html">
     <meta property="og:title" content="Support &amp; Help Center | TravelBuddy">
-    <meta property="og:description" content="Get help with sending parcels, finding travelers, payments, tracking, safety and refunds on TravelBuddy — or chat with Buddy AI and our support team.">
+    <meta property="og:description" content="Learn how TravelBuddy support works. Get assistance with your account, parcels, trips and more.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://travalbuddy.web.app/support/support.html">
     <meta property="og:image" content="https://travalbuddy.web.app/images/get-local.jpg">
     <meta property="og:site_name" content="TravelBuddy">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Support &amp; Help Center | TravelBuddy">
-    <meta name="twitter:description" content="Get help with sending parcels, finding travelers, payments, tracking, safety and refunds on TravelBuddy — or chat with Buddy AI and our support team.">
+    <meta name="twitter:description" content="Learn how TravelBuddy support works. Get assistance with your account, parcels, trips and more.">
     <meta name="twitter:image" content="https://travalbuddy.web.app/images/get-local.jpg">
     <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
 
-    <!-- Site design system (buttons, FAQ accordion, route-card motif, Buddy AI chatbot styles) -->
+    <!-- Site design system -->
     <link rel="stylesheet" href="../home/style.css">
     <link rel="stylesheet" href="support.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../shared/navbar.css">
     <link rel="stylesheet" href="../shared/footer.css">
@@ -38,7 +36,7 @@
       "@type": "WebPage",
       "name": "TravelBuddy Help Center & Support",
       "url": "https://travalbuddy.web.app/support/support.html",
-      "description": "24/7 customer support, FAQs, dispute resolution, and AI assistant for TravelBuddy users."
+      "description": "Information on how TravelBuddy support works and common help categories."
     }
     </script>
 </head>
@@ -46,12 +44,12 @@
 
 <script src="../shared/config.js?v=1"></script>
 <script src="../shared/auth-cookie-client.js?v=1"></script>
-    <script src="../shared/analytics-client.js?v=1"></script>
+<script src="../shared/analytics-client.js?v=1"></script>
 
-<!-- ================= NAVBAR (shared component, see Frontend/shared/navbar.html) ================= -->
+<!-- ================= NAVBAR ================= -->
 <div id="tbNavbarInclude"></div>
-<!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
-<header class="tb-nav-header" data-v="6">
+<!-- ================= CANONICAL PUBLIC NAVBAR ================= -->
+<header class="tb-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.png" alt="TravelBuddy logo" width="180" height="40" loading="eager" decoding="async">
@@ -65,14 +63,15 @@
     </button>
 
     <nav id="mainNav">
-        <a href="/" data-page="home">Home</a>
-        <a href="/about/about.html" data-page="about">About</a>
-        <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
-        <a href="/contact/contact.html" data-page="contact">Contact</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/about.html" data-page="about">About</a>
+            <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/contact.html" data-page="contact">Contact</a>
+        </div>
 
         <div id="guestNavActions" class="guest-nav-actions">
-            <a href="/login/login.html" class="login-btn">Login</a>
-            <a href="/register/register.html" class="register-btn">Register</a>
+            <a href="/login/login.html" class="auth-btn">Login / Register</a>
         </div>
 
         <div class="home-user-chip" id="homeUserChip" hidden>
@@ -102,59 +101,142 @@
     <div class="sp-hero-blob sp-hero-blob-b" aria-hidden="true"></div>
 
     <div class="sp-hero-inner">
-        <span class="sp-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> Support is online</span>
-        <h1>How can we help <span class="text-blue">you today?</span></h1>
-        <p>Get instant answers to common questions about parcel delivery, travel routes, and payments. Our help center is designed to get you back on the move as quickly as possible.</p>
+        <span class="sp-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> Need assistance?</span>
+        <h1>Support &amp; <span class="text-blue">Help Center</span></h1>
+        <p>Need help with TravelBuddy? Learn how support works and get assistance with your account, parcels, trips and more.</p>
+        <button type="button" class="btn btn-primary get-help-cta">Get Help Now <i class="fa-solid fa-arrow-right" style="margin-left:8px"></i></button>
+    </div>
+</section>
 
-        <form class="sp-search" id="spSearchForm" role="search">
-            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input type="text" id="spSearchInput" placeholder="Try “track my parcel” or “refund status”…" autocomplete="off" aria-label="Search help articles">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+<!-- ================= HOW IT WORKS ================= -->
+<section class="sp-how-it-works">
+    <div class="footer-container">
+        <span class="faq-eyebrow" style="margin: 0 auto 12px; display: table;">Process</span>
+        <h2 style="text-align: center; margin-bottom: 40px;">How Support Works</h2>
 
-        <div class="sp-chips" id="spChips">
-            <button class="sp-chip" data-cat="parcels"><i class="fa-solid fa-box"></i> Sending a Parcel</button>
-            <button class="sp-chip" data-cat="trips"><i class="fa-solid fa-route"></i> Travelers &amp; Tracking</button>
-            <button class="sp-chip" data-cat="payments"><i class="fa-solid fa-wallet"></i> Payments &amp; Wallet</button>
-            <button class="sp-chip" data-cat="account"><i class="fa-solid fa-user"></i> Account</button>
-            <button class="sp-chip" data-cat="safety"><i class="fa-solid fa-shield-halved"></i> Safety</button>
-            <button class="sp-chip" data-cat="refunds"><i class="fa-solid fa-rotate-left"></i> Refunds</button>
+        <div class="sp-process-steps">
+            <div class="sp-step">
+                <div class="sp-step-num">1</div>
+                <div class="sp-step-content">
+                    <h3>Sign In</h3>
+                    <p>Log in to your TravelBuddy account to access personalized support features.</p>
+                </div>
+            </div>
+            <div class="sp-step">
+                <div class="sp-step-num">2</div>
+                <div class="sp-step-content">
+                    <h3>Create a Ticket</h3>
+                    <p>Navigate to Support in your dashboard and describe the issue you're facing.</p>
+                </div>
+            </div>
+            <div class="sp-step">
+                <div class="sp-step-num">3</div>
+                <div class="sp-step-content">
+                    <h3>Team Review</h3>
+                    <p>Our dedicated support team reviews your request to provide the best solution.</p>
+                </div>
+            </div>
+            <div class="sp-step">
+                <div class="sp-step-num">4</div>
+                <div class="sp-step-content">
+                    <h3>Receive Response</h3>
+                    <p>Get detailed answers and resolutions directly from our experts.</p>
+                </div>
+            </div>
+            <div class="sp-step">
+                <div class="sp-step-num">5</div>
+                <div class="sp-step-content">
+                    <h3>Track Status</h3>
+                    <p>Monitor your active tickets and view history anytime from your dashboard.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- ================= STATS STRIP ================= -->
-<section class="sp-stats-wrap">
-    <div class="sp-stats sp-reveal">
-        <div class="sp-stat">
-            <i class="fa-solid fa-bolt"></i>
-            <div><strong class="sp-count" data-count="4" data-suffix=" min">0 min</strong><span>Average first reply</span></div>
-        </div>
-        <div class="sp-stat">
-            <i class="fa-solid fa-book-open"></i>
-            <div><strong class="sp-count" data-count="60" data-suffix="+">0+</strong><span>Help articles</span></div>
-        </div>
-        <div class="sp-stat">
-            <i class="fa-solid fa-face-smile"></i>
-            <div><strong class="sp-count" data-count="97" data-suffix="%">0%</strong><span>Traveler satisfaction</span></div>
+<!-- ================= HELP CATEGORIES ================= -->
+<section class="sp-topics-section">
+    <div class="footer-container">
+        <span class="sp-eyebrow sp-eyebrow-center">Help categories</span>
+        <h2 style="text-align: center; margin-bottom: 40px;">What can we help with?</h2>
+        <div class="sp-topics-grid">
+            <div class="topic-card">
+                <i class="fa-solid fa-user-circle"></i>
+                <h3>Account &amp; Login</h3>
+                <p>Assistance with registration, password resets, and profile verification.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-box"></i>
+                <h3>Parcel &amp; Delivery</h3>
+                <p>Questions about posting parcels, tracking, and delivery guidelines.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-route"></i>
+                <h3>Traveler Trips</h3>
+                <p>Support for adding trips, matching with parcels, and earning rewards.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-wallet"></i>
+                <h3>Payments &amp; Wallet</h3>
+                <p>Help with wallet top-ups, payment holds, and transaction history.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <h3>Withdrawals</h3>
+                <p>Guidance on withdrawing your earnings to your bank account.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-truck-fast"></i>
+                <h3>Pickup &amp; Delivery</h3>
+                <p>Support during the actual handover and delivery process.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>Safety &amp; Reports</h3>
+                <p>Reporting issues, disputes, and understanding our safety protocols.</p>
+            </div>
+            <div class="topic-card">
+                <i class="fa-solid fa-gears"></i>
+                <h3>Technical Issues</h3>
+                <p>Reporting bugs or performance issues on the app or website.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- ================= POPULAR TOPICS ================= -->
-<section class="features sp-topics" id="topics">
-    <span class="sp-eyebrow sp-eyebrow-center">Popular topics</span>
-    <h2>Where most questions come from</h2>
-    <div class="cards" id="spTopicsGrid"></div>
+<!-- ================= AFTER CONTACT ================= -->
+<section class="sp-after-contact">
+    <div class="footer-container">
+        <div class="sp-after-inner">
+            <div class="sp-after-text">
+                <h2>What happens next?</h2>
+                <p>Once you've signed in and accessed the Support Center, you can manage your entire support experience in one place.</p>
+                <ul class="sp-check-list">
+                    <li><i class="fa-solid fa-circle-check"></i> Create new support tickets 24/7</li>
+                    <li><i class="fa-solid fa-circle-check"></i> View your entire ticket history</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Read and reply to support responses</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Track real-time status of your requests</li>
+                </ul>
+            </div>
+            <div class="sp-after-cta">
+                <div class="cta-card">
+                    <h3>Need Personal Assistance?</h3>
+                    <p>Sign in to access your TravelBuddy Support Center and connect with our team.</p>
+                    <button type="button" class="btn btn-primary btn-full get-help-cta">Sign In to Get Help</button>
+                    <p class="cta-note">Don't have an account? <a href="/register/register.html">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- ================= FAQ ================= -->
 <section class="faq-section" id="faq">
-    <div class="faq-container">
+    <div class="footer-container">
         <div class="faq-heading">
-            <span class="faq-eyebrow">Frequently asked</span>
-            <h2>Answers, sorted by topic</h2>
-            <p>We've compiled the most common questions from our community to help you resolve issues independently. Filter by category or use the search bar above.</p>
+            <span class="faq-eyebrow">Quick Help</span>
+            <h2>Frequently Asked Questions</h2>
+            <p>Find instant answers to common questions from our community.</p>
         </div>
 
         <div class="sp-tabs" id="spTabs">
@@ -185,121 +267,30 @@
         <div class="sp-faq-empty" id="spFaqEmpty">
             <i class="fa-solid fa-box-open"></i>
             <strong>No matches for that search.</strong>
-            <span>Try a different term, or raise a ticket below — we'll route it to the right team.</span>
+            <span>Try a different term or use our AI assistant for instant guidance.</span>
         </div>
     </div>
 </section>
 
-<!-- ================= CONTACT / RAISE A TICKET ================= -->
-<section class="smart-matching" id="spRoute">
-    <div class="smart-matching-inner">
-        <div class="smart-matching-heading">
-            <span class="faq-eyebrow">Still stuck?</span>
-            <h2>Let's get this sorted together</h2>
-            <p>Send us the details and we'll route your ticket to the right team, or use a direct channel on the right.</p>
-        </div>
-
-        <div class="sp-contact-grid">
-            <div class="sp-route-card sp-reveal">
-                <div class="sp-route-row">
-                    <div class="sp-route-point">
-                        <span class="sp-route-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
-                        <h3>You</h3>
-                        <p>Sender or traveler</p>
-                    </div>
-                    <div class="sp-route-line-wrap">
-                        <span class="sp-route-line" aria-hidden="true"></span>
-                        <span class="sp-route-mover" id="spRouteMover" aria-hidden="true"><i class="fa-solid fa-paper-plane"></i></span>
-                    </div>
-                    <div class="sp-route-point">
-                        <span class="sp-route-icon sp-route-icon-alt"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
-                        <h3>Support</h3>
-                        <p>Real humans, 24/7</p>
-                    </div>
+<!-- ================= QUICK HELP ================= -->
+<section class="sp-quick-help">
+    <div class="footer-container">
+        <div class="sp-quick-grid">
+            <div class="sp-quick-card">
+                <i class="fa-solid fa-comment-dots"></i>
+                <div>
+                    <h3>Need quick help?</h3>
+                    <p>Start a live chat with our Buddy AI assistant for instant answers.</p>
                 </div>
-
-                <form id="spTicketForm" novalidate>
-                    <div class="sp-field-row">
-                        <div class="form-group sp-field" id="fName">
-                            <label for="tfName">Full name <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
-                            <input type="text" id="tfName" placeholder="Jordan Rivera" required>
-                            <span class="sp-field-msg"></span>
-                        </div>
-                        <div class="form-group sp-field" id="fEmail">
-                            <label for="tfEmail">Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
-                            <input type="email" id="tfEmail" placeholder="you@example.com" required>
-                            <span class="sp-field-msg"></span>
-                        </div>
-                    </div>
-                    <div class="sp-field-row">
-                        <div class="form-group sp-field" id="fTopic">
-                            <label for="tfTopic">Topic <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
-                            <select id="tfTopic" required>
-                                <option value="">Select a topic…</option>
-                                <option>Sending a Parcel</option>
-                                <option>Travelers &amp; Tracking</option>
-                                <option>Payments &amp; Wallet</option>
-                                <option>Account</option>
-                                <option>Safety &amp; Trust</option>
-                                <option>Refunds</option>
-                                <option>Something else</option>
-                            </select>
-                            <span class="sp-field-msg"></span>
-                        </div>
-                        <div class="form-group sp-field" id="fRef">
-                            <label for="tfRef">Parcel / booking ID <span class="field-optional">(optional)</span></label>
-                            <input type="text" id="tfRef" placeholder="TB-482910">
-                            <span class="sp-field-msg"></span>
-                        </div>
-                    </div>
-                    <div class="form-group sp-field" id="fMsg">
-                        <label for="tfMsg">What's going on? <span class="field-required" aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
-                        <textarea id="tfMsg" placeholder="Tell us what happened and what you'd expect instead…" required></textarea>
-                        <span class="sp-field-msg"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary sp-submit-btn" id="spSubmitBtn">
-                        <span class="sp-btn-text">Send to support <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></span>
-                        <span class="sp-spinner"></span>
-                    </button>
-
-                    <div class="sp-success" id="spSuccess">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>Ticket <b id="spTicketNum"></b> logged — check your inbox for a copy. Average reply time is 4 minutes.</span>
-                    </div>
-                </form>
+                <button type="button" class="btn btn-secondary" id="spLiveChatBtn">Open AI Chat</button>
             </div>
-
-            <aside class="sp-channels sp-reveal">
-                <h2 class="sp-channels-title">Direct channels</h2>
-
-                <button type="button" class="sp-channel" id="spLiveChatBtn">
-                    <span class="sp-channel-icon"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i></span>
-                    <span class="sp-channel-text"><b>Chat with TravelBuddy AI</b><small>Instant answers, smart navigation</small></span>
-                </button>
-
-                <a class="sp-channel" id="spEmailChannel" href="mailto:support@travelbuddy.com">
-                    <span class="sp-channel-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
-                    <span class="sp-channel-text"><b>support@travelbuddy.com</b><small>Click to copy</small></span>
-                </a>
-
-                <a class="sp-channel" href="tel:+18005550142">
-                    <span class="sp-channel-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span>
-                    <span class="sp-channel-text"><b>+1 (800) 555-0142</b><small>Mon–Sun, 24/7</small></span>
-                </a>
-
-                <div class="sp-channel-note">
-                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-                    <p>Never share your delivery OTP with support agents — we'll never ask for it.</p>
-                </div>
-            </aside>
         </div>
     </div>
 </section>
 
-<!-- ================= FOOTER (shared component, see Frontend/shared/footer.html) ================= -->
+<!-- ================= FOOTER ================= -->
 <div id="tbFooterInclude"></div>
-<!-- ================= CANONICAL FOOTER (Source of Truth) ================= -->
+<!-- ================= CANONICAL FOOTER ================= -->
 <footer class="site-footer" data-v="6">
     <div class="footer-container">
         <div class="footer-grid">
@@ -341,9 +332,7 @@
 </footer>
 <script>window.TBInclude.injectFooter();</script>
 
-
 <div class="sp-toast" id="spToast"></div>
-
 
 <script src="support.js"></script>
 <script src="../shared/site-banner.js?v=3"></script>

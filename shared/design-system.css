@@ -45,13 +45,13 @@
     --tb-radius-full: 9999px;
 
     /* Heuristic Fixes - Standardized Tokens */
-    --text-xs: 0.75rem;
-    --text-sm: 0.875rem;
-    --text-md: 1rem;
-    --text-lg: 1.125rem;
-    --text-xl: 1.5rem;
-    --text-2xl: 2rem;
-    --text-3xl: 3rem;
+    --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+    --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+    --text-md: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+    --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+    --text-xl: clamp(1.35rem, 1.2rem + 1vw, 1.75rem);
+    --text-2xl: clamp(1.75rem, 1.5rem + 2vw, 2.5rem);
+    --text-3xl: clamp(2.25rem, 2rem + 4vw, 4rem);
 
     --text-primary: #172033;
     --text-secondary: #5f6b7a;
@@ -79,15 +79,27 @@
     --tb-shape-opacity: 0.06;
 
     /* Responsive Spacing Tokens */
-    --spacing-xs: clamp(0.25rem, 1vw, 0.5rem);
-    --spacing-sm: clamp(0.5rem, 2vw, 1rem);
-    --spacing-md: clamp(1rem, 4vw, 2rem);
-    --spacing-lg: clamp(2rem, 6vw, 4rem);
-    --spacing-xl: clamp(4rem, 10vw, 8rem);
+    --spacing-xs: clamp(0.25rem, 0.2rem + 0.5vw, 0.5rem);
+    --spacing-sm: clamp(0.5rem, 0.4rem + 1vw, 1rem);
+    --spacing-md: clamp(1rem, 0.8rem + 2vw, 2rem);
+    --spacing-lg: clamp(1.5rem, 1.2rem + 4vw, 4rem);
+    --spacing-xl: clamp(2.5rem, 2rem + 8vw, 8rem);
 
-    --section-padding: clamp(3rem, 10vw, 8rem);
-    --container-px: clamp(1rem, 5vw, 2.5rem);
-    --section-gap-mobile: 2.5rem;
+    --section-padding: clamp(2rem, 5vw + 1rem, 8rem);
+    --container-px: clamp(1rem, 0.8rem + 2vw, 2.5rem);
+    --section-gap-mobile: 2rem;
+
+    /* Stacking Context (Z-index Hierarchy) */
+    --z-base: 1;
+    --z-sticky: 100;
+    --z-drawer: 200;
+    --z-drawer-overlay: 190;
+    --z-dropdown: 500;
+    --z-floating: 1000;
+    --z-modal-backdrop: 2000;
+    --z-modal: 2010;
+    --z-toast: 3000;
+    --z-critical: 9999;
 }
 
 /* ============================================================

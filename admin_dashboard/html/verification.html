@@ -1,45 +1,67 @@
-<div class="verification-container">
-    <div class="header-row">
-        <h3><i class="fa-solid fa-user-shield"></i> User Verification (KYC)</h3>
-        <button class="btn secondary" id="refreshVerification"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+<link rel="stylesheet" href="../css/parcels.css">
+<style>
+    .vd-review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+    .vd-doc-box { background: #fff; border: 1px solid var(--l); border-radius: 12px; padding: 16px; overflow: hidden; }
+    .vd-doc-label { display: block; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--m); margin-bottom: 12px; }
+    .vd-img-wrap { width: 100%; aspect-ratio: 4/3; background: var(--bg); border-radius: 8px; overflow: hidden; cursor: zoom-in; }
+    .vd-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+    .vd-review-footer { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--l); }
+    .vd-action-row { display: flex; gap: 12px; margin-bottom: 20px; }
+</style>
+
+<section id="verification-panel" class="panel pc-panel">
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="pc-toolbar">
+    <div class="pc-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="vkSearch" placeholder="Search by name or email…" aria-label="Search requests">
     </div>
-
-    <div class="filters">
-        <div class="filter-group">
-            <label>Status</label>
-            <select id="verificationStatusFilter">
-                <option value="pending" selected>Pending Review</option>
-                <option value="verified">Verified</option>
-                <option value="rejected">Rejected</option>
-                <option value="all">All</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label>Search User</label>
-            <input type="text" id="verificationSearch" placeholder="Name or Email...">
-        </div>
+    <div class="pc-toolbar-actions">
+      <button class="pc-btn pc-btn-icon" id="vkRefreshBtn" title="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <select id="vkStatusFilter" class="pc-select">
+        <option value="pending">Pending Review</option>
+        <option value="verified">Verified</option>
+        <option value="rejected">Rejected</option>
+        <option value="requires_changes">Changes Requested</option>
+      </select>
+      <span class="pc-badge" id="vkResultCount">0 requests</span>
     </div>
+  </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Joined</th>
-                    <th>User</th>
-                    <th>ID Type</th>
-                    <th>ID Status</th>
-                    <th>Selfie Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="verification-list">
-                <!-- KYC records load here -->
-            </tbody>
-        </table>
-    </div>
+  <!-- ═══ DATA TABLE ═══ -->
+  <div class="pc-table-wrap">
+    <table class="pc-table" id="vkTable">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Submitted</th>
+          <th>Documents</th>
+          <th>Status</th>
+          <th class="pc-th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="vkTableBody">
+        <tr><td colspan="6" class="pc-empty"><div class="pc-skeleton-row"></div><div class="pc-skeleton-row"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="pagination" id="verificationPagination"></div>
-</div>
+  <div class="pc-pagination" id="vkPagination"></div>
 
-<link rel="stylesheet" href="../css/users.css">
-<script type="module" src="../js/verification.js"></script>
+  <!-- ═══ REVIEW MODAL ═══ -->
+  <div class="pc-drawer-overlay hidden" id="vkDrawerOverlay">
+    <aside class="pc-drawer" id="vkDrawer" style="width: 800px; max-width: 95vw;">
+      <div class="pc-drawer-header">
+        <h2>Identity Review</h2>
+        <button class="pc-btn pc-btn-icon" id="vkDrawerClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pc-drawer-body" id="vkDrawerBody">
+        <!-- Content injected by JS -->
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="../js/verification.js"></script>
+</section>

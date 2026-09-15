@@ -52,17 +52,23 @@
 
   async function loadInitialData() {
     try {
-      const [meRes, walletRes, methodsRes] = await Promise.allSettled([
+      const [meRes, walletRes, methodsRes, configRes] = await Promise.allSettled([
         fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() }).then(r => r.json()),
         fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() }).then(r => r.json()),
-        fetch(`${API_ORIGIN}/api/withdraw/payout-methods`, { headers: authHeaders() }).then(r => r.json())
+        fetch(`${API_ORIGIN}/api/withdraw/payout-methods`, { headers: authHeaders() }).then(r => r.json()),
+        fetch(`${API_ORIGIN}/api/withdraw/config`, { headers: authHeaders() }).then(r => r.json())
       ]);
 
       if (meRes.status === 'fulfilled' && meRes.value.user) {
         currentUser = meRes.value.user;
-        if (!currentUser.isVerified && unverifiedNotice) {
+        const kycStatus = currentUser.kyc?.status || 'not_submitted';
+        if (kycStatus !== 'verified' && unverifiedNotice) {
           unverifiedNotice.classList.remove('hidden');
         }
+      }
+
+      if (configRes.status === 'fulfilled' && configRes.value.isTestMode) {
+        document.getElementById('testModeBadge')?.classList.remove('hidden');
       }
 
       if (walletRes.status === 'fulfilled') {
@@ -169,8 +175,9 @@
     withdrawRequestForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      if (currentUser && !currentUser.isVerified) {
-        window.showToast('Please complete identity verification in Profile before requesting a withdrawal.', 'error');
+      const kycStatus = currentUser?.kyc?.status || 'not_submitted';
+      if (kycStatus !== 'verified') {
+        window.showToast('Please complete identity verification before requesting a withdrawal.', 'error');
         return;
       }
 
@@ -347,6 +354,7 @@
 
     withdrawalsTableBody.innerHTML = withdrawals.map(w => {
       const isRequested = w.status === 'requested';
+      const isProcessing = w.status === 'processing';
       const dateStr = window.TravelBuddyDate
         ? window.TravelBuddyDate.formatDateTime(w.createdAt)
         : new Date(w.createdAt).toLocaleString('en-IN');
@@ -355,7 +363,7 @@
         ? `UPI: ${escapeHTML(w.upiId || 'UPI ID')}`
         : `Bank: •••• ${escapeHTML(String(w.bankDetails?.accountNumber || '').slice(-4))}`;
 
-      const actionBtn = isRequested
+      const actionBtn = (isRequested || isProcessing)
         ? `<button type="button" class="btn-ghost cancel-wd-btn" data-id="${escapeHTML(w._id)}" style="color:var(--error); padding:4px 10px; font-size:12px; height:auto; margin-left:8px;">
              Cancel
            </button>`
@@ -415,6 +423,19 @@
     wdDetailAmount.textContent = formatPaise(w.amount);
     wdDetailMethod.textContent = w.method === 'upi' ? `UPI: ${w.upiId}` : `Bank Account (•••• ${String(w.bankDetails?.accountNumber || '').slice(-4)})`;
     wdDetailDate.textContent = window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(w.createdAt) : new Date(w.createdAt).toLocaleString('en-IN');
+
+    // Failure Reason
+    const reasonEl = document.getElementById('wdDetailFailureReason');
+    if (reasonEl) {
+      if (w.status === 'failed' || w.status === 'rejected') {
+        reasonEl.innerHTML = `<div style="background:var(--tb-warning-soft); padding:10px; border-radius:8px; margin-top:10px; font-size:12px; color:var(--tb-warning);">
+          <strong>Failure Reason:</strong> ${escapeHTML(w.failureReason || w.remarks || 'Transaction declined by provider.')}
+        </div>`;
+        reasonEl.classList.remove('hidden');
+      } else {
+        reasonEl.classList.add('hidden');
+      }
+    }
 
     // Update Timeline
     const steps = ['requested', 'processing', 'completed'];

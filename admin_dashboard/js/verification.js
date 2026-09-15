@@ -1,166 +1,235 @@
 /**
- * TravelBuddy — KYC Verification Management
- * Interface for reviewing and approving/rejecting user ID documents.
+ * TravelBuddy Admin — KYC Verification Management
  */
 
-const API_ORIGIN = APP_CONFIG.API_BASE_URL;
+(function() {
+    'use strict';
 
-async function apiGet(url) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw { status: res.status, data };
-  return data;
-}
+    const { apiGet, apiPatch, showToast } = window;
 
-async function apiPatch(url, body) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PATCH', headers, credentials: 'include', body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw { status: res.status, data };
-  return data;
-}
+    let state = {
+        users: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+        status: 'pending',
+        search: ''
+    };
 
-let currentPage = 1;
-let searchDebounce = null;
+    const elements = {
+        tableBody: document.getElementById('vkTableBody'),
+        statusFilter: document.getElementById('vkStatusFilter'),
+        search: document.getElementById('vkSearch'),
+        refreshBtn: document.getElementById('vkRefreshBtn'),
+        resultCount: document.getElementById('vkResultCount'),
+        pagination: document.getElementById('vkPagination'),
+        drawerOverlay: document.getElementById('vkDrawerOverlay'),
+        drawer: document.getElementById('vkDrawer'),
+        drawerBody: document.getElementById('vkDrawerBody'),
+        drawerClose: document.getElementById('vkDrawerClose')
+    };
 
-export default function initVerification() {
-  const el = document.getElementById('verification-list');
-  if (!el) return;
-
-  wireEvents();
-  loadVerifications();
-}
-
-function wireEvents() {
-  document.getElementById('refreshVerification')?.addEventListener('click', loadVerifications);
-  document.getElementById('verificationStatusFilter')?.addEventListener('change', () => {
-    currentPage = 1;
-    loadVerifications();
-  });
-  document.getElementById('verificationSearch')?.addEventListener('input', () => {
-    clearTimeout(searchDebounce);
-    searchDebounce = setTimeout(() => {
-      currentPage = 1;
-      loadVerifications();
-    }, 400);
-  });
-}
-
-async function loadVerifications() {
-  const tbody = document.getElementById('verification-list');
-  const pagi = document.getElementById('verificationPagination');
-  if (!tbody) return;
-
-  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#98a2b3">Loading KYC submissions...</td></tr>`;
-
-  try {
-    const status = document.getElementById('verificationStatusFilter')?.value || 'pending';
-    const search = document.getElementById('verificationSearch')?.value.trim() || '';
-
-    let url = `/api/admin/users?page=${currentPage}&limit=20`;
-    if (status !== 'all') url += `&verification=${encodeURIComponent(status)}`;
-    if (search) url += `&search=${encodeURIComponent(search)}`;
-
-    const data = await apiGet(url);
-    const { users, total } = data;
-
-    if (!users || users.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#98a2b3">No verification requests found.</td></tr>`;
-      if (pagi) pagi.innerHTML = '';
-      return;
+    async function init() {
+        bindEvents();
+        await fetchRequests();
     }
 
-    tbody.innerHTML = users.map(u => {
-      const kyc = u.kyc || {};
-      const gov = kyc.governmentId || { status: 'not_submitted' };
-      const selfie = kyc.selfie || { status: 'not_submitted' };
+    function bindEvents() {
+        elements.statusFilter?.addEventListener('change', (e) => {
+            state.status = e.target.value;
+            state.page = 1;
+            fetchRequests();
+        });
 
-      return `
-        <tr>
-          <td style="font-size:12px;color:var(--text-muted)">${formatDateShort(u.createdAt)}</td>
-          <td>
-            <strong style="display:block">${esc(u.firstName)} ${esc(u.lastName)}</strong>
-            <small style="color:var(--text-faint)">${esc(u.email)}</small>
-          </td>
-          <td><span class="cell-sub">${esc(gov.type || 'ID Card')}</span></td>
-          <td>${statusTag(gov.status)}</td>
-          <td>${statusTag(selfie.status)}</td>
-          <td>
-            <div class="row-actions">
-              <button class="btn-icon" title="View Documents" onclick="window.fetchUserDetail('${u._id}')"><i class="fa-solid fa-eye"></i></button>
-              ${gov.status === 'pending' ? `
-                <button class="btn-icon success" title="Approve ID" onclick="window.updateKyc('${u._id}', 'governmentId', 'verified')"><i class="fa-solid fa-check"></i></button>
-                <button class="btn-icon danger" title="Reject ID" onclick="window.updateKyc('${u._id}', 'governmentId', 'rejected')"><i class="fa-solid fa-xmark"></i></button>
-              ` : ''}
+        let searchTimeout;
+        elements.search?.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                state.search = e.target.value.trim();
+                state.page = 1;
+                fetchRequests();
+            }, 400);
+        });
+
+        elements.refreshBtn?.addEventListener('click', fetchRequests);
+        elements.drawerClose?.addEventListener('click', closeDrawer);
+        elements.drawerOverlay?.addEventListener('click', (e) => {
+            if (e.target === elements.drawerOverlay) closeDrawer();
+        });
+    }
+
+    async function fetchRequests() {
+        showSkeleton();
+        try {
+            const query = new URLSearchParams({
+                page: state.page,
+                limit: state.limit,
+                status: state.status,
+                search: state.search
+            });
+
+            const data = await apiGet(`/api/admin/verification-requests?${query.toString()}`);
+            state.users = data.users || [];
+            state.total = data.total || 0;
+
+            renderTable();
+            renderPagination();
+        } catch (err) {
+            console.error('KYC list fetch failed:', err);
+            elements.tableBody.innerHTML = `<tr><td colspan="6" class="pc-empty">Error loading requests.</td></tr>`;
+        }
+    }
+
+    function renderTable() {
+        if (!elements.tableBody) return;
+        if (elements.resultCount) elements.resultCount.textContent = `${state.total} requests`;
+
+        if (!state.users.length) {
+            elements.tableBody.innerHTML = `<tr><td colspan="6" class="pc-empty">No ${state.status} verification requests.</td></tr>`;
+            return;
+        }
+
+        elements.tableBody.innerHTML = state.users.map(user => {
+            const date = new Date(user.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            const docsCount = (user.kyc?.selfie?.url ? 1 : 0) + (user.kyc?.governmentId?.url ? 1 : 0) + (user.kyc?.selfieWithId?.url ? 1 : 0);
+
+            return `
+                <tr>
+                    <td><strong>${esc(user.firstName)} ${esc(user.lastName)}</strong></td>
+                    <td class="cell-mono">${esc(user.email)}</td>
+                    <td><small>${date}</small></td>
+                    <td><span class="pc-badge">${docsCount} Files</span></td>
+                    <td><span class="status-tag ${user.kyc?.status}">${user.kyc?.status}</span></td>
+                    <td class="pc-th-actions">
+                        <button class="pc-btn pc-btn-icon vk-view-btn" data-id="${user._id}"><i class="fa-solid fa-user-shield"></i></button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        elements.tableBody.querySelectorAll('.vk-view-btn').forEach(btn => {
+            btn.addEventListener('click', () => openReview(btn.dataset.id));
+        });
+    }
+
+    function renderPagination() {
+        if (!elements.pagination) return;
+        const totalPages = Math.ceil(state.total / state.limit);
+        if (totalPages <= 1) {
+            elements.pagination.innerHTML = '';
+            return;
+        }
+
+        let html = `<button class="pc-btn pc-btn-sm" ${state.page === 1 ? 'disabled' : ''} data-page="${state.page - 1}">Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="pc-btn pc-btn-sm ${state.page === i ? 'pc-btn-primary' : ''}" data-page="${i}">${i}</button>`;
+        }
+        html += `<button class="pc-btn pc-btn-sm" ${state.page === totalPages ? 'disabled' : ''} data-page="${state.page + 1}">Next</button>`;
+        elements.pagination.innerHTML = html;
+
+        elements.pagination.querySelectorAll('button[data-page]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.page = parseInt(btn.dataset.page);
+                fetchRequests();
+            });
+        });
+    }
+
+    async function openReview(userId) {
+        const user = state.users.find(u => u._id === userId);
+        if (!user) return;
+
+        elements.drawerBody.innerHTML = `
+            <div class="drawer-header-meta" style="margin-bottom: 24px;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">${esc(user.firstName)} ${esc(user.lastName)}</h3>
+                <p style="color: var(--m); font-size: 13px;">${esc(user.email)}</p>
             </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
 
-    renderPagination(total, pagi);
-  } catch (err) {
-    console.warn('Failed to load verifications:', err);
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--danger)">Failed to load data.</td></tr>`;
-  }
-}
+            <div class="vd-review-grid">
+                <div class="vd-doc-box">
+                    <span class="vd-doc-label">Face Selfie</span>
+                    <div class="vd-img-wrap" onclick="window.open('/api/admin/docs/${user.kyc.selfie.url}', '_blank')">
+                        <img src="/api/admin/docs/${user.kyc.selfie.url}" alt="Selfie" />
+                    </div>
+                </div>
+                <div class="vd-doc-box">
+                    <span class="vd-doc-label">Government ID</span>
+                    <div class="vd-img-wrap" onclick="window.open('/api/admin/docs/${user.kyc.governmentId.url}', '_blank')">
+                        <img src="/api/admin/docs/${user.kyc.governmentId.url}" alt="ID" />
+                    </div>
+                </div>
+                ${user.kyc.selfieWithId?.url ? `
+                <div class="vd-doc-box">
+                    <span class="vd-doc-label">Selfie with ID</span>
+                    <div class="vd-img-wrap" onclick="window.open('/api/admin/docs/${user.kyc.selfieWithId.url}', '_blank')">
+                        <img src="/api/admin/docs/${user.kyc.selfieWithId.url}" alt="Selfie with ID" />
+                    </div>
+                </div>
+                ` : ''}
+            </div>
 
-window.updateKyc = async (userId, field, status) => {
-  const reason = status === 'rejected' ? prompt('Reason for rejection:') : 'Approved by admin';
-  if (status === 'rejected' && reason === null) return;
+            <div class="vd-review-footer">
+                <h4 style="font-size: 12px; color: var(--m); margin-bottom: 12px;">Verification Decision</h4>
+                <div class="vd-action-row">
+                    <button class="pc-btn pc-btn-success" id="btnApprove" style="flex:1"><i class="fa-solid fa-check-circle"></i> Approve & Verify</button>
+                    <button class="pc-btn pc-btn-danger" id="btnReject" style="flex:1"><i class="fa-solid fa-times-circle"></i> Reject Submission</button>
+                </div>
+                <div class="vd-action-row">
+                    <button class="pc-btn" id="btnReqChanges" style="flex:1"><i class="fa-solid fa-rotate-left"></i> Request Changes</button>
+                </div>
+                <div style="margin-top: 16px;">
+                    <textarea id="reviewReason" class="pc-filter-input" style="width: 100%; height: 80px; padding: 12px;" placeholder="Reason for rejection or changes (required for non-approval)..."></textarea>
+                </div>
+            </div>
+        `;
 
-  try {
-    await apiPatch(`/api/admin/users/${userId}/verify`, { field, status, reason });
-    window.showToast?.(`User ${field} ${status} successfully.`);
-    loadVerifications();
-  } catch (err) {
-    alert(err.error || 'Failed to update verification status.');
-  }
-};
+        openDrawer();
 
-function statusTag(s) {
-  const map = {
-    verified: 'active',
-    pending: 'warning',
-    rejected: 'danger',
-    not_submitted: 'muted'
-  };
-  const label = s ? s.replace(/_/g, ' ') : 'Not Submitted';
-  return `<span class="status-tag ${map[s] || 'muted'}" style="text-transform:capitalize">${esc(label)}</span>`;
-}
+        document.getElementById('btnApprove')?.addEventListener('click', () => processReview(userId, 'verified'));
+        document.getElementById('btnReject')?.addEventListener('click', () => processReview(userId, 'rejected'));
+        document.getElementById('btnReqChanges')?.addEventListener('click', () => processReview(userId, 'requires_changes'));
+    }
 
-function renderPagination(total, el) {
-  if (!el) return;
-  const totalPages = Math.ceil(total / 20);
-  if (totalPages <= 1) { el.innerHTML = ''; return; }
+    async function processReview(userId, status) {
+        const reason = document.getElementById('reviewReason')?.value.trim();
+        if (status !== 'verified' && !reason) {
+            showToast('Please provide a reason for this decision.', 'error');
+            return;
+        }
 
-  let html = `<button ${currentPage <= 1 ? 'disabled' : ''} data-p="${currentPage - 1}">&lsaquo;</button>`;
-  for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
-    html += `<button class="${i === currentPage ? 'active' : ''}" data-p="${i}">${i}</button>`;
-  }
-  html += `<button ${currentPage >= totalPages ? 'disabled' : ''} data-p="${currentPage + 1}">&rsaquo;</button>`;
-  el.innerHTML = html;
+        try {
+            await apiPatch(`/api/admin/verification-requests/${userId}/review`, { status, reason });
+            showToast(`User verification ${status}.`, 'success');
+            closeDrawer();
+            fetchRequests();
+        } catch (err) {
+            showToast('Failed to process review.', 'error');
+        }
+    }
 
-  el.querySelectorAll('button[data-p]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentPage = parseInt(btn.dataset.p);
-      loadVerifications();
-    });
-  });
-}
+    function openDrawer() {
+        elements.drawerOverlay.classList.remove('hidden');
+        elements.drawer.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
 
-function formatDateShort(d) {
-  return d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—';
-}
+    function closeDrawer() {
+        elements.drawerOverlay.classList.add('hidden');
+        elements.drawer.classList.remove('open');
+        document.body.style.overflow = '';
+    }
 
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+    function showSkeleton() {
+        if (!elements.tableBody) return;
+        elements.tableBody.innerHTML = `<tr><td colspan="6"><div class="pc-skeleton-row"></div></td></tr>`;
+    }
 
-window.initVerification = initVerification;
-try { initVerification(); } catch (e) { console.warn('verification init failed', e); }
+    function esc(s) {
+        if (!s) return '';
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.initVerification = init;
+    if (document.getElementById('verification-panel')) init();
+
+})();

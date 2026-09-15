@@ -1,22 +1,27 @@
 .tb-ai-widget {
     position: fixed;
-    bottom: 80px;
-    right: 24px;
-    z-index: 9999; /* Below critical modals but above content */
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    right: max(20px, env(safe-area-inset-right, 20px));
+    z-index: 1000; /* Above regular content, below critical topbars/modals */
     font-family: 'Inter', 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 }
 
-@media (max-width: 640px) {
+/* Adjust AI widget when cookie banner or other bottom bars are present */
+body.has-cookie-banner .tb-ai-widget,
+body.has-bottom-bar .tb-ai-widget {
+    bottom: 90px;
+}
+
+@media (max-width: 720px) {
     .tb-ai-widget {
-        bottom: 100px; /* Give more space for mobile bottom bars/cookies */
-        right: 16px;
+        bottom: 85px; /* Offset for typical mobile bottom nav if any */
     }
     .tb-ai-bubble {
-        width: 54px;
-        height: 54px;
+        width: 52px;
+        height: 52px;
         font-size: 22px;
     }
 }
