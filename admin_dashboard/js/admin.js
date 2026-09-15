@@ -1235,7 +1235,7 @@ function initializeAdminMenu() {
     // Logging out from inside the admin dashboard left it behind, so those
     // pages kept showing "Super Admin" as still logged in.
     localStorage.removeItem('travelBuddyAdmin');
-    window.location.href = '../../login/login.html';
+    window.location.href = '/login/login.html';
   });
 }
 

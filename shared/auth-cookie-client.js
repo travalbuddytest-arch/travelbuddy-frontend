@@ -17,7 +17,7 @@ window.fetch = async (input, init = {}) => {
         window.TravelBuddyAuth.logout();
 
         const returnTo = window.location.pathname + window.location.search + window.location.hash;
-        window.location.href = `../login/login.html?reason=session_expired\u0026redirect=${encodeURIComponent(returnTo)}`;
+        window.location.href = `/login/login.html?reason=session_expired\u0026redirect=${encodeURIComponent(returnTo)}`;
       }
     } else if (response.status === 403) {
       // 403 Forbidden: Permission denied for this resource. DO NOT logout.

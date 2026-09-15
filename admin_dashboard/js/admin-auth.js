@@ -54,7 +54,7 @@ async function ensureAdminProfile() {
     // There's only one login page for the whole site now: /login/login.html.
     // The unified /api/auth/login endpoint decides whether the email belongs
     // to a user or an admin.
-    window.location.href = '../../login/login.html';
+    window.location.href = '/login/login.html';
   }
 }
 

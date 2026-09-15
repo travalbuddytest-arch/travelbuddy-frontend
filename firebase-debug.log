@@ -1,0 +1,42 @@
+[debug] [2026-09-15T11:11:16.272Z] ----------------------------------------------------------------------
+[debug] [2026-09-15T11:11:16.277Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-09-15T11:11:16.279Z] CLI Version:   15.27.0
+[debug] [2026-09-15T11:11:16.279Z] Platform:      win32
+[debug] [2026-09-15T11:11:16.279Z] Node Version:  v24.18.0
+[debug] [2026-09-15T11:11:16.279Z] Detected Agent: unknown
+[debug] [2026-09-15T11:11:16.280Z] Time:          Tue Sep 15 2026 16:41:16 GMT+0530 (India Standard Time)
+[debug] [2026-09-15T11:11:16.280Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-09-15T11:11:18.339Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-09-15T11:11:18.340Z] > authorizing via signed-in user (kumbharbhushan27@gmail.com)
+[debug] [2026-09-15T11:11:18.340Z] [iam] checking project travalbuddy for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-09-15T11:11:18.365Z] Checked if tokens are valid: false, expires at: 1789471533213
+[debug] [2026-09-15T11:11:18.365Z] Checked if tokens are valid: false, expires at: 1789471533213
+[debug] [2026-09-15T11:11:18.365Z] > refreshing access token with scopes: []
+[debug] [2026-09-15T11:11:18.370Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-09-15T11:11:18.370Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-09-15T11:11:19.428Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-09-15T11:11:19.429Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-09-15T11:11:19.477Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions [none]
+[debug] [2026-09-15T11:11:19.477Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions  x-goog-user-project=travalbuddy
+[debug] [2026-09-15T11:11:19.478Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-15T11:11:21.638Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions 200
+[debug] [2026-09-15T11:11:21.638Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-15T11:11:21.641Z] Checked if tokens are valid: true, expires at: 1789474278429
+[debug] [2026-09-15T11:11:21.641Z] Checked if tokens are valid: true, expires at: 1789474278429
+[debug] [2026-09-15T11:11:21.643Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/travalbuddy [none]
+[debug] [2026-09-15T11:11:22.740Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/travalbuddy 200
+[debug] [2026-09-15T11:11:22.740Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/travalbuddy {"projectId":"travalbuddy","projectNumber":"268106005436","displayName":"TravalBuddy","name":"projects/travalbuddy","resources":{"hostingSite":"travalbuddy"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_64e44266-e625-4f86-bf3b-f29892f81f22"}
+[info] 
+[info] === Deploying to 'travalbuddy'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-09-15T11:11:22.762Z] Checked if tokens are valid: true, expires at: 1789474278429
+[debug] [2026-09-15T11:11:22.763Z] Checked if tokens are valid: true, expires at: 1789474278429
+[debug] [2026-09-15T11:11:22.763Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/travalbuddy/sites/travalbuddy [none]
+[debug] [2026-09-15T11:11:24.621Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/travalbuddy/sites/travalbuddy 200
+[debug] [2026-09-15T11:11:24.621Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/travalbuddy/sites/travalbuddy {"name":"projects/travalbuddy/sites/travalbuddy","defaultUrl":"https://travalbuddy.web.app","appId":"1:268106005436:web:c6cb7f02046f3f823989b9","type":"DEFAULT_SITE"}
+[debug] [2026-09-15T11:11:24.656Z] Checked if tokens are valid: true, expires at: 1789474278429
+[debug] [2026-09-15T11:11:24.666Z] Checked if tokens are valid: true, expires at: 1789474278429
+[debug] [2026-09-15T11:11:24.677Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/travalbuddy/versions [none]
+[debug] [2026-09-15T11:11:24.677Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/travalbuddy/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}

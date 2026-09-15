@@ -16,6 +16,8 @@
         search: ''
     };
 
+    let activeObjectUrls = [];
+
     const elements = {
         tableBody: document.getElementById('vkTableBody'),
         statusFilter: document.getElementById('vkStatusFilter'),
@@ -135,14 +137,61 @@
         });
     }
 
-    function getDocUrl(filename) {
-        if (!filename) return '';
-        return `${API_ORIGIN}/api/admin/docs/${filename}`;
+    function clearActiveUrls() {
+        activeObjectUrls.forEach(url => URL.revokeObjectURL(url));
+        activeObjectUrls = [];
+    }
+
+    async function loadSecureImage(filename, imgElement) {
+        if (!filename || !imgElement) return;
+
+        // Show generic placeholder while loading
+        imgElement.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath d="M21 12a9 9 0 1 1-6.219-8.56"/%3E%3C/svg%3E';
+        imgElement.classList.add('loading');
+
+        try {
+            const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
+            const headers = {};
+            if (token && token !== 'null' && token !== 'undefined') {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const res = await fetch(`${API_ORIGIN}/api/admin/docs/${filename}`, {
+                headers,
+                credentials: 'include'
+            });
+
+            if (!res.ok) throw new Error('Failed to load document');
+
+            const contentType = res.headers.get('content-type');
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            activeObjectUrls.push(url);
+
+            if (contentType?.startsWith('image/')) {
+                imgElement.src = url;
+                // Allow click to zoom/open
+                imgElement.parentElement.onclick = () => window.open(url, '_blank');
+            } else {
+                // For PDF or other documents, show an icon and open on click
+                imgElement.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/%3E%3Cpolyline points="14 2 14 8 20 8"/%3E%3C/svg%3E';
+                imgElement.parentElement.onclick = () => window.open(url, '_blank');
+                imgElement.title = 'Click to open document';
+            }
+        } catch (err) {
+            console.error('Secure document load failed:', err);
+            imgElement.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Crect width="18" height="18" x="3" y="3" rx="2" ry="2"/%3E%3Ccircle cx="9" cy="9" r="2"/%3E%3Cpath d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/%3E%3C/svg%3E';
+            imgElement.alt = 'Error loading file';
+        } finally {
+            imgElement.classList.remove('loading');
+        }
     }
 
     async function openReview(userId) {
         const user = state.users.find(u => u._id === userId);
         if (!user) return;
+
+        clearActiveUrls();
 
         elements.drawerBody.innerHTML = `
             <div class="drawer-header-meta" style="margin-bottom: 24px;">
@@ -153,21 +202,21 @@
             <div class="vd-review-grid">
                 <div class="vd-doc-box">
                     <span class="vd-doc-label">Face Selfie</span>
-                    <div class="vd-img-wrap" onclick="window.open('${getDocUrl(user.kyc.selfie.url)}', '_blank')">
-                        <img src="${getDocUrl(user.kyc.selfie.url)}" alt="Selfie" />
+                    <div class="vd-img-wrap" id="wrapSelfie">
+                        <img id="imgSelfie" alt="Selfie" />
                     </div>
                 </div>
                 <div class="vd-doc-box">
                     <span class="vd-doc-label">Government ID</span>
-                    <div class="vd-img-wrap" onclick="window.open('${getDocUrl(user.kyc.governmentId.url)}', '_blank')">
-                        <img src="${getDocUrl(user.kyc.governmentId.url)}" alt="ID" />
+                    <div class="vd-img-wrap" id="wrapId">
+                        <img id="imgId" alt="ID" />
                     </div>
                 </div>
                 ${user.kyc.selfieWithId?.url ? `
                 <div class="vd-doc-box">
                     <span class="vd-doc-label">ID + Face Selfie</span>
-                    <div class="vd-img-wrap" onclick="window.open('${getDocUrl(user.kyc.selfieWithId.url)}', '_blank')">
-                        <img src="${getDocUrl(user.kyc.selfieWithId.url)}" alt="Selfie with ID" />
+                    <div class="vd-img-wrap" id="wrapSelfieWithId">
+                        <img id="imgSelfieWithId" alt="Selfie with ID" />
                     </div>
                 </div>
                 ` : ''}
@@ -189,6 +238,13 @@
         `;
 
         openDrawer();
+
+        // Load images securely via authenticated fetch
+        loadSecureImage(user.kyc.selfie?.url, document.getElementById('imgSelfie'));
+        loadSecureImage(user.kyc.governmentId?.url, document.getElementById('imgId'));
+        if (user.kyc.selfieWithId?.url) {
+            loadSecureImage(user.kyc.selfieWithId.url, document.getElementById('imgSelfieWithId'));
+        }
 
         document.getElementById('btnApprove')?.addEventListener('click', () => processReview(userId, 'verified'));
         document.getElementById('btnReject')?.addEventListener('click', () => processReview(userId, 'rejected'));
@@ -219,6 +275,7 @@
     }
 
     function closeDrawer() {
+        clearActiveUrls();
         elements.drawerOverlay.classList.add('hidden');
         elements.drawer.classList.remove('open');
         document.body.style.overflow = '';

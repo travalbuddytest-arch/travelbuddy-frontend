@@ -269,11 +269,18 @@
             const adminObj = { ...data.admin, role: 'admin' };
             localStorage.setItem('admin_user', JSON.stringify(adminObj));
             localStorage.setItem('travelBuddyAdmin', JSON.stringify(adminObj));
+            if (data.token) {
+              localStorage.setItem('admin_token', data.token);
+              localStorage.setItem('travelBuddyAdminToken', data.token);
+            }
           }
         } else {
           if (data.user) {
             const userObj = { ...data.user, role: data.role || 'user' };
             localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
+            if (data.token) {
+              localStorage.setItem('travelBuddyToken', data.token);
+            }
           }
         }
         clearLoginState();
