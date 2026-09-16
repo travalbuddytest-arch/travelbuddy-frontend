@@ -38,32 +38,14 @@
 }
 
 .footer-logo{
-    display:inline-flex;
-    align-items:center;
-    gap:14px;
-    color:#fff;
-    text-decoration:none;
-    font-size:26px;
-    font-weight:800;
+    display:inline-block;
     margin-bottom:24px;
-    letter-spacing: -0.5px;
 }
 
-.footer-logo-mark{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:40px;
-    height:40px;
-    border-radius:10px;
-    overflow:hidden;
-    box-shadow: 0 4px 15px rgba(22, 119, 255, 0.3);
-}
-
-.footer-logo-mark img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+.footer-logo img{
+    display: block;
+    height: 40px;
+    width: auto;
 }
 
 .footer-brand > p{
@@ -110,7 +92,7 @@
     letter-spacing: 1px;
 }
 
-.footer-column a{
+.footer-column > a{
     color: rgba(255, 255, 255, 0.6);
     text-decoration:none;
     font-size:15px;
@@ -120,7 +102,7 @@
     display: block;
 }
 
-.footer-column a:hover{
+.footer-column > a:hover{
     color:#fff;
     transform: translateX(5px);
 }
