@@ -652,7 +652,6 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   background: linear-gradient(120deg, var(--tb-primary), #3b82f6);
   color: #fff;
   box-shadow: 0 8px 18px -8px rgba(13, 110, 253, 0.55);
-  transform: scale(1.02);
 }
 
 .nav-item.active::before {
@@ -681,8 +680,8 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
 .nav-item.active .nav-badge { background: rgba(255,255,255,0.28); animation: none; }
 
 @keyframes badge-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 .sidebar-bottom {
@@ -1290,7 +1289,25 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
 .search-row { flex-direction: row; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
 .search-row .field { flex: 1; min-width: 160px; }
 
-/* ---------- Polished Buttons ---------- */
+/* ---------- Polished Buttons & Stability ---------- */
+.btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-success,
+.tab-btn, .filter-pill, .filter-btn, .main-tab-btn, .accept-btn, .bar-btn,
+.quick-amount-pill, .payout-type-card, .order-success-actions button,
+.accepted-user-btn, .tb-metric-card, .tl-item, .history-card {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0); /* Fixes some layout flickering */
+  box-sizing: border-box;
+}
+
+/* Force-disable all layout-shifting 'press' effects dashboard-wide */
+.btn-primary:active, .btn-secondary:active, .btn-ghost:active,
+.tab-btn:active, .filter-pill:active, .accept-btn:active,
+.parcel-card:active, .route-match-card:active, .tl-item:active {
+  transform: none !important;
+  scale: 1 !important;
+}
+
 .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-success {
   display: inline-flex;
   align-items: center;
@@ -1307,8 +1324,6 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   border: 1.5px solid transparent;
   text-decoration: none;
   white-space: nowrap;
-  position: relative;
-  overflow: hidden;
 }
 
 .btn-primary {
@@ -2237,12 +2252,10 @@ input:focus-visible {
 
 .tb-live-status.fade-out {
     opacity: 0.4;
-    transform: scale(0.95);
 }
 
 .tb-live-status:hover {
     opacity: 1;
-    transform: scale(1);
 }
 
 .tb-live-status .dot {
@@ -2267,9 +2280,9 @@ input:focus-visible {
 }
 
 @keyframes tb-pulse {
-    0% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.2); }
-    100% { opacity: 1; transform: scale(1); }
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 /* ---------- Form Submission Lock ---------- */

@@ -481,27 +481,43 @@
   window.TravelBuddy.parseJsonSafe = parseJsonSafe;
   window.TravelBuddy.requestErrorMessage = requestErrorMessage;
 
-  function attachRipple(button) {
-    button.addEventListener('click', function (e) {
-      // Basic double-submit prevention for all primary buttons
-      if (button.classList.contains('btn-loading') || button.disabled) {
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
+  /**
+   * Universal Ripple Effect with Event Delegation.
+   * Standardizes click animations and prevents layout shifting.
+   */
+  function initGlobalRipples() {
+    const rippleSelector = `
+      .btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-success,
+      .tab-btn, .filter-pill, .filter-btn, .main-tab-btn, .accept-btn, .bar-btn,
+      .quick-amount-pill, .payout-type-card, .order-success-actions button,
+      .accepted-user-btn, .history-card, .tl-item
+    `.trim().replace(/\s+/g, ' ');
+
+    document.body.addEventListener('click', function (e) {
+      const button = e.target.closest(rippleSelector);
+      if (!button || button.classList.contains('btn-loading') || button.disabled) return;
 
       const rect = button.getBoundingClientRect();
       const ripple = document.createElement('span');
       const size = Math.max(rect.width, rect.height);
+
       ripple.className = 'ripple';
       ripple.style.width = ripple.style.height = size + 'px';
-      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+      // Determine click coordinates for the ripple center
+      // Handle keyboard clicks (clientX=0) by centering the ripple
+      const x = e.clientX > 0 ? (e.clientX - rect.left) : (rect.width / 2);
+      const y = e.clientY > 0 ? (e.clientY - rect.top) : (rect.height / 2);
+
+      ripple.style.left = (x - size / 2) + 'px';
+      ripple.style.top = (y - size / 2) + 'px';
+
       button.appendChild(ripple);
       ripple.addEventListener('animationend', () => ripple.remove());
     });
   }
-  document.querySelectorAll('.btn-primary').forEach(attachRipple);
+
+  initGlobalRipples();
 
   function parseStoredUser() {
     try {

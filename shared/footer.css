@@ -39,12 +39,11 @@
 
 .footer-logo{
     display:inline-block;
-    margin-bottom:24px;
 }
 
 .footer-logo img{
     display: block;
-    height: 40px;
+    height: 60px;
     width: auto;
 }
 
