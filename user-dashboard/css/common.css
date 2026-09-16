@@ -562,11 +562,10 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   background: rgba(13, 110, 253, 0.08);
   color: var(--primary);
   border-color: rgba(13, 110, 253, 0.3);
-  transform: scale(1.05);
 }
 
 .sidebar-toggle:active {
-  transform: scale(0.95);
+  background: rgba(13, 110, 253, 0.12);
 }
 
 .sidebar-toggle:focus-visible {
@@ -1308,6 +1307,8 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
   border: 1.5px solid transparent;
   text-decoration: none;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary {
@@ -1363,18 +1364,42 @@ textarea:disabled { cursor: not-allowed; opacity: .6; }
 /* Loading State */
 .btn-loading {
   pointer-events: none;
-  opacity: 0.8;
 }
 
-.btn-loading .btn-icon { display: none; }
+.btn-loading .btn-label,
+.btn-loading .btn-icon,
+.btn-loading i {
+  opacity: 0;
+}
+
 .btn-loading::after {
   content: "";
-  width: 18px;
-  height: 18px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
   border: 2.5px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
   animation: tb-spin 0.6s linear infinite;
+  z-index: 2;
+}
+
+/* Ripple Effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: tb-ripple 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes tb-ripple {
+  to { transform: scale(4); opacity: 0; }
 }
 
 @keyframes tb-spin {

@@ -15,7 +15,7 @@
 }
 .parcel-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: rgba(13,110,253,0.35); }
 .parcel-card:active,
-.route-match-card:active { transform: scale(.995); }
+.route-match-card:active { background: var(--tb-bg); }
 
 /* Route recommendation cards ("Travelers on Your Route") - kept as their own
    class rather than reusing .parcel-card, because .parcel-card gets

@@ -31,7 +31,7 @@
   transition: all 0.2s;
   border: 1px solid var(--border);
 }
-.back-circle-btn:hover { transform: scale(1.08); border-color: var(--primary); color: var(--primary); }
+.back-circle-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--tb-primary-soft); }
 .track-app-header h2 { font-size: 22px; font-weight: 800; margin: 0; color: var(--text-main); }
 .track-app-header p { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
 

@@ -40,6 +40,8 @@ const TYPE_LABELS = {
   withdrawal: 'Withdrawal',
 };
 
+const fmtMoney = n => '₹' + ((n || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 function getFilters() {
   return {
     type: $('#wlFilterType')?.value || 'all',
@@ -316,7 +318,7 @@ function wireFilterControls() {
   $('#wlClearFilters')?.addEventListener('click', clearAllFilters);
 }
 
-function wireFilterControls() {
+async function loadWallet() {
   const ledger = document.getElementById('walletLedger');
   const summary = document.getElementById('walletSummary');
   const pagination = document.getElementById('walletPagination');
