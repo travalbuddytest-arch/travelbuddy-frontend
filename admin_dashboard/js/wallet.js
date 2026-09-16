@@ -29,6 +29,7 @@ let activeWithdrawal = null;
 
 const TYPE_LABELS = {
   topup: 'Top-up',
+  order_payment: 'Order Payment',
   order_hold: 'Order Hold',
   order_refund: 'Order Refund',
   traveler_earning: 'Traveler Earning',
