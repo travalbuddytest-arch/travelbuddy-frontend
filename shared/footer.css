@@ -35,7 +35,6 @@
     display:grid;
     grid-template-columns:1.5fr repeat(3, 1fr);
     gap:clamp(40px, 5vw, 100px);
-    //padding-bottom:64px;
 }
 
 .footer-logo{
