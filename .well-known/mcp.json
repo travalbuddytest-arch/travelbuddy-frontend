@@ -1,8 +1,8 @@
 {
   "$schema": "https://modelcontextprotocol.io/schema.json",
   "mcpVersion": "2024-11-05",
-  "name": "TravelBuddy MCP Server",
-  "description": "Official Model Context Protocol server for TravelBuddy peer-to-peer delivery platform",
+  "name": "CarryParcel MCP Server",
+  "description": "Official Model Context Protocol server for CarryParcel peer-to-peer delivery platform",
   "version": "1.0.0",
   "servers": [
     {
@@ -94,7 +94,7 @@
     },
     {
       "name": "list_prohibited_items",
-      "description": "Returns list of items prohibited from being transported on TravelBuddy",
+      "description": "Returns list of items prohibited from being transported on CarryParcel",
       "inputSchema": {
         "type": "object",
         "properties": {}
@@ -111,9 +111,9 @@
   ],
   "authentication": {
     "type": "bearer",
-    "tokenUrl": "https://travalbuddy.web.app/login/login.html"
+    "tokenUrl": "https://www.carryparcel.in/login/login.html"
   },
   "links": {
-    "homepage": "https://travalbuddy.web.app/"
+    "homepage": "https://www.carryparcel.in/"
   }
 }

@@ -26,7 +26,7 @@ if (config.apiKey) {
   const messaging = firebase.messaging();
 
   messaging.onBackgroundMessage((payload) => {
-    const title = payload.notification?.title || 'TravelBuddy';
+    const title = payload.notification?.title || 'CarryParcel';
     const body = payload.notification?.body || '';
     self.registration.showNotification(title, {
       body,

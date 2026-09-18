@@ -4,6 +4,21 @@
     "cleanUrls": true,
     "redirects": [
       {
+        "source": "/about",
+        "destination": "/about/about.html",
+        "type": 301
+      },
+      {
+        "source": "/contact",
+        "destination": "/contact/contact.html",
+        "type": 301
+      },
+      {
+        "source": "/team",
+        "destination": "/team/team.html",
+        "type": 301
+      },
+      {
         "source": "/home",
         "destination": "/",
         "type": 301

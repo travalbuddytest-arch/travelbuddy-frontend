@@ -111,7 +111,7 @@
   // ---------------- RENDERERS ----------------
 
   function renderProfileHeader(user) {
-    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'TravelBuddy User';
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'CarryParcel User';
     const initials = ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() || 'TB';
     const isPrivate = window.TravelBuddy.isPrivacyMode();
 

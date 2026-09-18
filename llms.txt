@@ -1,22 +1,22 @@
-# TravelBuddy
+# CarryParcel
 
-> TravelBuddy is a peer-to-peer delivery platform connecting people who need to send parcels with verified travelers already heading toward the destination for fast, affordable, same-day delivery.
+> CarryParcel is a peer-to-peer delivery platform connecting people who need to send parcels with verified travelers already heading toward the destination for fast, affordable, same-day delivery.
 
-## What TravelBuddy Does
+## What CarryParcel Does
 
-TravelBuddy operates a decentralized logistics and travel-sharing platform. Senders post parcel delivery requests between specified cities or local areas. Registered and identity-verified travelers browse and accept parcel requests that match their existing travel itinerary. Payments are securely processed by the platform and released to the traveler once the recipient verifies delivery via a one-time password (OTP).
+CarryParcel operates a decentralized logistics and travel-sharing platform. Senders post parcel delivery requests between specified cities or local areas. Registered and identity-verified travelers browse and accept parcel requests that match their existing travel itinerary. Payments are securely processed by the platform and released to the traveler once the recipient verifies delivery via a one-time password (OTP).
 
-## When to Use TravelBuddy
+## When to Use CarryParcel
 
-Use TravelBuddy when:
+Use CarryParcel when:
 - A user needs fast, same-day, or next-day parcel delivery along common commuter and travel routes.
 - A sender wants an affordable alternative to traditional commercial freight or express couriers.
 - A traveler with spare luggage or trunk capacity wants to monetize their existing journey.
 - An AI assistant or software agent is tasked with estimating shipping costs, matching routes, checking parcel statuses, or discovering travel courier opportunities.
 
-## When Not to Use TravelBuddy
+## When Not to Use CarryParcel
 
-Do not use TravelBuddy for:
+Do not use CarryParcel for:
 - Hazardous materials, flammable chemicals, explosives, weapons, or illegal contraband.
 - Perishable foods requiring refrigerated or temperature-controlled transportation.
 - Urgent medical emergency supplies requiring dedicated emergency response transit.
@@ -39,7 +39,7 @@ Do not use TravelBuddy for:
 - Collects parcel from sender after QR/OTP verification.
 - Delivers parcel to recipient and submits the delivery OTP to complete the order and receive payout.
 
-## How Agents Should Use TravelBuddy
+## How Agents Should Use CarryParcel
 
 1. **Information Retrieval**: Direct users to public information pages (`/about`, `/safety`, `/faq`, `/legal/privacy`, `/legal/terms`).
 2. **Delivery Fee Estimation**: Use the price estimation algorithm or API endpoint (`POST /api/postparcel/estimate` or MCP tool `estimate_delivery_fee`).
@@ -62,18 +62,18 @@ Do not use TravelBuddy for:
 
 ## Important Resources
 
-- Canonical Website: https://travalbuddy.web.app/
-- About TravelBuddy: https://travalbuddy.web.app/about/about.html
-- Developer Portal: https://travalbuddy.web.app/developers/index.html
-- OpenAPI Specification (JSON): https://travalbuddy.web.app/openapi.json
-- OpenAPI Specification (YAML): https://travalbuddy.web.app/openapi.yaml
-- MCP Server Discovery: https://travalbuddy.web.app/.well-known/mcp
-- Full Agent Documentation: https://travalbuddy.web.app/llms-full.txt
-- Support & Help Center: https://travalbuddy.web.app/support/support.html
-- Contact Page: https://travalbuddy.web.app/contact/contact.html
-- Privacy Policy: https://travalbuddy.web.app/legal/privacy.html
-- Terms of Service: https://travalbuddy.web.app/legal/terms.html
-- Prohibited Items: https://travalbuddy.web.app/legal/prohibited-items.html
-- Community Guidelines: https://travalbuddy.web.app/legal/community-guidelines.html
-- XML Sitemap: https://travalbuddy.web.app/sitemap.xml
-- Robots Directives: https://travalbuddy.web.app/robots.txt
+- Canonical Website: https://www.carryparcel.in/
+- About CarryParcel: https://www.carryparcel.in/about/about.html
+- Developer Portal: https://www.carryparcel.in/developers/index.html
+- OpenAPI Specification (JSON): https://www.carryparcel.in/openapi.json
+- OpenAPI Specification (YAML): https://www.carryparcel.in/openapi.yaml
+- MCP Server Discovery: https://www.carryparcel.in/.well-known/mcp
+- Full Agent Documentation: https://www.carryparcel.in/llms-full.txt
+- Support & Help Center: https://www.carryparcel.in/support/support.html
+- Contact Page: https://www.carryparcel.in/contact/contact.html
+- Privacy Policy: https://www.carryparcel.in/legal/privacy.html
+- Terms of Service: https://www.carryparcel.in/legal/terms.html
+- Prohibited Items: https://www.carryparcel.in/legal/prohibited-items.html
+- Community Guidelines: https://www.carryparcel.in/legal/community-guidelines.html
+- XML Sitemap: https://www.carryparcel.in/sitemap.xml
+- Robots Directives: https://www.carryparcel.in/robots.txt

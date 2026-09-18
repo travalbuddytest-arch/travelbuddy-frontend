@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TravelBuddy Developer Documentation | API &amp; MCP Integration</title>
-    <meta name="description" content="Official TravelBuddy developer documentation. Integrate peer-to-peer parcel delivery with our REST API, OpenAPI 3.0 specification, and Model Context Protocol (MCP) server.">
-    <link rel="canonical" href="https://travalbuddy.web.app/developers/index.html">
+    <title>CarryParcel Developer Documentation | API &amp; MCP Integration</title>
+    <meta name="description" content="Official CarryParcel developer documentation. Integrate peer-to-peer parcel delivery with our REST API, OpenAPI 3.0 specification, and Model Context Protocol (MCP) server.">
+    <link rel="canonical" href="https://www.carryparcel.in/developers/index.html">
     <link rel="icon" type="image/jpeg" href="/images/logo.jpeg">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="TravelBuddy Developer Documentation">
-    <meta property="og:description" content="Build and integrate with the TravelBuddy logistics platform using our REST API, OpenAPI specification, and MCP AI agent server.">
-    <meta property="og:url" content="https://travalbuddy.web.app/developers/index.html">
-    <meta property="og:image" content="https://travalbuddy.web.app/images/post-your-parcel.jpg">
-    <meta property="og:site_name" content="TravelBuddy">
+    <meta property="og:title" content="CarryParcel Developer Documentation">
+    <meta property="og:description" content="Build and integrate with the CarryParcel logistics platform using our REST API, OpenAPI specification, and MCP AI agent server.">
+    <meta property="og:url" content="https://www.carryparcel.in/developers/index.html">
+    <meta property="og:image" content="https://www.carryparcel.in/images/post-your-parcel.jpg">
+    <meta property="og:site_name" content="CarryParcel">
 
     <link rel="stylesheet" href="/home/style.css">
     <link rel="stylesheet" href="/shared/design-system.css">
@@ -204,7 +204,7 @@
 <header class="tb-nav-header" data-v="6">
     <div class="logo">
         <a href="/" class="logo-link">
-            <img src="/images/logo-horizontal.png" alt="TravelBuddy logo" width="180" height="40" loading="eager" decoding="async">
+            <img src="/images/logo-horizontal.png" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
         </a>
     </div>
 
@@ -229,7 +229,7 @@
             <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
                 <span class="home-avatar" id="homeAvatar">TB</span>
                 <span class="home-user-meta">
-                    <strong id="homeUserName">TravelBuddy</strong>
+                    <strong id="homeUserName">CarryParcel</strong>
                     <small id="homeUserRole">Sender &amp; Traveler</small>
                 </span>
                 <i class="fa-solid fa-chevron-down home-user-chevron"></i>
@@ -248,9 +248,9 @@
 
 <div class="dev-container">
     <header class="dev-hero">
-        <h1>TravelBuddy Developer Documentation</h1>
+        <h1>CarryParcel Developer Documentation</h1>
         <p>
-            Build next-generation peer-to-peer delivery integrations, query real-time travel routes, calculate instant shipping estimates, or connect autonomous AI agents with the official TravelBuddy API and Model Context Protocol (MCP) server.
+            Build next-generation peer-to-peer delivery integrations, query real-time travel routes, calculate instant shipping estimates, or connect autonomous AI agents with the official CarryParcel API and Model Context Protocol (MCP) server.
         </p>
         <div class="dev-quick-links">
             <a href="/openapi.json" class="dev-badge-link" download><i class="fa-solid fa-file-code"></i> OpenAPI 3.0 (JSON)</a>
@@ -279,7 +279,7 @@
             <section id="overview" class="dev-section">
                 <h2><i class="fa-solid fa-network-wired text-blue"></i> Architecture Overview</h2>
                 <p>
-                    The TravelBuddy platform exposes a RESTful JSON API for mobile and web clients, automated workflows, and partner systems. All production API traffic is served over HTTPS with support for standard HTTP verbs, CORS authentication, and structured error responses.
+                    The CarryParcel platform exposes a RESTful JSON API for mobile and web clients, automated workflows, and partner systems. All production API traffic is served over HTTPS with support for standard HTTP verbs, CORS authentication, and structured error responses.
                 </p>
                 <div class="code-block">
 Base URL: https://travelbuddy-backend-19l6.onrender.com
@@ -358,10 +358,10 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
             <section id="mcp" class="dev-section">
                 <h2><i class="fa-solid fa-robot text-blue"></i> Model Context Protocol (MCP)</h2>
                 <p>
-                    TravelBuddy provides first-party Model Context Protocol (MCP) server support, allowing autonomous AI agents to query routes, calculate price estimates, and inspect platform status safely.
+                    CarryParcel provides first-party Model Context Protocol (MCP) server support, allowing autonomous AI agents to query routes, calculate price estimates, and inspect platform status safely.
                 </p>
                 <p>
-                    <strong>Discovery Endpoint:</strong> <code>https://travalbuddy.web.app/.well-known/mcp</code><br>
+                    <strong>Discovery Endpoint:</strong> <code>https://www.carryparcel.in/.well-known/mcp</code><br>
                     <strong>Transport Protocol:</strong> Server-Sent Events (SSE) &amp; Streamable HTTP POST at <code>https://travelbuddy-backend-19l6.onrender.com/mcp</code>
                 </p>
                 <h3>Available MCP Tools</h3>
@@ -392,8 +392,8 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
                     For questions, bug reports, or enterprise partnership inquiries:
                 </p>
                 <p>
-                    Email: <a href="mailto:hello@travelbuddy.com">hello@travelbuddy.com</a><br>
-                    Help Center: <a href="/support/support.html">TravelBuddy Support</a>
+                    Email: <a href="mailto:support@carryparcel.in">support@carryparcel.in</a><br>
+                    Help Center: <a href="/support/support.html">CarryParcel Support</a>
                 </p>
             </section>
         </main>
@@ -406,17 +406,16 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
     <div class="footer-container">
         <div class="footer-grid">
             <div class="footer-brand">
-                <a href="/" class="footer-logo" aria-label="TravelBuddy home">
-                    <img src="/images/logo-horizontal.png" alt="TravelBuddy logo" width="180" height="40" loading="lazy" decoding="async">
+                <a href="/" class="footer-logo" aria-label="CarryParcel home">
+                    <img src="/images/logo-horizontal.png" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async">
                 </a>
 
                 <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered<br>delivery.</p>
 
                 <div class="footer-socials" aria-label="Social media links">
-                    <a href="https://www.facebook.com/" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="https://x.com/" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="https://www.instagram.com/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.linkedin.com/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+<a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
             </div>
 
@@ -437,7 +436,7 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 TravelBuddy. All rights reserved.</p>
+            <p>&copy; 2026 CarryParcel. All rights reserved.</p>
         </div>
     </div>
 </footer>

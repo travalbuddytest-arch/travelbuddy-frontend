@@ -12,7 +12,7 @@
 
 **Actions Taken:**
 - ✅ Merged all unique content from Post Parcel into Send Parcel
-- ✅ Added "Understanding Parcel Posting on TravelBuddy" section (explains terminology)
+- ✅ Added "Understanding Parcel Posting on CarryParcel" section (explains terminology)
 - ✅ Added "How to Send Your Parcel (Step-by-Step)" section (detailed 5-step guide)
 - ✅ Added "Safety and Verification" section (OTP, traveler verification, dispute support)
 - ✅ Added "Track Your Parcel in Real Time" section (real-time status tracking)

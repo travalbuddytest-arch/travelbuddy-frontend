@@ -213,7 +213,7 @@
           key: orderData.keyId,
           amount: orderData.amount, // in paise
           currency: orderData.currency || 'INR',
-          name: 'TravelBuddy',
+          name: 'CarryParcel',
           description: 'Wallet Top-up',
           order_id: orderData.orderId,
           handler: async function (response) {

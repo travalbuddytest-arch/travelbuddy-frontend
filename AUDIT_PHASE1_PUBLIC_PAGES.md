@@ -1,4 +1,4 @@
-# TravelBuddy Public Website — Phase 1 Audit Report
+# CarryParcel Public Website — Phase 1 Audit Report
 **Date:** 2026-09-01  
 **Status:** AUDIT COMPLETE  
 **Project:** Frontend Enhancement & Audit  
@@ -7,7 +7,7 @@
 
 ## EXECUTIVE SUMMARY
 
-The TravelBuddy website is a well-structured HTML/CSS/Vanilla JavaScript project with:
+The CarryParcel website is a well-structured HTML/CSS/Vanilla JavaScript project with:
 - ✅ **15+ public pages** properly organized
 - ✅ **Solid authentication system** with frontend guards and backend validation  
 - ✅ **Real CTA routing** using `data-cta-auth` pattern to protect authenticated flows

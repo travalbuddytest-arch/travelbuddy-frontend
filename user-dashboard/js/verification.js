@@ -297,7 +297,7 @@
     } else if (status === 'verified') {
       elements.verified.classList.remove('hidden');
       elements.statusTitle.textContent = 'Identity Verified';
-      elements.statusDesc.textContent = 'You have full access to TravelBuddy features.';
+      elements.statusDesc.textContent = 'You have full access to CarryParcel features.';
     }
   }
 

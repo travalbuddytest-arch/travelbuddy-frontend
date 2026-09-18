@@ -30,7 +30,7 @@ function build(){
     <button class="tb-cookie-manage" data-cookie-action="customize" type="button">Manage Cookies <span aria-hidden="true">›</span></button>
   </section>
   <section class="tb-cookie-modal" id="tbCookieModal" role="dialog" aria-modal="true" aria-labelledby="tbCookieTitle">
-    <div class="tb-cookie-modal-head"><div><h2 id="tbCookieTitle">Cookie preferences</h2><p class="tb-cookie-text">Choose which optional cookies TravelBuddy may use. Necessary cookies are always active.</p></div><button class="tb-cookie-close" data-cookie-action="close" aria-label="Close">×</button></div>
+    <div class="tb-cookie-modal-head"><div><h2 id="tbCookieTitle">Cookie preferences</h2><p class="tb-cookie-text">Choose which optional cookies CarryParcel may use. Necessary cookies are always active.</p></div><button class="tb-cookie-close" data-cookie-action="close" aria-label="Close">×</button></div>
     <div class="tb-cookie-option"><div><h3>Necessary cookies</h3><p>Required for login state, security, wallet and core website features.</p></div><span class="tb-cookie-always">Always on</span></div>
     <div class="tb-cookie-option"><div><h3>Preference cookies</h3><p>Remember optional choices such as interface preferences.</p></div><label class="tb-cookie-switch"><input id="tbPreferenceConsent" type="checkbox"><span class="tb-cookie-slider"></span></label></div>
     <div class="tb-cookie-option"><div><h3>Analytics cookies</h3><p>Allow anonymous usage measurement when analytics is connected.</p></div><label class="tb-cookie-switch"><input id="tbAnalyticsConsent" type="checkbox"><span class="tb-cookie-slider"></span></label></div>

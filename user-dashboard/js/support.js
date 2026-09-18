@@ -273,7 +273,7 @@
       return `
         <div class="ticket-msg-bubble ${isUser ? 'is-user' : 'is-support'}">
           <span style="font-size:10.5px; opacity:0.8; display:block; margin-bottom:2px; font-weight:700;">
-            ${isUser ? 'You' : 'TravelBuddy Support Team'}
+            ${isUser ? 'You' : 'CarryParcel Support Team'}
           </span>
           ${escapeHTML(m.content)}
         </div>

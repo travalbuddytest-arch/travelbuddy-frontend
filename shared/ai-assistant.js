@@ -9,11 +9,11 @@
     widget.innerHTML = `
         <div class="tb-ai-window" id="tbAiWindow">
             <div class="tb-ai-header">
-                <h3>TravelBuddy Assistant</h3>
+                <h3>CarryParcel Assistant</h3>
                 <div class="tb-ai-close" id="tbAiClose"><i class="fa-solid fa-xmark"></i></div>
             </div>
             <div class="tb-ai-messages" id="tbAiMessages">
-                <div class="tb-ai-msg bot">Hi! I'm your TravelBuddy assistant. How can I help you today?</div>
+                <div class="tb-ai-msg bot">Hi! I'm your CarryParcel assistant. How can I help you today?</div>
             </div>
             <div class="tb-ai-typing" id="tbAiTyping">
                 <div class="tb-ai-dot"></div>

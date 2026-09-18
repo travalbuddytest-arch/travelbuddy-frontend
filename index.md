@@ -1,10 +1,10 @@
-# TravelBuddy — Community-Driven Parcel Delivery
+# CarryParcel — Community-Driven Parcel Delivery
 
 > Fast, affordable, and trusted same-day parcel delivery connecting people with verified travelers heading in the same direction.
 
 ## Overview
 
-TravelBuddy is a peer-to-peer logistics platform that transforms everyday personal journeys into a decentralized, sustainable delivery network. Instead of relying solely on traditional couriers with high overhead and multi-day shipping times, TravelBuddy connects individuals and businesses who need to send parcels directly with registered travelers already traveling that exact route.
+CarryParcel is a peer-to-peer logistics platform that transforms everyday personal journeys into a decentralized, sustainable delivery network. Instead of relying solely on traditional couriers with high overhead and multi-day shipping times, CarryParcel connects individuals and businesses who need to send parcels directly with registered travelers already traveling that exact route.
 
 ---
 
@@ -19,7 +19,7 @@ TravelBuddy is a peer-to-peer logistics platform that transforms everyday person
 
 ---
 
-## Two Ways to Use TravelBuddy
+## Two Ways to Use CarryParcel
 
 ### 1. For Senders (Send a Parcel)
 1. **Post Parcel Details**: Enter pickup location, destination city/address, parcel category (documents, electronics, personal items, gifts), size/weight, and your target price.
@@ -33,7 +33,7 @@ TravelBuddy is a peer-to-peer logistics platform that transforms everyday person
 2. **Match with Parcels**: Review pending parcel requests along your route.
 3. **Accept & Collect**: Accept compatible requests and collect packages at the agreed pickup point.
 4. **Deliver & Complete**: Hand over parcel to the designated receiver and collect the OTP.
-5. **Instant Earnings**: Receive payouts directly into your TravelBuddy wallet for instant bank withdrawal.
+5. **Instant Earnings**: Receive payouts directly into your CarryParcel wallet for instant bank withdrawal.
 
 ---
 
@@ -85,4 +85,4 @@ TravelBuddy is a peer-to-peer logistics platform that transforms everyday person
 - **Terms & Conditions**: `https://travalbuddy.web.app/legal/terms.html`
 - **Prohibited Items Policy**: `https://travalbuddy.web.app/legal/prohibited-items.html`
 - **Community Guidelines**: `https://travalbuddy.web.app/legal/community-guidelines.html`
-- **About TravelBuddy**: `https://travalbuddy.web.app/about/about.html`
+- **About CarryParcel**: `https://travalbuddy.web.app/about/about.html`

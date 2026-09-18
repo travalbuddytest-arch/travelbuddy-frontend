@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="tb-success-branding">
-                    <span>TRAVELBUDDY</span>
+                    <span>CARRYPARCEL</span>
                     <i class="fa-solid fa-plane tb-success-plane"></i>
                 </div>
             </div>

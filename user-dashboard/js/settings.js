@@ -40,7 +40,7 @@
           return;
         }
 
-        window.showToast('Thank you! Your feedback helps us make TravelBuddy better.', 'success');
+        window.showToast('Thank you! Your feedback helps us make CarryParcel better.', 'success');
         feedbackForm.reset();
       } catch (err) {
         console.error(err);

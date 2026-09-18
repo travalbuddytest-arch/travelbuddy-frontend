@@ -64,12 +64,12 @@ setTimeout(() => {
 
 **Send Parcel Unique Content:**
 - ✅ "Affordable Parcel Delivery, City to City" section (unique positioning)
-- "Why Send with TravelBuddy" (3 cards) — more concise
+- "Why Send with CarryParcel" (3 cards) — more concise
 - "What You Can Send" section
 - Secondary CTA: "See Delivery Options" (links to Parcel Delivery)
 
 **Post Parcel Unique Content:**
-- ✅ "What does 'Post a Parcel' mean on TravelBuddy?" (definitional section)
+- ✅ "What does 'Post a Parcel' mean on CarryParcel?" (definitional section)
 - "How to Post a Parcel" (step-by-step ordered list)
 - "Pickup and Delivery Tracking" section
 - Structured FAQ with `<details>` elements
@@ -137,7 +137,7 @@ setTimeout(() => {
 1. **Hero:** "A Different Kind of Parcel Delivery"
    - **Status:** Duplicate of Send Parcel hero
    
-2. **"What Makes TravelBuddy's Delivery Service Work"**
+2. **"What Makes CarryParcel's Delivery Service Work"**
    - **Status:** Same concepts as Send Parcel's "Why Send" section
    
 3. **"For Senders and Travelers"**

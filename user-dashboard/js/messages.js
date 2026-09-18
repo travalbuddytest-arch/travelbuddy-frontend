@@ -1287,8 +1287,8 @@
       </div>
       <div class="receipt-preview-section">
         <h4>Participants</h4>
-        <div class="receipt-row"><span class="receipt-label">Sender</span><span class="receipt-value">${escapeHTML(p.sender?.firstName || 'TravelBuddy')} ${escapeHTML(p.sender?.lastName || 'User')}</span></div>
-        <div class="receipt-row"><span class="receipt-label">Traveler</span><span class="receipt-value">${escapeHTML(p.acceptedBy?.firstName || 'TravelBuddy')} ${escapeHTML(p.acceptedBy?.lastName || 'User')}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Sender</span><span class="receipt-value">${escapeHTML(p.sender?.firstName || 'CarryParcel')} ${escapeHTML(p.sender?.lastName || 'User')}</span></div>
+        <div class="receipt-row"><span class="receipt-label">Traveler</span><span class="receipt-value">${escapeHTML(p.acceptedBy?.firstName || 'CarryParcel')} ${escapeHTML(p.acceptedBy?.lastName || 'User')}</span></div>
       </div>
       <div class="receipt-preview-section">
         <h4>Route Details</h4>
@@ -1318,7 +1318,7 @@
     doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
-    doc.text('TRAVELBUDDY', 20, 20);
+    doc.text('CARRYPARCEL', 20, 20);
     doc.setFontSize(10);
     doc.text('Official Delivery Receipt', 20, 30);
 
@@ -1339,7 +1339,7 @@
     doc.setFontSize(16);
     doc.text(window.TravelBuddy.formatPaise(p.price), 20, 128);
 
-    doc.save(`TravelBuddy-Receipt-${p.orderId || p._id}.pdf`);
+    doc.save(`CarryParcel-Receipt-${p.orderId || p._id}.pdf`);
   }
 
   downloadReceiptBtn?.addEventListener('click', downloadReceiptPDF);

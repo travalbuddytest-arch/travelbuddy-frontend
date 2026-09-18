@@ -1,4 +1,4 @@
-# TravelBuddy Developer Documentation
+# CarryParcel Developer Documentation
 
 > REST API and Model Context Protocol (MCP) Integration Guide.
 
@@ -9,10 +9,10 @@
 
 ## Machine-Readable Specifications
 
-- **OpenAPI 3.0 JSON**: `https://travalbuddy.web.app/openapi.json`
-- **OpenAPI 3.0 YAML**: `https://travalbuddy.web.app/openapi.yaml`
-- **Model Context Protocol Manifest**: `https://travalbuddy.web.app/.well-known/mcp`
-- **AI Agent Guidelines**: `https://travalbuddy.web.app/llms.txt`
+- **OpenAPI 3.0 JSON**: `https://www.carryparcel.in/openapi.json`
+- **OpenAPI 3.0 YAML**: `https://www.carryparcel.in/openapi.yaml`
+- **Model Context Protocol Manifest**: `https://www.carryparcel.in/.well-known/mcp`
+- **AI Agent Guidelines**: `https://www.carryparcel.in/llms.txt`
 
 ## Authentication
 

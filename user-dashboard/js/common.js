@@ -535,7 +535,7 @@
     const first = (user.firstName || '').trim();
     const last = (user.lastName || '').trim();
     const full = `${first} ${last}`.trim();
-    return full || user.name || 'TravelBuddy';
+    return full || user.name || 'CarryParcel';
   }
 
   function getInitials(name) {
@@ -1170,7 +1170,7 @@
                 <input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden>
                 <button type="button" class="btn-ghost" id="removeProfilePhoto"><i class="fa-solid fa-trash-can"></i> Remove Photo</button>
               </div>
-              <p class="profile-photo-help">Your photo is saved to your TravelBuddy account and shown in your profile avatar.</p>
+              <p class="profile-photo-help">Your photo is saved to your CarryParcel account and shown in your profile avatar.</p>
             </div>
           </section>
 

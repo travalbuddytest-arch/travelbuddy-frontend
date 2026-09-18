@@ -1,18 +1,20 @@
-# TravelBuddy — Comprehensive Agent Reference Manual
+# CarryParcel — Comprehensive Agent Reference Manual
 
-> Version: 1.0.0
-> Canonical URL: https://travalbuddy.web.app/
-> Last Updated: 2026-08-27
+> Version: 1.1.0
+> Canonical URL: https://www.carryparcel.in/
+> Last Updated: 2026-09-18
 
 ---
 
 ## 1. System Architecture & Model
 
-TravelBuddy is a community peer-to-peer delivery platform consisting of:
-1. **Web Application**: Static progressive web app hosted on Firebase Hosting (`https://travalbuddy.web.app`).
+CarryParcel is a community peer-to-peer delivery platform consisting of:
+1. **Web Application**: Static progressive web app hosted on Firebase Hosting with official domain `https://www.carryparcel.in/`.
 2. **Android Application**: Native Jetpack Compose Android client with Google Maps and real-time Socket.IO tracking.
 3. **Backend API Server**: Node.js Express server on Render (`https://travelbuddy-backend-19l6.onrender.com`) with MongoDB database, Twilio SMS verification, Razorpay wallet payments, and Gemini AI RAG assistant.
 4. **Model Context Protocol (MCP) Server**: First-party MCP discovery endpoint at `/.well-known/mcp` and live JSON-RPC/SSE endpoint at `/mcp`.
+
+*Note: Technical identifiers like the Android package `com.travelbuddy.app` and backend infrastructure URLs remain unchanged for operational compatibility.*
 
 ---
 
@@ -32,7 +34,7 @@ A parcel post transitions through the following statuses:
 
 3. `PAID`:
    - Sender funds the delivery payment via Razorpay.
-   - Money is securely processed by TravelBuddy.
+   - Money is securely processed by CarryParcel.
    - Direct encrypted in-app chat opens between sender and traveler.
 
 4. `PICKED_UP` / `IN_TRANSIT`:
@@ -111,8 +113,8 @@ A parcel post transitions through the following statuses:
 
 ## 5. Model Context Protocol (MCP) Integration
 
-TravelBuddy implements a Model Context Protocol server exposing:
-- Discovery: `https://travalbuddy.web.app/.well-known/mcp`
+CarryParcel implements a Model Context Protocol server exposing:
+- Discovery: `https://www.carryparcel.in/.well-known/mcp`
 - Transport: Server-Sent Events (SSE) / Streamable HTTP POST at `https://travelbuddy-backend-19l6.onrender.com/mcp`
 - Tools:
   - `estimate_delivery_fee(fromCity, toCity, weightKg, urgency)`

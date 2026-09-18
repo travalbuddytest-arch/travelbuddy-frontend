@@ -1,4 +1,4 @@
-# TravelBuddy Frontend - Detailed Code Changes Reference
+# CarryParcel Frontend - Detailed Code Changes Reference
 
 ## File-by-File Summary
 

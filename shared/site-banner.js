@@ -42,7 +42,7 @@ function build(){
     <button class="tb-banner-manage" data-banner-action="customize" type="button">Manage Cookies <span aria-hidden="true">›</span></button>
   </section>
   <section class="tb-notice-modal" id="tbNoticeModal" role="dialog" aria-modal="true" aria-labelledby="tbNoticeTitle">
-    <div class="tb-notice-modal-head"><div><h2 id="tbNoticeTitle">Cookie preferences</h2><p class="tb-banner-text">Choose which optional cookies TravelBuddy may use. Necessary cookies are always active.</p></div><button class="tb-notice-close" data-banner-action="close" aria-label="Close">×</button></div>
+    <div class="tb-notice-modal-head"><div><h2 id="tbNoticeTitle">Cookie preferences</h2><p class="tb-banner-text">Choose which optional cookies CarryParcel may use. Necessary cookies are always active.</p></div><button class="tb-notice-close" data-banner-action="close" aria-label="Close">×</button></div>
 
     <div class="tb-notice-option">
       <div>

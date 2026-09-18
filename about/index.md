@@ -1,10 +1,10 @@
-# About TravelBuddy
+# About CarryParcel
 
 > Connecting people and parcels through shared journeys. Faster, affordable, community-powered delivery.
 
 ## Our Mission
 
-TravelBuddy was founded to transform underutilized travel capacity into an efficient, eco-friendly logistics network. Every day, millions of travelers, commuters, and road-trippers travel between cities with empty trunk and luggage space. TravelBuddy creates a trusted, peer-to-peer marketplace connecting these travelers with people who need fast, affordable parcel delivery.
+CarryParcel was founded to transform underutilized travel capacity into an efficient, eco-friendly logistics network. Every day, millions of travelers, commuters, and road-trippers travel between cities with empty trunk and luggage space. CarryParcel creates a trusted, peer-to-peer marketplace connecting these travelers with people who need fast, affordable parcel delivery.
 
 ## Key Principles
 
@@ -15,6 +15,6 @@ TravelBuddy was founded to transform underutilized travel capacity into an effic
 
 ## Contact & Information
 
-- **Website**: https://travalbuddy.web.app/
-- **Email**: hello@travelbuddy.com
-- **Help Center**: https://travalbuddy.web.app/support/support.html
+- **Website**: https://www.carryparcel.in/
+- **Email**: support@carryparcel.in
+- **Help Center**: https://www.carryparcel.in/support/support.html

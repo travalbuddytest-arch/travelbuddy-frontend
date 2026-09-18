@@ -1,16 +1,16 @@
-# Contact TravelBuddy
+# Contact CarryParcel
 
 > Get in touch with our team for customer support, enterprise partnerships, or press inquiries.
 
 ## Contact Information
 
-- **Support Email**: `hello@travelbuddy.com`
-- **Phone**: `+1 (800) 555-0142` (Toll-Free, 24/7)
-- **Help Center**: `https://travalbuddy.web.app/support/support.html`
+- **Support Email**: `support@carryparcel.in`
+- **Phone**: `8999129779`
+- **Help Center**: `https://www.carryparcel.in/support/support.html`
 - **Operational Hours**: 24/7/365
 
 ## Office & Support Hub
 
-- **Platform**: TravelBuddy Logistics Network
-- **Website**: `https://travalbuddy.web.app/`
-- **Developer Inquiries**: `https://travalbuddy.web.app/developers/index.html`
+- **Platform**: CarryParcel Logistics Network
+- **Website**: `https://www.carryparcel.in/`
+- **Developer Inquiries**: `https://www.carryparcel.in/developers/index.html`

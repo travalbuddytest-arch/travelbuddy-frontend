@@ -100,7 +100,7 @@ Legal:
   - Community Guidelines
 
 Footer Bottom:
-  © 2026 TravelBuddy | Developers & API (link)
+  © 2026 CarryParcel | Developers & API (link)
 ```
 
 **Rationale:**

@@ -202,7 +202,7 @@
           showToast(data.error || 'Verification failed.', 'error');
           emailResolve({ success: false, message: 'Invalid verification code.' });
         } else {
-          showToast('Welcome to TravelBuddy! Your account has been created.', 'success');
+          showToast('Welcome to CarryParcel! Your account has been created.', 'success');
           emailResolve({ success: true });
         }
       } catch (err) {

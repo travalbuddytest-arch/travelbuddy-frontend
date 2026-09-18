@@ -1,4 +1,4 @@
-# TravelBuddy Frontend - Implementation Summary
+# CarryParcel Frontend - Implementation Summary
 
 ## 📋 Quick Overview
 
