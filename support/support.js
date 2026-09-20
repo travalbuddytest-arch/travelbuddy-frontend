@@ -22,7 +22,7 @@ const SP_FAQS = [
     { cat:'trips', q:'How do I find a traveler for my route?', a:'Enter your From and To locations plus a parcel category in the search bar on the Home page. CarryParcel matches your request against travelers who already have an upcoming trip on that route.' },
     { cat:'trips', q:'How do I add a trip and earn as a traveler?', a:'Post an upcoming trip with your route and dates, then browse route-matched parcel requests. Choose what you\u2019re comfortable carrying, accept, complete the delivery, and your earnings post to your wallet.' },
     { cat:'trips', q:'How do I track my parcel live?', a:'Open your dashboard and select the active parcel — the tracking view shows its latest status and journey progress as the traveler moves.' },
-    { cat:'trips', q:'What is the delivery OTP for?', a:'The receiver holds a one-time password that confirms successful handover. Only share it at the actual moment of delivery — support and travelers should never ask for it in advance.' },
+    { cat:'trips', q:'What is the Delivery QR Code for?', a:'The receiver holds a secure QR code that confirms successful handover. Only share it at the actual moment of delivery — support and travelers should never ask for it in advance.' },
     { cat:'trips', q:'My parcel tracking hasn\u2019t updated in a while — what should I do?', a:'Check live tracking first, since updates can lag slightly on longer routes. If it stays stuck or the delivery seems delayed, message the traveler through the in-app chat, and raise a ticket below if it doesn\u2019t resolve.' },
     { cat:'account', q:'I can\u2019t log in — what should I check first?', a:'Confirm you\u2019re using the email or number your account was created with, then use “Forgot password” on the login screen. Reset links and OTPs expire quickly, so request a fresh one if it\u2019s gone stale.' },
     { cat:'account', q:'How do I verify my profile?', a:'Upload a government ID during registration, or from Profile → Verification if you skipped it. A verified badge appears on your profile once it\u2019s approved, which builds trust with the other side of the match.' },
@@ -137,7 +137,7 @@ spSearchInput?.addEventListener('input', () => {
 
 /* ============ AUTH-AWARE REDIRECTION ============ */
 function handleGetHelp() {
-    const token = localStorage.getItem('travelBuddyToken');
+    const token = localStorage.getItem('carryParcelToken');
     const dashboardSupportUrl = '/user-dashboard/support.html';
 
     if (token) {

@@ -34,6 +34,11 @@
     <link rel="stylesheet" href="/shared/seo-page.css">
     <link rel="stylesheet" href="/shared/site-banner.css?v=3">
 
+    <!-- Global Config & Auth (Required early for components) -->
+    <script src="/shared/config.js?v=1"></script>
+    <script src="/shared/auth-cookie-client.js?v=1"></script>
+    <script src="/shared/analytics-client.js?v=1"></script>
+
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
@@ -105,7 +110,7 @@
           "name": "Is my parcel safe with a traveler?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "CarryParcel is designed around verified users, parcel and trip records, secure payment protection, and OTP-based delivery confirmation. You can review traveler details before choosing who carries your parcel."
+            "text": "CarryParcel is designed around verified users, parcel and trip records, secure payment protection, and QR-code-based delivery confirmation. You can review traveler details before choosing who carries your parcel."
           }
         },
         {
@@ -132,17 +137,17 @@
 <body data-page="home">
 
 <!-- ================= PREMIUM BACKGROUND SYSTEM ================= -->
-<div class="tb-bg-system">
-    <div class="tb-bg-layer-base"></div>
-    <div class="tb-bg-orb tb-bg-orb-1"></div>
-    <div class="tb-bg-orb tb-bg-orb-2"></div>
-    <div class="tb-bg-orb tb-bg-orb-3"></div>
+<div class="cp-bg-system">
+    <div class="cp-bg-layer-base"></div>
+    <div class="cp-bg-orb cp-bg-orb-1"></div>
+    <div class="cp-bg-orb cp-bg-orb-2"></div>
+    <div class="cp-bg-orb cp-bg-orb-3"></div>
 </div>
 
 <!-- ================= NAVBAR ================= -->
 <div id="tbNavbarInclude"></div>
 <!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
-<header class="tb-nav-header" data-v="6">
+<header class="cp-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.png" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
@@ -156,10 +161,12 @@
     </button>
 
     <nav id="mainNav">
-        <a href="/" data-page="home">Home</a>
-        <a href="/about/about.html" data-page="about">About</a>
-        <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
-        <a href="/contact/contact.html" data-page="contact">Contact</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/about.html" data-page="about">About</a>
+            <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/contact.html" data-page="contact">Contact</a>
+        </div>
 
         <div id="guestNavActions" class="guest-nav-actions">
             <a href="/login/login.html" class="login-btn">Login</a>
@@ -168,7 +175,7 @@
 
         <div class="home-user-chip" id="homeUserChip" hidden>
             <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
-                <span class="home-avatar" id="homeAvatar">TB</span>
+                <span class="home-avatar" id="homeAvatar">CP</span>
                 <span class="home-user-meta">
                     <strong id="homeUserName">CarryParcel</strong>
                     <small id="homeUserRole">Sender &amp; Traveler</small>
@@ -185,10 +192,10 @@
     </nav>
 </header>
 <div class="nav-overlay" id="navOverlay"></div>
-<script src="/shared/nav-include.js"></script>
+<script src="/shared/nav-include.js?v=2"></script>
 
 <!-- ================= HERO SECTION ================= -->
-<section class="tb-hero-section" id="hero">
+<section class="cp-hero-section" id="hero">
     <div class="hero-container">
         <!-- LEFT CONTENT -->
         <div class="hero-left-content">
@@ -202,11 +209,11 @@
             </p>
 
             <div class="hero-cta-group">
-                <a href="/login/login.html" class="tb-btn-primary hero-primary-btn" id="heroPostParcelBtn">
+                <a href="/login/login.html" class="cp-btn-primary hero-primary-btn" id="heroPostParcelBtn">
                     <i class="fa-solid fa-box" aria-hidden="true"></i>
                     <span>Post a Parcel</span>
                 </a>
-                <a href="#how-it-works" class="tb-btn-secondary hero-secondary-btn">
+                <a href="#how-it-works" class="cp-btn-secondary hero-secondary-btn">
                     <span>How It Works</span>
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>
@@ -221,7 +228,7 @@
                 <div class="stat-divider" aria-hidden="true"></div>
                 <div class="stat-item">
                     <span class="stat-number">6-DIGIT</span>
-                    <span class="stat-label">OTP HANDOVER</span>
+                    <span class="stat-label">SECURE QR HANDOVER</span>
                 </div>
                 <div class="stat-divider" aria-hidden="true"></div>
                 <div class="stat-item">
@@ -231,8 +238,8 @@
             </div>
 
             <!-- SEARCH / PICK / DELIVER QUICK ACTIONS -->
-            <div class="tb-hero-quick-actions" aria-label="Quick actions">
-                <button type="button" class="tb-action-card" data-action="search" aria-label="Search available routes or travelers">
+            <div class="cp-hero-quick-actions" aria-label="Quick actions">
+                <button type="button" class="cp-action-card" data-action="search" aria-label="Search available routes or travelers">
                     <span class="action-icon"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
                     <span class="action-meta">
                         <strong class="action-title">Search</strong>
@@ -240,7 +247,7 @@
                     </span>
                 </button>
                 <span class="action-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
-                <button type="button" class="tb-action-card" data-action="pick" aria-label="Pick up a parcel request">
+                <button type="button" class="cp-action-card" data-action="pick" aria-label="Pick up a parcel request">
                     <span class="action-icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></span>
                     <span class="action-meta">
                         <strong class="action-title">Pick</strong>
@@ -248,7 +255,7 @@
                     </span>
                 </button>
                 <span class="action-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
-                <button type="button" class="tb-action-card" data-action="deliver" aria-label="Deliver and complete handover">
+                <button type="button" class="cp-action-card" data-action="deliver" aria-label="Deliver and complete handover">
                     <span class="action-icon"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></span>
                     <span class="action-meta">
                         <strong class="action-title">Deliver</strong>
@@ -383,7 +390,7 @@
                 <li><i class="fa-solid fa-check"></i> Compare matching travelers</li>
                 <li><i class="fa-solid fa-check"></i> Securely held payments</li>
                 <li><i class="fa-solid fa-check"></i> Real-time journey tracking</li>
-                <li><i class="fa-solid fa-check"></i> OTP delivery confirmation</li>
+                <li><i class="fa-solid fa-check"></i> QR delivery confirmation</li>
             </ul>
             <a href="/login/login.html" class="primary-btn way-btn">Send a Parcel</a>
         </div>
@@ -461,11 +468,11 @@
         <!-- CARD 5 -->
         <article class="why-card">
             <div class="why-icon">
-                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                <i class="fa-solid fa-qrcode" aria-hidden="true"></i>
             </div>
             <h3>Secure Confirmation Codes</h3>
             <p>
-                Parcel handover and delivery are confirmed through CarryParcel's 6-digit OTP verification process, helping create clear checkpoints throughout the delivery journey.
+                Parcel handover and delivery are confirmed through CarryParcel's Secure QR Code verification process, helping create clear checkpoints throughout the delivery journey.
             </p>
         </article>
 
@@ -518,8 +525,8 @@
                 <article class="safety-item">
                     <span class="safety-number">4</span>
                     <div>
-                        <h3>OTP Delivery Confirmation</h3>
-                        <p>Receiver confirms delivery using a one-time password sent to their phone.</p>
+                        <h3>Secure QR Handover</h3>
+                        <p>Receiver confirms delivery using a Secure QR Code sent to their phone.</p>
                     </div>
                 </article>
                 <article class="safety-item">
@@ -563,7 +570,7 @@
             <div class="flow-num">3</div>
             <div class="flow-content">
                 <h3>Pickup &amp; QR Verify</h3>
-                <p>Traveler meets sender. Exchange verified via secure QR or OTP.</p>
+                <p>Traveler meets sender. Exchange verified via Secure QR Code.</p>
             </div>
             <div class="flow-icon-3d"><i class="fa-solid fa-qrcode" aria-hidden="true"></i></div>
         </div>
@@ -579,7 +586,7 @@
             <div class="flow-num">5</div>
             <div class="flow-content">
                 <h3>Verified Delivery</h3>
-                <p>Delivery confirmed with receiver OTP. Payment released instantly.</p>
+                <p>Delivery confirmed with Delivery QR Code. Payment released instantly.</p>
             </div>
             <div class="flow-icon-3d"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
         </div>
@@ -646,7 +653,7 @@
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-inner">
-                        <p>CarryParcel is designed around verified users, parcel and trip records, secure payment protection, and OTP-based delivery confirmation. You can review the available traveler details before choosing who carries your parcel.</p>
+                        <p>CarryParcel is designed around verified users, parcel and trip records, secure payment protection, and QR-code-based delivery confirmation. You can review the available traveler details before choosing who carries your parcel.</p>
                     </div>
                 </div>
             </article>
@@ -694,7 +701,7 @@
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-inner">
-                        <p>The traveler receives payout to their in-app wallet immediately after the receiver validates the delivery OTP with the traveler upon handover.</p>
+                        <p>The traveler receives payout to their in-app wallet immediately after the receiver validates the Delivery QR Code with the traveler upon handover.</p>
                     </div>
                 </div>
             </article>
@@ -703,7 +710,7 @@
 </section>
 
 <!-- ================= APP PROMOTION BANNER ================= -->
-<section class="tb-app-promo-section" id="appPromotionSection">
+<section class="cp-app-promo-section" id="appPromotionSection">
     <div class="app-promo-container">
         <div class="app-promo-content">
             <div class="app-promo-left">
@@ -808,11 +815,11 @@
     </div>
 </footer>
 
-<script>window.TBInclude.injectFooter();</script>
+<script>window.CPInclude.injectFooter();</script>
 
 <!-- ================= SCRIPTS ================= -->
 <!-- ================= MOBILE APP STICKY BAR ================= -->
-<div class="tb-mobile-app-bar" id="mobileAppBanner" hidden>
+<div class="cp-mobile-app-bar" id="mobileAppBanner" hidden>
     <div class="mobile-bar-content">
         <div class="mobile-promo-info">
             <div class="mobile-promo-icon">
@@ -832,9 +839,6 @@
     </div>
 </div>
 
-<script src="/shared/config.js?v=1"></script>
-<script src="/shared/auth-cookie-client.js?v=1"></script>
-<script src="/shared/analytics-client.js?v=1"></script>
 <script src="/home/script.js?v=4"></script>
 <script src="/shared/site-banner.js?v=3"></script>
 </body>

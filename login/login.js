@@ -16,7 +16,7 @@
   const forgotLink = document.getElementById('forgotLink');
   const createAccount = document.getElementById('createAccount');
   const backBtn = document.getElementById('backBtn');
-  const LOGIN_STATE_KEY = 'travelBuddyLoginState';
+  const LOGIN_STATE_KEY = 'carryParcelLoginState';
 
   // Where auth-guard.js sent the visitor from before bouncing them here
   // (see shared/auth-guard.js). Only ever a same-site relative path into
@@ -234,7 +234,7 @@
       return;
     }
 
-    (window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock)(form, true, { loadingText: 'Logging in...' });
+    (window.CarryParcel?.FormLock || window.CarryParcelValidation?.FormLock)(form, true, { loadingText: 'Logging in...' });
 
     try {
       // Single unified endpoint for both users and admins - the backend
@@ -267,20 +267,17 @@
         if (data.role === 'admin') {
           if (data.admin) {
             const adminObj = { ...data.admin, role: 'admin' };
-            localStorage.setItem('admin_user', JSON.stringify(adminObj));
-            localStorage.setItem('travelBuddyAdmin', JSON.stringify(adminObj));
-            if (data.token) {
-              localStorage.setItem('admin_token', data.token);
-              localStorage.setItem('travelBuddyAdminToken', data.token);
-            }
+            localStorage.setItem('carryParcelUser', JSON.stringify(adminObj));
+            localStorage.setItem('carryParcelAdmin', JSON.stringify(adminObj));
+            // Security: We no longer store the JWT token in localStorage.
+            // It is handled by HttpOnly secure cookies.
+            localStorage.setItem('carryParcelAdminLoggedIn', 'true');
           }
         } else {
           if (data.user) {
             const userObj = { ...data.user, role: data.role || 'user' };
-            localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
-            if (data.token) {
-              localStorage.setItem('travelBuddyToken', data.token);
-            }
+            localStorage.setItem('carryParcelUser', JSON.stringify(userObj));
+            localStorage.setItem('carryParcelLoggedIn', 'true');
           }
         }
         clearLoginState();
@@ -288,7 +285,7 @@
         console.error('Could not persist login session:', storageErr);
       }
 
-      window.TravelBuddy.showLoginSuccess({
+      window.CarryParcel.showLoginSuccess({
         user: data.role === 'admin' ? data.admin : data.user,
         method: 'EMAIL',
         onComplete: () => {
@@ -298,7 +295,7 @@
     } catch (err) {
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
-      (window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock)(form, false);
+      (window.CarryParcel?.FormLock || window.CarryParcelValidation?.FormLock)(form, false);
     }
   });
 
@@ -316,13 +313,13 @@
         return;
       }
       try {
-        const userObj = { ...data.user, role: data.role || 'user' };
-        localStorage.setItem('travelBuddyUser', JSON.stringify(userObj));
+      const userObj = { ...data.user, role: data.role || 'user' };
+        localStorage.setItem('carryParcelUser', JSON.stringify(userObj));
         clearLoginState();
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
       }
-      window.TravelBuddy.showLoginSuccess({
+      window.CarryParcel.showLoginSuccess({
         user: data.user,
         method: 'GOOGLE',
         onComplete: () => {
@@ -335,7 +332,7 @@
   }
 
   async function initializeGoogleLogin() {
-    const firebaseConfig = window.TravelBuddyFirebaseConfig || {};
+    const firebaseConfig = window.CarryParcelFirebaseConfig || {};
 
     if (!window.firebase) {
       googleBtn.disabled = true;

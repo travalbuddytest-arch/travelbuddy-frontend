@@ -6,8 +6,7 @@
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = { 'X-CP-Admin-Request': 'true' };
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };

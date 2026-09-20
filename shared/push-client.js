@@ -5,17 +5,17 @@
 // open (background/closed-tab pushes are handled by firebase-messaging-sw.js
 // instead, since there's no page here to show a toast in).
 //
-// Depends on shared/firebase-config.js and js/common.js (for window.TravelBuddy
+// Depends on shared/firebase-config.js and js/common.js (for window.CarryParcel
 // and window.showToast) being loaded first.
 (async () => {
   'use strict';
 
-  const config = window.TravelBuddyFirebaseConfig || {};
+  const config = window.CarryParcelFirebaseConfig || {};
   if (!config.apiKey || !config.vapidKey) return;
   if (!('Notification' in window) || !('serviceWorker' in navigator)) return; // unsupported browser.
-  if (!window.TravelBuddy) return; // common.js didn't load (e.g. this isn't a dashboard page).
+    if (!window.CarryParcel) return; // common.js didn't load (e.g. this isn't a dashboard page).
 
-  const { API_ORIGIN, authHeaders } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders } = window.CarryParcel;
 
   async function pushIsConfiguredOnServer() {
     try {
@@ -50,7 +50,7 @@
       });
       // Stashed so logout (in auth-cookie-client.js) can unregister this exact
       // token without needing to reload the Firebase SDK just to fetch it again.
-      localStorage.setItem('travelBuddyFcmToken', token);
+      localStorage.setItem('carryParcelFcmToken', token);
 
       // Foreground messages: the tab is already open, so a native OS
       // notification would be redundant — use the same toast the rest of

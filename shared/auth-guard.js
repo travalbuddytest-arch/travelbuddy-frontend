@@ -1,5 +1,5 @@
 // =========================================================
-// TravelBuddy — Protected Page Auth Guard
+// CarryParcel — Protected Page Auth Guard
 // ---------------------------------------------------------
 // Include this as the VERY FIRST <script> in <head>, before any
 // stylesheet/script that could paint page content, on every page that
@@ -10,7 +10,7 @@
 //
 // This reuses the SAME session tokens the rest of the app already
 // writes on login (see login/login.js and shared/auth-cookie-client.js):
-//   - user pages  -> localStorage 'travelBuddyToken'
+//   - user pages  -> localStorage 'carryParcelToken'
 //   - admin pages -> localStorage 'admin_token' / 'travelBuddyAdminToken'
 //
 // It does not invent a second authentication system. It only adds a
@@ -37,7 +37,7 @@
     // Synchronous Zero-FOUC check for sidebar preference on desktop
     try {
         if (window.innerWidth > 900) {
-            var sidebarKey = guardType === 'admin' ? 'travelbuddy_admin_sidebar_collapsed' : 'travelbuddy_user_sidebar_collapsed';
+            var sidebarKey = guardType === 'admin' ? 'carryparcel_admin_sidebar_collapsed' : 'carryparcel_user_sidebar_collapsed';
             if (localStorage.getItem(sidebarKey) === 'true') {
                 document.documentElement.classList.add('sidebar-collapsed');
             }
@@ -62,38 +62,38 @@
     function hasSession() {
         try {
             if (guardType === 'admin') {
-                var hasToken = Boolean(localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken'));
-                var adminData = localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
-                if (!hasToken || !adminData) return false;
+                var isLoggedIn = Boolean(localStorage.getItem('carryParcelAdminLoggedIn'));
+                var adminData = localStorage.getItem('carryParcelAdmin') || localStorage.getItem('admin_user');
+                if (!isLoggedIn || !adminData) return false;
 
                 try {
                     var admin = JSON.parse(adminData);
-                    return admin && admin.role === 'admin';
+                    return admin && (admin.role === 'admin' || admin.role === 'superadmin');
                 } catch (e) {
                     return false;
                 }
             }
 
-            var hasUserToken = Boolean(localStorage.getItem('travelBuddyToken'));
-            var userData = localStorage.getItem('travelBuddyUser');
-            // FIX: Be more lenient. If a token exists, don't immediately redirect.
-            // Allow common.js a chance to refresh the user profile.
-            if (!hasUserToken) return false;
-            if (!userData) return true; // Session exists but user data is missing (common.js will refresh)
+            var isLoggedInUser = Boolean(localStorage.getItem('carryParcelLoggedIn'));
+            var userData = localStorage.getItem('carryParcelUser');
+            // FIX: Be more lenient. If a login flag exists, don't immediately redirect.
+            // Allow common.js a chance to verify the session with the backend.
+            if (!isLoggedInUser) return false;
+            if (!userData) return true; // Session flag exists but user data is missing (common.js will refresh)
 
             try {
                 var user = JSON.parse(userData);
                 // If role is missing, we still grant access but common.js will fix the object.
                 return !user.role || (user.role === 'user' || user.role === 'traveler' || user.role === 'sender');
             } catch (e) {
-                return true; // Malformed JSON but token exists; let common.js handle it
+                return true; // Malformed JSON but login flag exists; let common.js handle it
             }
         } catch (e) {
             return false;
         }
     }
 
-    window.TravelBuddySanitizer = {
+    window.CarryParcelSanitizer = {
         sanitize(str) {
             if (typeof str !== 'string') return str;
             return str.replace(/[\$.]/g, '');
@@ -129,22 +129,22 @@
         var checkInterval = setInterval(function() {
             if (document.body) {
                 clearInterval(checkInterval);
-                if (!window.TravelBuddyAuthChecked) {
+                if (!window.CarryParcelAuthChecked) {
                     var skeleton = document.createElement('div');
                     skeleton.id = 'initialPageSkeleton';
-                    skeleton.className = 'tb-skeleton-page-overlay';
+                    skeleton.className = 'cp-skeleton-page-overlay';
                     skeleton.innerHTML = `
                         <div style="display:flex; align-items:center; gap:12px; margin-bottom:40px">
-                            <div class="tb-skeleton tb-skeleton-circle"></div>
-                            <div class="tb-skeleton" style="width:120px; height:20px"></div>
+                            <div class="cp-skeleton cp-skeleton-circle"></div>
+                            <div class="cp-skeleton" style="width:120px; height:20px"></div>
                         </div>
-                        <div class="tb-skeleton" style="width:40%; height:32px; margin-bottom:24px"></div>
+                        <div class="cp-skeleton" style="width:40%; height:32px; margin-bottom:24px"></div>
                         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:40px">
-                            <div class="tb-skeleton-kpi tb-skeleton"></div>
-                            <div class="tb-skeleton-kpi tb-skeleton"></div>
-                            <div class="tb-skeleton-kpi tb-skeleton"></div>
+                            <div class="cp-skeleton-kpi cp-skeleton"></div>
+                            <div class="cp-skeleton-kpi cp-skeleton"></div>
+                            <div class="cp-skeleton-kpi cp-skeleton"></div>
                         </div>
-                        <div class="tb-skeleton" style="width:100%; flex:1; border-radius:12px"></div>
+                        <div class="cp-skeleton" style="width:100%; flex:1; border-radius:12px"></div>
                     `;
                     document.body.prepend(skeleton);
                     document.documentElement.style.visibility = '';
@@ -153,9 +153,9 @@
         }, 10);
     } catch (e) { /* no-op */ }
 
-    window.resolveTravelBuddyAuth = function (authenticated) {
-        if (window.TravelBuddyAuthChecked && authenticated) return; // Already resolved ok
-        window.TravelBuddyAuthChecked = true;
+    window.resolveCarryParcelAuth = function (authenticated) {
+        if (window.CarryParcelAuthChecked && authenticated) return; // Already resolved ok
+        window.CarryParcelAuthChecked = true;
         clearTimeout(safetyTimeout);
 
         var skeleton = document.getElementById('initialPageSkeleton');
@@ -174,7 +174,7 @@
     };
 
     var safetyTimeout = setTimeout(function () {
-        if (!window.TravelBuddyAuthChecked) {
+        if (!window.CarryParcelAuthChecked) {
             console.warn('[AuthGuard] Auth check timed out (12s).');
             const skeleton = document.getElementById('initialPageSkeleton');
             if (skeleton) {
@@ -185,7 +185,7 @@
                         <p style="opacity: 0.7; margin-bottom: 24px;">We're having trouble verifying your session. This could be due to a slow connection.</p>
                         <div style="display: flex; gap: 10px; justify-content: center;">
                             <button onclick="window.location.reload()" style="background: var(--primary, #0d6efd); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Retry Connection</button>
-                            <button onclick="window.TravelBuddyAuthChecked=true; window.location.replace('../login/login.html')" style="background: transparent; color: var(--text-muted, #64748b); border: 1px solid var(--border, #e2e8f0); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Go to Login</button>
+                            <button onclick="window.CarryParcelAuthChecked=true; window.location.replace('../login/login.html')" style="background: transparent; color: var(--text-muted, #64748b); border: 1px solid var(--border, #e2e8f0); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Go to Login</button>
                         </div>
                     </div>
                 `;

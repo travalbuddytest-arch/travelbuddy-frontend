@@ -126,10 +126,7 @@
       let actionButtons = '';
       if (isAwaitingPickup) {
         actionButtons = `
-          <button type="button" class="btn-primary" data-action="verify-pickup-otp" data-id="${escapeHTML(p.id)}">
-            <i class="fa-solid fa-key"></i> Verify Pickup PIN
-          </button>
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-ghost" style="text-decoration:none;">
+          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;">
             <i class="fa-solid fa-camera"></i> Scan Sender QR
           </a>
         `;
@@ -141,10 +138,7 @@
         `;
       } else if (isInTransit) {
         actionButtons = `
-          <button type="button" class="btn-primary" data-action="verify-delivery-otp" data-id="${escapeHTML(p.id)}">
-            <i class="fa-solid fa-circle-check"></i> Verify Delivery PIN
-          </button>
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-ghost" style="text-decoration:none;">
+          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;">
             <i class="fa-solid fa-camera"></i> Scan Recipient QR
           </a>
         `;
@@ -192,11 +186,7 @@
       btn.addEventListener('click', () => {
         const action = btn.dataset.action;
         const id = btn.dataset.id;
-        if (action === 'verify-pickup-otp') {
-          openTaskOtpModal(id, 'pickup');
-        } else if (action === 'verify-delivery-otp') {
-          openTaskOtpModal(id, 'delivery');
-        } else if (action === 'start-journey') {
+        if (action === 'start-journey') {
           startJourney(id);
         }
       });
@@ -221,55 +211,6 @@
       console.error(err);
       window.showToast('Network error while starting journey.', 'error');
     }
-  }
-
-  function openTaskOtpModal(id, purpose) {
-    currentActiveParcelId = id;
-    currentOtpPurpose = purpose;
-    taskOtpTitle.textContent = purpose === 'pickup' ? 'Verify Pickup Handover' : 'Verify Delivery Completion';
-    taskOtpSub.textContent = `Ask the ${purpose === 'pickup' ? 'sender' : 'recipient'} for the 6-digit verification PIN and enter it below.`;
-    taskOtpInput.value = '';
-    taskOtpModal.classList.remove('hidden');
-    taskOtpInput.focus();
-  }
-
-  if (taskOtpForm) {
-    taskOtpForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const pin = taskOtpInput.value.trim();
-      if (pin.length !== 6) {
-        window.showToast('Please enter a valid 6-digit PIN.', 'warning');
-        return;
-      }
-
-      window.TravelBuddy.FormLock(taskOtpForm, true, { loadingText: 'Verifying...' });
-      try {
-        const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(currentActiveParcelId)}/otp/${currentOtpPurpose}/verify`, {
-          method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify({ otp: pin })
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          window.showToast(data.error || 'Incorrect verification PIN.', 'error');
-          return;
-        }
-
-        window.showToast(`${currentOtpPurpose === 'pickup' ? 'Pickup' : 'Delivery'} verified successfully!`, 'success');
-        taskOtpModal.classList.add('hidden');
-        loadActiveDeliveries();
-      } catch (err) {
-        console.error(err);
-        window.showToast('Could not reach the server.', 'error');
-      } finally {
-        window.TravelBuddy.FormLock(taskOtpForm, false);
-      }
-    });
-  }
-
-  if (taskOtpModalClose) {
-    taskOtpModalClose.addEventListener('click', () => taskOtpModal.classList.add('hidden'));
   }
 
   refreshDeliveriesBtn?.addEventListener('click', loadActiveDeliveries);

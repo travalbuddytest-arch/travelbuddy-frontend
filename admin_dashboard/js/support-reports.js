@@ -7,8 +7,7 @@
     const tabContents = document.querySelectorAll('.tab-content');
 
     async function apiGet(url) {
-      const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers = { 'X-CP-Admin-Request': 'true' };
       const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw { status: res.status, data };
@@ -191,7 +190,8 @@
             // Let's use the one I added to support.js
 
             const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/support/tickets/${id}/messages`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
+                headers: { 'X-CP-Admin-Request': 'true' },
+                credentials: 'include'
             });
             const chatData = await res.json();
 

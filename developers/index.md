@@ -4,7 +4,7 @@
 
 ## Base URLs
 
-- **Production API**: `https://travelbuddy-backend-19l6.onrender.com`
+- **Production API**: `https://api.carryparcel.in`
 - **Development API**: `http://localhost:4000`
 
 ## Machine-Readable Specifications

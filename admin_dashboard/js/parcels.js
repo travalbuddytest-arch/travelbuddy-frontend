@@ -25,9 +25,10 @@ const fmtMoney = n => '₹' + ((n||0)/100).toLocaleString('en-IN', { minimumFrac
 const timeAgo = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatRelative(d) : (d ? (()=>{ if(!d) return '—'; const m=Math.floor((Date.now()-new Date(d))/60000); if(m<1) return 'Just now'; if(m<60) return m+'m'; const h=Math.floor(m/60); if(h<24) return h+'h'; return Math.floor(h/24)+'d'; })() : '—');
 
 async function api(url, opts={}) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { ...opts.headers };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = {
+    'X-CP-Admin-Request': 'true',
+    ...opts.headers
+  };
   if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
@@ -540,7 +541,7 @@ async function exportCSV() {
     if (state.filters.dateTo) params.set('dateTo', state.filters.dateTo);
     const res = await fetch(`${API_ORIGIN}/api/admin/parcels/export?${params}`, {
       credentials: 'include',
-      headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')||''}` }
+      headers: { 'X-CP-Admin-Request': 'true' }
     });
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);

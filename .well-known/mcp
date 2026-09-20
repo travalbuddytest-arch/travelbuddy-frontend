@@ -1,18 +1,18 @@
 {
   "$schema": "https://modelcontextprotocol.io/schema.json",
   "mcpVersion": "2024-11-05",
-  "name": "TravelBuddy MCP Server",
-  "description": "Official Model Context Protocol server for TravelBuddy peer-to-peer delivery platform",
+  "name": "CarryParcel MCP Server",
+  "description": "Official Model Context Protocol server for CarryParcel peer-to-peer delivery platform",
   "version": "1.0.0",
   "servers": [
     {
       "transport": "sse",
-      "url": "https://travelbuddy-backend-19l6.onrender.com/mcp/sse",
+      "url": "https://api.carryparcel.in/mcp/sse",
       "description": "Production Server-Sent Events (SSE) Streamable Transport"
     },
     {
       "transport": "http",
-      "url": "https://travelbuddy-backend-19l6.onrender.com/mcp",
+      "url": "https://api.carryparcel.in/mcp",
       "description": "Production Streamable HTTP JSON-RPC 2.0 Transport"
     }
   ],
@@ -94,7 +94,7 @@
     },
     {
       "name": "list_prohibited_items",
-      "description": "Returns list of items prohibited from being transported on TravelBuddy",
+      "description": "Returns list of items prohibited from being transported on CarryParcel",
       "inputSchema": {
         "type": "object",
         "properties": {}
@@ -111,9 +111,9 @@
   ],
   "authentication": {
     "type": "bearer",
-    "tokenUrl": "https://travalbuddy.web.app/login/login.html"
+    "tokenUrl": "https://www.carryparcel.in/login/login.html"
   },
   "links": {
-    "homepage": "https://travalbuddy.web.app/"
+    "homepage": "https://www.carryparcel.in/"
   }
 }

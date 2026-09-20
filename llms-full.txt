@@ -11,10 +11,10 @@
 CarryParcel is a community peer-to-peer delivery platform consisting of:
 1. **Web Application**: Static progressive web app hosted on Firebase Hosting with official domain `https://www.carryparcel.in/`.
 2. **Android Application**: Native Jetpack Compose Android client with Google Maps and real-time Socket.IO tracking.
-3. **Backend API Server**: Node.js Express server on Render (`https://travelbuddy-backend-19l6.onrender.com`) with MongoDB database, Twilio SMS verification, Razorpay wallet payments, and Gemini AI RAG assistant.
+3. **Backend API Server**: Node.js Express server on Render (`https://api.carryparcel.in`) with MongoDB database, Twilio SMS verification, Razorpay wallet payments, and Gemini AI RAG assistant.
 4. **Model Context Protocol (MCP) Server**: First-party MCP discovery endpoint at `/.well-known/mcp` and live JSON-RPC/SSE endpoint at `/mcp`.
 
-*Note: Technical identifiers like the Android package `com.travelbuddy.app` and backend infrastructure URLs remain unchanged for operational compatibility.*
+*Note: Technical identifiers have been updated to com.carryparcel.app for consistency.*
 
 ---
 
@@ -39,13 +39,13 @@ A parcel post transitions through the following statuses:
 
 4. `PICKED_UP` / `IN_TRANSIT`:
    - Traveler meets sender at pickup location.
-   - Exchange is verified using sender's pickup OTP or secure QR scan.
+   - Exchange is verified using sender's secure pickup QR code.
    - Real-time GPS journey tracking begins.
 
 5. `DELIVERED`:
    - Traveler reaches the recipient at destination.
-   - Recipient inspects the parcel and provides the secret delivery OTP.
-   - Traveler submits OTP to API/app.
+   - Recipient inspects the parcel and provides the secure delivery QR code.
+   - Traveler scans the QR code via the app to confirm.
    - Earnings are immediately transferred to traveler's wallet.
 
 6. `COMPLETED`:
@@ -82,18 +82,19 @@ A parcel post transitions through the following statuses:
 ## 4. API Endpoints Reference
 
 ### Authentication
-- `POST /api/auth/register`: `{ email, phone, password, firstName, lastName, role }` -> `{ token, user }`
-- `POST /api/auth/login`: `{ emailOrPhone, password }` -> `{ token, user }`
-- `POST /api/auth/request-otp`: `{ phone, type }` -> `{ success, message }`
-- `POST /api/auth/verify-otp`: `{ phone, otp, type }` -> `{ success, verified }`
-- `GET /api/auth/me`: Headers `Authorization: Bearer <jwt>` -> `{ user }`
+- `POST /api/auth/register`: `{ email, phone, password, firstName, lastName, role }` -> `{ user }`
+- `POST /api/auth/login`: `{ email, password }` -> `{ user, role }`
+- `POST /api/auth/resend-otp`: `{ email, phone }` -> `{ success, message }`
+- `POST /api/auth/verify-otp`: `{ email, phone, otp }` -> `{ success, verified, user }`
+- `GET /api/auth/me`: Cookie `carryparcel_session` or Header `Authorization: Bearer <jwt>` -> `{ user }`
 
 ### Parcels
 - `POST /api/postparcel/create`: `{ fromCity, toCity, pickupAddress, deliveryAddress, parcelType, weightKg, price, urgency, receiverName, receiverPhone }`
 - `GET /api/postparcel/search?from=City&to=City&category=Type`: Search available parcel posts
 - `GET /api/postparcel/:id`: Fetch parcel details
 - `PUT /api/postparcel/:id/accept`: Traveler accepts parcel
-- `POST /api/postparcel/:id/verify-otp`: Submits receiver OTP to complete delivery
+- `POST /api/postparcel/:id/verify-pickup-qr`: Verifies pickup via secure QR scan
+- `POST /api/postparcel/:id/verify-delivery-qr`: Verifies delivery via secure QR scan
 
 ### Traveler Routes
 - `POST /api/travelroutes/create`: `{ fromCity, toCity, travelDate, travelTime, vehicleType, capacityKg, maxPrice }`
@@ -115,7 +116,7 @@ A parcel post transitions through the following statuses:
 
 CarryParcel implements a Model Context Protocol server exposing:
 - Discovery: `https://www.carryparcel.in/.well-known/mcp`
-- Transport: Server-Sent Events (SSE) / Streamable HTTP POST at `https://travelbuddy-backend-19l6.onrender.com/mcp`
+- Transport: Server-Sent Events (SSE) / Streamable HTTP POST at `https://api.carryparcel.in/mcp`
 - Tools:
   - `estimate_delivery_fee(fromCity, toCity, weightKg, urgency)`
   - `search_travel_routes(fromCity, toCity, travelDate)`

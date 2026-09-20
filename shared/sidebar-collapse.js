@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- * TravelBuddy — Shared Collapsible Sidebar Controller & Tooltip Manager
+ * CarryParcel — Shared Collapsible Sidebar Controller & Tooltip Manager
  * =====================================================================
  * Handles desktop collapse/expand, localStorage preference persistence,
  * keyboard accessibility, and non-clipping floating tooltips.
@@ -250,7 +250,7 @@
     };
   }
 
-  window.TravelBuddySidebarCollapse = {
+  window.CarryParcelSidebarCollapse = {
     init: init,
     showTooltip: showTooltip,
     hideTooltip: hideTooltip

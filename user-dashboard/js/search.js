@@ -13,7 +13,7 @@ const clearAllBtn = document.getElementById('clearAllBtn');
 let searchDebounce = null;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('travelBuddyToken');
+  const token = localStorage.getItem('carryParcelToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const res = await fetch(`${API_ORIGIN}${url}`, { headers });
   const data = await res.json().catch(() => ({}));
@@ -22,7 +22,7 @@ async function apiGet(url) {
 }
 
 async function apiPost(url, body) {
-  const token = localStorage.getItem('travelBuddyToken');
+  const token = localStorage.getItem('carryParcelToken');
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, body: JSON.stringify(body) });
@@ -30,7 +30,7 @@ async function apiPost(url, body) {
 }
 
 async function apiDelete(url) {
-  const token = localStorage.getItem('travelBuddyToken');
+  const token = localStorage.getItem('carryParcelToken');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'DELETE', headers });
   return res.json();

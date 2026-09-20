@@ -2,8 +2,7 @@ const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 const SOCKET_ORIGIN = APP_CONFIG.SOCKET_URL;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('admin_token');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = { 'X-CP-Admin-Request': 'true' };
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };
@@ -130,7 +129,7 @@ export function initMessages() {
 // messages REST fallback), instead of admins having to refresh.
 // ══════════════════════════════════════════════
 function connectLiveSocket() {
-  const socketInstance = TravelBuddySocket.admin;
+  const socketInstance = CarryParcelSocket.admin;
   if (!socketInstance) return;
 
   msgSocket = socketInstance;

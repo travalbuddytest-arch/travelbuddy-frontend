@@ -1,6 +1,6 @@
 /**
  * Agentic Readiness Automated Test Suite
- * Validates all 24 IsAgentic criteria and full public route inventory for TravelBuddy (https://travalbuddy.web.app)
+ * Validates all 24 IsAgentic criteria and full public route inventory for CarryParcel (https://www.carryparcel.in)
  */
 
 const fs = require('fs');
@@ -98,7 +98,7 @@ test('P5: OpenAPI specifications and Developer Portal exist', () => {
 });
 
 // 6. Brand Discoverability & Canonical Domain
-test('P6: Canonical domain https://travalbuddy.web.app used across public pages with zero legacy domain references', () => {
+test('P6: Canonical domain https://www.carryparcel.in used across public pages with zero legacy domain references', () => {
   const htmlFiles = [
     'index.html',
     'about/about.html',
@@ -112,7 +112,7 @@ test('P6: Canonical domain https://travalbuddy.web.app used across public pages 
     'carry-parcel/index.html',
     'post-parcel/index.html',
     'parcel-delivery/index.html',
-    'how-travelbuddy-works/index.html',
+    'how-carryparcel-works/index.html',
     'safety/index.html',
     'faq/index.html',
     'developers/index.html',
@@ -124,7 +124,7 @@ test('P6: Canonical domain https://travalbuddy.web.app used across public pages 
     if (!fs.existsSync(fullPath)) continue;
     const content = fs.readFileSync(fullPath, 'utf8');
     assert(!content.includes('travelbuddyweb1.netlify.app'), `${relPath} contains old staging domain`);
-    assert(content.includes('https://travalbuddy.web.app'), `${relPath} must reference canonical domain`);
+    assert(content.includes('https://www.carryparcel.in'), `${relPath} must reference canonical domain`);
   }
 });
 
@@ -134,17 +134,17 @@ test('P7: Valid Organization, SoftwareApplication, and WebSite schemas', () => {
   assert(indexHtml.includes('"@type": "Organization"'), 'index.html must contain Organization schema');
   assert(indexHtml.includes('"@type": "SoftwareApplication"'), 'index.html must contain SoftwareApplication schema');
   assert(indexHtml.includes('"@type": "WebSite"'), 'index.html must contain WebSite schema');
-  assert(indexHtml.includes('hello@travelbuddy.com'), 'Organization must contain verified email');
+  assert(indexHtml.includes('support@carryparcel.in'), 'Organization must contain verified email');
   assert(indexHtml.includes('+1-800-555-0142'), 'Organization must contain verified phone');
 });
 
 // 8. Agent Instructions (/llms.txt and /llms-full.txt)
 test('P8: llms.txt and llms-full.txt exist with required sections', () => {
   const llmsTxt = fs.readFileSync(path.join(FRONTEND_DIR, 'llms.txt'), 'utf8');
-  assert(llmsTxt.includes('# TravelBuddy'), 'llms.txt must have title');
-  assert(llmsTxt.includes('What TravelBuddy Does'), 'llms.txt must describe platform');
-  assert(llmsTxt.includes('When to Use TravelBuddy'), 'llms.txt must have when-to-use');
-  assert(llmsTxt.includes('When Not to Use TravelBuddy'), 'llms.txt must have when-not-to-use');
+  assert(llmsTxt.includes('# CarryParcel'), 'llms.txt must have title');
+  assert(llmsTxt.includes('What CarryParcel Does'), 'llms.txt must describe platform');
+  assert(llmsTxt.includes('When to Use CarryParcel'), 'llms.txt must have when-to-use');
+  assert(llmsTxt.includes('When Not to Use CarryParcel'), 'llms.txt must have when-not-to-use');
   assert(llmsTxt.includes('Key API Endpoints'), 'llms.txt must have API endpoints');
 
   const llmsFullTxt = fs.readFileSync(path.join(FRONTEND_DIR, 'llms-full.txt'), 'utf8');
@@ -165,7 +165,7 @@ test('P9: Metadata completeness across HTML documents', () => {
     'carry-parcel/index.html',
     'post-parcel/index.html',
     'parcel-delivery/index.html',
-    'how-travelbuddy-works/index.html',
+    'how-carryparcel-works/index.html',
     'safety/index.html',
     'faq/index.html',
     'developers/index.html',
@@ -204,13 +204,13 @@ test('P10: MCP Server discovery and tools definition', () => {
 // 11. Robots and Sitemap Hygiene
 test('P11: robots.txt and sitemap.xml point to canonical domain', () => {
   const robotsTxt = fs.readFileSync(path.join(FRONTEND_DIR, 'robots.txt'), 'utf8');
-  assert(robotsTxt.includes('Sitemap: https://travalbuddy.web.app/sitemap.xml'), 'robots.txt must point to canonical sitemap');
+  assert(robotsTxt.includes('Sitemap: https://www.carryparcel.in/sitemap.xml'), 'robots.txt must point to canonical sitemap');
   assert(!robotsTxt.includes('travelbuddyweb1.netlify.app'), 'robots.txt must not contain old domain');
 
   const sitemapXml = fs.readFileSync(path.join(FRONTEND_DIR, 'sitemap.xml'), 'utf8');
-  assert(sitemapXml.includes('<loc>https://travalbuddy.web.app/</loc>'), 'sitemap.xml must include root');
-  assert(sitemapXml.includes('<loc>https://travalbuddy.web.app/developers/index.html</loc>'), 'sitemap.xml must include developers page');
-  assert(sitemapXml.includes('<loc>https://travalbuddy.web.app/llms.txt</loc>'), 'sitemap.xml must include llms.txt');
+  assert(sitemapXml.includes('<loc>https://www.carryparcel.in/</loc>'), 'sitemap.xml must include root');
+  assert(sitemapXml.includes('<loc>https://www.carryparcel.in/developers/index.html</loc>'), 'sitemap.xml must include developers page');
+  assert(sitemapXml.includes('<loc>https://www.carryparcel.in/llms.txt</loc>'), 'sitemap.xml must include llms.txt');
   assert(!sitemapXml.includes('travelbuddyweb1.netlify.app'), 'sitemap.xml must not contain old domain');
 });
 
@@ -225,7 +225,7 @@ test('P12: Comprehensive Public Route Inventory & Table Verification', () => {
     { route: '/carry-parcel/', file: 'carry-parcel/index.html', indexable: true },
     { route: '/post-parcel/', file: 'post-parcel/index.html', indexable: true },
     { route: '/parcel-delivery/', file: 'parcel-delivery/index.html', indexable: true },
-    { route: '/how-travelbuddy-works/', file: 'how-travelbuddy-works/index.html', indexable: true },
+    { route: '/how-carryparcel-works/', file: 'how-carryparcel-works/index.html', indexable: true },
     { route: '/safety/', file: 'safety/index.html', indexable: true },
     { route: '/faq/', file: 'faq/index.html', indexable: true },
     { route: '/developers/', file: 'developers/index.html', indexable: true },
@@ -252,7 +252,7 @@ test('P12: Comprehensive Public Route Inventory & Table Verification', () => {
     
     if (r.indexable) {
       assert(content.includes('<link rel="canonical"'), `${r.file} missing canonical`);
-      assert(content.includes('https://travalbuddy.web.app'), `${r.file} canonical domain incorrect`);
+      assert(content.includes('https://www.carryparcel.in'), `${r.file} canonical domain incorrect`);
       assert(!content.includes('noindex'), `${r.file} should not be marked noindex`);
     } else {
       if (r.file.includes('login') || r.file.includes('register') || r.file.includes('forgot-password')) {

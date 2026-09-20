@@ -5,8 +5,7 @@
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = { 'X-CP-Admin-Request': 'true' };
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };
@@ -99,9 +98,10 @@ window.processWithdrawal = async (withdrawalId, action) => {
 };
 
 async function apiPost(url, body) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-CP-Admin-Request': 'true'
+  };
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, credentials: 'include', body: JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };

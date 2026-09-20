@@ -2,12 +2,12 @@
   'use strict';
 
   async function injectDashboardComponents() {
-    const sidebarPlaceholder = document.getElementById('tbAppSidebarInclude');
-    const topbarPlaceholder = document.getElementById('tbAppTopbarInclude');
+    const sidebarPlaceholder = document.getElementById('cpAppSidebarInclude');
+    const topbarPlaceholder = document.getElementById('cpAppTopbarInclude');
     const v = '3'; // Cache bust version
 
-    const cachedSidebar = sessionStorage.getItem('tb_sidebar_html');
-    const cachedTopbar = sessionStorage.getItem('tb_topbar_html');
+    const cachedSidebar = sessionStorage.getItem('cp_sidebar_html');
+    const cachedTopbar = sessionStorage.getItem('cp_topbar_html');
 
     if (sidebarPlaceholder) {
       if (cachedSidebar) {
@@ -19,7 +19,7 @@
         if (res.ok) {
           const html = await res.text();
           if (html !== cachedSidebar) {
-            sessionStorage.setItem('tb_sidebar_html', html);
+            sessionStorage.setItem('cp_sidebar_html', html);
             if (!cachedSidebar) {
               sidebarPlaceholder.outerHTML = html;
               initSidebarEvents();
@@ -39,7 +39,7 @@
         if (res.ok) {
           const html = await res.text();
           if (html !== cachedTopbar) {
-            sessionStorage.setItem('tb_topbar_html', html);
+            sessionStorage.setItem('cp_topbar_html', html);
             if (!cachedTopbar) {
               topbarPlaceholder.outerHTML = html;
               initTopbarEvents();
@@ -87,7 +87,7 @@
   function initTopbarEvents() {
     const pageTitleEl = document.getElementById('pageTitle');
     if (pageTitleEl) {
-      const titleText = document.title.replace('TravelBuddy - ', '').replace('TravelBuddy — ', '').trim();
+      const titleText = document.title.replace('CarryParcel - ', '').replace('CarryParcel — ', '').trim();
       pageTitleEl.textContent = titleText;
     }
 
@@ -172,7 +172,7 @@
   // (Temporal Dead Zone) throws ReferenceError, which was the root cause of
   // the "Cannot access 'profilePhotoCacheBust' before initialization" error.
   let profilePhotoCacheBust = null;
-  const API_ORIGIN = window.APP_CONFIG?.API_BASE_URL || "https://travelbuddy-backend-19l6.onrender.com";
+  const API_ORIGIN = window.APP_CONFIG?.API_BASE_URL || "https://api.carryparcel.in";
 
   function showToast(message, type) {
     if (!toast) return;
@@ -213,18 +213,16 @@
   }
 
   function authHeaders() {
-    const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken');
     const headers = {
       'Content-Type': 'application/json',
     };
-    if (token && token !== 'null' && token !== 'undefined') {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    // Security: Token is now handled by HttpOnly secure cookies via {credentials: 'include'}.
+    // We no longer manually send the Authorization header from localStorage on the web.
     return headers;
   }
 
   function getAuthToken() {
-    return localStorage.getItem('travelBuddyToken') || null;
+    return null;
   }
 
   function setButtonLoading(button, isLoading, loadingText) {
@@ -295,7 +293,7 @@
   }
 
   function formatDate(iso, options) {
-    if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(iso);
+    if (window.CarryParcelDate) return window.CarryParcelDate.formatDateTime(iso);
     const date = new Date(iso);
     if (Number.isNaN(date.getTime())) return 'Date unavailable';
     return date.toLocaleDateString('en-IN', options || { day: 'numeric', month: 'short' });
@@ -391,8 +389,8 @@
     }
   }
 
-  window.TravelBuddy = window.TravelBuddy || {};
-  Object.assign(window.TravelBuddy, {
+  window.CarryParcel = window.CarryParcel || {};
+  Object.assign(window.CarryParcel, {
     API_ORIGIN,
     escapeHTML,
     authHeaders,
@@ -459,8 +457,8 @@
     inFlightRequests.clear();
   }
 
-  window.TravelBuddy.fetchWithCache = fetchWithCache;
-  window.TravelBuddy.clearClientCache = clearClientCache;
+  window.CarryParcel.fetchWithCache = fetchWithCache;
+  window.CarryParcel.clearClientCache = clearClientCache;
 
   async function parseJsonSafe(res) {
     try {
@@ -478,8 +476,8 @@
     return fallback || 'Unable to complete the request.';
   }
 
-  window.TravelBuddy.parseJsonSafe = parseJsonSafe;
-  window.TravelBuddy.requestErrorMessage = requestErrorMessage;
+  window.CarryParcel.parseJsonSafe = parseJsonSafe;
+  window.CarryParcel.requestErrorMessage = requestErrorMessage;
 
   /**
    * Universal Ripple Effect with Event Delegation.
@@ -521,14 +519,14 @@
 
   function parseStoredUser() {
     try {
-      return JSON.parse(localStorage.getItem('travelBuddyUser') || '{}');
+      return JSON.parse(localStorage.getItem('carryParcelUser') || '{}');
     } catch (err) {
       return {};
     }
   }
 
   function saveStoredUser(user) {
-    localStorage.setItem('travelBuddyUser', JSON.stringify(user || {}));
+    localStorage.setItem('carryParcelUser', JSON.stringify(user || {}));
   }
 
   function getDisplayName(user) {
@@ -544,7 +542,7 @@
       .filter(Boolean)
       .slice(0, 2)
       .map((part) => part[0].toUpperCase())
-      .join('') || 'TB';
+      .join('') || 'CP';
   }
 
   function personalizeUser() {
@@ -562,20 +560,20 @@
   personalizeUser();
 
   async function refreshCurrentUser() {
-    // 1. Get cached user and token status
+    // 1. Get cached user and login status
     const cached = parseStoredUser();
-    const hasToken = Boolean(localStorage.getItem('travelBuddyToken'));
+    const isLoggedIn = Boolean(localStorage.getItem('carryParcelLoggedIn')) || Boolean(localStorage.getItem('carryParcelAdminLoggedIn'));
 
     // 2. Return cached user immediately if available to unblock page rendering
     if (cached && cached.id) {
        personalizeUser();
-       if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
+       if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(true);
 
        // Start background refresh
        backgroundRefreshUser(cached);
        return cached;
-    } else if (!hasToken) {
-       if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
+    } else if (!isLoggedIn) {
+       if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(false);
        return {};
     }
 
@@ -603,7 +601,7 @@
       if (!res.ok) {
         if (res.status === 401) {
           // If we got a 401, the session is actually dead.
-          if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
+          if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(false);
           return {};
         }
         return cached || {};
@@ -619,18 +617,18 @@
         document.dispatchEvent(new CustomEvent('travelbuddy:user-refreshed', { detail: { user: mergedUser } }));
       }
 
-      if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
+      if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(true);
       return mergedUser;
     } catch (err) {
       clearTimeout(timeoutId);
       console.warn('Profile background refresh failed:', err.name === 'AbortError' ? 'Timeout' : err.message);
-      if (cached && cached.id && window.resolveTravelBuddyAuth) {
-         window.resolveTravelBuddyAuth(true);
+              if (cached && cached.id && window.resolveCarryParcelAuth) {
+            window.resolveCarryParcelAuth(true);
       }
       return cached || {};
     }
   }
-  window.TravelBuddy.getCurrentUser = refreshCurrentUser;
+  window.CarryParcel.getCurrentUser = refreshCurrentUser;
 
   async function refreshMessageBadge() {
     const badge = document.getElementById('navMsgBadge');
@@ -715,8 +713,8 @@
     }
   }
 
-  window.TravelBuddy.getNotificationRoute = getNotificationRoute;
-  window.TravelBuddy.markNotificationRead = markNotificationRead;
+  window.CarryParcel.getNotificationRoute = getNotificationRoute;
+  window.CarryParcel.markNotificationRead = markNotificationRead;
 
   // ---------- Notification bell badge + real-time push (shared across every dashboard page) ----------
   function setNotifBadge(count) {
@@ -789,7 +787,7 @@
       toast.onclick = null;
     }, 5000);
   }
-  window.TravelBuddy.showNotificationPopup = showNotificationPopup;
+  window.CarryParcel.showNotificationPopup = showNotificationPopup;
 
   // ---------- Ringtone ----------
   // Primary: the actual Microsoft Teams ringtone audio file, looped for as
@@ -874,8 +872,8 @@
     }
   }
 
-  window.TravelBuddy.playRingtone = playRingtone;
-  window.TravelBuddy.stopRingtone = stopRingtone;
+  window.CarryParcel.playRingtone = playRingtone;
+  window.CarryParcel.stopRingtone = stopRingtone;
 
   // ---------- Global incoming-call popup (rings on every dashboard page, not just Messages) ----------
   // messages.html already has its own dedicated call modal + WebRTC handling
@@ -954,9 +952,9 @@
 
   function connectNotificationSocket() {
     const token = getAuthToken();
-    if (!token || !window.TravelBuddySocket) return;
+    if (!token || !window.CarryParcelSocket) return;
 
-    const socket = TravelBuddySocket.connect('/', token);
+    const socket = CarryParcelSocket.connect('/', token);
     if (!socket) return;
 
     const updateLiveStatus = (status) => {
@@ -1022,13 +1020,13 @@
       if (activeIncomingCall && String(activeIncomingCall.callId) === String(callId)) hideGlobalIncomingCall();
     });
 
-    window.TravelBuddy.socket = socket;
+    window.CarryParcel.socket = socket;
     return socket;
   }
 
 
-  window.TravelBuddy.refreshNotifBadge = refreshNotifBadge;
-  window.TravelBuddy.setNotifBadge = setNotifBadge;
+  window.CarryParcel.refreshNotifBadge = refreshNotifBadge;
+  window.CarryParcel.setNotifBadge = setNotifBadge;
 
   const sidebar = () => document.getElementById('sidebar');
   const sidebarOverlay = () => document.getElementById('sidebarOverlay');
@@ -1057,18 +1055,18 @@
 
   function initUserSidebarCollapse() {
     function runInit() {
-      if (window.TravelBuddySidebarCollapse) {
-        window.TravelBuddySidebarCollapse.init({
+      if (window.CarryParcelSidebarCollapse) {
+        window.CarryParcelSidebarCollapse.init({
           sidebarId: 'sidebar',
           toggleBtnId: 'sidebarToggle',
-          storageKey: 'travelbuddy_user_sidebar_collapsed',
+          storageKey: 'carryparcel_user_sidebar_collapsed',
           navItemSelector: '.nav-item',
           collapsedClass: 'sidebar-collapsed'
         });
       }
     }
 
-    if (window.TravelBuddySidebarCollapse) {
+    if (window.CarryParcelSidebarCollapse) {
       runInit();
     } else {
       const script = document.createElement('script');
@@ -1132,7 +1130,7 @@
       return source;
     }
   }
-  window.TravelBuddy.resolveMediaUrl = resolveMediaUrl;
+  window.CarryParcel.resolveMediaUrl = resolveMediaUrl;
   function resizeProfilePhoto(file) { return new Promise((resolve,reject)=>{ const r=new FileReader(); r.onerror=reject; r.onload=()=>{ const img=new Image(); img.onerror=reject; img.onload=()=>{ const size=320,c=document.createElement('canvas'); c.width=size;c.height=size; const x=c.getContext('2d'),side=Math.min(img.width,img.height),sx=(img.width-side)/2,sy=(img.height-side)/2; x.drawImage(img,sx,sy,side,side,0,0,size,size); resolve(c.toDataURL('image/jpeg',.82)); }; img.src=r.result; }; r.readAsDataURL(file); }); }
 
   function createProfileModal() {
@@ -1331,8 +1329,8 @@
   }
 
   async function logoutNow(){
-    try{await window.TravelBuddyAuth?.logout();}catch{}
-    localStorage.removeItem('travelBuddyUser');
+    try{await window.CarryParcelAuth?.logout();}catch{}
+    localStorage.removeItem('carryParcelUser');
     clearClientCache();
     showToast('Logged out successfully.','success');
     setTimeout(()=>{window.location.href='../login/login.html';},500);
@@ -1462,9 +1460,9 @@
   */
 
   function initImageSkeletons() {
-    if (!window.TravelBuddySkeleton) return;
+    if (!window.CarryParcelSkeleton) return;
     document.querySelectorAll('img[data-skeleton="true"]').forEach(img => {
-      window.TravelBuddySkeleton.handleImage(img);
+      window.CarryParcelSkeleton.handleImage(img);
     });
   }
 

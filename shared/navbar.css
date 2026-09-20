@@ -1,11 +1,11 @@
 /* ==========================
    SHARED NAVBAR
-   Scoped to .tb-nav-header / #mainNav so this file is safe to include
+   Scoped to .cp-nav-header / #mainNav so this file is safe to include
    on any page (e.g. Support) without clashing with that page's own CSS.
    Visuals are copied 1:1 from the original Home page navbar.
 ========================== */
 
-.tb-nav-header{
+.cp-nav-header{
     width:100%;
     max-width:100%;
     height: 70px;
@@ -21,18 +21,18 @@
     z-index: var(--z-sticky, 1000);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
     font-family:'Poppins',sans-serif;
-    transition: all 0.4s var(--tb-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
+    transition: all 0.4s var(--cp-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.tb-nav-header.is-scrolled{
+.cp-nav-header.is-scrolled{
     background: rgba(255, 255, 255, 0.75);
     padding: 8px var(--container-px);
     box-shadow: 0 10px 30px rgba(18, 32, 58, 0.1);
     border-bottom: 1px solid rgba(13, 110, 253, 0.1);
 }
 
-.tb-nav-header .logo{
+.cp-nav-header .logo{
     display:flex;
     align-items:center;
     min-width:0;
@@ -46,7 +46,7 @@
     gap:12px;
     font-size:18px;
     font-weight:700;
-    color: var(--tb-primary, #0d6efd);
+    color: var(--cp-primary, #0d6efd);
 }
 
 .logo-link img {
@@ -56,18 +56,18 @@
     object-fit: contain;
 }
 
-.tb-nav-header .logo:hover {
+.cp-nav-header .logo:hover {
     transform: scale(1.02);
 }
 
-.tb-nav-header .logonav img{
+.cp-nav-header .logonav img{
     width:34px;
     height:auto;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(13, 110, 253, 0.15);
 }
 
-.tb-nav-header .namenav img{
+.cp-nav-header .namenav img{
     width:140px;
     height:auto;
 }
@@ -82,7 +82,7 @@
 #mainNav a{
     position:relative;
     text-decoration:none;
-    color: var(--tb-ink-soft, #33415c);
+    color: var(--cp-ink-soft, #33415c);
     font-weight:600;
     font-size: 15px;
     transition: all .3s ease;
@@ -98,14 +98,14 @@
     bottom: 4px;
     width: 0;
     height: 3px;
-    background: var(--tb-primary, #0d6efd);
+    background: var(--cp-primary, #0d6efd);
     border-radius: 4px;
-    transition: all .3s var(--tb-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
+    transition: all .3s var(--cp-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
     transform: translateX(-50%);
 }
 
 #mainNav a:hover{
-    color: var(--tb-primary, #0d6efd);
+    color: var(--cp-primary, #0d6efd);
     transform: translateY(-1px);
 }
 
@@ -114,7 +114,7 @@
 }
 
 #mainNav a.active{
-    color: var(--tb-primary, #0d6efd);
+    color: var(--cp-primary, #0d6efd);
 }
 
 #mainNav a.active::after{
@@ -141,7 +141,7 @@
 }
 
 .auth-btn {
-    background: linear-gradient(135deg, var(--tb-primary, #0d6efd), var(--tb-accent, #3d8bff));
+    background: linear-gradient(135deg, var(--cp-primary, #0d6efd), var(--cp-accent, #3d8bff));
     color: #ffffff !important;
     border: 1px solid transparent;
     box-shadow: 0 4px 15px rgba(13, 110, 253, 0.22);
@@ -152,7 +152,7 @@
     color: #ffffff !important;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(13, 110, 253, 0.32);
-    background: linear-gradient(135deg, var(--tb-primary-dark, #0b5ed7), var(--tb-primary, #0d6efd));
+    background: linear-gradient(135deg, var(--cp-primary-dark, #0b5ed7), var(--cp-primary, #0d6efd));
 }
 
 .auth-btn:active {
@@ -161,7 +161,7 @@
 }
 
 .auth-btn:focus-visible {
-    outline: 2px solid var(--tb-primary, #0d6efd);
+    outline: 2px solid var(--cp-primary, #0d6efd);
     outline-offset: 3px;
 }
 
@@ -174,19 +174,19 @@
 
 .login-btn {
     background: transparent;
-    color: var(--tb-primary);
+    color: var(--cp-primary);
     border: 1px solid var(--border-color);
     margin-right: 8px;
 }
 
 .login-btn:hover{
-    background: var(--tb-primary-light);
-    border-color: var(--tb-primary);
+    background: var(--cp-primary-light);
+    border-color: var(--cp-primary);
     transform: translateY(-2px);
 }
 
 .register-btn {
-    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
+    background: linear-gradient(135deg, var(--cp-primary), var(--cp-accent));
     color: #fff;
     box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
 }
@@ -293,7 +293,7 @@ button[hidden]{ display:none !important; }
     position: relative;
     background: none;
     border: none;
-    color: var(--tb-ink-soft, #33415c);
+    color: var(--cp-ink-soft, #33415c);
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
@@ -313,14 +313,14 @@ button[hidden]{ display:none !important; }
     bottom: 4px;
     width: 0;
     height: 3px;
-    background: var(--tb-primary, #0d6efd);
+    background: var(--cp-primary, #0d6efd);
     border-radius: 4px;
-    transition: all 0.3s var(--tb-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
+    transition: all 0.3s var(--cp-transition, cubic-bezier(0.2, 0.8, 0.2, 1));
     transform: translateX(-50%);
 }
 
 .nav-dropdown-trigger:hover {
-    color: var(--tb-primary, #0d6efd);
+    color: var(--cp-primary, #0d6efd);
     transform: translateY(-1px);
 }
 
@@ -372,7 +372,7 @@ button[hidden]{ display:none !important; }
     align-items: center;
     gap: 12px;
     padding: 12px 20px;
-    color: var(--tb-ink-soft, #33415c);
+    color: var(--cp-ink-soft, #33415c);
     text-decoration: none;
     font-size: 15px;
     font-weight: 500;
@@ -383,7 +383,7 @@ button[hidden]{ display:none !important; }
 
 .nav-dropdown-menu a:hover {
     background: #f0f5ff;
-    color: var(--tb-primary, #0d6efd);
+    color: var(--cp-primary, #0d6efd);
     padding-left: 20px;
 }
 
@@ -394,12 +394,12 @@ button[hidden]{ display:none !important; }
 }
 
 @media(min-width:769px){
-    .tb-nav-header{
+    .cp-nav-header{
         display:flex;
         align-items:center;
         justify-content:space-between;
     }
-    .tb-nav-header .logo{
+    .cp-nav-header .logo{
         flex:0 0 auto;
         min-width:180px;
     }
@@ -427,7 +427,7 @@ button[hidden]{ display:none !important; }
 }
 
 @media(max-width:768px){
-    .tb-nav-header{
+    .cp-nav-header{
         flex-direction:row;
         justify-content:space-between;
         align-items:center;
@@ -562,23 +562,23 @@ button[hidden]{ display:none !important; }
 }
 
 @media(max-width:600px){
-    .tb-nav-header{
+    .cp-nav-header{
         padding:8px 14px;
     }
 
-    .tb-nav-header .namenav img{
+    .cp-nav-header .namenav img{
         width:min(120px, 42vw);
         height:auto;
     }
 
-    .tb-nav-header .logonav img{
+    .cp-nav-header .logonav img{
         width:26px;
         height:34px;
     }
 }
 
 @media (prefers-reduced-motion: reduce){
-    .tb-nav-header{
+    .cp-nav-header{
         animation:none !important;
     }
 }

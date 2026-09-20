@@ -1260,7 +1260,7 @@
   }
 
   function renderReceiptPreview(p) {
-    const user = JSON.parse(localStorage.getItem('travelBuddyUser') || '{}');
+    const user = JSON.parse(localStorage.getItem('carryParcelUser') || '{}');
     const isSender = String(p.sender?._id || p.sender) === String(user.id || user._id);
     const timelineHtml = [
       { l: 'Parcel Posted', t: p.createdAt },

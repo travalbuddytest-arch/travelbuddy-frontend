@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * TravelBuddy Validation and Form Submission Lock System
+   * CarryParcel Validation and Form Submission Lock System
    * This helper provides a centralized way to handle form locking and validation.
    */
 
@@ -49,8 +49,8 @@
         }
       });
 
-      if (submitBtn && window.TravelBuddy?.setButtonLoading) {
-        window.TravelBuddy.setButtonLoading(submitBtn, isLoading, options.loadingText);
+      if (submitBtn && window.CarryParcel?.setButtonLoading) {
+        window.CarryParcel.setButtonLoading(submitBtn, isLoading, options.loadingText);
       }
     },
 
@@ -72,12 +72,12 @@
     }
   };
 
-  // Attach to window.TravelBuddy if available, otherwise global
-  if (window.TravelBuddy) {
-    window.TravelBuddy.FormLock = Validation.FormLock;
-    window.TravelBuddy.Validation = Validation;
+  // Attach to window.CarryParcel if available, otherwise global
+  if (window.CarryParcel) {
+    window.CarryParcel.FormLock = Validation.FormLock;
+    window.CarryParcel.Validation = Validation;
   } else {
-    window.TravelBuddyValidation = Validation;
+    window.CarryParcelValidation = Validation;
   }
 
 })();

@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const COOKIE_NAME='travelbuddy_cookie_consent', DAYS=180;
+const COOKIE_NAME='carryparcel_cookie_consent', DAYS=180;
 const defaults={necessary:true,preferences:false,analytics:false};
 function read(){
   const row=document.cookie.split('; ').find(v=>v.startsWith(COOKIE_NAME+'='));
@@ -10,8 +10,8 @@ function read(){
 function write(value){
   const data={necessary:true,preferences:!!value.preferences,analytics:!!value.analytics,updatedAt:new Date().toISOString()};
   document.cookie=`${COOKIE_NAME}=${encodeURIComponent(JSON.stringify(data))}; Max-Age=${DAYS*86400}; Path=/; SameSite=Lax${location.protocol==='https:'?'; Secure':''}`;
-  window.travelBuddyCookieConsent=data;
-  window.dispatchEvent(new CustomEvent('travelbuddy:consent-changed',{detail:data}));
+  window.carryParcelCookieConsent=data;
+  window.dispatchEvent(new CustomEvent('carryparcel:consent-changed',{detail:data}));
 }
 function build(){
   document.body.insertAdjacentHTML('beforeend',`
@@ -57,6 +57,6 @@ function init(){
   backdrop.addEventListener('click',closeModal); settings.addEventListener('click',openModal);
   if(current)settings.classList.add('show'); else banner.classList.add('show');
 }
-window.TravelBuddyCookies={get:()=>read()||{...defaults},has:type=>type==='necessary'||!!(read()||defaults)[type],open:()=>document.getElementById('tbCookieSettings')?.click()};
+window.CarryParcelCookies={get:()=>read()||{...defaults},has:type=>type==='necessary'||!!(read()||defaults)[type],open:()=>window.dispatchEvent(new CustomEvent('carryparcel:open-consent'))};pen:()=>document.getElementById('tbCookieSettings')?.click()};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    window.TravelBuddy = window.TravelBuddy || {};
+    window.CarryParcel = window.CarryParcel || {};
 
     /**
      * Show premium login success animation.
@@ -10,7 +10,7 @@
      * @param {string} options.method - 'EMAIL', 'GOOGLE', or 'OTP'
      * @param {Function} options.onComplete - Callback after animation finishes
      */
-    window.TravelBuddy.showLoginSuccess = function ({ user, method, onComplete }) {
+    window.CarryParcel.showLoginSuccess = function ({ user, method, onComplete }) {
         const overlay = document.createElement('div');
         overlay.className = 'tb-success-overlay';
 
@@ -18,7 +18,7 @@
         const initials = ((user.firstName?.charAt(0) || user.name?.charAt(0) || 'T') +
                          (user.lastName?.charAt(0) || user.name?.split(' ')[1]?.charAt(0) || 'B')).toUpperCase();
 
-        const photoUrl = user.profilePhoto ? (window.TravelBuddy.resolveMediaUrl ? window.TravelBuddy.resolveMediaUrl(user.profilePhoto) : user.profilePhoto) : null;
+        const photoUrl = user.profilePhoto ? (window.CarryParcel.resolveMediaUrl ? window.CarryParcel.resolveMediaUrl(user.profilePhoto) : user.profilePhoto) : null;
 
         const methodText = {
             'EMAIL': 'Successfully signed in with your account.',

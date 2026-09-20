@@ -227,7 +227,7 @@
 
         <div class="home-user-chip" id="homeUserChip" hidden>
             <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
-                <span class="home-avatar" id="homeAvatar">TB</span>
+                <span class="home-avatar" id="homeAvatar">CP</span>
                 <span class="home-user-meta">
                     <strong id="homeUserName">CarryParcel</strong>
                     <small id="homeUserRole">Sender &amp; Traveler</small>
@@ -282,7 +282,7 @@
                     The CarryParcel platform exposes a RESTful JSON API for mobile and web clients, automated workflows, and partner systems. All production API traffic is served over HTTPS with support for standard HTTP verbs, CORS authentication, and structured error responses.
                 </p>
                 <div class="code-block">
-Base URL: https://travelbuddy-backend-19l6.onrender.com
+Base URL: https://api.carryparcel.in
 Local Dev: http://localhost:4000
 Content-Type: application/json
                 </div>
@@ -347,10 +347,10 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
                 <div class="endpoint-card">
                     <div class="endpoint-header">
                         <span class="method-badge method-post">POST</span>
-                        <span class="endpoint-path">/api/postparcel/:id/verify-otp</span>
+                        <span class="endpoint-path">/api/postparcel/:id/verify-qr</span>
                     </div>
                     <div class="endpoint-body">
-                        Validates the final delivery OTP provided by the receiver upon handover, instantly crediting the traveler's wallet with their earnings.
+                        Validates the final delivery QR Code provided by the receiver upon handover, instantly crediting the traveler's wallet with their earnings.
                     </div>
                 </div>
             </section>
@@ -362,7 +362,7 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
                 </p>
                 <p>
                     <strong>Discovery Endpoint:</strong> <code>https://www.carryparcel.in/.well-known/mcp</code><br>
-                    <strong>Transport Protocol:</strong> Server-Sent Events (SSE) &amp; Streamable HTTP POST at <code>https://travelbuddy-backend-19l6.onrender.com/mcp</code>
+                    <strong>Transport Protocol:</strong> Server-Sent Events (SSE) &amp; Streamable HTTP POST at <code>https://api.carryparcel.in/mcp</code>
                 </p>
                 <h3>Available MCP Tools</h3>
                 <ul>
@@ -440,7 +440,7 @@ Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;
         </div>
     </div>
 </footer>
-<script>window.TBInclude.injectFooter();</script>
+<script>window.CPInclude.injectFooter();</script>
 
 <script src="/shared/config.js?v=1"></script>
 <script src="/shared/auth-cookie-client.js?v=1"></script>

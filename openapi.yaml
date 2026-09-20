@@ -6,9 +6,9 @@ info:
   contact:
     name: TravelBuddy Support
     email: hello@travelbuddy.com
-    url: https://travalbuddy.web.app/contact/contact.html
+    url: https://www.carryparcel.in/contact/contact.html
 servers:
-  - url: https://travelbuddy-backend-19l6.onrender.com
+  - url: https://api.carryparcel.in
     description: Production Backend Server
   - url: http://localhost:4000
     description: Local Development Server

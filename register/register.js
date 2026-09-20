@@ -121,7 +121,7 @@
       return;
     }
 
-    const lock = window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock;
+    const lock = window.CarryParcel?.FormLock || window.CarryParcelValidation?.FormLock;
     lock(detailsForm, true, { loadingText: 'Creating Account...' });
 
     try {
@@ -161,7 +161,7 @@
       // The server could not be reached at all (not running, wrong URL, no internet)
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
-      const lock = window.TravelBuddy?.FormLock || window.TravelBuddyValidation?.FormLock;
+      const lock = window.CarryParcel?.FormLock || window.CarryParcelValidation?.FormLock;
       lock(detailsForm, false);
     }
   });
@@ -203,6 +203,12 @@
           emailResolve({ success: false, message: 'Invalid verification code.' });
         } else {
           showToast('Welcome to CarryParcel! Your account has been created.', 'success');
+          // Automatic login: the backend already set the session cookie.
+          // Store user info and the logged-in flag, then redirect to dashboard.
+          if (data.user) {
+            localStorage.setItem('carryParcelUser', JSON.stringify(data.user));
+            localStorage.setItem('carryParcelLoggedIn', 'true');
+          }
           emailResolve({ success: true });
         }
       } catch (err) {
@@ -272,7 +278,7 @@
       onBack: goBackFromOtp,
       onVerified: () => {
         setTimeout(() => {
-          window.location.href = '../login/login.html';
+          window.location.href = '../user-dashboard/overview.html';
         }, 1500);
       },
     });

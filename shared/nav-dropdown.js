@@ -1,5 +1,5 @@
 // =========================================================
-// TravelBuddy — Navbar Dropdown Menu Handler
+// CarryParcel — Navbar Dropdown Menu Handler
 // ---------------------------------------------------------
 // Handles Help dropdown menu toggle and accessibility
 // =========================================================

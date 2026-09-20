@@ -1,5 +1,5 @@
 // =========================
-// TravelBuddy Landing Page
+// CarryParcel Landing Page
 // =========================
 
 // =========================
@@ -54,73 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // =========================
-// Mobile Menu Toggle
+// Mobile Menu Toggle (Handled by shared/nav-basic-behavior.js)
 // =========================
-
-const menuToggle = document.getElementById("menuToggle");
-const mainNav = document.getElementById("mainNav");
-const navOverlay = document.getElementById("navOverlay");
-
-function closeMobileNav(){
-    menuToggle.classList.remove("active");
-    mainNav.classList.remove("active");
-    document.body.classList.remove("nav-open");
-    if (navOverlay) navOverlay.classList.remove("active");
-    menuToggle.setAttribute("aria-expanded", "false");
-}
-
-if (menuToggle && mainNav) {
-
-    menuToggle.addEventListener("click", () => {
-
-        const isOpen = mainNav.classList.toggle("active");
-        menuToggle.classList.toggle("active", isOpen);
-        document.body.classList.toggle("nav-open", isOpen);
-        if (navOverlay) navOverlay.classList.toggle("active", isOpen);
-        menuToggle.setAttribute("aria-expanded", String(isOpen));
-
-    });
-
-    // Close the menu whenever a nav link or button (e.g. Register) is clicked.
-    // Exception: the profile chip trigger only opens its own dropdown menu -
-    // it must NOT also collapse the mobile nav panel, since the dropdown it's
-    // opening lives inside that same panel (closing it hid the dropdown
-    // before the user ever saw it, which looked like "nothing happens" on
-    // mobile when tapping the Admin/user profile chip).
-    mainNav.querySelectorAll("a, button").forEach(link => {
-        if (link.id === "homeUserTrigger") return;
-        link.addEventListener("click", closeMobileNav);
-    });
-
-    // Close the menu when the dark overlay is tapped
-    if (navOverlay) {
-        navOverlay.addEventListener("click", closeMobileNav);
-    }
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeMobileNav();
-    });
-
-    // Close the menu automatically if the viewport grows back to desktop size
-    window.addEventListener("resize", () => {
-        if (window.innerWidth > 768) closeMobileNav();
-    });
-
-}
-
-// Keep the drawer closable even if the navbar markup is injected after this
-// script captures its initial element references.
-window.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") return;
-    const currentMenuToggle = document.getElementById("menuToggle");
-    const currentMainNav = document.getElementById("mainNav");
-    const currentNavOverlay = document.getElementById("navOverlay");
-    currentMenuToggle?.classList.remove("active");
-    currentMainNav?.classList.remove("active");
-    currentNavOverlay?.classList.remove("active");
-    document.body.classList.remove("nav-open");
-    currentMenuToggle?.setAttribute("aria-expanded", "false");
-});
 
 // Smooth scrolling for navigation
 document.querySelectorAll("nav a").forEach(link => {
@@ -166,7 +101,7 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 const revealSelectors = [
-    '.tb-hero-content', '.tb-hero-visual',
+    '.cp-hero-content', '.cp-hero-visual',
     '.card', '.step', '.flow', '.way-card',
     '.post-text', '.post-image',
     '.get-text', '.get-image',
@@ -424,8 +359,8 @@ function resolveAppUrl(relativePath) {
 
 function checkIsUserLoggedIn() {
     try {
-        const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
-        const user = localStorage.getItem('travelBuddyUser') || localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
+        const token = localStorage.getItem('carryParcelToken') || localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
+        const user = localStorage.getItem('carryParcelUser') || localStorage.getItem('carryParcelAdmin') || localStorage.getItem('admin_user');
 
         const hasToken = token && token !== 'null' && token !== 'undefined' && String(token).trim().length > 10;
         const hasUser = user && user !== 'null' && user !== 'undefined' && user !== '{}';
@@ -438,8 +373,8 @@ function checkIsUserLoggedIn() {
 
 function checkIsAdminLoggedIn() {
     try {
-        const admin = localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
-        const user = localStorage.getItem('travelBuddyAdmin') || localStorage.getItem('admin_user');
+        const admin = localStorage.getItem('carryParcelAdmin') || localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
+        const user = localStorage.getItem('carryParcelAdmin') || localStorage.getItem('admin_user');
         const hasAdmin = Boolean(admin) && admin !== 'null' && admin !== 'undefined';
         const hasUser = Boolean(user) && user !== 'null' && user !== 'undefined';
         return hasAdmin || hasUser;
@@ -462,7 +397,7 @@ function checkIsAdminLoggedIn() {
 
     // Main action buttons on the public home page become session-aware.
     // Logged in -> dashboard. Logged out -> login.
-    document.querySelectorAll('a.primary-btn:not([data-auth-routing="false"]), a.tb-btn-primary:not([data-auth-routing="false"])').forEach((link) => {
+    document.querySelectorAll('a.primary-btn:not([data-auth-routing="false"]), a.cp-btn-primary:not([data-auth-routing="false"])').forEach((link) => {
         link.href = isLoggedIn ? dashboardUrl : loginUrl;
     });
 
@@ -473,13 +408,13 @@ function checkIsAdminLoggedIn() {
     // profile/settings modals logic continues below...
 })();
 
-function tbRenderAvatar(el, user, fallback) {
+function cpRenderAvatar(el, user, fallback) {
   if (!el) return;
-  el.querySelectorAll('img.tb-profile-photo').forEach(img => img.remove());
+  el.querySelectorAll('img.cp-profile-photo').forEach(img => img.remove());
   if (user && user.profilePhoto) {
     el.textContent = '';
     const img = document.createElement('img');
-    img.className = 'tb-profile-photo';
+    img.className = 'cp-profile-photo';
     img.src = user.profilePhoto;
     img.alt = 'Profile photo';
     img.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit;';
@@ -492,7 +427,7 @@ function tbRenderAvatar(el, user, fallback) {
 (function initHeroQuickActions() {
     // Use event delegation for better reliability
     document.addEventListener('click', function(e) {
-        const card = e.target.closest('.tb-action-card');
+        const card = e.target.closest('.cp-action-card');
         if (!card) return;
 
         e.preventDefault();
@@ -522,7 +457,7 @@ function tbRenderAvatar(el, user, fallback) {
 (function initAppPromotionBanner() {
     const mobileBanner = document.getElementById('mobileAppBanner');
     const closeBtn = document.getElementById('closeMobileBanner');
-    const DISMISSED_KEY = 'travelbuddy_app_banner_dismissed';
+    const DISMISSED_KEY = 'carryparcel_app_banner_dismissed';
 
     if (!mobileBanner || !closeBtn) return;
 

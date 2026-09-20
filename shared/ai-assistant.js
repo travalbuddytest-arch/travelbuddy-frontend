@@ -103,7 +103,7 @@
             try {
                 const screen = document.body.getAttribute('data-page') || 'Unknown';
                 // Detect User or Admin token
-                const token = localStorage.getItem('travelBuddyToken') || localStorage.getItem('travelBuddyAdminToken') || localStorage.getItem('admin_token');
+                const token = localStorage.getItem('carryParcelToken') || localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
 
                 // Robust config check
                 let apiBase = '';
@@ -111,7 +111,7 @@
                     apiBase = window.APP_CONFIG.API_BASE_URL;
                 } else {
                     // Fallback if config is missing
-                    apiBase = window.location.origin.includes('localhost') ? 'http://localhost:4000' : 'https://travelbuddy-backend-19l6.onrender.com';
+                    apiBase = window.location.origin.includes('localhost') ? 'http://localhost:4000' : 'https://api.carryparcel.in';
                 }
 
                 const res = await fetch(`${apiBase}/api/ai/chat`, {

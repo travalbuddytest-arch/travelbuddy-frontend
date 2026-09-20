@@ -29,6 +29,11 @@
     <link rel="stylesheet" href="../shared/footer.css">
     <link rel="stylesheet" href="../shared/site-banner.css?v=3">
 
+    <!-- Global Config & Auth (Required early for components) -->
+    <script src="../shared/config.js?v=1"></script>
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -53,14 +58,10 @@
 </head>
 <body data-page="contact">
 
-<script src="../shared/config.js?v=1"></script>
-<script src="../shared/auth-cookie-client.js?v=1"></script>
-    <script src="../shared/analytics-client.js?v=1"></script>
-
 <!-- ================= NAVBAR (shared component, see Frontend/shared/navbar.html) ================= -->
 <div id="tbNavbarInclude"></div>
 <!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
-<header class="tb-nav-header" data-v="7">
+<header class="cp-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.png" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
@@ -88,7 +89,7 @@
 
         <div class="home-user-chip" id="homeUserChip" hidden>
             <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
-                <span class="home-avatar" id="homeAvatar">TB</span>
+                <span class="home-avatar" id="homeAvatar">CP</span>
                 <span class="home-user-meta">
                     <strong id="homeUserName">CarryParcel</strong>
                     <small id="homeUserRole">Sender &amp; Traveler</small>
@@ -105,7 +106,7 @@
     </nav>
 </header>
 <div class="nav-overlay" id="navOverlay"></div>
-<script src="../shared/nav-include.js"></script>
+<script src="../shared/nav-include.js?v=2"></script>
 
 <!-- ================= HERO ================= -->
 <section class="ct-hero">
@@ -132,7 +133,7 @@
             <div class="ct-process-item">
                 <i class="fa-solid fa-user-shield" style="font-size: 2rem; color: var(--tb-primary);"></i>
                 <h3>Secure Handling</h3>
-                <p>All support interactions are recorded for safety and quality assurance. We never ask for your password or delivery OTP.</p>
+                <p>All support interactions are recorded for safety and quality assurance. We never ask for your password or Delivery QR Code.</p>
             </div>
             <div class="ct-process-item">
                 <i class="fa-solid fa-route" style="font-size: 2rem; color: var(--tb-primary);"></i>
@@ -243,7 +244,7 @@
                 </div>
                 <div class="ct-side-row">
                     <i class="fa-solid fa-shield-halved"></i>
-                    <p>We'll never ask for your delivery OTP or password over email or phone.</p>
+                    <p>We'll never ask for your Delivery QR Code or password over email or phone.</p>
                 </div>
             </div>
 
@@ -301,7 +302,7 @@
         </div>
     </div>
 </footer>
-<script>window.TBInclude.injectFooter();</script>
+<script>window.CPInclude.injectFooter();</script>
 
 <div class="ct-toast" id="ctToast"></div>
 

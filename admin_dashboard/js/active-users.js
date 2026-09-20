@@ -17,14 +17,18 @@ let pollTimer = null;
 const $ = (s, p) => (p || document).querySelector(s);
 const $$ = (s, p) => [...(p || document).querySelectorAll(s)];
 const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : '';
-const fmtDate = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDate(d) : (d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—');
-const timeAgo = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatRelative(d) : (d ? (()=>{ if(!d) return 'Never'; const m=Math.floor((Date.now()-new Date(d))/60000); if(m<1) return 'Just now'; if(m<60) return m+'m ago'; const h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago'; })() : 'Never');
-const avatarSrc = u => u.profilePhoto ? u.profilePhoto : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
+const fmtDate = d => window.CarryParcelDate ? window.CarryParcelDate.formatDate(d) : (d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—');
+const timeAgo = d => window.CarryParcelDate ? window.CarryParcelDate.formatRelative(d) : (d ? (()=>{ if(!d) return 'Never'; const m=Math.floor((Date.now()-new Date(d))/60000); if(m<1) return 'Just now'; if(m<60) return m+'m ago'; const h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago'; })() : 'Never');
+const avatarSrc = u => {
+  const photo = u.profilePhoto ? esc(u.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
+  return photo;
+};
 
 async function api(url, opts = {}) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { ...opts.headers };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = {
+    'X-CP-Admin-Request': 'true',
+    ...opts.headers
+  };
   const res = await fetch(`${API_ORIGIN}${url}`, { credentials: 'include', ...opts, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw data;
@@ -212,7 +216,7 @@ function renderList() {
   }
 
   tbody.innerHTML = state.users.map(u => `
-    <tr data-id="${u._id}">
+    <tr data-id="${esc(u._id)}">
       <td>
         <div class="au-user-cell">
           <img class="au-avatar" src="${avatarSrc(u)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
@@ -220,15 +224,15 @@ function renderList() {
         </div>
       </td>
       <td><div>${esc(u.email)}</div><div class="au-mono">${esc(u.phone || '—')}</div></td>
-      <td><span class="au-role-pill">${roleLabel(u.role)}</span></td>
+      <td><span class="au-role-pill">${esc(roleLabel(u.role))}</span></td>
       <td>${accountStatusPill(u.status)}</td>
-      <td>${fmtDate(u.joinedAt)}</td>
-      <td>${timeAgo(u.lastSeenAt)}</td>
+      <td>${esc(fmtDate(u.joinedAt))}</td>
+      <td>${esc(timeAgo(u.lastSeenAt))}</td>
       <td>${visitStatusPill(u)}</td>
       <td class="au-td-actions" onclick="event.stopPropagation()">
         <div class="au-row-actions">
-          <button class="au-icon-btn" title="View Profile" data-action="view" data-id="${u._id}"><i class="fa-solid fa-eye"></i></button>
-          <button class="au-icon-btn danger" title="${u.isOnline ? 'Force logout' : 'Already offline'}" data-action="logout" data-id="${u._id}" ${u.isOnline ? '' : 'disabled'}><i class="fa-solid fa-right-from-bracket"></i></button>
+          <button class="au-icon-btn" title="View Profile" data-action="view" data-id="${esc(u._id)}"><i class="fa-solid fa-eye"></i></button>
+          <button class="au-icon-btn danger" title="${u.isOnline ? 'Force logout' : 'Already offline'}" data-action="logout" data-id="${esc(u._id)}" ${u.isOnline ? '' : 'disabled'}><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
       </td>
     </tr>`).join('');

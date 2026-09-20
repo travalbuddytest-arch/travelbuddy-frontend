@@ -25,14 +25,21 @@ const timeAgo = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatRelat
 const avatarSrc = u => u.profilePhoto ? u.profilePhoto : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
 
 async function api(url, opts = {}) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { ...opts.headers };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = {
+    'X-CP-Admin-Request': 'true',
+    ...opts.headers
+  };
+
   if (opts.body && typeof opts.body === 'object') {
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
   }
-  const res = await fetch(`${API_ORIGIN}${url}`, { credentials: 'include', ...opts, headers });
+
+  const res = await fetch(`${API_ORIGIN}${url}`, {
+    credentials: 'include',
+    ...opts,
+    headers
+  });
   if (url.includes('/export')) {
     if (!res.ok) throw new Error('Export failed');
     return res;

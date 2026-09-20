@@ -3,18 +3,18 @@
 const nativeFetch=window.fetch.bind(window);
 window.fetch = async (input, init = {}) => {
   const url = typeof input === 'string' ? input : input?.url || '';
-  const isTravelBuddyApi = url.startsWith(`${APP_CONFIG.API_BASE_URL}/`);
+  const isCarryParcelApi = url.startsWith(`${APP_CONFIG.API_BASE_URL}/`);
 
-  const response = await nativeFetch(input, isTravelBuddyApi ? { ...init, credentials: 'include' } : init);
+  const response = await nativeFetch(input, isCarryParcelApi ? { ...init, credentials: 'include' } : init);
 
-  if (isTravelBuddyApi) {
+  if (isCarryParcelApi) {
     if (response.status === 401) {
       // 401 Unauthorized: Session is invalid/expired. Logout.
       // HARDENING: Only redirect if we are not already on the login page
       // AND if this wasn't a background refresh that we can handle more gracefully.
       if (!window.location.pathname.includes('login.html')) {
         console.warn('[Auth] Received 401. Logging out and redirecting.');
-        window.TravelBuddyAuth.logout();
+        window.CarryParcelAuth.logout();
 
         const returnTo = window.location.pathname + window.location.search + window.location.hash;
         window.location.href = `/login/login.html?reason=session_expired\u0026redirect=${encodeURIComponent(returnTo)}`;
@@ -32,10 +32,10 @@ window.fetch = async (input, init = {}) => {
 
   return response;
 };
-window.TravelBuddyAuth={
+window.CarryParcelAuth={
   async logout(){
     try{
-      const fcmToken=localStorage.getItem('travelBuddyFcmToken');
+      const fcmToken=localStorage.getItem('carryParcelFcmToken');
       if(fcmToken){
         await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/notifications/device-token`, {
           method: 'DELETE',
@@ -48,36 +48,40 @@ window.TravelBuddyAuth={
       }
     }catch{}
     try{await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/auth/logout`,{method:'POST',credentials:'include'});}catch{}
-    localStorage.removeItem('travelBuddyToken');
-    localStorage.removeItem('travelBuddyUser');
-    localStorage.removeItem('travelBuddyFcmToken');
-    localStorage.removeItem('travelBuddyAdminToken');
+    localStorage.removeItem('carryParcelToken');
+    localStorage.removeItem('carryParcelUser');
+    localStorage.removeItem('carryParcelFcmToken');
+    localStorage.removeItem('carryParcelAdminToken');
     localStorage.removeItem('admin_token');
-    if (window.TravelBuddy && window.TravelBuddy.clearClientCache) {
-      window.TravelBuddy.clearClientCache();
+    localStorage.removeItem('carryParcelLoggedIn');
+    localStorage.removeItem('carryParcelAdminLoggedIn');
+    if (window.CarryParcel && window.CarryParcel.clearClientCache) {
+      window.CarryParcel.clearClientCache();
     }
   }
   ,
   // Admin helpers: admin sessions are stored separately to avoid colliding with user sessions
   isAdmin(){
-    return Boolean(localStorage.getItem('travelBuddyAdmin'));
+    return Boolean(localStorage.getItem('carryParcelAdminLoggedIn'));
   },
   getAdmin(){
-    try{return JSON.parse(localStorage.getItem('travelBuddyAdmin')||'{}');}catch(e){return {};}
+    try{return JSON.parse(localStorage.getItem('carryParcelAdmin')||'{}');}catch(e){return {};}
   },
   async logoutAdmin(){
     try{
-      const fcmToken=localStorage.getItem('travelBuddyFcmToken');
+      const fcmToken=localStorage.getItem('carryParcelFcmToken');
       if(fcmToken){
         await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/notifications/device-token`,{method:'DELETE',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:fcmToken})});
       }
     }catch(e){}
     try{await nativeFetch(`${APP_CONFIG.API_BASE_URL}/api/admin/logout`,{method:'POST',credentials:'include'});}catch(e){}
-    localStorage.removeItem('travelBuddyAdminToken');
-    localStorage.removeItem('travelBuddyAdmin');
+    localStorage.removeItem('carryParcelAdminToken');
+    localStorage.removeItem('carryParcelAdmin');
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
-    localStorage.removeItem('travelBuddyFcmToken');
+    localStorage.removeItem('carryParcelFcmToken');
+    localStorage.removeItem('carryParcelLoggedIn');
+    localStorage.removeItem('carryParcelAdminLoggedIn');
   }
 };
 })();

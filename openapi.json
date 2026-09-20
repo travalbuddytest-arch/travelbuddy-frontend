@@ -1,18 +1,18 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "TravelBuddy API",
-    "description": "Official REST API for TravelBuddy peer-to-peer parcel delivery platform connecting senders and verified travelers.",
+    "title": "CarryParcel API",
+    "description": "Official REST API for CarryParcel peer-to-peer parcel delivery platform connecting senders and verified travelers.",
     "version": "1.0.0",
     "contact": {
-      "name": "TravelBuddy Support",
-      "email": "hello@travelbuddy.com",
-      "url": "https://travalbuddy.web.app/contact/contact.html"
+      "name": "CarryParcel Support",
+      "email": "hello@carryparcel.in",
+      "url": "https://www.carryparcel.in/contact/contact.html"
     }
   },
   "servers": [
     {
-      "url": "https://travelbuddy-backend-19l6.onrender.com",
+      "url": "https://api.carryparcel.in",
       "description": "Production Backend Server"
     },
     {

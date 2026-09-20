@@ -600,21 +600,19 @@
       actionBanner.className = 'journey-action-box';
       title.innerHTML = '<i class="fa-solid fa-handshake"></i> Ready for Handover';
       if (isSender) {
-        desc.textContent = 'Meet the traveler to hand over the parcel. Provide the pickup OTP or show the secure QR code.';
+        desc.textContent = 'Meet the traveler to hand over the parcel. Show the secure QR code for them to scan.';
         buttons.innerHTML = `
           <button type="button" class="btn-primary" onclick="window.generateSecureQr('pickup')"><i class="fa-solid fa-qrcode"></i> Show Pickup QR</button>
-          <button type="button" class="btn-ghost" id="requestPickupOtpBtn"><i class="fa-solid fa-key"></i> Resend Pickup OTP</button>
         `;
       } else {
         const isPointNeeded = s === 'pickup_point_pending';
         desc.textContent = isPointNeeded
           ? 'Choose a convenient meeting point to collect the parcel from the sender.'
-          : 'Collect the parcel from the sender. Verify the 6-digit handover OTP or scan their QR code to confirm.';
+          : 'Collect the parcel from the sender. Scan their secure QR code to confirm handover.';
         buttons.innerHTML = isPointNeeded
           ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('pickup', false)"><i class="fa-solid fa-location-dot"></i> Select Pickup Point</button>`
           : `
-          <button type="button" class="btn-primary" id="openVerifyPickupOtpBtn"><i class="fa-solid fa-key"></i> Verify Pickup OTP</button>
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-ghost" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Sender QR</a>
+          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Sender QR</a>
         `;
       }
       actionBanner.classList.remove('hidden');
@@ -635,21 +633,19 @@
       actionBanner.className = 'journey-action-box';
       title.innerHTML = '<i class="fa-solid fa-truck-fast"></i> Parcel in Transit';
       if (isSender) {
-        desc.textContent = 'The parcel is on the way. Once arrived, share the delivery completion OTP or show your QR code to confirm delivery.';
+        desc.textContent = 'The parcel is on the way. Once arrived, show your secure QR code to the traveler to confirm delivery.';
         buttons.innerHTML = `
           <button type="button" class="btn-primary" onclick="window.generateSecureQr('delivery')"><i class="fa-solid fa-qrcode"></i> Show Delivery QR</button>
-          <button type="button" class="btn-ghost" id="requestDeliveryOtpBtn"><i class="fa-solid fa-key"></i> Resend Delivery OTP</button>
         `;
       } else {
         const isPointNeeded = s === 'delivery_point_pending';
         desc.textContent = isPointNeeded
           ? 'Choose the final destination point to deliver the parcel safely.'
-          : 'You are currently transporting this parcel. Hand over to the recipient and verify the delivery OTP or scan their QR.';
+          : 'You are currently transporting this parcel. Hand over to the recipient and scan their secure QR code to complete.';
         buttons.innerHTML = isPointNeeded
           ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('delivery', false)"><i class="fa-solid fa-location-dot"></i> Select Delivery Point</button>`
           : `
-          <button type="button" class="btn-primary" id="openVerifyDeliveryOtpBtn"><i class="fa-solid fa-check-double"></i> Verify Delivery OTP</button>
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-ghost" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Recipient QR</a>
+          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Recipient QR</a>
         `;
       }
       actionBanner.classList.remove('hidden');
@@ -681,18 +677,6 @@
   }
 
   function attachActionBannerEvents() {
-    const openVerifyPickupBtn = ui('openVerifyPickupOtpBtn');
-    if (openVerifyPickupBtn) openVerifyPickupBtn.onclick = () => openOtpModal('pickup');
-
-    const openVerifyDeliveryBtn = ui('openVerifyDeliveryOtpBtn');
-    if (openVerifyDeliveryBtn) openVerifyDeliveryBtn.onclick = () => openOtpModal('delivery');
-
-    const reqPickupBtn = ui('requestPickupOtpBtn');
-    if (reqPickupBtn) reqPickupBtn.onclick = () => requestOtp('pickup');
-
-    const reqDeliveryBtn = ui('requestDeliveryOtpBtn');
-    if (reqDeliveryBtn) reqDeliveryBtn.onclick = () => requestOtp('delivery');
-
     const startJourneyBtn = ui('startJourneyBtn');
     if (startJourneyBtn) startJourneyBtn.onclick = startJourneyAction;
   }
@@ -1098,95 +1082,6 @@
       console.error(err);
       window.showToast('Failed to start journey.', 'error');
     }
-  }
-
-  async function requestOtp(purpose) {
-    if (!parcelData) return;
-    if (otpCooldownSeconds > 0) return;
-    try {
-      window.showToast(`Requesting ${purpose} OTP...`, 'info');
-      const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/otp/${purpose}/request`, {
-        method: 'POST',
-        headers: authHeaders()
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        window.showToast(data.error || `Failed to request ${purpose} OTP.`, 'error');
-        return;
-      }
-      window.showToast(`${purpose.toUpperCase()} OTP sent to recipient successfully!`, 'success');
-      startOtpCooldown(data.resendAfterSeconds || 60);
-    } catch (err) {
-      console.error(err);
-      window.showToast('Could not reach server to request OTP.', 'error');
-    }
-  }
-
-  function startOtpCooldown(seconds) {
-    otpCooldownSeconds = seconds;
-    updateOtpButtonsUI();
-    clearInterval(otpCooldownTimer);
-    otpCooldownTimer = setInterval(() => {
-      otpCooldownSeconds--;
-      updateOtpButtonsUI();
-      if (otpCooldownSeconds <= 0) clearInterval(otpCooldownTimer);
-    }, 1000);
-  }
-
-  function updateOtpButtonsUI() {
-    const btns = [ui('requestPickupOtpBtn'), ui('requestDeliveryOtpBtn')];
-    btns.forEach(btn => {
-      if (!btn) return;
-      if (otpCooldownSeconds > 0) {
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-clock"></i> Resend in ${otpCooldownSeconds}s`;
-      } else {
-        btn.disabled = false;
-        const type = btn.id.includes('Pickup') ? 'Pickup' : 'Delivery';
-        btn.innerHTML = `<i class="fa-solid fa-key"></i> Resend ${type} OTP`;
-      }
-    });
-  }
-
-  function openOtpModal(purpose) {
-    currentOtpPurpose = purpose;
-    otpModalTitle().textContent = purpose === 'pickup' ? 'Verify Pickup Handover' : 'Verify Delivery Completion';
-    otpModalSub().textContent = `Enter the 6-digit ${purpose} PIN shared by the counterpart.`;
-    otpInput().value = '';
-    otpModal().classList.remove('hidden');
-    otpInput().focus();
-  }
-
-  if (submitOtpBtn()) {
-    submitOtpBtn().onclick = async () => {
-      const pin = otpInput().value.trim();
-      if (pin.length !== 6) {
-        window.showToast('Please enter a valid 6-digit OTP.', 'warning');
-        return;
-      }
-      setButtonLoading(submitOtpBtn(), true, 'Verifying...');
-      try {
-        const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/otp/${currentOtpPurpose}/verify`, {
-          method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify({ otp: pin })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          window.showToast(data.error || 'Verification failed. Incorrect OTP.', 'error');
-          return;
-        }
-        window.showToast(`${currentOtpPurpose === 'pickup' ? 'Pickup' : 'Delivery'} verified successfully!`, 'success');
-        otpModal().classList.add('hidden');
-        showVerificationSuccess();
-        loadParcelDetails();
-      } catch (err) {
-        console.error(err);
-        window.showToast('Could not reach server.', 'error');
-      } finally {
-        setButtonLoading(submitOtpBtn(), false);
-      }
-    };
   }
 
   if (confirmCancelBtn()) {

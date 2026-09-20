@@ -35,7 +35,7 @@
 
   function track(type, meta) {
     // Real Management: Respect cookie consent
-    if (window.TravelBuddyCookies && !window.TravelBuddyCookies.has('analytics')) {
+    if (window.CarryParcelCookies && !window.CarryParcelCookies.has('analytics')) {
       return;
     }
 
@@ -103,7 +103,7 @@
   window.TBAnalytics = { track: track };
 
   // Real Management: React to consent changes dynamically
-  window.addEventListener('travelbuddy:consent-changed', function(e) {
+  window.addEventListener('carryparcel:consent-changed', function(e) {
     var consent = e.detail;
     if (consent.analytics) {
       // Consent granted: start tracking and presence
@@ -130,7 +130,7 @@
     if (!window.io || window.TBAnalyticsPresenceSocket) return;
 
     // Real Management: Respect cookie consent
-    if (window.TravelBuddyCookies && !window.TravelBuddyCookies.has('analytics')) {
+    if (window.CarryParcelCookies && !window.CarryParcelCookies.has('analytics')) {
       return;
     }
 

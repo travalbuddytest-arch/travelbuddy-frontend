@@ -16,7 +16,7 @@
     'use strict';
 
     function isLoggedIn() {
-        try { return Boolean(localStorage.getItem('travelBuddyToken')); }
+        try { return Boolean(localStorage.getItem('carryParcelToken')); }
         catch (e) { return false; }
     }
 

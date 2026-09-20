@@ -30,6 +30,11 @@
     <link rel="stylesheet" href="../shared/footer.css">
     <link rel="stylesheet" href="../shared/site-banner.css?v=3">
 
+    <!-- Global Config & Auth (Required early for components) -->
+    <script src="../shared/config.js?v=1"></script>
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -42,14 +47,10 @@
 </head>
 <body data-page="support">
 
-<script src="../shared/config.js?v=1"></script>
-<script src="../shared/auth-cookie-client.js?v=1"></script>
-<script src="../shared/analytics-client.js?v=1"></script>
-
 <!-- ================= NAVBAR ================= -->
 <div id="tbNavbarInclude"></div>
 <!-- ================= CANONICAL PUBLIC NAVBAR ================= -->
-<header class="tb-nav-header" data-v="7">
+<header class="cp-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.png" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
@@ -76,7 +77,7 @@
 
         <div class="home-user-chip" id="homeUserChip" hidden>
             <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
-                <span class="home-avatar" id="homeAvatar">TB</span>
+                <span class="home-avatar" id="homeAvatar">CP</span>
                 <span class="home-user-meta">
                     <strong id="homeUserName">CarryParcel</strong>
                     <small id="homeUserRole">Sender &amp; Traveler</small>
@@ -93,7 +94,7 @@
     </nav>
 </header>
 <div class="nav-overlay" id="navOverlay"></div>
-<script src="../shared/nav-include.js"></script>
+<script src="../shared/nav-include.js?v=2"></script>
 
 <!-- ================= HERO ================= -->
 <section class="sp-hero">
@@ -260,8 +261,8 @@
                 <p>Open your dashboard and select the active parcel — the tracking view shows its latest status and journey progress.</p>
             </div>
             <div class="faq-item">
-                <h3>What is the delivery OTP for?</h3>
-                <p>The receiver holds a one-time password that confirms successful handover. Only share it at the actual moment of delivery.</p>
+                <h3>What is the Delivery QR Code for?</h3>
+                <p>The receiver holds a secure QR code that confirms successful handover. Only share it at the actual moment of delivery.</p>
             </div>
         </div>
         <div class="sp-faq-empty" id="spFaqEmpty">
@@ -329,7 +330,7 @@
         </div>
     </div>
 </footer>
-<script>window.TBInclude.injectFooter();</script>
+<script>window.CPInclude.injectFooter();</script>
 
 <div class="sp-toast" id="spToast"></div>
 

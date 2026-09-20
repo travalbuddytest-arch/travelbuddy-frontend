@@ -1,5 +1,5 @@
 /**
- * TravelBuddy — Global Skeleton Loading System
+ * CarryParcel — Global Skeleton Loading System
  * Matches design system defined in shared/design-system.css and user-dashboard/css/common.css
  */
 
@@ -10,17 +10,17 @@
 }
 
 /* Base shimmer animation */
-@keyframes tb-shimmer {
+@keyframes cp-shimmer {
   0% { background-position: 100% 0; }
   100% { background-position: 0 0; }
 }
 
-.tb-skeleton {
+.cp-skeleton {
   position: relative;
   overflow: hidden;
   background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 37%, var(--skeleton-base) 63%);
   background-size: 400% 100%;
-  animation: tb-shimmer 1.4s ease-in-out infinite;
+  animation: cp-shimmer 1.4s ease-in-out infinite;
   border-radius: var(--skeleton-radius);
   color: transparent !important;
   pointer-events: none;
@@ -30,22 +30,22 @@
 
 /* Accessibility: Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .tb-skeleton {
+  .cp-skeleton {
     animation: none;
     background: var(--skeleton-base);
   }
 }
 
 /* Utility shapes */
-.tb-skeleton-text { height: 1em; margin-bottom: 0.5em; width: 100%; }
-.tb-skeleton-title { height: 1.5em; margin-bottom: 0.75em; width: 60%; }
-.tb-skeleton-circle { border-radius: 50%; aspect-ratio: 1/1; width: 40px; height: 40px; flex-shrink: 0; }
-.tb-skeleton-rect { width: 100%; height: 100%; }
+.cp-skeleton-text { height: 1em; margin-bottom: 0.5em; width: 100%; }
+.cp-skeleton-title { height: 1.5em; margin-bottom: 0.75em; width: 60%; }
+.cp-skeleton-circle { border-radius: 50%; aspect-ratio: 1/1; width: 40px; height: 40px; flex-shrink: 0; }
+.cp-skeleton-rect { width: 100%; height: 100%; }
 
 /* Predefined Component Skeletons */
 
 /* KPI / Stat Card */
-.tb-skeleton-kpi {
+.cp-skeleton-kpi {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -57,7 +57,7 @@
 }
 
 /* Table Row */
-.tb-skeleton-table-row {
+.cp-skeleton-table-row {
   display: flex;
   gap: 16px;
   padding: 14px 16px;
@@ -65,7 +65,7 @@
 }
 
 /* List Item */
-.tb-skeleton-list-item {
+.cp-skeleton-list-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -74,7 +74,7 @@
 }
 
 /* Specialized Dashboard Details */
-.tb-skeleton-details-shell {
+.cp-skeleton-details-shell {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -82,7 +82,7 @@
 }
 
 /* Map Placeholder */
-.tb-skeleton-map {
+.cp-skeleton-map {
   width: 100%;
   height: 100%;
   min-height: 400px;
@@ -95,7 +95,7 @@
   overflow: hidden;
 }
 
-.tb-skeleton-map::after {
+.cp-skeleton-map::after {
   content: 'Loading Live Map Data...';
   font-size: 14px;
   font-weight: 600;
@@ -104,7 +104,7 @@
 }
 
 /* Full Page Initial Loader */
-.tb-skeleton-page-overlay {
+.cp-skeleton-page-overlay {
   position: fixed;
   inset: 0;
   background: var(--bg, #F5F8FF);
@@ -116,7 +116,7 @@
   transition: opacity 0.3s ease;
 }
 
-.tb-skeleton-page-overlay.fade-out {
+.cp-skeleton-page-overlay.fade-out {
   opacity: 0;
   pointer-events: none;
 }

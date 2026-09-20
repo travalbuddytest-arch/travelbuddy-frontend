@@ -19,7 +19,7 @@ document.querySelectorAll('.ct-reveal').forEach(el => ctRevealObserver.observe(e
 /* ============ VISIT SUPPORT LOGIC ============ */
 const ctSupportCard = document.getElementById('ctSupportCard');
 ctSupportCard?.addEventListener('click', (e) => {
-    const token = localStorage.getItem('travelBuddyToken');
+    const token = localStorage.getItem('carryParcelToken');
     if (!token) {
         e.preventDefault();
         if (window.TBAiAssistant && typeof window.TBAiAssistant.open === 'function') {
@@ -69,7 +69,7 @@ ctForm?.addEventListener('submit', e => {
     const apiUrl = (window.APP_CONFIG?.API_BASE_URL || '') + '/api/contact/submit';
 
     // Get token if user is logged in
-    const token = localStorage.getItem('travelBuddyToken');
+    const token = localStorage.getItem('carryParcelToken');
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
 

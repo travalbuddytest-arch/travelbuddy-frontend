@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders } = window.CarryParcel;
   const API_BASE = `${API_ORIGIN}/api/postparcel`;
-  const CACHE_KEY = 'tb_dashboard_data';
+  const CACHE_KEY = 'cp_dashboard_data';
 
   async function loadDashboard() {
     const cached = localStorage.getItem(CACHE_KEY);
@@ -14,7 +14,7 @@
       } catch (e) { localStorage.removeItem(CACHE_KEY); }
     } else {
       // No cache: Show skeletons for initial load
-      if (window.TravelBuddySkeleton) {
+      if (window.CarryParcelSkeleton) {
         // Stats are already showing 0, we can shimmer them
         document.querySelectorAll('.tb-metric-card').forEach(card => card.classList.add('is-loading'));
       }
@@ -71,7 +71,7 @@
         document.getElementById('statActiveParcels').textContent = (data.stats.activeParcels || 0).toLocaleString();
         document.getElementById('statCompletedDeliveries').textContent = (data.stats.completedDeliveries || 0).toLocaleString();
         document.getElementById('statTripsPosted').textContent = (data.stats.tripsPosted || 0).toLocaleString();
-        document.getElementById('statTotalEarnings').textContent = window.TravelBuddy.formatPaise(data.stats.totalEarnings || 0);
+        document.getElementById('statTotalEarnings').textContent = window.CarryParcel.formatPaise(data.stats.totalEarnings || 0);
       } else {
         animateCount(document.getElementById('statActiveParcels'), data.stats.activeParcels || 0, false);
         animateCount(document.getElementById('statCompletedDeliveries'), data.stats.completedDeliveries || 0, false);
@@ -80,18 +80,18 @@
       }
 
       const earningsEl = document.getElementById('walletEarningsValue');
-      if (earningsEl) earningsEl.textContent = window.TravelBuddy.formatPaise(data.stats.totalEarnings || 0);
+      if (earningsEl) earningsEl.textContent = window.CarryParcel.formatPaise(data.stats.totalEarnings || 0);
     }
 
     // Apply Wallet
     const heroValue = document.getElementById('heroWalletValue');
     const balanceValue = document.getElementById('walletBalanceValue');
     const lockedValue = document.getElementById('walletLockedValue');
-    const isPrivate = window.TravelBuddy.isPrivacyMode();
+    const isPrivate = window.CarryParcel.isPrivacyMode();
 
     if (data.user) {
-      const balanceText = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.user.walletBalance || 0);
-      const lockedText = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.user.lockedBalance || 0);
+      const balanceText = isPrivate ? '••••' : window.CarryParcel.formatPaise(data.user.walletBalance || 0);
+      const lockedText = isPrivate ? '••••' : window.CarryParcel.formatPaise(data.user.lockedBalance || 0);
       if (heroValue) heroValue.textContent = balanceText;
       if (balanceValue) balanceValue.textContent = balanceText;
       if (lockedValue) lockedValue.textContent = lockedText;
@@ -122,12 +122,12 @@
     container.innerHTML = activities.map(act => `
       <div class="activity-item">
         <div class="activity-icon">
-          <i class="fa-solid ${act.icon || 'fa-bell'}"></i>
+          <i class="fa-solid ${window.CarryParcel.escapeHTML(act.icon || 'fa-bell')}"></i>
         </div>
         <div class="activity-content">
-          <strong class="activity-title">${window.TravelBuddy.escapeHTML(act.title)}</strong>
-          <span class="activity-desc">${window.TravelBuddy.escapeHTML(act.description)}</span>
-          <span class="activity-time">${window.TravelBuddy.formatDate(act.timestamp)}</span>
+          <strong class="activity-title">${window.CarryParcel.escapeHTML(act.title)}</strong>
+          <span class="activity-desc">${window.CarryParcel.escapeHTML(act.description)}</span>
+          <span class="activity-time">${window.CarryParcel.formatDate(act.timestamp)}</span>
         </div>
       </div>
     `).join('');
@@ -149,14 +149,14 @@
     }
 
     container.innerHTML = messages.map(msg => `
-      <a href="messages.html?conversation=${msg.id}" class="msg-thread-item">
-        <div class="avatar avatar--sm">${(msg.other?.label || 'TB')[0].toUpperCase()}</div>
+      <a href="messages.html?conversation=${window.CarryParcel.escapeHTML(msg.id)}" class="msg-thread-item">
+        <div class="avatar avatar--sm">${window.CarryParcel.escapeHTML((msg.other?.label || 'CP')[0].toUpperCase())}</div>
         <div class="msg-thread-info">
           <div class="msg-thread-header">
-            <span class="msg-thread-name">${window.TravelBuddy.escapeHTML(msg.other?.label)}</span>
-            <span class="msg-thread-date">${window.TravelBuddy.formatDate(msg.lastMessageAt)}</span>
+            <span class="msg-thread-name">${window.CarryParcel.escapeHTML(msg.other?.label)}</span>
+            <span class="msg-thread-date">${window.CarryParcel.formatDate(msg.lastMessageAt)}</span>
           </div>
-          <span class="msg-thread-snippet">${window.TravelBuddy.escapeHTML(msg.lastMessage || 'No messages yet')}</span>
+          <span class="msg-thread-snippet">${window.CarryParcel.escapeHTML(msg.lastMessage || 'No messages yet')}</span>
         </div>
         ${msg.unreadCount > 0 ? '<span class="msg-unread-dot"></span>' : ''}
       </a>
@@ -164,7 +164,7 @@
   }
 
   function saveStoredUser(user) {
-    localStorage.setItem('travelBuddyUser', JSON.stringify(user || {}));
+    localStorage.setItem('carryParcelUser', JSON.stringify(user || {}));
   }
 
   function personalizeUser() {
@@ -172,11 +172,11 @@
   }
 
   function setNotifBadge(count) {
-     if (window.TravelBuddy.setNotifBadge) window.TravelBuddy.setNotifBadge(count);
+     if (window.CarryParcel.setNotifBadge) window.CarryParcel.setNotifBadge(count);
   }
 
   // Real-time updates
-  document.addEventListener('travelbuddy:notification', (e) => {
+  document.addEventListener('carryparcel:notification', (e) => {
     if (!e.detail) return;
     if (e.detail.type === 'wallet_added' || e.detail.type === 'reward_added') {
       loadWallet();
@@ -184,7 +184,7 @@
     }
   });
 
-  document.addEventListener('travelbuddy:parcel-status', (e) => {
+  document.addEventListener('carryparcel:parcel-status', (e) => {
     console.log('[Overview] Parcel status update received, refreshing dashboard...');
     loadDashboard();
   });
@@ -199,7 +199,7 @@
     function tick(now) {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      const isPrivate = window.TravelBuddy.isPrivacyMode();
+      const isPrivate = window.CarryParcel.isPrivacyMode();
 
       if (isCurrency) {
         if (isPrivate) {
@@ -236,7 +236,7 @@
       animateCount(document.getElementById('statTotalEarnings'), data.totalEarnings, true, '₹');
 
       const earningsEl = document.getElementById('walletEarningsValue');
-      if (earningsEl) earningsEl.textContent = window.TravelBuddy.formatPaise(data.totalEarnings || 0);
+      if (earningsEl) earningsEl.textContent = window.CarryParcel.formatPaise(data.totalEarnings || 0);
     } catch (err) {
       console.error(err);
       window.showToast('Could not reach the server.', 'error');
@@ -250,16 +250,16 @@
     const balanceValue = document.getElementById('walletBalanceValue');
     const lockedValue = document.getElementById('walletLockedValue');
     const earningsValue = document.getElementById('walletEarningsValue');
-    const isPrivate = window.TravelBuddy.isPrivacyMode();
+    const isPrivate = window.CarryParcel.isPrivacyMode();
 
     try {
       const res = await fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() });
       if (res.ok) {
         const data = await res.json();
-        if (heroValue) heroValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.walletBalance || 0);
-        if (balanceValue) balanceValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.walletBalance || 0);
-        if (lockedValue) lockedValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.lockedBalance || 0);
-        if (earningsValue) earningsValue.textContent = isPrivate ? '••••' : window.TravelBuddy.formatPaise(data.totalEarnings || 0);
+        if (heroValue) heroValue.textContent = isPrivate ? '••••' : window.CarryParcel.formatPaise(data.walletBalance || 0);
+        if (balanceValue) balanceValue.textContent = isPrivate ? '••••' : window.CarryParcel.formatPaise(data.walletBalance || 0);
+        if (lockedValue) lockedValue.textContent = isPrivate ? '••••' : window.CarryParcel.formatPaise(data.lockedBalance || 0);
+        if (earningsValue) earningsValue.textContent = isPrivate ? '••••' : window.CarryParcel.formatPaise(data.totalEarnings || 0);
         return;
       }
     } catch (e) {
@@ -267,10 +267,10 @@
     }
 
     try {
-      const user = await window.TravelBuddy.getCurrentUser();
+      const user = await window.CarryParcel.getCurrentUser();
       if (!user) return;
-      const balance = isPrivate ? '••••' : window.TravelBuddy.formatPaise(user.walletBalance || 0);
-      const locked = isPrivate ? '••••' : window.TravelBuddy.formatPaise(user.lockedBalance || 0);
+      const balance = isPrivate ? '••••' : window.CarryParcel.formatPaise(user.walletBalance || 0);
+      const locked = isPrivate ? '••••' : window.CarryParcel.formatPaise(user.lockedBalance || 0);
       if (heroValue) heroValue.textContent = balance;
       if (balanceValue) balanceValue.textContent = balance;
       if (lockedValue) lockedValue.textContent = locked;
@@ -279,7 +279,7 @@
     }
   }
 
-  document.addEventListener('travelbuddy:privacy-toggled', () => {
+  document.addEventListener('carryparcel:privacy-toggled', () => {
     loadWallet();
     loadStats();
   });

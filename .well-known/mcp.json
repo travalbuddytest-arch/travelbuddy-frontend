@@ -7,12 +7,12 @@
   "servers": [
     {
       "transport": "sse",
-      "url": "https://travelbuddy-backend-19l6.onrender.com/mcp/sse",
+      "url": "https://api.carryparcel.in/mcp/sse",
       "description": "Production Server-Sent Events (SSE) Streamable Transport"
     },
     {
       "transport": "http",
-      "url": "https://travelbuddy-backend-19l6.onrender.com/mcp",
+      "url": "https://api.carryparcel.in/mcp",
       "description": "Production Streamable HTTP JSON-RPC 2.0 Transport"
     }
   ],

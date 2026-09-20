@@ -1,48 +1,48 @@
 /* ============================================================
-   TRAVELBUDDY PREMIUM 3D DESIGN SYSTEM
+   CARRYPARCEL PREMIUM 3D DESIGN SYSTEM
    Standardized visuals for all public pages.
    ============================================================ */
 
 :root {
     /* Brand Colors */
-    --tb-primary: #0d6efd;
-    --tb-primary-dark: #0b5ed7;
-    --tb-primary-light: #eef5ff;
-    --tb-secondary: #7291d2;
-    --tb-accent: #3d8bff;
+    --cp-primary: #0d6efd;
+    --cp-primary-dark: #0b5ed7;
+    --cp-primary-light: #eef5ff;
+    --cp-secondary: #7291d2;
+    --cp-accent: #3d8bff;
 
     /* Semantic Colors */
-    --tb-success: #22c55e;
-    --tb-warning: #f5a524;
-    --tb-danger: #ef4056;
-    --tb-info: #4f8dff;
+    --cp-success: #22c55e;
+    --cp-warning: #f5a524;
+    --cp-danger: #ef4056;
+    --cp-info: #4f8dff;
 
     /* Neutral / Surfaces */
-    --tb-ink: #12203a;
-    --tb-ink-soft: #33415c;
-    --tb-muted: #667797;
-    --tb-border: #e6ecf9;
-    --tb-surface: #ffffff;
-    --tb-bg: #f7f9fc;
-    --tb-navy: #0b213f;
+    --cp-ink: #12203a;
+    --cp-ink-soft: #33415c;
+    --cp-muted: #667797;
+    --cp-border: #e6ecf9;
+    --cp-surface: #ffffff;
+    --cp-bg: #f7f9fc;
+    --cp-navy: #0b213f;
 
     /* 3D Elevation Layers */
-    --tb-shadow-l1: 0 4px 12px rgba(18, 32, 58, 0.05);
-    --tb-shadow-l2: 0 12px 24px rgba(18, 32, 58, 0.08);
-    --tb-shadow-l3: 0 24px 48px rgba(18, 32, 58, 0.12);
-    --tb-shadow-l4: 0 40px 80px rgba(18, 32, 58, 0.18);
+    --cp-shadow-l1: 0 4px 12px rgba(18, 32, 58, 0.05);
+    --cp-shadow-l2: 0 12px 24px rgba(18, 32, 58, 0.08);
+    --cp-shadow-l3: 0 24px 48px rgba(18, 32, 58, 0.12);
+    --cp-shadow-l4: 0 40px 80px rgba(18, 32, 58, 0.18);
 
     /* Perspective & Depth */
-    --tb-perspective: 1200px;
-    --tb-transition: cubic-bezier(0.2, 0.8, 0.2, 1);
-    --tb-speed: 0.4s;
+    --cp-perspective: 1200px;
+    --cp-transition: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --cp-speed: 0.4s;
 
     /* Border Radius */
-    --tb-radius-sm: 8px;
-    --tb-radius-md: 16px;
-    --tb-radius-lg: 24px;
-    --tb-radius-xl: 32px;
-    --tb-radius-full: 9999px;
+    --cp-radius-sm: 8px;
+    --cp-radius-md: 16px;
+    --cp-radius-lg: 24px;
+    --cp-radius-xl: 32px;
+    --cp-radius-full: 9999px;
 
     /* Heuristic Fixes - Standardized Tokens */
     --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);

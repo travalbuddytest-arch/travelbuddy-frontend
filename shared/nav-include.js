@@ -23,14 +23,23 @@
 
         // Find existing component: either nested inside el or as an immediate sibling
         var existing = (type === 'navbar')
-            ? (el.querySelector('.tb-nav-header') || (el.nextElementSibling && el.nextElementSibling.classList.contains('tb-nav-header') ? el.nextElementSibling : null))
+            ? (el.querySelector('.cp-nav-header') || (el.nextElementSibling && el.nextElementSibling.classList.contains('cp-nav-header') ? el.nextElementSibling : null))
             : (el.querySelector('.site-footer') || (el.nextElementSibling && el.nextElementSibling.classList.contains('site-footer') ? el.nextElementSibling : null));
 
         // Check if already hardcoded with correct version
         if (existing && existing.getAttribute('data-v') === targetVersion) {
             // console.log('[nav-include] skipping injection for', type, '- version match');
-            if (type === 'navbar' && window.TBNav && typeof window.TBNav.init === 'function') {
-                window.TBNav.init();
+            if (type === 'navbar') {
+                // Wait for behavioral script to be ready if it's deferred
+                if (window.CPNav && typeof window.CPNav.init === 'function') {
+                    window.CPNav.init();
+                } else {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (window.CPNav && typeof window.CPNav.init === 'function') {
+                            window.CPNav.init();
+                        }
+                    });
+                }
             }
             highlightActiveLink();
             return;
@@ -55,8 +64,14 @@
                 el.outerHTML = html;
 
                 if (type === 'navbar') {
-                    if (window.TBNav && typeof window.TBNav.init === 'function') {
-                        window.TBNav.init();
+                    if (window.CPNav && typeof window.CPNav.init === 'function') {
+                        window.CPNav.init();
+                    } else {
+                        document.addEventListener('DOMContentLoaded', function() {
+                            if (window.CPNav && typeof window.CPNav.init === 'function') {
+                                window.CPNav.init();
+                            }
+                        });
                     }
                 }
 
@@ -124,12 +139,30 @@
         }
     }
 
+    async function backgroundCheckSession() {
+        if (!window.CarryParcelAuthChecked) {
+            try {
+                var apiOrigin = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://api.carryparcel.in';
+                const res = await fetch(`${apiOrigin}/api/auth/me`, { credentials: 'include' });
+                if (window.resolveCarryParcelAuth) {
+                    window.resolveCarryParcelAuth(res.ok);
+                }
+            } catch (e) {
+                if (window.resolveCarryParcelAuth) {
+                    window.resolveCarryParcelAuth(false);
+                }
+            }
+        }
+    }
+
+    setTimeout(backgroundCheckSession, 0);
+
     // Initialize Navbar
-    inject('tbNavbarInclude', basePath + 'public-navbar.html', 'navbar');
+    inject('cpNavbarInclude', basePath + 'public-navbar.html', 'navbar');
 
     // Global App Promotion Banner
     function initAppPromoBanner() {
-        var DISMISSED_KEY = 'travelbuddy_app_promo_dismissed';
+        var DISMISSED_KEY = 'carryparcel_app_promo_dismissed';
         var ALLOWED_PAGES = ['home', 'about', 'support', 'contact'];
         var currentPage = document.body.getAttribute('data-page');
 
@@ -141,18 +174,18 @@
         var installUrl = (currentPage === 'home') ? '#appPromotionSection' : '/index.html#appPromotionSection';
 
         var bannerHtml = `
-            <div class="tb-app-promo-bar" id="appPromoBanner">
-                <div class="tb-promo-content">
-                    <div class="tb-promo-icon" aria-hidden="true">
+            <div class="cp-app-promo-bar" id="appPromoBanner">
+                <div class="cp-promo-content">
+                    <div class="cp-promo-icon" aria-hidden="true">
                         <i class="fa-solid fa-gift"></i>
                     </div>
-                    <div class="tb-promo-text">
-                        <span class="tb-promo-title">🎉 Post Your First 2 Parcels for FREE!</span>
-                        <span class="tb-promo-subtitle">Download the TravelBuddy App and unlock your free parcel posts.</span>
+                    <div class="cp-promo-text">
+                        <span class="cp-promo-title">🎉 Post Your First 2 Parcels for FREE!</span>
+                        <span class="cp-promo-subtitle">Download the CarryParcel App and unlock your free parcel posts.</span>
                     </div>
-                    <div class="tb-promo-actions">
-                        <a href="${installUrl}" class="tb-promo-install-btn">Install App</a>
-                        <button type="button" class="tb-promo-close" id="closeAppPromo" aria-label="Close app promotion">
+                    <div class="cp-promo-actions">
+                        <a href="${installUrl}" class="cp-promo-install-btn">Install App</a>
+                        <button type="button" class="cp-promo-close" id="closeAppPromo" aria-label="Close app promotion">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -179,9 +212,9 @@
 
     // Global Scroll Progress Bar Injection & Logic
     function initScrollProgress() {
-        if (document.getElementById('tbScrollProgress')) return;
+        if (document.getElementById('cpScrollProgress')) return;
         const progressEl = document.createElement('div');
-        progressEl.id = 'tbScrollProgress';
+        progressEl.id = 'cpScrollProgress';
         document.body.prepend(progressEl);
 
         let ticking = false;
@@ -205,20 +238,20 @@
 
     // Premium Background Injection
     setTimeout(function injectBackground() {
-        if (document.querySelector('.tb-bg-system')) return;
+        if (document.querySelector('.cp-bg-system')) return;
         const bgEl = document.createElement('div');
-        bgEl.className = 'tb-bg-system';
+        bgEl.className = 'cp-bg-system';
         bgEl.innerHTML = `
-            <div class="tb-bg-layer-base"></div>
-            <div class="tb-bg-orb tb-bg-orb-1"></div>
-            <div class="tb-bg-orb tb-bg-orb-2"></div>
-            <div class="tb-bg-orb tb-bg-orb-3"></div>
-            <svg class="tb-bg-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <div class="cp-bg-layer-base"></div>
+            <div class="cp-bg-orb cp-bg-orb-1"></div>
+            <div class="cp-bg-orb cp-bg-orb-2"></div>
+            <div class="cp-bg-orb cp-bg-orb-3"></div>
+            <svg class="cp-bg-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M-10,50 Q25,20 50,50 T110,50" fill="none" stroke-width="0.05" />
                 <path d="M-10,30 Q30,60 60,30 T110,30" fill="none" stroke-width="0.03" />
             </svg>
-            <div class="tb-bg-shape" style="width:100px; height:100px; top:20%; left:10%; border-width:0.5px;"></div>
-            <div class="tb-bg-shape" style="width:150px; height:150px; bottom:15%; right:20%; border-width:0.3px; border-style:dashed;"></div>
+            <div class="cp-bg-shape" style="width:100px; height:100px; top:20%; left:10%; border-width:0.5px;"></div>
+            <div class="cp-bg-shape" style="width:150px; height:150px; bottom:15%; right:20%; border-width:0.3px; border-style:dashed;"></div>
         `;
         document.body.prepend(bgEl);
     }, 0);
@@ -230,9 +263,9 @@
     loadAsset(basePath + 'nav-dropdown.js', 'js');
     loadAsset(basePath + 'nav-basic-behavior.js', 'js');
 
-    window.TBInclude = {
+    window.CPInclude = {
         injectFooter: function () {
-            inject('tbFooterInclude', basePath + 'footer.html', 'footer');
+            inject('cpFooterInclude', basePath + 'footer.html', 'footer');
         }
     };
 

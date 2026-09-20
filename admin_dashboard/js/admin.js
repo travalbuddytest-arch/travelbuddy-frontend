@@ -4,9 +4,9 @@
 
 /* ---------- Configuration & Data ---------- */
 const dashboardInfo = {
-  command: ['Command Center', 'Live overview of your TravelBuddy platform'],
+  command: ['Command Center', 'Live overview of your CarryParcel platform'],
   users: ['User Management', 'Complete user profiles, activity and account controls'],
-  'active-users': ['Active Users', "Who's on TravelBuddy right now, and who visited recently"],
+  'active-users': ['Active Users', "Who's on CarryParcel right now, and who visited recently"],
   'user-activity': ['User Activity', 'Real-time feed of all user actions across the platform'],
   verification: ['Identity Verification', 'Review and approve user identity documents'],
   parcels: ['Parcel Control', 'Search, inspect and manage every parcel journey'],
@@ -40,7 +40,7 @@ const infoCards = {
     ['fa-chart-simple', 'Behavior Insights', 'Detect unusual cancellations and risky behavior.'],
   ],
   'active-users': [
-    ['fa-circle-dot', 'Who\'s Online', 'See every user connected to TravelBuddy right now.'],
+    ['fa-circle-dot', 'Who\'s Online', 'See every user connected to CarryParcel right now.'],
     ['fa-clock-rotate-left', 'Visit Log', 'Browse recent site visits sorted by most recent activity.'],
     ['fa-chart-line', 'Traffic Timeline', 'Spot when visits peak across the day.'],
   ],
@@ -114,8 +114,7 @@ const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 window.API_ORIGIN = API_ORIGIN;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = { 'X-CP-Admin-Request': 'true' };
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
   let data;
   try {
@@ -128,9 +127,10 @@ async function apiGet(url) {
 }
 
 async function apiPut(url, body) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-CP-Admin-Request': 'true'
+  };
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PUT', headers, credentials: 'include', body: JSON.stringify(body) });
   let data;
   try {
@@ -143,9 +143,10 @@ async function apiPut(url, body) {
 }
 
 async function apiPatch(url, body) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-CP-Admin-Request': 'true'
+  };
   const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PATCH', headers, credentials: 'include', body: JSON.stringify(body) });
   let data;
   try {
@@ -208,9 +209,9 @@ function getEl(id) {
    - Every restore is validated against the actual set of known pages so a
      stale/tampered value can never point at a page that no longer exists;
      it safely falls back to Command Center instead. */
-const NAV_STORAGE_KEY = 'travelBuddyAdminActivePage';
-const NAV_SCROLL_KEY = 'travelBuddyAdminScrollPositions';
-const NAV_SUBSTATE_PREFIX = 'travelBuddyAdminSubState:';
+const NAV_STORAGE_KEY = 'carryParcelAdminActivePage';
+const NAV_SCROLL_KEY = 'carryParcelAdminScrollPositions';
+const NAV_SUBSTATE_PREFIX = 'carryParcelAdminSubState:';
 const VALID_PAGES = Object.keys(dashboardInfo);
 const DEFAULT_PAGE = 'command';
 
@@ -391,8 +392,8 @@ function renderStatisticCards(data) {
   const items = data || statisticCards;
   kpisContainer.innerHTML = items
     .map(([icon, label, value, detail, page]) => `
-      <article class="kpi${page ? ' kpi-clickable' : ''}"${page ? ` data-page-link="${page}" role="button" tabindex="0" title="View ${escHtml(label)}"` : ''}>
-        <i class="ki fa-solid ${icon}"></i>
+      <article class="kpi${page ? ' kpi-clickable' : ''}"${page ? ` data-page-link="${escHtml(page)}" role="button" tabindex="0" title="View ${escHtml(label)}"` : ''}>
+        <i class="ki fa-solid ${escHtml(icon)}"></i>
         <div>
           <span>${escHtml(label)}</span>
           <strong>${escHtml(value)}</strong>
@@ -423,7 +424,7 @@ function renderActivityFeed(data) {
   activityContainer.innerHTML = items
     .map(([icon, title, desc, timeLabel]) => `
       <div class="activity">
-        <i class="fa-solid ${icon}"></i>
+        <i class="fa-solid ${escHtml(icon)}"></i>
         <div>
           <b>${escHtml(title)}</b>
           <p>${escHtml(desc)}</p>
@@ -441,7 +442,7 @@ function renderRiskCards(data) {
   risksContainer.innerHTML = items
     .map(([icon, title, desc, sev, orderId]) => `
       <div class="risk"${orderId ? ` data-order-id="${escHtml(orderId)}" title="View ${escHtml(orderId)} in Parcels" style="cursor:pointer"` : ''}>
-        <i class="fa-solid ${icon}"></i>
+        <i class="fa-solid ${escHtml(icon)}"></i>
         <div>
           <b>${escHtml(title)}</b>
           <p>${escHtml(desc)}</p>
@@ -450,6 +451,7 @@ function renderRiskCards(data) {
       </div>
     `)
     .join('');
+}
 }
 
 // Switch to Parcels and pre-fill its search box with an order id. The
@@ -509,7 +511,7 @@ function renderActiveJourneys(data) {
       <div class="jr">
         <b>${escHtml(id)}</b>
         <p>${escHtml(route)} • Live journey</p>
-        <div class="progress"><i style="width:${Math.min(prog, 100)}%"></i></div>
+        <div class="progress"><i style="width:${escHtml(Math.min(prog, 100))}%"></i></div>
       </div>
     `)
     .join('');
@@ -521,15 +523,15 @@ function renderOverviewCards() {
     if (!el) return;
     el.innerHTML = `
       <div class="intro">
-        <h2>${dashboardInfo[sectionId][0]}</h2>
-        <p>${dashboardInfo[sectionId][1]}</p>
+        <h2>${escHtml(dashboardInfo[sectionId][0])}</h2>
+        <p>${escHtml(dashboardInfo[sectionId][1])}</p>
       </div>
       <div class="cards">
         ${infoCards[sectionId].map(([icon, h, d]) => `
           <article class="card">
-            <i class="fa-solid ${icon}"></i>
-            <h3>${h}</h3>
-            <p>${d}</p>
+            <i class="fa-solid ${escHtml(icon)}"></i>
+            <h3>${escHtml(h)}</h3>
+            <p>${escHtml(d)}</p>
           </article>
         `).join('')}
       </div>
@@ -579,7 +581,7 @@ async function renderSearchResults(q = '') {
       html += '<div class="search-section"><span class="search-section-label">Parcels</span></div>';
       html += data.parcels.map(p => `
         <div class="result" data-type="parcel" data-id="${escHtml(String(p._id || ''))}" data-order-id="${escHtml(String(p.orderId || ''))}">
-          <i class="fa-solid ${p.icon || 'fa-box'}"></i>
+          <i class="fa-solid ${escHtml(p.icon || 'fa-box')}"></i>
           <div><b>${escHtml(p.label || p.orderId || '')}</b><span>${escHtml(p.subtitle || '')} • ${escHtml(p.detail || '')}</span></div>
         </div>
       `).join('');
@@ -589,7 +591,7 @@ async function renderSearchResults(q = '') {
       html += '<div class="search-section"><span class="search-section-label">Users</span></div>';
       html += data.users.map(u => `
         <div class="result" data-type="user" data-id="${escHtml(String(u._id || ''))}">
-          <i class="fa-solid ${u.icon || 'fa-user'}"></i>
+          <i class="fa-solid ${escHtml(u.icon || 'fa-user')}"></i>
           <div><b>${escHtml(u.label || '')}</b><span>${escHtml(u.subtitle || '')}${u.detail ? ` • ${escHtml(u.detail)}` : ''}</span></div>
         </div>
       `).join('');
@@ -599,7 +601,7 @@ async function renderSearchResults(q = '') {
       html += '<div class="search-section"><span class="search-section-label">Travelers</span></div>';
       html += data.travelers.map(t => `
         <div class="result" data-type="traveler" data-id="${escHtml(String(t._id || ''))}">
-          <i class="fa-solid ${t.icon || 'fa-person-walking-luggage'}"></i>
+          <i class="fa-solid ${escHtml(t.icon || 'fa-person-walking-luggage')}"></i>
           <div><b>${escHtml(t.label || '')}</b><span>${escHtml(t.subtitle || '')}${t.detail ? ` • ${escHtml(t.detail)}` : ''}</span></div>
         </div>
       `).join('');
@@ -687,7 +689,7 @@ function renderUserDetail(data) {
   const u = data.user;
   const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Unknown';
   const initials = (u.firstName?.[0] || '') + (u.lastName?.[0] || '');
-  const formatDateStr = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDateTime(d) : formatDate(d);
+  const formatDateStr = d => window.CarryParcelDate ? window.CarryParcelDate.formatDateTime(d) : formatDate(d);
 
   let html = `
     <div class="dp-card">
@@ -951,15 +953,15 @@ function timeAgoShort(iso) {
 }
 
 function formatDate(d) {
-  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatDateTime(d);
+  if (window.CarryParcelDate) return window.CarryParcelDate.formatDateTime(d);
   if (!d) return '—';
   return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 function updateDateLabel() {
   const dateLabel = getEl('date');
   if (dateLabel) {
-    if (window.TravelBuddyDate) {
-      dateLabel.textContent = window.TravelBuddyDate.formatDate(new Date());
+    if (window.CarryParcelDate) {
+      dateLabel.textContent = window.CarryParcelDate.formatDate(new Date());
     } else {
       dateLabel.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
     }
@@ -968,10 +970,10 @@ function updateDateLabel() {
 
 /* ---------- Dashboard Data Loading ---------- */
 function showDashboardSkeleton() {
-  if (window.TravelBuddySkeleton) {
-    window.TravelBuddySkeleton.show('#kpis', 'kpi', 6);
-    window.TravelBuddySkeleton.show('#activity', 'list-item', 5);
-    window.TravelBuddySkeleton.show('#risks', 'list-item', 3);
+  if (window.CarryParcelSkeleton) {
+    window.CarryParcelSkeleton.show('#kpis', 'kpi', 6);
+    window.CarryParcelSkeleton.show('#activity', 'list-item', 5);
+    window.CarryParcelSkeleton.show('#risks', 'list-item', 3);
 
     // Custom inline skeletons for specialized panels
     const jrn = document.getElementById('journeys');
@@ -1135,16 +1137,16 @@ function initializeSidebarToggle() {
 
   // Initialize Collapsible Sidebar System for Admin Dashboard
   function runAdminSidebarInit() {
-    window.TravelBuddySidebarCollapse?.init({
+    window.CarryParcelSidebarCollapse?.init({
       sidebarId: 'side',
       toggleBtnId: 'adminSidebarToggle',
-      storageKey: 'travelbuddy_admin_sidebar_collapsed',
+      storageKey: 'carryparcel_admin_sidebar_collapsed',
       navItemSelector: 'nav button, #adminChip',
       collapsedClass: 'sidebar-collapsed'
     });
   }
 
-  if (window.TravelBuddySidebarCollapse) {
+  if (window.CarryParcelSidebarCollapse) {
     runAdminSidebarInit();
   } else {
     const script = document.createElement('script');
@@ -1229,20 +1231,21 @@ function initializeAdminMenu() {
     adminMenu.classList.remove('open');
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
-    localStorage.removeItem('travelBuddyAdminToken');
-    // BUG FIX: 'travelBuddyAdmin' (used by the shared navbar on Home/Support/
+    localStorage.removeItem('carryParcelAdminToken');
+    // BUG FIX: 'carryParcelAdmin' (used by the shared navbar on Home/Support/
     // About to decide whether to show the admin chip) was never cleared here.
     // Logging out from inside the admin dashboard left it behind, so those
     // pages kept showing "Super Admin" as still logged in.
-    localStorage.removeItem('travelBuddyAdmin');
+    localStorage.removeItem('carryParcelAdmin');
+    localStorage.removeItem('carryParcelAdminLoggedIn');
     window.location.href = '/login/login.html';
   });
 }
 
 /* ---------- Lazy page loader (simple) ---------- */
 async function loadPageFragment(id, targetEl) {
-  if (window.TravelBuddySkeleton) {
-    window.TravelBuddySkeleton.show(targetEl, 'card');
+  if (window.CarryParcelSkeleton) {
+    window.CarryParcelSkeleton.show(targetEl, 'card');
   }
   try {
     const resp = await fetch(`./${id}.html`, { cache: 'no-store' });
@@ -1275,7 +1278,7 @@ async function loadPageFragment(id, targetEl) {
     // Fallback: render overview cards for sections without fragment
     if (id === 'command') {
       targetEl.innerHTML = `
-        <div class="welcome"><div><h2>Good evening, Admin 👋</h2><p>Here is what is happening across TravelBuddy right now.</p></div><span id="date"></span></div>
+        <div class="welcome"><div><h2>Good evening, Admin 👋</h2><p>Here is what is happening across CarryParcel right now.</p></div><span id="date"></span></div>
         <div class="kpis" id="kpis"></div>
         <div class="grid"><article class="panel"><div class="head"><div><h3>Live Activity</h3><p>Real-time platform events</p></div><span class="live-tag">● LIVE</span></div><div id="activity"></div></article><article class="panel"><div class="head"><div><h3>Attention Required</h3><p>Prioritized by risk level</p></div><a>View queue</a></div><div id="risks"></div></article></div>
         <div class="grid lower"><article class="panel"><div class="head"><div><h3>Parcel Journey Overview</h3><p>Current parcel distribution</p></div><select><option>Today</option></select></div><div class="journeys" id="journeys"></div></article><article class="panel"><div class="head"><div><h3>Revenue Snapshot</h3><p>Last 7 days</p></div><strong class="money">₹—</strong></div><div class="chart" id="chart"></div><div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></article></div>
@@ -1360,12 +1363,12 @@ function initAdminProfileModal() {
   }
 
   function getStoredAdmin() {
-    return window.ADMIN || (() => { try { return JSON.parse(localStorage.getItem('travelBuddyAdmin') || '{}'); } catch { return {}; } })();
+    return window.ADMIN || (() => { try { return JSON.parse(localStorage.getItem('carryParcelAdmin') || '{}'); } catch { return {}; } })();
   }
 
   function persistAdmin(admin) {
     window.ADMIN = admin;
-    localStorage.setItem('travelBuddyAdmin', JSON.stringify(admin));
+    localStorage.setItem('carryParcelAdmin', JSON.stringify(admin));
   }
 
   function populate() {
@@ -1488,10 +1491,10 @@ function initAdminProfileModal() {
   });
 
   document.getElementById('adminManageCookiesBtn')?.addEventListener('click', () => {
-    if (window.TravelBuddyCookies && typeof window.TravelBuddyCookies.open === 'function') {
+    if (window.CarryParcelCookies && typeof window.CarryParcelCookies.open === 'function') {
       // Close the profile modal first to show the cookie modal clearly
       document.getElementById('adminProfileModal')?.classList.remove('show');
-      window.TravelBuddyCookies.open();
+      window.CarryParcelCookies.open();
     } else {
       showToast('Cookie management is currently unavailable.', 'error');
     }
@@ -1515,7 +1518,7 @@ const bellAlerts = [];
 const BELL_MAX = 20;
 
 function timeAgoShort(iso) {
-  if (window.TravelBuddyDate) return window.TravelBuddyDate.formatRelative(iso);
+  if (window.CarryParcelDate) return window.CarryParcelDate.formatRelative(iso);
   if (!iso) return '';
   const diffMs = Date.now() - +new Date(iso);
   const mins = Math.floor(diffMs / 60000);
@@ -1535,16 +1538,16 @@ function renderBellMenu() {
   }
   list.innerHTML = bellAlerts.map(a => {
     const sevClass = a.severity === 'high' ? 'sev-high' : a.severity === 'warning' ? 'sev-warning' : '';
-    const iconMap = { delivered: 'fa-circle-check', pickup_confirmed: 'fa-key', cancelled: 'fa-ban', otp_failures: 'fa-key', fraud_risk: 'fa-shield-halved', payment_failed: 'fa-credit-card' };
+    const iconMap = { delivered: 'fa-circle-check', pickup_confirmed: 'fa-qrcode', cancelled: 'fa-ban', otp_failures: 'fa-triangle-exclamation', fraud_risk: 'fa-shield-halved', payment_failed: 'fa-credit-card' };
     const icon = iconMap[a.type] || 'fa-circle-info';
     return `
       <div class="bell-item ${sevClass}">
-        <i class="fa-solid ${icon}"></i>
+        <i class="fa-solid ${escHtml(icon)}"></i>
         <div>
           <b>${escHtml(a.title || 'Update')}</b>
           <p>${escHtml(a.description || '')}</p>
         </div>
-        <span>${timeAgoShort(a.timestamp)}</span>
+        <span>${escHtml(timeAgoShort(a.timestamp))}</span>
       </div>
     `;
   }).join('');
@@ -1598,10 +1601,10 @@ function initBellDropdown() {
 function initAdminLiveSocket() {
   const liveIndicator = document.querySelector('.tools .live');
 
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  if (!token || !window.TravelBuddySocket) return;
+  const isLoggedIn = Boolean(localStorage.getItem('carryParcelAdminLoggedIn'));
+  if (!isLoggedIn || !window.CarryParcelSocket) return;
 
-  const liveSocket = TravelBuddySocket.connect('/admin', token);
+  const liveSocket = CarryParcelSocket.connect('/admin');
   if (!liveSocket) return;
 
   const updateIndicator = (state) => {
@@ -1623,7 +1626,7 @@ function initAdminLiveSocket() {
     }
   };
 
-  TravelBuddySocket.onStatus((state) => {
+  CarryParcelSocket.onStatus((state) => {
     if (state.namespace === '/admin') {
       updateIndicator(state);
     }
@@ -1649,7 +1652,7 @@ function initAdminLiveSocket() {
 
 function hydrateAdminChip() {
   try {
-    const admin = JSON.parse(localStorage.getItem('travelBuddyAdmin') || '{}');
+    const admin = JSON.parse(localStorage.getItem('carryParcelAdmin') || '{}');
     if (admin && admin.firstName) {
       const initials = (admin.firstName[0] + (admin.lastName ? admin.lastName[0] : '')).toUpperCase();
       const chip = document.getElementById('adminChip');

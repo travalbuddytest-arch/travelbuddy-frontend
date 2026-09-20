@@ -85,7 +85,7 @@
   }
 
   // Export to global namespace
-  window.TravelBuddyDate = {
+  window.CarryParcelDate = {
     formatDateTime,
     formatDate,
     formatTime,

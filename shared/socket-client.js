@@ -125,6 +125,6 @@
   }
 
   // Export as global singleton
-  window.TravelBuddySocket = new SocketClient();
+  window.CarryParcelSocket = new SocketClient();
 
 })();

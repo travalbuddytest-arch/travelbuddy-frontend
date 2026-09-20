@@ -150,11 +150,7 @@
         imgElement.classList.add('loading');
 
         try {
-            const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-            const headers = {};
-            if (token && token !== 'null' && token !== 'undefined') {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
+            const headers = { 'X-CP-Admin-Request': 'true' };
 
             const res = await fetch(`${API_ORIGIN}/api/admin/docs/${filename}`, {
                 headers,

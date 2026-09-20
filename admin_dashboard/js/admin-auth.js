@@ -12,8 +12,7 @@
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('admin_token') || localStorage.getItem('travelBuddyAdminToken');
-  const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+  const headers = { 'X-CP-Admin-Request': 'true' };
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };
@@ -35,22 +34,22 @@ async function ensureAdminProfile() {
     // expose admin on window for other scripts
     window.ADMIN = admin;
 
-    if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(true);
+    if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(true);
     return admin;
   } catch (err) {
     console.warn('Admin auth failed, redirecting to login', err);
 
-    if (window.resolveTravelBuddyAuth) window.resolveTravelBuddyAuth(false);
+    if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(false);
 
     // clear stored token and redirect
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
     // Also clear the newer key names (login.js writes both old and new keys
-    // - see travelBuddyAdmin/travelBuddyAdminToken). Missing this left a
+    // - see carryParcelAdmin/carryParcelAdminToken). Missing this left a
     // stale "logged in" admin chip showing on Home/Support/About even after
     // this page decided the session was invalid and kicked back to login.
-    localStorage.removeItem('travelBuddyAdminToken');
-    localStorage.removeItem('travelBuddyAdmin');
+    localStorage.removeItem('carryParcelAdminToken');
+    localStorage.removeItem('carryParcelAdmin');
     // There's only one login page for the whole site now: /login/login.html.
     // The unified /api/auth/login endpoint decides whether the email belongs
     // to a user or an admin.
