@@ -34,7 +34,7 @@
 ```html
 <!-- 301 Redirect to consolidated Send Parcel page -->
 <meta http-equiv="refresh" content="0; url=../send-parcel/index.html">
-<link rel="canonical" href="https://travalbuddy.web.app/send-parcel/index.html">
+<link rel="canonical" href="https://www.carryparcel.in/send-parcel/index.html">
 <script type="text/javascript">
     window.location.href = "../send-parcel/index.html";
 </script>
@@ -59,7 +59,7 @@
 ```html
 <!-- 301 Redirect to consolidated Send Parcel page -->
 <meta http-equiv="refresh" content="0; url=../send-parcel/index.html">
-<link rel="canonical" href="https://travalbuddy.web.app/send-parcel/index.html">
+<link rel="canonical" href="https://www.carryparcel.in/send-parcel/index.html">
 <script type="text/javascript">
     window.location.href = "../send-parcel/index.html";
 </script>
