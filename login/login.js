@@ -17,6 +17,7 @@
   const createAccount = document.getElementById('createAccount');
   const backBtn = document.getElementById('backBtn');
   const LOGIN_STATE_KEY = 'carryParcelLoginState';
+  let loginSubmissionInFlight = false;
 
   // Where auth-guard.js sent the visitor from before bouncing them here
   // (see shared/auth-guard.js). Only ever a same-site relative path into
@@ -238,6 +239,8 @@
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
+    if (loginSubmissionInFlight) return;
+
     const emailOk = validateEmail(true);
     const passOk = validatePassword(true);
 
@@ -248,6 +251,8 @@
       return;
     }
 
+    loginSubmissionInFlight = true;
+    loginBtn.disabled = true;
     (window.CarryParcel?.FormLock || window.CarryParcelValidation?.FormLock)(form, true, { loadingText: 'Logging in...' });
 
     try {
@@ -273,7 +278,12 @@
         // collections. That's a config error the person can't fix
         // themselves, so show the server's message as-is rather than a
         // generic "login failed".
-        showToast(data.error || 'Login failed. Please try again.', 'error');
+        showToast(
+          resp.status === 429
+            ? 'Too many login attempts. Please wait a moment and try again.'
+            : (data.error || 'Login failed. Please try again.'),
+          'error'
+        );
         return;
       }
 
@@ -328,6 +338,8 @@
       showToast('Could not reach the server. Is it running?', 'error');
     } finally {
       (window.CarryParcel?.FormLock || window.CarryParcelValidation?.FormLock)(form, false);
+      loginBtn.disabled = false;
+      loginSubmissionInFlight = false;
     }
   });
 
