@@ -452,7 +452,6 @@ function renderRiskCards(data) {
     `)
     .join('');
 }
-}
 
 // Switch to Parcels and pre-fill its search box with an order id. The
 // Parcels fragment/script loads async (lazy-loaded + module script), so we

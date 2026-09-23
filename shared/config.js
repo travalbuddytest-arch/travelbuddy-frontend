@@ -2,6 +2,8 @@
   'use strict';
   // Centralized CarryParcel Global Object
   window.CarryParcel = window.CarryParcel || {};
+  // Keep older dashboard modules working while they migrate to CarryParcel.
+  window.TravelBuddy = window.CarryParcel;
 
   const isLocal = window.location.hostname === 'localhost' ||
                   window.location.hostname === '127.0.0.1' || 
