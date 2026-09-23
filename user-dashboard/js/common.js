@@ -172,7 +172,7 @@
   // (Temporal Dead Zone) throws ReferenceError, which was the root cause of
   // the "Cannot access 'profilePhotoCacheBust' before initialization" error.
   let profilePhotoCacheBust = null;
-  const API_ORIGIN = window.APP_CONFIG?.API_BASE_URL || "https://api.carryparcel.in";
+  const API_ORIGIN = window.APP_CONFIG?.API_BASE_URL;
 
   function showToast(message, type) {
     if (!toast) return;

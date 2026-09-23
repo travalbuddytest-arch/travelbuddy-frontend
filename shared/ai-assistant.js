@@ -106,13 +106,8 @@
                 const token = localStorage.getItem('carryParcelToken') || localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
 
                 // Robust config check
-                let apiBase = '';
-                if (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) {
-                    apiBase = window.APP_CONFIG.API_BASE_URL;
-                } else {
-                    // Fallback if config is missing
-                    apiBase = window.location.origin.includes('localhost') ? 'http://localhost:4000' : 'https://api.carryparcel.in';
-                }
+                const apiBase = window.APP_CONFIG?.API_BASE_URL;
+                if (!apiBase) throw new Error('API configuration is unavailable.');
 
                 const res = await fetch(`${apiBase}/api/ai/chat`, {
                     method: 'POST',

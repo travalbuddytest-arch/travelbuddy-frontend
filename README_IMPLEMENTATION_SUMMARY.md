@@ -5,7 +5,7 @@
 **Status:** ✅ COMPLETE - Production Ready  
 **Date Completed:** August 8, 2026  
 **Deployment:** Ready for Netlify  
-**Backend:** Connected to Render (https://travelbuddy-backend-19l6.onrender.com)
+**Backend:** Connected through the production API domain (https://api.carryparcel.in)
 
 ---
 
@@ -104,8 +104,8 @@
 
 ### Configuration Verified
 ```javascript
-✅ API_BASE_URL: https://travelbuddy-backend-19l6.onrender.com
-✅ SOCKET_URL: https://travelbuddy-backend-19l6.onrender.com
+✅ API_BASE_URL: https://api.carryparcel.in
+✅ SOCKET_URL: https://api.carryparcel.in
 ✅ No localhost references
 ✅ No hardcoded paths
 ```
@@ -209,7 +209,7 @@ git push origin main
 ### Verify Production
 ```
 Frontend: https://endearing-kleicha-a95038.netlify.app
-Backend: https://travelbuddy-backend-19l6.onrender.com
+Backend: https://api.carryparcel.in
 ```
 
 ### Rollback (If Needed)

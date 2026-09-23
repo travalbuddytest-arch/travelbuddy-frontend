@@ -230,7 +230,7 @@ resolveImageUrl(url) - Handles:
   - null/undefined → ''
   - data: URLs → unchanged (base64 images)
   - http(s):// URLs → unchanged (absolute URLs)
-  - /uploads/... → https://travelbuddy-backend-19l6.onrender.com/uploads/...
+  - /uploads/... → https://api.carryparcel.in/uploads/...
   - Relative paths → resolved with API origin
 ```
 
@@ -285,8 +285,8 @@ resolveImageUrl(url) - Handles:
 ## 5. API & BACKEND INTEGRATION
 
 ### Verified Configuration
-- **API Base URL:** `https://travelbuddy-backend-19l6.onrender.com` ✅
-- **Socket.IO URL:** `https://travelbuddy-backend-19l6.onrender.com` ✅
+- **API Base URL:** `https://api.carryparcel.in` ✅
+- **Socket.IO URL:** `https://api.carryparcel.in` ✅
 - **Authentication:** Bearer token from localStorage ✅
 - **CORS:** Handled by backend ✅
 
@@ -467,7 +467,7 @@ resolveImageUrl(url) - Handles:
 ### Verifying Production
 ```
 Frontend: https://endearing-kleicha-a95038.netlify.app/
-Backend: https://travelbuddy-backend-19l6.onrender.com/
+Backend: https://api.carryparcel.in/
 Database: MongoDB Atlas (connected via backend)
 ```
 
@@ -503,6 +503,6 @@ All required improvements have been implemented and validated:
 
 **Report Generated:** 2026-08-08  
 **Version:** 1.0  
-**Backend Compatibility:** Render (https://travelbuddy-backend-19l6.onrender.com)  
+**Backend Compatibility:** Render (https://api.carryparcel.in)
 **Database:** MongoDB Atlas  
 **Deployment Platform:** Netlify  

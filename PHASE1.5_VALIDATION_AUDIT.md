@@ -189,7 +189,7 @@ setTimeout(() => {
 | **File** | `/developers/index.html` |
 | **Current Location** | Main navbar (in Phase 2, moved to footer) |
 | **APIs Listed** | Yes — with endpoints documented |
-| **Backend URL** | https://travelbuddy-backend-19l6.onrender.com |
+| **Backend URL** | https://api.carryparcel.in |
 | **Documentation Type** | OpenAPI JSON/YAML + MCP Server |
 | **Audience** | External developers |
 

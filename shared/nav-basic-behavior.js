@@ -120,7 +120,8 @@
                         avatarEl.textContent = '';
                         var img = document.createElement('img');
                         img.className = 'cp-profile-photo';
-                        var apiOrigin = window.APP_CONFIG?.API_BASE_URL || 'https://api.carryparcel.in';
+                        var apiOrigin = window.APP_CONFIG?.API_BASE_URL;
+                        if (!apiOrigin) return;
                         var photoUrl = photo.startsWith('data:') || photo.startsWith('http')
                             ? photo
                             : (photo.startsWith('/') ? apiOrigin + photo : apiOrigin + '/' + photo);

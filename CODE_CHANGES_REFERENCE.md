@@ -589,8 +589,8 @@ let hasMoreMessages = false;               // For future pagination
 ## Configuration Files (Verified, No Changes Needed)
 
 ### shared/config.js
-✅ **API_BASE_URL:** `https://travelbuddy-backend-19l6.onrender.com`
-✅ **SOCKET_URL:** `https://travelbuddy-backend-19l6.onrender.com`
+✅ **API_BASE_URL:** `https://api.carryparcel.in`
+✅ **SOCKET_URL:** `https://api.carryparcel.in`
 ✅ Production backend confirmed - no localhost references
 
 ---
@@ -659,7 +659,7 @@ git push origin main
 
 ### Verification URL
 - Frontend: https://endearing-kleicha-a95038.netlify.app
-- Backend: https://travelbuddy-backend-19l6.onrender.com
+- Backend: https://api.carryparcel.in
 
 ---
 

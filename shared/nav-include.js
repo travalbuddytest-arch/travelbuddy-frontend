@@ -142,7 +142,8 @@
     async function backgroundCheckSession() {
         if (!window.CarryParcelAuthChecked) {
             try {
-                var apiOrigin = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://api.carryparcel.in';
+                var apiOrigin = window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL;
+                if (!apiOrigin) return;
                 const res = await fetch(`${apiOrigin}/api/auth/me`, { credentials: 'include' });
                 if (window.resolveCarryParcelAuth) {
                     window.resolveCarryParcelAuth(res.ok);

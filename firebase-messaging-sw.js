@@ -17,7 +17,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js');
 importScripts('/shared/firebase-config.js');
 
-const config = self.TravelBuddyFirebaseConfig || {};
+const config = self.CarryParcelFirebaseConfig || {};
 
 // If the project hasn't filled in shared/firebase-config.js yet, skip
 // initialization entirely rather than letting Firebase throw on empty values.
