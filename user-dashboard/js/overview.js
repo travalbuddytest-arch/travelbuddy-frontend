@@ -176,18 +176,16 @@
   }
 
   // Real-time updates
-  document.addEventListener('carryparcel:notification', (e) => {
+  const handleRealtimeDashboardRefresh = (eventName) => (e) => {
     if (!e.detail) return;
-    if (e.detail.type === 'wallet_added' || e.detail.type === 'reward_added') {
-      loadWallet();
-      loadStats();
-    }
-  });
-
-  document.addEventListener('carryparcel:parcel-status', (e) => {
-    console.log('[Overview] Parcel status update received, refreshing dashboard...');
+    console.log(`[Overview] ${eventName} received, refreshing dashboard...`);
     loadDashboard();
-  });
+  };
+
+  document.addEventListener('travelbuddy:notification', handleRealtimeDashboardRefresh('travelbuddy:notification'));
+  document.addEventListener('carryparcel:notification', handleRealtimeDashboardRefresh('carryparcel:notification'));
+  document.addEventListener('travelbuddy:parcel-status', handleRealtimeDashboardRefresh('travelbuddy:parcel-status'));
+  document.addEventListener('carryparcel:parcel-status', handleRealtimeDashboardRefresh('carryparcel:parcel-status'));
 
   function animateCount(el, target, isCurrency, prefix) {
     if (!el) return;

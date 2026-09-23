@@ -591,7 +591,20 @@
     messagesShell.classList.add('chat-open');
     renderHeader(conversation);
     renderThreads();
-    socket?.emit('conversation:join', { conversationId: id });
+
+    const ready = await new Promise((resolve) => {
+      joinConversationRoom(id, (ok, error) => {
+        if (!ok && error) {
+          window.showToast(error, 'warning');
+        }
+        resolve(ok);
+      });
+    });
+
+    if (!ready) {
+      window.TravelBuddy.FormLock(chatForm, false);
+      return;
+    }
 
     try {
       await loadMessages(id);
@@ -626,7 +639,7 @@
     conversations = data.conversations || [];
     renderThreads();
     if (socket?.connected) {
-      conversations.forEach((conversation) => socket.emit('conversation:join', { conversationId: conversation.id }));
+      conversations.forEach((conversation) => joinConversationRoom(conversation.id));
     }
     if (conversations.length) {
       const requested = conversationId && conversations.some((c) => String(c.id) === String(conversationId));
@@ -649,13 +662,92 @@
     renderThreads();
   }
 
+  function getRealtimeDiagnostics(conversationId = activeConversationId) {
+    const connection = resolveSocketConnection();
+    const joinedConversations = connection?._cpJoinedConversations || new Set();
+    const normalizedId = conversationId ? String(conversationId) : null;
+    const conversationJoined = normalizedId ? joinedConversations.has(normalizedId) : joinedConversations.size > 0;
+    const socketConnected = !!connection?.connected;
+
+    return {
+      socketConnected,
+      socketAuthenticated: socketConnected,
+      conversationJoined,
+      realtimeReady: socketConnected && normalizedId ? conversationJoined : false,
+    };
+  }
+
+  function resolveSocketConnection() {
+    if (socket && (socket.connected || socket.connecting || socket.disconnected === false)) {
+      return socket;
+    }
+
+    const sharedSocket = window.CarryParcelSocket?.getSocket('/') || window.CarryParcelSocket?.connect('/', getAuthToken());
+    if (sharedSocket) {
+      socket = sharedSocket;
+      if (window.TravelBuddy) window.TravelBuddy.socket = socket;
+      if (window.CarryParcel) window.CarryParcel.socket = socket;
+      return socket;
+    }
+
+    const legacySocket = window.TravelBuddy?.socket || window.CarryParcel?.socket;
+    if (legacySocket) {
+      socket = legacySocket;
+      return socket;
+    }
+
+    return null;
+  }
+
+  function joinConversationRoom(conversationId, onResult = null) {
+    const connection = resolveSocketConnection();
+    if (!connection) {
+      onResult?.(false, 'Realtime service is not available yet. Please try again in a moment.');
+      return false;
+    }
+
+    if (connection.connecting || connection.disconnected) {
+      connection.connect?.();
+      onResult?.(false, 'Connecting to realtime service. Please try again in a moment.');
+      return false;
+    }
+
+    const normalizedId = String(conversationId);
+    if (connection._cpJoinedConversations?.has(normalizedId)) {
+      onResult?.(true, null);
+      return true;
+    }
+
+    if (!connection.connected) {
+      connection.connect?.();
+      onResult?.(false, 'Connecting to realtime service. Please try again in a moment.');
+      return false;
+    }
+
+    connection._cpJoinedConversations ??= new Set();
+    connection.emit('conversation:join', { conversationId: normalizedId }, (ack) => {
+      if (ack?.ok) {
+        connection._cpJoinedConversations.add(normalizedId);
+        onResult?.(true, null);
+        return;
+      }
+      onResult?.(false, ack?.error || 'Could not join conversation.');
+    });
+    return true;
+  }
+
   function connectSocket() {
     if (!window.io) return;
-    socket = window.TravelBuddy.socket;
+    socket = resolveSocketConnection();
     if (!socket) return;
+    if (socket.__cpMessageListenersBound) return;
+    socket.__cpMessageListenersBound = true;
+    socket._cpJoinedConversations ??= new Set();
 
     socket.on('connect', () => {
-      conversations.forEach((conversation) => socket.emit('conversation:join', { conversationId: conversation.id }));
+      conversations.forEach((conversation) => {
+        joinConversationRoom(conversation.id);
+      });
     });
     socket.on('connect_error', (err) => window.showToast(err.message || 'Realtime connection failed.', 'error'));
     socket.on('conversation:update', mergeConversation);
@@ -830,10 +922,34 @@
       window.showToast('Audio calls are available only during active deliveries.', 'error');
       return;
     }
-    if (!socket?.connected) {
-      window.showToast('Realtime connection is not ready.', 'error');
+
+    const connection = resolveSocketConnection();
+    if (!connection || !connection.connected || connection.connecting || connection.disconnected) {
+      window.showToast('Connecting to realtime service. Please try again in a moment.', 'info');
+      if (connection) {
+        connection.connect?.();
+      }
+      joinConversationRoom(conversation.id, (ok, error) => {
+        if (!ok && error) window.showToast(error, 'warning');
+      });
       return;
     }
+    socket = connection;
+
+    const diagnostics = getRealtimeDiagnostics(conversation.id);
+    if (!diagnostics.realtimeReady) {
+      window.showToast('Connecting to realtime service. Please try again in a moment.', 'info');
+      joinConversationRoom(conversation.id, (ok, error) => {
+        if (!ok && error) {
+          window.showToast(error, 'warning');
+        }
+      });
+      if (socket && !socket.connected) {
+        socket.connect();
+      }
+      return;
+    }
+
     try {
       await ensureMedia();
       socket.emit('call:start', { conversationId: conversation.id }, (ack) => {

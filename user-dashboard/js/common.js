@@ -222,7 +222,14 @@
   }
 
   function getAuthToken() {
-    return null;
+    if (typeof document === 'undefined') return null;
+    try {
+      const match = document.cookie.split('; ').find((entry) => entry.startsWith('carryparcel_session='));
+      if (!match) return null;
+      return decodeURIComponent(match.split('=').slice(1).join('=')) || null;
+    } catch (error) {
+      return null;
+    }
   }
 
   function setButtonLoading(button, isLoading, loadingText) {
@@ -1002,13 +1009,17 @@
     socket.on('notification:new', ({ notification, unreadCount }) => {
       setNotifBadge(Number(unreadCount || 0));
       showNotificationPopup(notification);
-      document.dispatchEvent(new CustomEvent('travelbuddy:notification', { detail: notification }));
+      const detail = notification || {};
+      document.dispatchEvent(new CustomEvent('travelbuddy:notification', { detail }));
+      document.dispatchEvent(new CustomEvent('carryparcel:notification', { detail }));
     });
 
     socket.on('parcel_status_change', (data) => {
       console.log('[Live] Parcel status change:', data);
-      document.dispatchEvent(new CustomEvent('travelbuddy:parcel-status', { detail: data }));
-      showToast(`Parcel #${data.parcelId.slice(-6)}: ${data.status.replace(/_/g, ' ')}`, 'info');
+      const detail = data || {};
+      document.dispatchEvent(new CustomEvent('travelbuddy:parcel-status', { detail }));
+      document.dispatchEvent(new CustomEvent('carryparcel:parcel-status', { detail }));
+      showToast(`Parcel #${detail.parcelId ? String(detail.parcelId).slice(-6) : 'N/A'}: ${String(detail.status || 'updated').replace(/_/g, ' ')}`, 'info');
     });
 
     socket.on('incoming-call', (payload) => {
@@ -1021,6 +1032,7 @@
     });
 
     window.CarryParcel.socket = socket;
+    window.TravelBuddy.socket = socket;
     return socket;
   }
 

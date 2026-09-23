@@ -17,6 +17,18 @@
       console.log('[Realtime] Initializing Unified Socket Service...');
     }
 
+    _readSessionToken() {
+      if (typeof document === 'undefined') return null;
+      try {
+        const match = document.cookie.split('; ').find((entry) => entry.startsWith('carryparcel_session='));
+        if (!match) return null;
+        const value = decodeURIComponent(match.split('=').slice(1).join('='));
+        return value || null;
+      } catch (error) {
+        return null;
+      }
+    }
+
     /**
      * Connect to a specific namespace
      * @param {string} namespace - Namespace (e.g., '/', '/admin')
@@ -33,19 +45,25 @@
       }
 
       const url = namespace === '/' ? APP_CONFIG.SOCKET_URL : `${APP_CONFIG.SOCKET_URL}${namespace}`;
-      const auth = token ? { token } : {};
-
-      console.log(`[Realtime] Establishing connection to ${namespace}...`);
-
-      const socket = io(url, {
-        auth,
+      const sessionToken = token || this._readSessionToken();
+      const socketOptions = {
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 2000,
         reconnectionDelayMax: 10000,
-        withCredentials: true
-      });
+        withCredentials: true,
+      };
+
+      if (sessionToken) {
+        socketOptions.auth = { token: sessionToken };
+      }
+
+      console.log(`[Realtime] Establishing connection to ${namespace}...`);
+
+      const socket = io(url, socketOptions);
+      socket._cpNamespace = namespace;
+      socket._cpJoinedConversations = new Set();
 
       this._bindBaseEvents(namespace, socket);
       this.connections.set(namespace, socket);
@@ -75,16 +93,18 @@
         this._notifyStatus(namespace, 'connecting');
       });
 
-      // Unified event bus logging
+      socket.on('reconnect', () => {
+        console.log(`[Realtime] Reconnected to ${namespace}.`);
+        this.lastHeartbeat = Date.now();
+        this._notifyStatus(namespace, 'connected');
+      });
+
       socket.onAny((event, ...args) => {
-        if (!event.startsWith('admin:')) return; // Filter spammy internal events if needed
+        if (!event.startsWith('admin:')) return;
         console.debug(`[Realtime] Event Received [${namespace}]: ${event}`, args);
       });
     }
 
-    /**
-     * Add a listener for connection status changes
-     */
     onStatus(callback) {
       this.statusListeners.add(callback);
     }
@@ -93,30 +113,31 @@
       this.statusListeners.forEach(cb => cb({ namespace, status, error, timestamp: Date.now() }));
     }
 
-    /**
-     * Authoritative helper to get a socket instance
-     */
+    getRealtimeStatus(namespace = '/') {
+      const socket = this.getSocket(namespace);
+      const joinedCount = socket?._cpJoinedConversations?.size || 0;
+      const connected = !!socket?.connected;
+
+      return {
+        connected,
+        authenticated: connected,
+        conversationJoined: joinedCount > 0,
+        ready: connected && joinedCount > 0,
+      };
+    }
+
     getSocket(namespace = '/') {
       return this.connections.get(namespace);
     }
 
-    /**
-     * Admin-specific shortcut
-     */
     get admin() {
       return this.getSocket('/admin');
     }
 
-    /**
-     * Root-specific shortcut
-     */
     get root() {
       return this.getSocket('/');
     }
 
-    /**
-     * Graceful cleanup
-     */
     disconnectAll() {
       this.connections.forEach(socket => socket.disconnect());
       this.connections.clear();
@@ -124,7 +145,6 @@
     }
   }
 
-  // Export as global singleton
   window.CarryParcelSocket = new SocketClient();
 
 })();
