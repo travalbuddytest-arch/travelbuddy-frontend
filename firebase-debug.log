@@ -1,0 +1,36 @@
+[debug] [2026-09-23T08:22:08.495Z] ----------------------------------------------------------------------
+[debug] [2026-09-23T08:22:08.500Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-09-23T08:22:08.500Z] CLI Version:   15.27.0
+[debug] [2026-09-23T08:22:08.500Z] Platform:      win32
+[debug] [2026-09-23T08:22:08.501Z] Node Version:  v24.18.0
+[debug] [2026-09-23T08:22:08.501Z] Detected Agent: unknown
+[debug] [2026-09-23T08:22:08.501Z] Time:          Wed Sep 23 2026 13:52:08 GMT+0530 (India Standard Time)
+[debug] [2026-09-23T08:22:08.501Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-09-23T08:22:10.670Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-09-23T08:22:10.671Z] > authorizing via signed-in user (kumbharbhushan27@gmail.com)
+[debug] [2026-09-23T08:22:10.671Z] [iam] checking project travalbuddy for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-09-23T08:22:10.707Z] Checked if tokens are valid: false, expires at: 1790150904427
+[debug] [2026-09-23T08:22:10.708Z] Checked if tokens are valid: false, expires at: 1790150904427
+[debug] [2026-09-23T08:22:10.708Z] > refreshing access token with scopes: []
+[debug] [2026-09-23T08:22:10.711Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-09-23T08:22:10.712Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-09-23T08:22:11.703Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-09-23T08:22:11.703Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-09-23T08:22:11.740Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions [none]
+[debug] [2026-09-23T08:22:11.741Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions  x-goog-user-project=travalbuddy
+[debug] [2026-09-23T08:22:11.741Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-23T08:22:13.830Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions 200
+[debug] [2026-09-23T08:22:13.830Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-23T08:22:13.833Z] Checked if tokens are valid: true, expires at: 1790155330704
+[debug] [2026-09-23T08:22:13.834Z] Checked if tokens are valid: true, expires at: 1790155330704
+[debug] [2026-09-23T08:22:13.834Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/travalbuddy [none]
+[debug] [2026-09-23T08:22:15.216Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/travalbuddy 200
+[debug] [2026-09-23T08:22:15.216Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/travalbuddy {"projectId":"travalbuddy","projectNumber":"268106005436","displayName":"CarryParcel","name":"projects/travalbuddy","resources":{"hostingSite":"travalbuddy"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_88f9b9fc-ae50-499c-b459-b5a97e7f5b2a"}
+[info] 
+[info] === Deploying to 'travalbuddy'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-09-23T08:22:15.229Z] Checked if tokens are valid: true, expires at: 1790155330704
+[debug] [2026-09-23T08:22:15.229Z] Checked if tokens are valid: true, expires at: 1790155330704
+[debug] [2026-09-23T08:22:15.229Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/travalbuddy/sites/travalbuddy [none]

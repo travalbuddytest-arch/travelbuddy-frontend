@@ -2,8 +2,8 @@
   'use strict';
 
   async function injectDashboardComponents() {
-    const sidebarPlaceholder = document.getElementById('cpAppSidebarInclude');
-    const topbarPlaceholder = document.getElementById('cpAppTopbarInclude');
+    const sidebarPlaceholder = document.getElementById('tbAppSidebarInclude');
+    const topbarPlaceholder = document.getElementById('tbAppTopbarInclude');
     const v = '3'; // Cache bust version
 
     const cachedSidebar = sessionStorage.getItem('cp_sidebar_html');
