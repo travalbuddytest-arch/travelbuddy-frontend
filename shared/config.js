@@ -7,9 +7,10 @@
                   window.location.hostname === '127.0.0.1' || 
                   window.location.protocol === 'file:';
   const localUrl = 'http://localhost:4000';
+  const productionUrl = 'https://travelbuddy-backend-19l6.onrender.com';
   window.APP_CONFIG = {
-    API_BASE_URL: isLocal ? localUrl : 'https://api.carryparcel.in',
-    SOCKET_URL: isLocal ? localUrl : 'https://api.carryparcel.in',
+    API_BASE_URL: isLocal ? localUrl : productionUrl,
+    SOCKET_URL: isLocal ? localUrl : productionUrl,
     ENV: isLocal ? 'development' : 'production',
   };
 })();
