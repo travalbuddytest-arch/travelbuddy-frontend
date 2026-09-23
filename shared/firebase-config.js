@@ -14,9 +14,9 @@
 // `window` is undefined — assigning to `window` there would throw).
 (typeof window !== 'undefined' ? window : self).CarryParcelFirebaseConfig = {
   apiKey: 'AIzaSyCbqWF04CH3sW2lM26MmhhJF-uwlohGgv8',
-  authDomain: 'carryparcel.firebaseapp.com',
-  projectId: 'carryparcel',
-  storageBucket: 'carryparcel.firebasestorage.app',
+  authDomain: 'carryparcel.in',
+  projectId: 'travalbuddy',
+  storageBucket: 'travalbuddy.firebasestorage.app',
   messagingSenderId: '268106005436',
   appId: '1:268106005436:web:c6cb7f02046f3f823989b9',
   vapidKey: '',
