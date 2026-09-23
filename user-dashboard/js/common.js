@@ -959,7 +959,7 @@
 
   function connectNotificationSocket() {
     const token = getAuthToken();
-    if (!token || !window.CarryParcelSocket) return;
+    if (!window.CarryParcelSocket) return;
 
     const socket = CarryParcelSocket.connect('/', token);
     if (!socket) return;
