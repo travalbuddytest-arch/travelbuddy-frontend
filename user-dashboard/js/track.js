@@ -303,7 +303,7 @@
     if (!travelerId || typeof firebase === 'undefined') return;
 
     if (!firebase.apps.length) {
-      firebase.initializeApp(window.TravelBuddyFirebaseConfig);
+      firebase.initializeApp(window.CarryParcelFirebaseConfig);
     }
 
     const db = firebase.firestore();

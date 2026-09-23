@@ -18,6 +18,7 @@
   const backBtn = document.getElementById('backBtn');
   const LOGIN_STATE_KEY = 'carryParcelLoginState';
   let loginSubmissionInFlight = false;
+  let googleSubmissionInFlight = false;
 
   // Where auth-guard.js sent the visitor from before bouncing them here
   // (see shared/auth-guard.js). Only ever a same-site relative path into
@@ -385,20 +386,71 @@
     }
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const provider = new firebase.auth.GoogleAuthProvider();
 
+    const googleErrorMessage = (err) => {
+      switch (err?.code) {
+        case 'auth/popup-blocked':
+          return 'Your browser blocked the Google sign-in window. Redirecting to Google sign-in.';
+        case 'auth/popup-closed-by-user':
+          return 'Google sign-in was cancelled.';
+        case 'auth/cancelled-popup-request':
+          return 'Another Google sign-in request is already in progress.';
+        case 'auth/unauthorized-domain':
+          return 'Google sign-in is not enabled for this website domain.';
+        case 'auth/operation-not-allowed':
+          return 'Google sign-in is currently unavailable.';
+        case 'auth/network-request-failed':
+          return 'The network request failed. Check your connection and try again.';
+        default:
+          return 'Google sign-in failed. Please try again.';
+      }
+    };
+
+    const processRedirectResult = async () => {
+      try {
+        const result = await auth.getRedirectResult();
+        if (!result?.user || googleSubmissionInFlight) return;
+        googleSubmissionInFlight = true;
+        setButtonLoading(googleBtn, true);
+        const idToken = await result.user.getIdToken(true);
+        await handleGoogleCredential(idToken);
+      } catch (err) {
+        console.error('Firebase Google redirect failed:', err);
+        showToast(googleErrorMessage(err), 'error');
+      } finally {
+        googleSubmissionInFlight = false;
+        setButtonLoading(googleBtn, false);
+      }
+    };
+
+    await processRedirectResult();
+
     googleBtn.addEventListener('click', async () => {
+      if (googleSubmissionInFlight) return;
+      googleSubmissionInFlight = true;
       setButtonLoading(googleBtn, true);
       try {
-        const result = await firebase.auth().signInWithPopup(provider);
+        const result = await auth.signInWithPopup(provider);
         const idToken = await result.user.getIdToken(true);
         await handleGoogleCredential(idToken);
       } catch (err) {
         console.error('Firebase Google login failed:', err);
-        if (err.code !== 'auth/popup-closed-by-user') {
-          showToast(err.message || 'Google login failed.', 'error');
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+          try {
+            showToast(googleErrorMessage(err), 'info');
+            await auth.signInWithRedirect(provider);
+            return;
+          } catch (redirectErr) {
+            console.error('Firebase Google redirect start failed:', redirectErr);
+            showToast(googleErrorMessage(redirectErr), 'error');
+          }
+        } else {
+          showToast(googleErrorMessage(err), 'error');
         }
       } finally {
+        googleSubmissionInFlight = false;
         setButtonLoading(googleBtn, false);
       }
     });

@@ -35,7 +35,7 @@ if (config.apiKey) {
     });
   });
 
-  // Clicking the OS notification focuses an existing TravelBuddy tab if one
+  // Clicking the OS notification focuses an existing CarryParcel tab if one
   // is open, otherwise opens the notifications page.
   self.addEventListener('notificationclick', (event) => {
     event.notification.close();

@@ -5,6 +5,12 @@ window.fetch = async (input, init = {}) => {
   const url = typeof input === 'string' ? input : input?.url || '';
   const isCarryParcelApi = url.startsWith(`${APP_CONFIG.API_BASE_URL}/`);
 
+  const isProtectedPage = () => {
+    const guardedPage = document.currentScript?.getAttribute?.('data-guard');
+    const path = window.location.pathname || '';
+    return Boolean(guardedPage) || path.includes('/user-dashboard/') || path.includes('/admin_dashboard/');
+  };
+
   const response = await nativeFetch(input, isCarryParcelApi ? { ...init, credentials: 'include' } : init);
 
   if (isCarryParcelApi) {
@@ -12,7 +18,7 @@ window.fetch = async (input, init = {}) => {
       // 401 Unauthorized: Session is invalid/expired. Logout.
       // HARDENING: Only redirect if we are not already on the login page
       // AND if this wasn't a background refresh that we can handle more gracefully.
-      if (!window.location.pathname.includes('login.html')) {
+      if (isProtectedPage() && !window.location.pathname.includes('login.html')) {
         console.warn('[Auth] Received 401. Logging out and redirecting.');
         window.CarryParcelAuth.logout();
 
