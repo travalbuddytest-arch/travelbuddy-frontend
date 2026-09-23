@@ -102,6 +102,20 @@
     }, delay);
   }
 
+  async function verifyAdminSession() {
+    const response = await fetch(`${APP_CONFIG.API_BASE_URL}/api/admin/profile`, {
+      credentials: 'include',
+      headers: { 'X-CP-Admin-Request': 'true' },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.admin) {
+      const error = new Error(data.error || 'Admin session could not be verified.');
+      error.status = response.status;
+      throw error;
+    }
+    return data.admin;
+  }
+
   restoreLoginState();
 
   // ---------- Toast ----------
@@ -280,10 +294,28 @@
             localStorage.setItem('carryParcelLoggedIn', 'true');
           }
         }
-        clearLoginState();
+
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
       }
+
+      if (data.role === 'admin') {
+        try {
+          const verifiedAdmin = await verifyAdminSession();
+          localStorage.setItem('carryParcelAdmin', JSON.stringify({ ...verifiedAdmin, role: 'admin' }));
+        } catch (sessionError) {
+          localStorage.removeItem('carryParcelAdminLoggedIn');
+          localStorage.removeItem('carryParcelAdmin');
+          localStorage.removeItem('carryParcelUser');
+          showToast(
+            'Authentication succeeded, but the admin session could not be verified. Please try again.',
+            'error'
+          );
+          return;
+        }
+      }
+
+      clearLoginState();
 
       window.CarryParcel.showLoginSuccess({
         user: data.role === 'admin' ? data.admin : data.user,
