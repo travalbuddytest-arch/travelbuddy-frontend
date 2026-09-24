@@ -106,16 +106,21 @@
    PREMIUM BACKGROUND SYSTEM
    ============================================================ */
 
+.cp-bg-system,
 .tb-bg-system {
     position: fixed;
     inset: 0;
-    z-index: -100;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
     overflow: hidden;
     background-color: var(--tb-bg-base);
     pointer-events: none;
+    display: block;
 }
 
 /* Layer 1: Base Tints (Center-Light Engine) */
+.cp-bg-layer-base,
 .tb-bg-layer-base {
     position: absolute;
     inset: 0;
@@ -129,6 +134,7 @@
 }
 
 /* Layer 2: Atmospheric Light Fields */
+.cp-bg-orb,
 .tb-bg-orb {
     position: absolute;
     border-radius: 50%;
@@ -138,6 +144,7 @@
     animation: tb-orb-float 25s infinite alternate ease-in-out;
 }
 
+.cp-bg-orb-1,
 .tb-bg-orb-1 {
     width: 800px;
     height: 800px;
@@ -146,6 +153,7 @@
     left: -10%;
 }
 
+.cp-bg-orb-2,
 .tb-bg-orb-2 {
     width: 700px;
     height: 700px;
@@ -155,6 +163,7 @@
     animation-delay: -7s;
 }
 
+.cp-bg-orb-3,
 .tb-bg-orb-3 {
     width: 600px;
     height: 600px;
@@ -171,6 +180,7 @@
 }
 
 /* Layer 3: Route Motif */
+.cp-bg-route-svg,
 .tb-bg-route-svg {
     position: absolute;
     inset: 0;
@@ -181,6 +191,7 @@
 }
 
 /* Layer 4: Floating Shapes */
+.cp-bg-shape,
 .tb-bg-shape {
     position: absolute;
     border: 1px solid var(--tb-bg-blue);
@@ -195,13 +206,18 @@
 }
 
 /* Page Specific Overrides */
+body[data-page="about"] .cp-bg-system,
 body[data-page="about"] .tb-bg-system { --tb-bg-base: #f4f8ff; }
+body[data-page="about"] .cp-bg-orb-1,
 body[data-page="about"] .tb-bg-orb-1 { background: var(--tb-bg-navy); opacity: 0.08; }
 
+body[data-page="how-it-works"] .cp-bg-orb-2,
 body[data-page="how-it-works"] .tb-bg-orb-2 { background: var(--tb-bg-blue); }
 
+body[data-page="safety"] .cp-bg-orb-3,
 body[data-page="safety"] .tb-bg-orb-3 { background: #22c55e; opacity: 0.05; }
 
+body[data-page="faq"] .cp-bg-system,
 body[data-page="faq"] .tb-bg-system { --tb-bg-base: #ffffff; --tb-orb-opacity: 0.05; }
 
 /* Dark Section Background Utility */
@@ -483,6 +499,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Global Scroll Progress Bar */
+#cpScrollProgress,
 #tbScrollProgress {
     position: fixed;
     top: 0;
@@ -500,6 +517,7 @@ h1, h2, h3, h4, h5, h6 {
         animation: none !important;
         transition: none !important;
     }
+    #cpScrollProgress,
     #tbScrollProgress { transition: none !important; }
 }
 
