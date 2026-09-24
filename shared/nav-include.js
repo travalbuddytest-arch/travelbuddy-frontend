@@ -26,8 +26,9 @@
             ? (el.querySelector('.cp-nav-header') || (el.nextElementSibling && el.nextElementSibling.classList.contains('cp-nav-header') ? el.nextElementSibling : null))
             : (el.querySelector('.site-footer') || (el.nextElementSibling && el.nextElementSibling.classList.contains('site-footer') ? el.nextElementSibling : null));
 
-        // Check if already hardcoded with correct version
-        if (existing && existing.getAttribute('data-v') === targetVersion) {
+        // Navbar markup may remain hardcoded to avoid layout shift. Footers are
+        // always loaded from the shared source so every public page stays identical.
+        if (type !== 'footer' && existing && existing.getAttribute('data-v') === targetVersion) {
             // console.log('[nav-include] skipping injection for', type, '- version match');
             if (type === 'navbar') {
                 // Wait for behavioral script to be ready if it's deferred
@@ -266,7 +267,9 @@
 
     window.CPInclude = {
         injectFooter: function () {
-            inject('cpFooterInclude', basePath + 'footer.html', 'footer');
+            var includeScript = document.querySelector('script[src*="nav-include.js"]');
+            var footerUrl = includeScript ? new URL('footer.html', includeScript.src).href : basePath + 'footer.html';
+            inject('tbFooterInclude', footerUrl, 'footer');
         }
     };
 
