@@ -119,18 +119,6 @@ img { height: auto; }
     border: 3px solid #fff;
     box-shadow: 0 6px 18px rgba(13,32,58,.16);
 }
-.team-badge {
-    position: absolute; right: -2px; bottom: -2px;
-    width: 30px; height: 30px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
-    color: #fff; font-size: 12px;
-    border: 2px solid #fff;
-    box-shadow: 0 4px 10px rgba(13,110,253,.32);
-}
-.team-badge-alt { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 10px rgba(34,197,94,.32); }
-
 .team-role {
     margin: 0 0 7px;
     color: var(--tb-primary);
