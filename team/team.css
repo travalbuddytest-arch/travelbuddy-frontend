@@ -3,7 +3,18 @@
    Layers on top of ../home/style.css (which @imports
    ../shared/design-system.css for the --tb-* / --cp-* tokens).
    All selectors namespaced "team-".
+
+   SPACING MODEL
+   The shared --section-padding token resolves to ~87px at 1440px (and ~112px
+   above 1920px). The four content blocks here each carried their own larger
+   padding on top of that idea (112/96/96/72), which is what made the page read
+   as disconnected bands of text. This page uses its own --team-pad instead.
    ========================== */
+
+:root {
+    --team-pad: clamp(36px, 4.4vw, 60px);
+    --team-wrap: 1100px;
+}
 
 html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
 *, *::before, *::after { box-sizing: border-box; }
@@ -13,7 +24,7 @@ img { height: auto; }
 /* ---------- HERO ---------- */
 .team-hero {
     position: relative;
-    padding: clamp(64px, 10vw, 112px) var(--container-px) 72px;
+    padding: var(--team-pad) var(--container-px);
     background: linear-gradient(135deg, #f2f7ff 0%, #ffffff 68%);
     text-align: center;
     overflow: hidden;
@@ -26,7 +37,7 @@ img { height: auto; }
     background: radial-gradient(circle, rgba(13,110,253,.16) 0%, rgba(13,110,253,0) 70%);
     pointer-events: none;
 }
-.team-hero-inner, .team-section-inner { width: min(1100px, 100%); margin: 0 auto; position: relative; z-index: 1; }
+.team-hero-inner, .team-section-inner { width: min(var(--team-wrap), 100%); margin: 0 auto; position: relative; z-index: 1; }
 
 .team-eyebrow {
     display: inline-block;
@@ -71,34 +82,15 @@ img { height: auto; }
 }
 .team-hero-meta i { color: var(--tb-primary); font-size: 13px; }
 
-/* ---------- STATS ---------- */
-.team-stats-wrap { padding: 0 var(--container-px); margin-top: -34px; position: relative; z-index: 2; }
-.team-stats {
-    max-width: 1100px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px;
-    background: rgba(255,255,255,.14);
-    border-radius: var(--radius-lg);
-    padding: 5px;
-    box-shadow: var(--tb-shadow-l3);
-}
-.team-stat {
-    background: linear-gradient(140deg, #16294a 0%, #0f1f3a 100%);
-    border-radius: var(--radius-md);
-    padding: 24px 16px;
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-}
-.team-stat strong { font-size: clamp(22px, 3vw, 30px); font-weight: 700; color: #fff; line-height: 1.1; }
-.team-stat span { font-size: var(--text-xs); color: #9fb1cf; margin-top: 7px; }
-
 /* ---------- LEADERSHIP ---------- */
-.team-section { padding: clamp(56px, 8vw, 96px) var(--container-px); background: #fff; }
+.team-section { padding: var(--team-pad) var(--container-px); background: #fff; }
 .team-section h2 { color: var(--text-primary); font-size: clamp(26px, 4vw, 38px); margin: 0 0 14px; }
 .team-section-sub {
     color: var(--text-secondary);
     font-size: var(--text-md);
     line-height: 1.75;
     max-width: 660px;
-    margin: 0 0 40px;
+    margin: 0 0 clamp(24px, 3vw, 36px);
 }
 .team-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 
@@ -166,8 +158,8 @@ img { height: auto; }
 .team-link:hover, .team-link:focus-visible { color: var(--tb-primary-dark); text-decoration: underline; }
 
 /* ---------- VALUES ---------- */
-.team-values { padding: clamp(56px, 8vw, 96px) var(--container-px); background: var(--tb-bg); }
-.team-values h2 { color: var(--text-primary); font-size: clamp(26px, 4vw, 38px); margin: 0 0 40px; }
+.team-values { padding: var(--team-pad) var(--container-px); background: var(--tb-bg); }
+.team-values h2 { color: var(--text-primary); font-size: clamp(26px, 4vw, 38px); margin: 0 0 clamp(24px, 3vw, 36px); }
 .team-values-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
 .team-value {
     background: #fff;
@@ -193,7 +185,7 @@ img { height: auto; }
 .team-contact {
     display: flex; align-items: center; justify-content: space-between;
     gap: 32px; flex-wrap: wrap;
-    padding: clamp(48px, 7vw, 72px) max(var(--container-px), calc((100% - 1100px) / 2));
+    padding: var(--team-pad) max(var(--container-px), calc((100% - var(--team-wrap)) / 2));
     color: var(--text-inverse);
     background: linear-gradient(135deg, #16294a 0%, #0b1a33 100%);
 }
@@ -220,7 +212,6 @@ img { height: auto; }
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 980px) {
     .team-values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .team-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
     .team-grid { grid-template-columns: 1fr; }
@@ -231,6 +222,5 @@ img { height: auto; }
     .team-card { padding: 24px; }
     .team-card-top { grid-template-columns: 1fr; }
     .team-avatar-wrap, .team-avatar { width: 76px; height: 76px; }
-    .team-stats { grid-template-columns: 1fr; }
     .team-button { width: 100%; justify-content: center; }
 }

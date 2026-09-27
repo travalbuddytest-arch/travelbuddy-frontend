@@ -9,6 +9,15 @@ html, body { width:100%; max-width:100%; overflow-x:hidden; }
 img, video, svg, canvas { max-width:100%; }
 img { height:auto; }
 
+:root {
+    /* Page-scoped spacing rhythm. The shared --section-padding token resolves to
+       ~87px at 1440px (and ~112px above 1920px); applying it to every block made
+       roughly a quarter of this page pure padding, which is what read as dead
+       space. One tighter value, scaled down on small screens. */
+    --ab-pad: clamp(36px, 4.4vw, 60px);
+    --ab-wrap: 1120px;
+}
+
 .ab-eyebrow{
     display:inline-block;
     color: var(--tb-primary);
@@ -26,7 +35,7 @@ img { height:auto; }
 
 /* ---------- HERO ---------- */
 .ab-hero{
-    padding: var(--section-padding) var(--container-px);
+    padding: var(--ab-pad) var(--container-px);
     background: transparent;
 }
 
@@ -109,25 +118,8 @@ img { height:auto; }
     .ab-float-2{ bottom:-12px; right:0; }
 }
 
-/* ---------- STATS ---------- */
-.ab-stats-wrap{ padding:0 var(--container-px); margin-top:-28px; position:relative; z-index:2; }
-.ab-stats{
-    max-width:1100px; margin:0 auto;
-    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
-    background: var(--text-primary); border-radius: var(--radius-lg); padding:4px;
-    box-shadow:0 24px 55px rgba(13,32,58,.2);
-}
-@media(max-width:768px){ .ab-stats{ grid-template-columns:repeat(2, 1fr); gap:1px; } }
-@media(max-width:480px){ .ab-stats{ grid-template-columns:1fr; } }
-.ab-stat{
-    background:#16294a; border-radius: var(--radius-md); padding:24px 18px;
-    display:flex; flex-direction:column; align-items:center; text-align:center;
-}
-.ab-stat strong{ font-size:clamp(24px, 3vw, 30px); font-weight:700; color: var(--text-inverse); }
-.ab-stat span{ font-size: var(--text-xs); color:#9fb1cf; margin-top:6px; }
-
 /* ---------- STORY ---------- */
-.ab-story{ padding: var(--section-padding) var(--container-px); }
+.ab-story{ padding: var(--ab-pad) var(--container-px); }
 .ab-story-inner{
     max-width:1180px; margin:0 auto;
     display:flex; align-items:center; gap:clamp(32px, 6vw, 64px); flex-wrap:wrap;
@@ -148,27 +140,74 @@ img { height:auto; }
 .ab-check-list li{ display:flex; align-items:flex-start; gap:10px; color: var(--text-secondary); font-size: var(--text-sm); font-weight:500; }
 .ab-check-list i{ color: var(--text-success); margin-top:2px; }
 
-/* ---------- VALUES (reuses .features / .cards / .card) ---------- */
-.ab-values{ background:#f7f9fc; padding: var(--section-padding) var(--container-px); }
-.ab-values h2{ color: var(--text-primary); text-align: left; max-width: 1100px; margin: 12px auto 48px; }
-.ab-values .ab-eyebrow-center { display: block; max-width: 1100px; margin: 0 auto 16px; text-align: left; }
-.ab-values .cards { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; }
-.ab-values .card{
-    text-align:left;
-    background: #fff;
-    padding: 32px;
+/* ---------- ROLES: For Senders / For Travelers ---------- */
+.ab-roles{ background:#f5f8fd; padding: var(--ab-pad) var(--container-px); }
+.ab-roles-inner{ max-width:var(--ab-wrap); margin:0 auto; }
+.ab-roles-head{ max-width:640px; margin:0 auto clamp(26px, 3.4vw, 40px); text-align:center; }
+.ab-roles-head h2{ color: var(--text-primary); font-size:clamp(26px, 4vw, 36px); line-height:1.22; margin:0 0 12px; }
+.ab-roles-head p{ color: var(--text-secondary); font-size: var(--text-md); line-height:1.7; margin:0; }
+
+.ab-role-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:24px; }
+.ab-role{
+    display:flex; flex-direction:column;
+    background:#fff;
+    border:1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
     box-shadow: var(--tb-shadow-l1);
+    padding:30px 30px 26px;
+    transition: transform .3s var(--tb-transition), box-shadow .3s var(--tb-transition), border-color .3s var(--tb-transition);
 }
-.ab-values .card i{ font-size: 28px; color: var(--tb-primary); margin-bottom: 12px; display: block; } /* Issue 8 fix */
-.ab-values .card h3 { font-size: var(--text-lg); margin: 0 0 10px; color: var(--text-primary); }
-.ab-values .card p{ font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6; }
+.ab-role:hover{ transform:translateY(-4px); border-color: rgba(13,110,253,.32); box-shadow: var(--tb-shadow-l2); }
+.ab-role-icon{
+    display:flex; align-items:center; justify-content:center;
+    width:52px; height:52px; margin-bottom:16px;
+    border-radius: var(--radius-md);
+    background: var(--tb-primary-light); color: var(--tb-primary);
+    font-size:20px;
+}
+.ab-role-icon-alt{ background:#eafaf1; color: var(--text-success); }
+.ab-role h3{ color: var(--text-primary); font-size: var(--text-lg); line-height:1.35; margin:0 0 10px; }
+.ab-role > p{ color: var(--text-secondary); font-size: var(--text-sm); line-height:1.7; margin:0 0 18px; }
+.ab-role-list{ list-style:none; margin:0 0 22px; padding:0; display:flex; flex-direction:column; gap:11px; }
+.ab-role-list li{ display:flex; align-items:flex-start; gap:10px; color: var(--text-secondary); font-size: var(--text-sm); line-height:1.55; }
+.ab-role-list i{ color: var(--tb-success); margin-top:4px; font-size:13px; flex:0 0 auto; }
+.ab-role-link{
+    margin-top:auto; align-self:flex-start;
+    display:inline-flex; align-items:center; gap:8px;
+    color: var(--tb-primary); font-size: var(--text-sm); font-weight:700;
+    text-decoration:none;
+}
+.ab-role-link i{ transition: transform .25s var(--tb-transition); }
+.ab-role-link:hover, .ab-role-link:focus-visible{ text-decoration: underline; }
+.ab-role-link:hover i{ transform: translateX(4px); }
+
+/* ---------- MISSION / VISION ---------- */
+.ab-purpose{ background:#fff; padding: var(--ab-pad) var(--container-px); }
+.ab-purpose-inner{
+    max-width:var(--ab-wrap); margin:0 auto;
+    display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:24px;
+}
+.ab-purpose-card{
+    padding:30px 30px 32px;
+    border-radius: var(--radius-lg);
+    border:1px solid var(--border-color);
+    border-left: 4px solid var(--tb-primary);
+    background: #fbfcfe;
+}
+.ab-purpose-card-alt{ border-left-color: var(--tb-success); background:#fbfefc; }
+.ab-purpose-label{
+    display:inline-block; margin-bottom:12px;
+    color: var(--tb-primary); font-size: var(--text-xs); font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase;
+}
+.ab-purpose-card-alt .ab-purpose-label{ color: var(--text-success); }
+.ab-purpose-card h2{ color: var(--text-primary); font-size:clamp(20px, 2.4vw, 24px); line-height:1.32; margin:0 0 12px; }
+.ab-purpose-card p{ color: var(--text-secondary); font-size: var(--text-sm); line-height:1.75; margin:0; }
 
 /* ---------- PROCESS (how it works) ---------- */
-.ab-process{ padding: var(--section-padding) var(--container-px); background: #fff; }
-.ab-process-inner{ max-width:1100px; margin:0 auto; }
-.ab-process-head{ text-align:center; max-width:640px; margin:0 auto clamp(40px, 6vw, 64px); }
+.ab-process{ padding: var(--ab-pad) var(--container-px); background: #fff; }
+.ab-process-inner{ max-width:var(--ab-wrap); margin:0 auto; }
+.ab-process-head{ text-align:center; max-width:640px; margin:0 auto clamp(28px, 4vw, 46px); }
 .ab-process-head h2{ color: var(--text-primary); font-size:clamp(26px, 4vw, 38px); line-height:1.22; margin:0 0 14px; }
 .ab-process-head p{ color: var(--text-secondary); font-size: var(--text-md); line-height:1.75; margin:0; }
 
@@ -203,14 +242,14 @@ img { height:auto; }
 .ab-step-body p{ color: var(--text-secondary); font-size: var(--text-sm); line-height:1.7; margin:0; }
 
 /* ---------- TRUST STRIP ---------- */
-.ab-trust{ padding:0 var(--container-px) var(--section-padding); background:#fff; }
+.ab-trust{ padding:0 var(--container-px) var(--ab-pad); background:#fff; }
 .ab-trust-inner{
-    max-width:1100px; margin:0 auto;
+    max-width:var(--ab-wrap); margin:0 auto;
     display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:20px;
 }
 .ab-trust-card{
     text-align:center;
-    padding:34px 24px;
+    padding:28px 22px;
     background: var(--tb-surface);
     border:1px solid var(--tb-border);
     border-radius: var(--radius-lg);
@@ -220,18 +259,20 @@ img { height:auto; }
 .ab-trust-card:hover{ transform: translateY(-4px); box-shadow: var(--tb-shadow-l2); }
 .ab-trust-card i{
     display:inline-flex; align-items:center; justify-content:center;
-    width:56px; height:56px; margin-bottom:16px;
+    width:52px; height:52px; margin-bottom:14px;
     border-radius:50%;
     background: var(--tb-primary-light);
     color: var(--tb-primary);
-    font-size:22px;
+    font-size:20px;
 }
 .ab-trust-card h3{ color: var(--text-primary); font-size: var(--text-md); margin:0 0 8px; }
 .ab-trust-card p{ color: var(--text-secondary); font-size: var(--text-sm); line-height:1.65; margin:0; }
+/* The support card carries a mailto link. */
+.ab-trust-card a{ color: var(--tb-primary); font-weight:600; word-break:break-word; }
 
 /* ---------- CTA BANNER ---------- */
 .ab-cta{
-    padding: var(--section-padding) var(--container-px);
+    padding: var(--ab-pad) var(--container-px);
     background: var(--text-primary);
     position:relative;
     overflow:hidden;
@@ -276,6 +317,13 @@ img { height:auto; }
     .ab-trust-inner{ grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
 
+/* Roles and Mission/Vision are two-up only where both columns can hold a
+   readable sentence; below that they stack rather than squeeze. */
+@media(max-width:860px){
+    .ab-role-grid, .ab-purpose-inner{ grid-template-columns: 1fr; gap:20px; }
+    .ab-roles-head{ text-align:left; }
+}
+
 @media(max-width:700px){
     .ab-steps{ grid-template-columns: 1fr; gap:18px; }
     .ab-step{ padding:24px; }
@@ -284,13 +332,14 @@ img { height:auto; }
 @media(max-width:520px){
     .ab-trust-inner{ grid-template-columns: 1fr; }
     .ab-process-head{ text-align:left; }
+    .ab-role, .ab-purpose-card{ padding:24px 22px; }
 }
 
 @media(max-width:600px){
     .ab-hero-media{ margin-top:20px; }
-    .ab-hero, .ab-story, .ab-cta { padding-inline:16px; }
+    .ab-hero, .ab-story, .ab-cta, .ab-roles, .ab-purpose, .ab-process { padding-inline:16px; }
     .ab-hero-cta .btn, .ab-hero-cta .ab-ghost-btn, .ab-cta-buttons a { width:100%; }
-    .ab-stats-wrap { padding-inline:16px; }
+    .ab-trust{ padding-inline:16px; }
     .ab-hero-content,
     .ab-hero-media,
     .ab-story-media,

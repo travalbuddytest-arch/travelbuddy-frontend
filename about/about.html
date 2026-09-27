@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="about.css?v=2">
+    <link rel="stylesheet" href="about.css?v=3">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -105,6 +105,7 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js?v=2"></script>
 
+<main>
 <!-- ================= HERO ================= -->
 <section class="ab-hero">
     <div class="ab-hero-inner">
@@ -149,28 +150,6 @@
         </div>
     </div>
 </section>
-
-<!-- ================= STATS ================= -->
-<div class="ab-stats-wrap ab-reveal">
-    <div class="ab-stats">
-        <div class="ab-stat">
-            <strong><span class="ab-count" data-count="48" data-decimal="0">0</span>+</strong>
-            <span>Cities &amp; towns covered</span>
-        </div>
-        <div class="ab-stat">
-            <strong><span class="ab-count" data-count="12" data-decimal="0">0</span>k+</strong>
-            <span>Parcels delivered</span>
-        </div>
-        <div class="ab-stat">
-            <strong><span class="ab-count" data-count="35" data-decimal="0">0</span>%</strong>
-            <span>Lower delivery cost</span>
-        </div>
-        <div class="ab-stat">
-            <strong><span class="ab-count" data-count="4.9" data-decimal="1">0</span></strong>
-            <span>Average traveler rating</span>
-        </div>
-    </div>
-</div>
 
 <!-- ================= OUR STORY ================= -->
 <section class="ab-story">
@@ -240,31 +219,56 @@
     </div>
 </section>
 
-<!-- ================= VALUES ================= -->
-<section class="features ab-values">
-    <span class="ab-eyebrow ab-eyebrow-center">How CarryParcel Works</span>
-    <h2>Built around shared journeys</h2>
-    <div class="cards">
-        <div class="card ab-reveal">
-            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-            <h3>For Senders</h3>
-            <p>Post parcel requirements, provide pickup and destination details, discover suitable travelers, and manage your delivery journey.</p>
+<!-- ================= FOR SENDERS / FOR TRAVELERS ================= -->
+<section class="ab-roles">
+    <div class="ab-roles-inner">
+        <div class="ab-roles-head ab-reveal">
+            <span class="ab-eyebrow">Who CarryParcel is for</span>
+            <h2>Two roles, one journey</h2>
+            <p>Every CarryParcel account can post a parcel, add a trip, or both. Most people end up doing the two on the same journey.</p>
         </div>
-        <div class="card ab-reveal">
-            <i class="fa-solid fa-people-group" aria-hidden="true"></i>
-            <h3>For Travelers</h3>
-            <p>Share upcoming journeys, discover parcel requests that match your routes, and choose parcels you are willing to carry.</p>
+
+        <div class="ab-role-grid">
+            <article class="ab-role ab-reveal">
+                <span class="ab-role-icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span>
+                <h3>For Senders</h3>
+                <p>Post a parcel requirement with your pickup point, destination and category. CarryParcel surfaces verified travelers already heading your way, so you compare real options instead of guessing at couriers.</p>
+                <ul class="ab-role-list">
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Declare weight, size and category so matches are accurate</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Review a traveler's trip history before you confirm</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Payment is held and released only on confirmed delivery</li>
+                </ul>
+                <a href="../login/login.html" class="ab-role-link" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Post a parcel <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            </article>
+
+            <article class="ab-role ab-reveal">
+                <span class="ab-role-icon ab-role-icon-alt"><i class="fa-solid fa-route" aria-hidden="true"></i></span>
+                <h3>For Travelers</h3>
+                <p>Add an upcoming trip with your route and dates, then see the parcel requests that match it. You decide which ones to take, and your earnings post to your wallet after delivery.</p>
+                <ul class="ab-role-list">
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Carry only what you have room for and are comfortable with</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> See parcel details and prohibited-item rules before accepting</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Earnings go to your wallet, withdrawable to your bank</li>
+                </ul>
+                <a href="../login/login.html" class="ab-role-link" data-auth-cta="/user-dashboard/earnings.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Add a trip <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            </article>
         </div>
-        <div class="card ab-reveal">
-            <i class="fa-solid fa-wallet" aria-hidden="true"></i>
-            <h3>Our Mission</h3>
-            <p>Make parcel delivery more connected to the journeys people are already taking.</p>
-        </div>
-        <div class="card ab-reveal">
-            <i class="fa-solid fa-leaf" aria-hidden="true"></i>
-            <h3>Our Vision</h3>
-            <p>Build a clear, useful digital network for people sending and carrying parcels.</p>
-        </div>
+    </div>
+</section>
+
+<!-- ================= MISSION / VISION ================= -->
+<section class="ab-purpose">
+    <div class="ab-purpose-inner">
+        <article class="ab-purpose-card ab-reveal">
+            <span class="ab-purpose-label">Our Mission</span>
+            <h2>Make delivery fit the journey that already exists</h2>
+            <p>Most parcels travel routes somebody is already driving. CarryParcel's job is to make it simple to find that spare capacity when someone needs a parcel moved, and to make it worthwhile for the person carrying it.</p>
+        </article>
+        <article class="ab-purpose-card ab-purpose-card-alt ab-reveal">
+            <span class="ab-purpose-label">Our Vision</span>
+            <h2>A network people can rely on</h2>
+            <p>We want CarryParcel to be the obvious first choice for moving something between Indian cities without a courier: verified people, visible journeys, and payment that only moves when the parcel does.</p>
+        </article>
     </div>
 </section>
 
@@ -283,13 +287,13 @@
         </article>
         <article class="ab-trust-card ab-reveal">
             <i class="fa-solid fa-headset" aria-hidden="true"></i>
-            <h3>Human support</h3>
-            <p>Every ticket is reviewed by our team, not just a bot.</p>
+            <h3>Reachable support</h3>
+            <p>Email <a href="mailto:support@carryparcel.in">support@carryparcel.in</a> or raise a ticket from your dashboard.</p>
         </article>
         <article class="ab-trust-card ab-reveal">
             <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
             <h3>Fewer empty miles</h3>
-            <p>Using journeys that already happen cuts redundant trips.</p>
+            <p>Using journeys that already happen means fewer redundant trips.</p>
         </article>
     </div>
 </section>
@@ -298,13 +302,14 @@
 <section class="ab-cta">
     <div class="ab-cta-inner ab-reveal">
         <h2>Ready to send your first parcel?</h2>
-        <p>Join thousands of senders and travelers already moving parcels the smarter way.</p>
+        <p>Create a CarryParcel account to post a parcel or add a trip. It is free to register.</p>
         <div class="ab-cta-buttons">
             <a href="../login/login.html" class="btn btn-primary" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
             <a href="../support/support.html" class="btn btn-secondary ab-ghost-btn">Visit Support</a>
         </div>
     </div>
 </section>
+</main>
 
 <!-- ================= FOOTER (shared component, see Frontend/shared/footer.html) ================= -->
 <div id="tbFooterInclude"></div>

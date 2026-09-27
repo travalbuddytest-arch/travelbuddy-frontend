@@ -136,60 +136,21 @@ spSearchInput?.addEventListener('input', () => {
 });
 
 /* ============ AUTH-AWARE REDIRECTION ============ */
-// Routing for every CTA on this page now lives in shared/auth-aware-cta.js,
+// Routing for every CTA on this page lives in shared/auth-aware-cta.js,
 // driven by the markup's data-auth-cta attribute. That module rewrites
 // anchor hrefs and intercepts <button> clicks in one delegated handler,
 // and it reads the same 'carryParcelUser' / 'carryParcelAdmin' profile blobs
 // the navbar uses (see shared/nav-basic-behavior.js).
 //
-// The previous code here gated on localStorage 'carryParcelToken' — a key
-// nothing writes any more — so "Get Help Now" always resolved to logged-out
-// and bounced signed-in visitors back through the login screen. The constant
-// below stays as the single declared destination for those CTAs.
-const DASHBOARD_SUPPORT_URL = '/user-dashboard/support.html';
+// This page used to gate its own CTAs on localStorage 'carryParcelToken' — a
+// key nothing writes any more — so every CTA resolved to logged-out and bounced
+// signed-in visitors back through the login screen. There is deliberately no
+// local copy of that logic any more: one module owns the decision.
 
-document.querySelectorAll('.get-help-cta').forEach(btn => {
-    // Fallback only: auth-aware-cta.js normally intercepts these first.
-    // Kept so the CTAs still resolve if that script fails to load.
-    if (btn.getAttribute('data-auth-cta-resolved') === 'true') return;
-    btn.addEventListener('click', () => {
-        // Mirrors shared/auth-guard.js, including the lenient case where the
-        // login flag is present but the profile blob is not.
-        let loggedIn = false;
-        if (localStorage.getItem('carryParcelAdminLoggedIn') && localStorage.getItem('carryParcelAdmin')) {
-            loggedIn = true;
-        } else if (localStorage.getItem('carryParcelLoggedIn')) {
-            const raw = localStorage.getItem('carryParcelUser');
-            if (!raw) {
-                loggedIn = true;
-            } else {
-                try {
-                    const role = (JSON.parse(raw) || {}).role;
-                    loggedIn = !role || role === 'user' || role === 'traveler' || role === 'sender';
-                } catch (e) { loggedIn = true; }
-            }
-        }
-        window.location.href = loggedIn
-            ? DASHBOARD_SUPPORT_URL
-            : `/login/login.html?redirect=${encodeURIComponent(DASHBOARD_SUPPORT_URL)}`;
-    });
-});
-
-/* ============ DIRECT CHANNELS ============ */
+/* ============ AI ASSISTANT ============ */
 document.getElementById('spLiveChatBtn')?.addEventListener('click', () => {
     if (window.TBAiAssistant) window.TBAiAssistant.open();
 });
 
 /* ============ INITIALIZE ============ */
 renderFaqs();
-
-/* ============ TOAST ============ */
-let spToastTimer;
-function showToast(msg) {
-    const toast = document.getElementById('spToast');
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('sp-show');
-    clearTimeout(spToastTimer);
-    spToastTimer = setTimeout(() => toast.classList.remove('sp-show'), 2600);
-}

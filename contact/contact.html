@@ -20,7 +20,7 @@
 
     <!-- Site design system (buttons, cards, form-group, etc.) -->
     <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="contact.css">
+    <link rel="stylesheet" href="contact.css?v=2">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -108,65 +108,42 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js?v=2"></script>
 
+<main>
 <!-- ================= HERO ================= -->
 <section class="ct-hero">
     <div class="ct-hero-blob ct-hero-blob-a" aria-hidden="true"></div>
     <div class="ct-hero-blob ct-hero-blob-b" aria-hidden="true"></div>
 
     <div class="ct-hero-inner">
-        <span class="ct-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> We reply in under 4 minutes on average</span>
-        <h1>Let's talk — <span class="text-blue">we're listening</span></h1>
-        <p>Whether you have a question about sending a parcel, becoming a traveler, or a business partnership, our team is here to help you move things forward.</p>
+        <span class="ct-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> Pune, Maharashtra, India</span>
+        <h1>Get in touch — <span class="text-blue">we're listening</span></h1>
+        <p>Questions about sending a parcel, carrying one on a trip, or using the CarryParcel API — email us, read the Help Centre, or send a message below.</p>
     </div>
 </section>
 
-<!-- ================= EXPECTED PROCESS ================= -->
-<section class="ct-process">
-    <div class="footer-container">
-        <h2>What to expect when you contact us</h2>
-        <div class="ct-process-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
-            <div class="ct-process-item">
-                <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; color: var(--tb-primary);"></i>
-                <h3>Fast Response</h3>
-                <p>Our average response time for general inquiries is under 4 minutes during business hours.</p>
-            </div>
-            <div class="ct-process-item">
-                <i class="fa-solid fa-user-shield" style="font-size: 2rem; color: var(--tb-primary);"></i>
-                <h3>Secure Handling</h3>
-                <p>All support interactions are recorded for safety and quality assurance. We never ask for your password or Delivery QR Code.</p>
-            </div>
-            <div class="ct-process-item">
-                <i class="fa-solid fa-route" style="font-size: 2rem; color: var(--tb-primary);"></i>
-                <h3>Direct Routing</h3>
-                <p>Your message is automatically routed to the team best equipped to handle your specific concern (Parcels, Travel, or Payments).</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ================= QUICK CONTACT CARDS ================= -->
-<section class="ct-cards-wrap">
-    <div class="ct-cards">
-            <a class="ct-card ct-reveal" href="mailto:support@carryparcel.in">
+<!-- ================= CONTACT CHANNELS ================= -->
+<section class="ct-channels-wrap">
+    <div class="ct-channels">
+        <a class="ct-card ct-reveal" href="mailto:support@carryparcel.in">
             <span class="ct-card-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
             <h2>Email us</h2>
             <p>support@carryparcel.in</p>
             <span class="ct-card-cta">Send an email <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
         </a>
 
-        <a class="ct-card ct-reveal" href="tel:8999129779">
-            <span class="ct-card-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span>
-            <h2>Call CarryParcel</h2>
-            <p>8999129779</p>
-            <span class="ct-card-cta">Call now <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-
         <a class="ct-card ct-reveal" href="../support/support.html" id="ctSupportCard">
             <span class="ct-card-icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
-            <h2>Visit Support</h2>
-                    <p>Help centre and support</p>
+            <h2>Help Centre</h2>
+            <p>Answers, tickets and FAQs</p>
             <span class="ct-card-cta">Get instant answers <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
         </a>
+
+        <div class="ct-card ct-card-static ct-reveal">
+            <span class="ct-card-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+            <h2>Where we're based</h2>
+            <p>Pune, Maharashtra, India</p>
+            <span class="ct-card-cta ct-card-cta-muted">carryparcel.in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        </div>
     </div>
 </section>
 
@@ -176,13 +153,13 @@
 
         <div class="ct-form-card ct-reveal">
             <h2>Send us a message</h2>
-            <p class="ct-form-sub">Fill in the form and we'll route it to the right team.</p>
+            <p class="ct-form-sub">Fill this in and we'll reply by email. Fields marked optional can be left blank.</p>
 
             <form id="ctForm" novalidate>
                 <div class="ct-field-row">
                     <div class="form-group ct-field" id="cfName">
                         <label for="ctName">Full name</label>
-                        <input type="text" id="ctName" placeholder="Jordan Rivera">
+                        <input type="text" id="ctName" placeholder="Your name">
                         <span class="ct-field-msg"></span>
                     </div>
                     <div class="form-group ct-field" id="cfEmail">
@@ -195,7 +172,7 @@
                 <div class="ct-field-row">
                     <div class="form-group ct-field" id="cfPhone">
                         <label for="ctPhone">Phone <span class="ct-optional">(optional)</span></label>
-                        <input type="tel" id="ctPhone" placeholder="+1 555 000 0000">
+                        <input type="tel" id="ctPhone" placeholder="If you would prefer a call back">
                         <span class="ct-field-msg"></span>
                     </div>
                     <div class="form-group ct-field" id="cfSubject">
@@ -204,9 +181,10 @@
                             <option value="">Select a subject…</option>
                             <option>General question</option>
                             <option>Sending a parcel</option>
-                            <option>Becoming a traveler</option>
-                            <option>Partnerships &amp; press</option>
-                            <option>Careers</option>
+                            <option>Carrying a parcel on a trip</option>
+                            <option>Payments &amp; wallet</option>
+                            <option>Verification</option>
+                            <option>Developer / API</option>
                             <option>Something else</option>
                         </select>
                         <span class="ct-field-msg"></span>
@@ -226,25 +204,21 @@
 
                 <div class="ct-success" id="ctSuccess">
                     <i class="fa-solid fa-circle-check"></i>
-                    <span>Thanks, <b id="ctSuccessName">there</b> — your message is in. We usually reply within 4 minutes.</span>
+                    <span>Thanks, <b id="ctSuccessName">there</b> — your message has been sent. We'll reply to the email address you gave us.</span>
                 </div>
             </form>
         </div>
 
         <aside class="ct-side">
             <div class="ct-side-card ct-reveal">
-                <span class="ct-side-title">CarryParcel</span>
-                <div class="ct-side-row">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <p>Pune, Maharashtra, India</p>
-                </div>
-                <div class="ct-side-row">
-                    <i class="fa-solid fa-clock"></i>
-                    <p>For company and support enquiries, email<br>support@carryparcel.in</p>
-                </div>
+                <span class="ct-side-title">Keep this in mind</span>
                 <div class="ct-side-row">
                     <i class="fa-solid fa-shield-halved"></i>
-                    <p>We'll never ask for your Delivery QR Code or password over email or phone.</p>
+                    <p>We'll never ask for your password or Delivery QR Code over email or phone. If someone does, it isn't us.</p>
+                </div>
+                <div class="ct-side-row">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>Include your parcel or trip ID if your question is about a specific delivery — it speeds things up.</p>
                 </div>
             </div>
 
@@ -259,6 +233,7 @@
         </aside>
     </div>
 </section>
+</main>
 
 <!-- ================= FOOTER (shared component, see Frontend/shared/footer.html) ================= -->
 <div id="tbFooterInclude"></div>

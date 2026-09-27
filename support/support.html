@@ -21,7 +21,7 @@
 
     <!-- Site design system -->
     <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="support.css">
+    <link rel="stylesheet" href="support.css?v=2">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -96,6 +96,7 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js?v=2"></script>
 
+<main>
 <!-- ================= HERO + SEARCH ================= -->
 <section class="sp-hero">
     <div class="sp-hero-blob sp-hero-blob-a" aria-hidden="true"></div>
@@ -104,7 +105,7 @@
     <div class="sp-hero-inner">
         <span class="sp-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> Need assistance?</span>
         <h1>Support &amp; <span class="text-blue">Help Center</span></h1>
-        <p>Need help with CarryParcel? Search the answers below, or sign in to raise a ticket and track it end to end.</p>
+        <p>CarryParcel support is handled by our team at <a href="mailto:support@carryparcel.in">support@carryparcel.in</a>. Search the answers below, pick a help topic, or sign in to raise a ticket and follow it end to end.</p>
 
         <form class="sp-search" id="spSearchForm" role="search" action="#faq">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -129,12 +130,74 @@
     </div>
 </section>
 
-<!-- ================= HOW IT WORKS ================= -->
+<!-- ================= HELP TOPICS (all links resolve to real CarryParcel pages) ================= -->
+<section class="sp-topics-section">
+    <div class="sp-container">
+        <div class="sp-section-head">
+            <span class="sp-eyebrow sp-eyebrow-center">Help topics</span>
+            <h2>What can we help with?</h2>
+            <p>Pick the area that matches your issue. Each one goes to a real CarryParcel page or to the place you can raise it.</p>
+        </div>
+
+        <div class="sp-topics-grid">
+            <a class="topic-card" href="../forgot-password/forgot-password.html">
+                <i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+                <h3>Account &amp; Login</h3>
+                <p>Sign-in problems, password resets, and profile verification. Reset links and OTPs expire quickly, so request a fresh one if needed.</p>
+                <span class="topic-card-cta">Reset your password <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../how-carryparcel-works/index.html">
+                <i class="fa-solid fa-box" aria-hidden="true"></i>
+                <h3>Parcel &amp; Delivery</h3>
+                <p>Posting a parcel, what you can send, editing details before a traveler accepts, and how handover works.</p>
+                <span class="topic-card-cta">See how it works <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../login/login.html" data-auth-cta="/user-dashboard/wallet.html">
+                <i class="fa-solid fa-wallet" aria-hidden="true"></i>
+                <h3>Payments &amp; Wallet</h3>
+                <p>Payment holds, wallet balance, receipts and transaction history. Funds release on confirmed delivery, not before.</p>
+                <span class="topic-card-cta">Open your wallet <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../login/login.html" data-auth-cta="/user-dashboard/withdraw.html">
+                <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
+                <h3>Withdrawals</h3>
+                <p>Moving traveler earnings from your CarryParcel wallet to your bank account.</p>
+                <span class="topic-card-cta">Withdraw funds <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../login/login.html" data-auth-cta="/user-dashboard/verification.html">
+                <i class="fa-solid fa-badge-check" aria-hidden="true"></i>
+                <h3>Verification</h3>
+                <p>Government ID verification for senders and travelers, and what a verified profile unlocks on a match.</p>
+                <span class="topic-card-cta">Check your status <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../safety/index.html">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <h3>Safety &amp; Reports</h3>
+                <p>Reporting another user, disputing a delivery, or raising a concern about a match you do not feel right about.</p>
+                <span class="topic-card-cta">Read our safety policy <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../legal/prohibited-items.html">
+                <i class="fa-solid fa-ban" aria-hidden="true"></i>
+                <h3>Prohibited Items</h3>
+                <p>What cannot travel on CarryParcel. Check this before posting — undeclared items cannot be accepted.</p>
+                <span class="topic-card-cta">See the list <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="topic-card" href="../login/login.html" data-auth-cta="/user-dashboard/support.html">
+                <i class="fa-solid fa-gears" aria-hidden="true"></i>
+                <h3>Technical Issues</h3>
+                <p>Bugs, a page not loading, or a status that is not updating. Raise a ticket with your parcel ID and we will look at it.</p>
+                <span class="topic-card-cta">Raise a ticket <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ================= HOW SUPPORT WORKS ================= -->
 <section class="sp-how-it-works">
-    <div class="footer-container">
+    <div class="sp-container">
         <div class="sp-section-head">
             <span class="faq-eyebrow">Process</span>
-            <h2>How Support Works</h2>
+            <h2>How a Support Ticket Works</h2>
             <p>Five steps from the moment you hit a problem to the moment it is closed out.</p>
         </div>
 
@@ -157,101 +220,73 @@
                 <div class="sp-step-num">3</div>
                 <div class="sp-step-content">
                     <h3>Team Review</h3>
-                    <p>Our dedicated support team reviews your request to provide the best solution.</p>
+                    <p>Our support team reviews your request along with the parcel, trip and chat records attached to it.</p>
                 </div>
             </div>
             <div class="sp-step">
                 <div class="sp-step-num">4</div>
                 <div class="sp-step-content">
                     <h3>Receive Response</h3>
-                    <p>Get detailed answers and resolutions directly from our experts.</p>
+                    <p>Get a written answer and a resolution directly in your ticket thread.</p>
                 </div>
             </div>
             <div class="sp-step">
                 <div class="sp-step-num">5</div>
                 <div class="sp-step-content">
                     <h3>Track Status</h3>
-                    <p>Monitor your active tickets and view history anytime from your dashboard.</p>
+                    <p>Monitor your active tickets and view their history anytime from your dashboard.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ================= HELP CATEGORIES ================= -->
-<section class="sp-topics-section">
-    <div class="footer-container">
-        <div class="sp-section-head">
-            <span class="sp-eyebrow sp-eyebrow-center">Help categories</span>
-            <h2>What can we help with?</h2>
-            <p>Pick the area that matches your issue, or search above for a specific question.</p>
-        </div>
-        <div class="sp-topics-grid">
-            <div class="topic-card">
-                <i class="fa-solid fa-user-circle"></i>
-                <h3>Account &amp; Login</h3>
-                <p>Assistance with registration, password resets, and profile verification.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-box"></i>
-                <h3>Parcel &amp; Delivery</h3>
-                <p>Questions about posting parcels, tracking, and delivery guidelines.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-route"></i>
-                <h3>Traveler Trips</h3>
-                <p>Support for adding trips, matching with parcels, and earning rewards.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-wallet"></i>
-                <h3>Payments &amp; Wallet</h3>
-                <p>Help with wallet top-ups, payment holds, and transaction history.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-money-bill-transfer"></i>
-                <h3>Withdrawals</h3>
-                <p>Guidance on withdrawing your earnings to your bank account.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-truck-fast"></i>
-                <h3>Pickup &amp; Delivery</h3>
-                <p>Support during the actual handover and delivery process.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-shield-halved"></i>
-                <h3>Safety &amp; Reports</h3>
-                <p>Reporting issues, disputes, and understanding our safety protocols.</p>
-            </div>
-            <div class="topic-card">
-                <i class="fa-solid fa-gears"></i>
-                <h3>Technical Issues</h3>
-                <p>Reporting bugs or performance issues on the app or website.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ================= AFTER CONTACT ================= -->
-<section class="sp-after-contact">
-    <div class="footer-container">
-        <div class="sp-after-inner">
-            <div class="sp-after-text">
-                <h2>What happens next?</h2>
-                <p>Once you've signed in and accessed the Support Center, you can manage your entire support experience in one place.</p>
+<!-- ================= REACH US ================= -->
+<section class="sp-reach">
+    <div class="sp-container">
+        <div class="sp-reach-grid">
+            <div class="sp-reach-text">
+                <h2>Still need a person?</h2>
+                <p>Email <a href="mailto:support@carryparcel.in">support@carryparcel.in</a> with your parcel or trip ID and we will pick it up from there. You can also use the contact form, reach the Buddy AI assistant for instant answers, or raise a ticket to track it properly.</p>
                 <ul class="sp-check-list">
-                    <li><i class="fa-solid fa-circle-check"></i> Create new support tickets 24/7</li>
-                    <li><i class="fa-solid fa-circle-check"></i> View your entire ticket history</li>
-                    <li><i class="fa-solid fa-circle-check"></i> Read and reply to support responses</li>
-                    <li><i class="fa-solid fa-circle-check"></i> Track real-time status of your requests</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Tickets you can follow and reply to</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Your full ticket history in one place</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Never share your password or Delivery QR Code with anyone</li>
                 </ul>
             </div>
-            <div class="sp-after-cta">
-                <div class="cta-card">
-                    <h3>Need Personal Assistance?</h3>
-                    <p>Sign in to access your CarryParcel Support Center and connect with our team.</p>
-                    <button type="button" class="btn btn-primary btn-full get-help-cta" data-auth-cta="/user-dashboard/support.html">Sign In to Get Help</button>
-                    <p class="cta-note">Don't have an account? <a href="/register/register.html">Register here</a></p>
-                </div>
+            <div class="sp-reach-cards">
+                <a class="sp-reach-card" href="mailto:support@carryparcel.in">
+                    <span class="sp-reach-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+                    <span class="sp-reach-body">
+                        <b>Email us</b>
+                        <small>support@carryparcel.in</small>
+                    </span>
+                    <i class="fa-solid fa-arrow-right sp-reach-go" aria-hidden="true"></i>
+                </a>
+                <a class="sp-reach-card" href="../contact/contact.html">
+                    <span class="sp-reach-icon"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></span>
+                    <span class="sp-reach-body">
+                        <b>Contact form</b>
+                        <small>Send us a message</small>
+                    </span>
+                    <i class="fa-solid fa-arrow-right sp-reach-go" aria-hidden="true"></i>
+                </a>
+                <a class="sp-reach-card" href="../login/login.html" data-auth-cta="/user-dashboard/support.html">
+                    <span class="sp-reach-icon"><i class="fa-solid fa-ticket" aria-hidden="true"></i></span>
+                    <span class="sp-reach-body">
+                        <b>Raise a ticket</b>
+                        <small>Sign in to the Support Center</small>
+                    </span>
+                    <i class="fa-solid fa-arrow-right sp-reach-go" aria-hidden="true"></i>
+                </a>
+                <button type="button" class="sp-reach-card" id="spLiveChatBtn">
+                    <span class="sp-reach-icon"><i class="fa-solid fa-robot" aria-hidden="true"></i></span>
+                    <span class="sp-reach-body">
+                        <b>Ask the AI assistant</b>
+                        <small>Instant answers, any time</small>
+                    </span>
+                    <i class="fa-solid fa-arrow-right sp-reach-go" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -259,11 +294,11 @@
 
 <!-- ================= FAQ ================= -->
 <section class="faq-section" id="faq">
-    <div class="footer-container">
+    <div class="sp-container">
         <div class="faq-heading">
             <span class="faq-eyebrow">Quick Help</span>
             <h2>Frequently Asked Questions</h2>
-            <p>Find instant answers to common questions from our community.</p>
+            <p>Answers to the questions our team is asked most often.</p>
         </div>
 
         <div class="sp-tabs" id="spTabs">
@@ -298,22 +333,7 @@
         </div>
     </div>
 </section>
-
-<!-- ================= QUICK HELP ================= -->
-<section class="sp-quick-help">
-    <div class="footer-container">
-        <div class="sp-quick-grid">
-            <div class="sp-quick-card">
-                <i class="fa-solid fa-comment-dots"></i>
-                <div>
-                    <h3>Need quick help?</h3>
-                    <p>Start a live chat with our Buddy AI assistant for instant answers.</p>
-                </div>
-                <button type="button" class="btn btn-secondary" id="spLiveChatBtn">Open AI Chat</button>
-            </div>
-        </div>
-    </div>
-</section>
+</main>
 
 <!-- ================= FOOTER ================= -->
 <div id="tbFooterInclude"></div>
@@ -357,8 +377,6 @@
     </div>
 </footer>
 <script>window.CPInclude.injectFooter();</script>
-
-<div class="sp-toast" id="spToast"></div>
 
 <script src="support.js"></script>
 <script src="../shared/auth-aware-cta.js?v=1"></script>
