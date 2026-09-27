@@ -84,6 +84,8 @@ img { height:auto; }
     display:inline-flex; align-items:center; gap:8px;
     background:#fff; color: var(--text-secondary); border:1px solid var(--border-color);
     padding:10px 18px; border-radius: var(--radius-pill);
+    /* 44px minimum touch target — the pill padding alone rendered at 43px. */
+    min-height:44px;
     font:600 var(--text-sm) 'Poppins',sans-serif; cursor:pointer;
     transition: all 0.25s var(--tb-transition);
 }
@@ -320,8 +322,6 @@ img { height:auto; }
     transform:translateY(-50%); border-radius:0; background: transparent;
     border-top: 1px dashed var(--border-color); overflow:visible; display:block;
 }
-    border-top: 1px dashed var(--border-color); overflow:visible; display:block;
-}
 .sp-route-progress{ display: none; } /* Removing thick blue progress */
 
 .sp-route-mover{
@@ -403,6 +403,107 @@ img { height:auto; }
 /* ---------- SCROLL REVEAL ---------- */
 .sp-reveal{ opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
 .sp-reveal.sp-in-view{ opacity:1; transform:translateY(0); }
+
+/* ==========================================================
+   POLISH ADDITIONS
+   Replaces inline-style hacks that were left in support.html and
+   fills in the styling for the hero search form, which already had
+   markup-side handlers in support.js (spSearchForm / spSearchInput /
+   spChips) but no element to attach to.
+   ========================================================== */
+
+/* Section heading block — used by "How Support Works" and the
+   help-categories grid, both of which previously centred themselves
+   with inline styles. */
+.sp-section-head{
+    text-align:center;
+    max-width:640px;
+    margin:0 auto clamp(32px, 5vw, 48px);
+}
+.sp-section-head h2{
+    color: var(--text-primary);
+    font-size: clamp(26px, 4vw, 38px);
+    line-height:1.22;
+    margin: 0 0 12px;
+}
+.sp-section-head p{
+    color: var(--text-secondary);
+    font-size: var(--text-md);
+    line-height:1.7;
+    margin:0;
+}
+
+/* Hero search — the submit button sits inside the pill, so it needs
+   to be visually a control rather than a full-width .btn. */
+.sp-search .btn{ min-height: 44px; padding-inline: 1.4rem; flex: 0 0 auto; }
+.sp-search input::-webkit-search-cancel-button{ cursor:pointer; }
+.sp-chips{ margin-top: 26px; }
+
+/* Topic cards lift on hover so the grid reads as interactive. */
+.topic-card{
+    transition: transform .3s var(--tb-transition), box-shadow .3s var(--tb-transition), border-color .3s var(--tb-transition);
+}
+.topic-card:hover{
+    transform: translateY(-4px);
+    border-color: rgba(13,110,253,.35);
+    box-shadow: var(--tb-shadow-l2);
+}
+.topic-card i{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:54px; height:54px; margin-bottom:16px;
+    border-radius: var(--radius-md);
+    background: var(--tb-primary-light);
+    color: var(--tb-primary);
+}
+
+/* Process steps: a vertical timeline below 900px, a horizontal row at 900px+
+   (the base rules and the existing @media block own that switch). Soften the
+   connector into a gradient that fades at both ends, per orientation. */
+.sp-process-steps::before{
+    background: linear-gradient(180deg,
+        rgba(13,110,253,0) 0%,
+        rgba(13,110,253,.30) 12%,
+        rgba(13,110,253,.30) 88%,
+        rgba(13,110,253,0) 100%);
+}
+@media (min-width: 900px){
+    .sp-process-steps::before{
+        background: linear-gradient(90deg,
+            rgba(13,110,253,0) 0%,
+            rgba(13,110,253,.30) 10%,
+            rgba(13,110,253,.30) 90%,
+            rgba(13,110,253,0) 100%);
+    }
+}
+.sp-step{ transition: transform .3s var(--tb-transition); }
+.sp-step:hover{ transform: translateX(4px); }
+@media (min-width: 900px){
+    .sp-step:hover{ transform: translateY(-4px); }
+}
+.sp-step-num{ box-shadow: 0 4px 12px rgba(13,110,253,.14); }
+
+/* FAQ tab row scrolls horizontally on phones instead of overflowing. */
+.sp-tabs{
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:10px; margin-bottom:32px;
+}
+@media(max-width:640px){
+    .sp-tabs{
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        justify-content:flex-start;
+        padding-bottom:8px;
+        scrollbar-width:none;
+        -webkit-overflow-scrolling:touch;
+    }
+    .sp-tabs::-webkit-scrollbar{ display:none; }
+    .sp-tab{ flex:0 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .sp-reveal{ opacity:1; transform:none; transition:none; }
+    .topic-card, .topic-card:hover{ transition:none; transform:none; }
+}
 
 @media (prefers-reduced-motion: reduce){
     .sp-reveal{ opacity:1; transform:none; transition:none; }

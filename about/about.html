@@ -116,7 +116,7 @@
             </p>
 
             <div class="ab-hero-cta">
-                <a href="../login/login.html" class="btn btn-primary">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
+                <a href="../login/login.html" class="btn btn-primary" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
                 <a href="../contact/contact.html" class="btn btn-secondary">Talk to Us</a>
             </div>
 
@@ -130,9 +130,47 @@
 
         <div class="ab-hero-media ab-reveal">
             <img src="../images/trust-local-connection.png" alt="A traveler handing a parcel to a local shopkeeper on a city street" width="1040" height="480" loading="lazy" decoding="async">
+
+            <div class="ab-floating-card ab-float-1">
+                <i class="fa-solid fa-route" aria-hidden="true"></i>
+                <div>
+                    <strong>Route matched</strong>
+                    <span>Traveler already en route</span>
+                </div>
+            </div>
+
+            <div class="ab-floating-card ab-float-2">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <div>
+                    <strong>ID verified</strong>
+                    <span>Every traveler &amp; sender</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<!-- ================= STATS ================= -->
+<div class="ab-stats-wrap ab-reveal">
+    <div class="ab-stats">
+        <div class="ab-stat">
+            <strong><span class="ab-count" data-count="48" data-decimal="0">0</span>+</strong>
+            <span>Cities &amp; towns covered</span>
+        </div>
+        <div class="ab-stat">
+            <strong><span class="ab-count" data-count="12" data-decimal="0">0</span>k+</strong>
+            <span>Parcels delivered</span>
+        </div>
+        <div class="ab-stat">
+            <strong><span class="ab-count" data-count="35" data-decimal="0">0</span>%</strong>
+            <span>Lower delivery cost</span>
+        </div>
+        <div class="ab-stat">
+            <strong><span class="ab-count" data-count="4.9" data-decimal="1">0</span></strong>
+            <span>Average traveler rating</span>
+        </div>
+    </div>
+</div>
 
 <!-- ================= OUR STORY ================= -->
 <section class="ab-story">
@@ -157,6 +195,48 @@
                 <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> A community-powered approach to delivery</li>
             </ul>
         </div>
+    </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="ab-process">
+    <div class="ab-process-inner">
+        <div class="ab-process-head ab-reveal">
+            <span class="ab-eyebrow">How it works</span>
+            <h2>Four steps from sender to doorstep</h2>
+            <p>CarryParcel removes the scheduling problem. Your parcel rides along a journey somebody is already making.</p>
+        </div>
+
+        <ol class="ab-steps">
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">01</span>
+                <div class="ab-step-body">
+                    <h3>Post your requirement</h3>
+                    <p>Add pickup and destination details, choose a parcel category, and declare weight and size so matches are accurate.</p>
+                </div>
+            </li>
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">02</span>
+                <div class="ab-step-body">
+                    <h3>Review matched travelers</h3>
+                    <p>We surface verified travelers already heading your way, with their trip history and ratings visible before you decide.</p>
+                </div>
+            </li>
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">03</span>
+                <div class="ab-step-body">
+                    <h3>Confirm and pay securely</h3>
+                    <p>Payment is held when you confirm a match and only released to the traveler once the receiver confirms delivery.</p>
+                </div>
+            </li>
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">04</span>
+                <div class="ab-step-body">
+                    <h3>Track to the door</h3>
+                    <p>Follow live status updates through handover. The receiver confirms with a secure QR code at the moment of delivery.</p>
+                </div>
+            </li>
+        </ol>
     </div>
 </section>
 
@@ -188,14 +268,40 @@
     </div>
 </section>
 
+<!-- ================= TRUST STRIP ================= -->
+<section class="ab-trust">
+    <div class="ab-trust-inner">
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+            <h3>Verified identities</h3>
+            <p>Senders and travelers complete ID verification before matching.</p>
+        </article>
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            <h3>Held payments</h3>
+            <p>Funds release only after the receiver confirms delivery.</p>
+        </article>
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+            <h3>Human support</h3>
+            <p>Every ticket is reviewed by our team, not just a bot.</p>
+        </article>
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
+            <h3>Fewer empty miles</h3>
+            <p>Using journeys that already happen cuts redundant trips.</p>
+        </article>
+    </div>
+</section>
+
 <!-- ================= CTA BANNER ================= -->
 <section class="ab-cta">
     <div class="ab-cta-inner ab-reveal">
         <h2>Ready to send your first parcel?</h2>
         <p>Join thousands of senders and travelers already moving parcels the smarter way.</p>
         <div class="ab-cta-buttons">
-            <a href="../login/login.html" class="btn btn-primary">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
-            <a href="../support/support.html" class="btn btn-secondary">Visit Support</a>
+            <a href="../login/login.html" class="btn btn-primary" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
+            <a href="../support/support.html" class="btn btn-secondary ab-ghost-btn">Visit Support</a>
         </div>
     </div>
 </section>
@@ -244,6 +350,7 @@
 <script>window.CPInclude.injectFooter();</script>
 
 <script src="about.js"></script>
+<script src="../shared/auth-aware-cta.js?v=1"></script>
 <script src="../shared/site-banner.js?v=3"></script>
 </body>
 </html>

@@ -136,21 +136,43 @@ spSearchInput?.addEventListener('input', () => {
 });
 
 /* ============ AUTH-AWARE REDIRECTION ============ */
-function handleGetHelp() {
-    const token = localStorage.getItem('carryParcelToken');
-    const dashboardSupportUrl = '/user-dashboard/support.html';
-
-    if (token) {
-        // User is logged in, send directly to dashboard support
-        window.location.href = dashboardSupportUrl;
-    } else {
-        // User is logged out, send to login with redirect back to support
-        window.location.href = `/login/login.html?redirect=${encodeURIComponent(dashboardSupportUrl)}`;
-    }
-}
+// Routing for every CTA on this page now lives in shared/auth-aware-cta.js,
+// driven by the markup's data-auth-cta attribute. That module rewrites
+// anchor hrefs and intercepts <button> clicks in one delegated handler,
+// and it reads the same 'carryParcelUser' / 'carryParcelAdmin' profile blobs
+// the navbar uses (see shared/nav-basic-behavior.js).
+//
+// The previous code here gated on localStorage 'carryParcelToken' — a key
+// nothing writes any more — so "Get Help Now" always resolved to logged-out
+// and bounced signed-in visitors back through the login screen. The constant
+// below stays as the single declared destination for those CTAs.
+const DASHBOARD_SUPPORT_URL = '/user-dashboard/support.html';
 
 document.querySelectorAll('.get-help-cta').forEach(btn => {
-    btn.addEventListener('click', handleGetHelp);
+    // Fallback only: auth-aware-cta.js normally intercepts these first.
+    // Kept so the CTAs still resolve if that script fails to load.
+    if (btn.getAttribute('data-auth-cta-resolved') === 'true') return;
+    btn.addEventListener('click', () => {
+        // Mirrors shared/auth-guard.js, including the lenient case where the
+        // login flag is present but the profile blob is not.
+        let loggedIn = false;
+        if (localStorage.getItem('carryParcelAdminLoggedIn') && localStorage.getItem('carryParcelAdmin')) {
+            loggedIn = true;
+        } else if (localStorage.getItem('carryParcelLoggedIn')) {
+            const raw = localStorage.getItem('carryParcelUser');
+            if (!raw) {
+                loggedIn = true;
+            } else {
+                try {
+                    const role = (JSON.parse(raw) || {}).role;
+                    loggedIn = !role || role === 'user' || role === 'traveler' || role === 'sender';
+                } catch (e) { loggedIn = true; }
+            }
+        }
+        window.location.href = loggedIn
+            ? DASHBOARD_SUPPORT_URL
+            : `/login/login.html?redirect=${encodeURIComponent(DASHBOARD_SUPPORT_URL)}`;
+    });
 });
 
 /* ============ DIRECT CHANNELS ============ */

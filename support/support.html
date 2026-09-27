@@ -96,7 +96,7 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js?v=2"></script>
 
-<!-- ================= HERO ================= -->
+<!-- ================= HERO + SEARCH ================= -->
 <section class="sp-hero">
     <div class="sp-hero-blob sp-hero-blob-a" aria-hidden="true"></div>
     <div class="sp-hero-blob sp-hero-blob-b" aria-hidden="true"></div>
@@ -104,16 +104,39 @@
     <div class="sp-hero-inner">
         <span class="sp-eyebrow"><i class="fa-solid fa-circle" aria-hidden="true"></i> Need assistance?</span>
         <h1>Support &amp; <span class="text-blue">Help Center</span></h1>
-        <p>Need help with CarryParcel? Learn how support works and get assistance with your account, parcels, trips and more.</p>
-        <button type="button" class="btn btn-primary get-help-cta">Get Help Now <i class="fa-solid fa-arrow-right" style="margin-left:8px"></i></button>
+        <p>Need help with CarryParcel? Search the answers below, or sign in to raise a ticket and track it end to end.</p>
+
+        <form class="sp-search" id="spSearchForm" role="search" action="#faq">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+                type="search"
+                id="spSearchInput"
+                name="q"
+                placeholder="Search help topics — refunds, tracking, verification…"
+                aria-label="Search help topics"
+                autocomplete="off">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <div class="sp-chips" id="spChips" aria-label="Popular help topics">
+            <button type="button" class="sp-chip" data-cat="parcels"><i class="fa-solid fa-box" aria-hidden="true"></i> Parcels</button>
+            <button type="button" class="sp-chip" data-cat="trips"><i class="fa-solid fa-route" aria-hidden="true"></i> Tracking</button>
+            <button type="button" class="sp-chip" data-cat="payments"><i class="fa-solid fa-wallet" aria-hidden="true"></i> Payments</button>
+            <button type="button" class="sp-chip" data-cat="refunds"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Refunds</button>
+            <button type="button" class="sp-chip" data-cat="account"><i class="fa-solid fa-user" aria-hidden="true"></i> Account</button>
+            <button type="button" class="sp-chip" data-cat="safety"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Safety</button>
+        </div>
     </div>
 </section>
 
 <!-- ================= HOW IT WORKS ================= -->
 <section class="sp-how-it-works">
     <div class="footer-container">
-        <span class="faq-eyebrow" style="margin: 0 auto 12px; display: table;">Process</span>
-        <h2 style="text-align: center; margin-bottom: 40px;">How Support Works</h2>
+        <div class="sp-section-head">
+            <span class="faq-eyebrow">Process</span>
+            <h2>How Support Works</h2>
+            <p>Five steps from the moment you hit a problem to the moment it is closed out.</p>
+        </div>
 
         <div class="sp-process-steps">
             <div class="sp-step">
@@ -158,8 +181,11 @@
 <!-- ================= HELP CATEGORIES ================= -->
 <section class="sp-topics-section">
     <div class="footer-container">
-        <span class="sp-eyebrow sp-eyebrow-center">Help categories</span>
-        <h2 style="text-align: center; margin-bottom: 40px;">What can we help with?</h2>
+        <div class="sp-section-head">
+            <span class="sp-eyebrow sp-eyebrow-center">Help categories</span>
+            <h2>What can we help with?</h2>
+            <p>Pick the area that matches your issue, or search above for a specific question.</p>
+        </div>
         <div class="sp-topics-grid">
             <div class="topic-card">
                 <i class="fa-solid fa-user-circle"></i>
@@ -223,7 +249,7 @@
                 <div class="cta-card">
                     <h3>Need Personal Assistance?</h3>
                     <p>Sign in to access your CarryParcel Support Center and connect with our team.</p>
-                    <button type="button" class="btn btn-primary btn-full get-help-cta">Sign In to Get Help</button>
+                    <button type="button" class="btn btn-primary btn-full get-help-cta" data-auth-cta="/user-dashboard/support.html">Sign In to Get Help</button>
                     <p class="cta-note">Don't have an account? <a href="/register/register.html">Register here</a></p>
                 </div>
             </div>
@@ -335,6 +361,7 @@
 <div class="sp-toast" id="spToast"></div>
 
 <script src="support.js"></script>
+<script src="../shared/auth-aware-cta.js?v=1"></script>
 <script src="../shared/site-banner.js?v=3"></script>
 </body>
 </html>

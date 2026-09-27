@@ -165,6 +165,70 @@ img { height:auto; }
 .ab-values .card h3 { font-size: var(--text-lg); margin: 0 0 10px; color: var(--text-primary); }
 .ab-values .card p{ font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6; }
 
+/* ---------- PROCESS (how it works) ---------- */
+.ab-process{ padding: var(--section-padding) var(--container-px); background: #fff; }
+.ab-process-inner{ max-width:1100px; margin:0 auto; }
+.ab-process-head{ text-align:center; max-width:640px; margin:0 auto clamp(40px, 6vw, 64px); }
+.ab-process-head h2{ color: var(--text-primary); font-size:clamp(26px, 4vw, 38px); line-height:1.22; margin:0 0 14px; }
+.ab-process-head p{ color: var(--text-secondary); font-size: var(--text-md); line-height:1.75; margin:0; }
+
+.ab-steps{
+    list-style:none; margin:0; padding:0;
+    display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:24px;
+}
+.ab-step{
+    position:relative;
+    display:flex; gap:20px; align-items:flex-start;
+    padding:30px 32px;
+    background: var(--tb-bg);
+    border:1px solid var(--tb-border);
+    border-radius: var(--radius-lg);
+    transition: transform .3s var(--tb-transition), box-shadow .3s var(--tb-transition), border-color .3s var(--tb-transition);
+}
+.ab-step:hover{
+    transform: translateY(-4px);
+    background: #fff;
+    border-color: rgba(13,110,253,.35);
+    box-shadow: var(--tb-shadow-l2);
+}
+.ab-step-index{
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    width:52px; height:52px; border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent));
+    color:#fff; font-size: var(--text-md); font-weight:700; letter-spacing:.02em;
+    box-shadow: 0 6px 16px rgba(13,110,253,.28);
+}
+.ab-step-body h3{ color: var(--text-primary); font-size: var(--text-lg); line-height:1.35; margin:2px 0 8px; }
+.ab-step-body p{ color: var(--text-secondary); font-size: var(--text-sm); line-height:1.7; margin:0; }
+
+/* ---------- TRUST STRIP ---------- */
+.ab-trust{ padding:0 var(--container-px) var(--section-padding); background:#fff; }
+.ab-trust-inner{
+    max-width:1100px; margin:0 auto;
+    display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:20px;
+}
+.ab-trust-card{
+    text-align:center;
+    padding:34px 24px;
+    background: var(--tb-surface);
+    border:1px solid var(--tb-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--tb-shadow-l1);
+    transition: transform .3s var(--tb-transition), box-shadow .3s var(--tb-transition);
+}
+.ab-trust-card:hover{ transform: translateY(-4px); box-shadow: var(--tb-shadow-l2); }
+.ab-trust-card i{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:56px; height:56px; margin-bottom:16px;
+    border-radius:50%;
+    background: var(--tb-primary-light);
+    color: var(--tb-primary);
+    font-size:22px;
+}
+.ab-trust-card h3{ color: var(--text-primary); font-size: var(--text-md); margin:0 0 8px; }
+.ab-trust-card p{ color: var(--text-secondary); font-size: var(--text-sm); line-height:1.65; margin:0; }
+
 /* ---------- CTA BANNER ---------- */
 .ab-cta{
     padding: var(--section-padding) var(--container-px);
@@ -209,15 +273,28 @@ img { height:auto; }
     .ab-hero-cta, .ab-tags{ justify-content:center; }
     .ab-story-inner{ flex-direction:column; }
     .ab-story-content{ text-align:left; }
+    .ab-trust-inner{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media(max-width:700px){
+    .ab-steps{ grid-template-columns: 1fr; gap:18px; }
+    .ab-step{ padding:24px; }
+}
+
+@media(max-width:520px){
+    .ab-trust-inner{ grid-template-columns: 1fr; }
+    .ab-process-head{ text-align:left; }
 }
 
 @media(max-width:600px){
     .ab-hero-media{ margin-top:20px; }
     .ab-hero, .ab-story, .ab-cta { padding-inline:16px; }
-    .ab-hero-cta .primary-btn, .ab-hero-cta .ab-ghost-btn, .ab-cta-buttons a { width:100%; }
+    .ab-hero-cta .btn, .ab-hero-cta .ab-ghost-btn, .ab-cta-buttons a { width:100%; }
     .ab-stats-wrap { padding-inline:16px; }
     .ab-hero-content,
     .ab-hero-media,
     .ab-story-media,
     .ab-story-content { flex:1 1 auto; min-width:0; width:100%; max-width:100%; }
+    /* Floating cards would overlap the hero copy once stacked. */
+    .ab-floating-card{ display:none; }
 }

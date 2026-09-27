@@ -16,11 +16,16 @@
     --danger: var(--text-danger);
     --info:#4f8dff;
 
-    /* Using design system tokens */
-    --radius-sm: var(--radius-sm);
-    --radius-md: var(--radius-md);
-    --radius-lg: var(--radius-lg);
-    --radius-xl: var(--radius-xl);
+    /* Radius tokens (--radius-sm/md/lg/xl) come straight from
+       shared/design-system.css, which this file @imports above.
+       They were previously re-declared here as
+       "--radius-lg: var(--radius-lg)" etc. — self-referential custom
+       properties, which the CSS Variables spec makes invalid at
+       computed-value time. Because this :root block is evaluated after
+       the @import, those no-ops shadowed the real values, so every
+       border-radius: var(--radius-lg) in the cascade resolved to invalid
+       and the declaration was dropped — silently flattening every rounded
+       corner on every public page to 0. Do not re-add them. */
 
     --shadow-sm:0 2px 10px rgba(18,32,58,.06);
     --shadow-md:0 14px 32px rgba(18,32,58,.10);

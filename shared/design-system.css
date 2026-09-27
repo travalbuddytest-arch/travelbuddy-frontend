@@ -103,6 +103,61 @@
 }
 
 /* ============================================================
+   LEGACY "tb-*" TOKEN BRIDGE
+   ----------------------------------------------------------
+   The public pages (about, team, support, contact, seo-*) and
+   design-system.css itself reference a --tb-* token family that
+   was never defined in this file — it only exists in the
+   dashboard-scoped stylesheets (user-dashboard/css/common.css,
+   admin_dashboard/css/admin.css), which public pages do not load.
+
+   Undefined custom properties invalidate the *entire* declaration
+   they appear in, so this was not a subtle tint problem:
+     .btn-primary { background: linear-gradient(135deg, var(--tb-primary), var(--tb-accent)); }
+   resolved to an invalid background (transparent), leaving white
+   label text on a transparent button — invisible CTAs across every
+   public page. Borders, shadows and hover transitions were lost the
+   same way, which is what made these pages read as flat and unstyled.
+
+   Everything below aliases to the --cp-* palette defined above, so
+   the two families cannot drift. Values match user-dashboard's
+   --tb-primary (#0D6EFD) to keep the public and dashboard surfaces
+   visually identical.
+   ============================================================ */
+:root {
+    --tb-primary: #0d6efd;
+    --tb-primary-dark: #0b5ed7;
+    --tb-accent: #3d8bff;
+    --tb-primary-light: #eef5ff;
+
+    --tb-surface: #ffffff;
+    --tb-bg: #f7f9fc;
+    --tb-bg-alt: #f2f7ff;
+    --tb-border: #e6ecf9;
+    --tb-bg-blue: #d8eafe;
+    --tb-bg-navy: #0b213f;
+    --tb-navy: #0b213f;
+
+    --tb-ink: #12203a;
+    --tb-ink-soft: #33415c;
+    --tb-muted: #667797;
+
+    --tb-success: #16803c;
+    --tb-warning: #f5a524;
+    --tb-danger: #dc2626;
+
+    --tb-shadow-l1: 0 4px 12px rgba(18, 32, 58, 0.05);
+    --tb-shadow-l2: 0 12px 24px rgba(18, 32, 58, 0.08);
+    --tb-shadow-l3: 0 24px 48px rgba(18, 32, 58, 0.12);
+
+    --tb-radius-md: 16px;
+    --tb-radius-full: 9999px;
+    --tb-perspective: 1200px;
+    --tb-speed: 0.4s;
+    --tb-transition: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ============================================================
    PREMIUM BACKGROUND SYSTEM
    ============================================================ */
 
