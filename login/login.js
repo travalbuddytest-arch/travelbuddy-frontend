@@ -347,10 +347,17 @@
   // ---------- Google login ----------
   async function handleGoogleCredential(idToken) {
     try {
+      // credentials: 'include' is REQUIRED here. The API is cross-origin
+      // (api.carryparcel.in), so without it the browser silently discards the
+      // Set-Cookie: carryparcel_session=... on the response. The whole session
+      // model is cookie-only (see authHeaders() in user-dashboard/js/common.js —
+      // no Authorization header is sent), so the user would land on the
+      // dashboard with no session and get bounced straight back to login.
       const apiResponse = await fetch(`${API_BASE}/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken }),
+        credentials: 'include',
       });
       const data = await parseResponse(apiResponse);
       if (!apiResponse.ok) {
@@ -358,8 +365,13 @@
         return;
       }
       try {
-      const userObj = { ...data.user, role: data.role || 'user' };
+        const userObj = { ...data.user, role: data.role || 'user' };
         localStorage.setItem('carryParcelUser', JSON.stringify(userObj));
+        // auth-guard.js's synchronous hasSession() gates every user-dashboard
+        // page on this exact flag, and /api/auth/me is the only async fallback.
+        // Omitting it makes the guard redirect back here the moment
+        // goToDashboard() navigates — i.e. right after the account is selected.
+        localStorage.setItem('carryParcelLoggedIn', 'true');
         clearLoginState();
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
