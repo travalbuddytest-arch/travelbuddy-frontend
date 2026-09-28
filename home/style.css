@@ -1863,7 +1863,7 @@ body.nav-open{
     position: relative;
     border-radius: var(--radius-xl, 32px);
     overflow: hidden;
-    background: url('../images/hero-back.jpg') no-repeat center center;
+    background: url('../images/hero-back.webp') no-repeat center center;
     background-size: cover;
     box-shadow: var(--cp-shadow-l4);
 }
