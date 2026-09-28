@@ -165,7 +165,7 @@
     // Global App Promotion Banner
     function initAppPromoBanner() {
         var DISMISSED_KEY = 'carryparcel_app_promo_dismissed';
-        var ALLOWED_PAGES = ['home', 'about', 'support', 'contact'];
+        var ALLOWED_PAGES = ['home', 'about', 'team', 'support', 'contact'];
         var currentPage = document.body.getAttribute('data-page');
 
         if (localStorage.getItem(DISMISSED_KEY) === 'true') return;

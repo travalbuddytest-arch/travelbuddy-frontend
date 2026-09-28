@@ -5,6 +5,8 @@
 # search engines at the clean version.
 /about            /about/about.html                          200
 /about/           /about/about.html                          200
+/team             /team/team.html                            200
+/team/            /team/team.html                            200
 /contact          /contact/contact.html                      200
 /contact/         /contact/contact.html                      200
 /support          /support/support.html                      200
