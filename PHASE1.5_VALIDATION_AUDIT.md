@@ -316,7 +316,7 @@ POST /api/contact/submit
 ### Implementation Checklist
 
 - [ ] Design `/api/contact/submit` endpoint
-- [ ] Add email notification handler (SendGrid, SMTP, etc.)
+- [ ] Add email notification handler (SMTP, etc.)
 - [ ] Add validation on backend (rate limiting, spam filters)
 - [ ] Update `contact.js` to make real API call
 - [ ] Test form submission end-to-end

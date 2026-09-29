@@ -109,7 +109,7 @@ const revealSelectors = [
     '.trusted-text', '.trusted-image',
     '.affordable-text', '.affordable-image',
     '.delivered-text', '.delivered-image',
-    '.features h2', '.workflow h2', '.trust-orbit h2', '.safety-orbit-img', '.platform-ways h2',
+    '.features h2', '.workflow h2', '.workflow-heading', '.workflow-heading h2', '.why-choose-header', '.why-choose-header h2', '.trust-orbit h2', '.safety-orbit-img', '.platform-ways h2',
     '.safety-content h2', '.safety-item',
     '.smart-matching-heading', '.route-card',
     '.about-image', '.about-content h4',

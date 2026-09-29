@@ -11,7 +11,7 @@
 CarryParcel is a community peer-to-peer delivery platform consisting of:
 1. **Web Application**: Static progressive web app hosted on Firebase Hosting with official domain `https://www.carryparcel.in/`.
 2. **Android Application**: Native Jetpack Compose Android client with Google Maps and real-time Socket.IO tracking.
-3. **Backend API Server**: Node.js Express server on Render (`https://api.carryparcel.in`) with MongoDB database, Twilio SMS verification, Razorpay wallet payments, and Gemini AI RAG assistant.
+3. **Backend API Server**: Node.js Express server on Render (`https://api.carryparcel.in`) with MongoDB database, email-based OTP verification, Razorpay wallet payments, and Gemini AI RAG assistant.
 4. **Model Context Protocol (MCP) Server**: First-party MCP discovery endpoint at `/.well-known/mcp` and live JSON-RPC/SSE endpoint at `/mcp`.
 
 *Note: Technical identifiers have been updated to com.carryparcel.app for consistency.*

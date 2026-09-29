@@ -707,7 +707,17 @@ body.nav-open{
 
 .workflow-heading h2 {
     font-size: clamp(32px, 5vw, 48px);
-    margin: 5px 0 20px;
+    font-weight: 800;
+    color: var(--cp-navy, #0b213f);
+    margin: 5px 0 16px;
+    letter-spacing: -0.02em;
+}
+
+.workflow-heading p {
+    font-size: clamp(0.975rem, 1.15vw, 1.1rem);
+    line-height: 1.6;
+    color: var(--cp-ink-soft, #475569);
+    margin: 0 auto;
 }
 
 .timeline-3d {
