@@ -1,5 +1,14 @@
 /* CarryParcel Support — main content only. Navbar/footer styles remain in shared files. */
 .support-page { background: #f7f9fc; color: #18243a; }
+.support-page .hidden,
+.support-page .hidden.show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: none;
+  animation: none;
+  will-change: auto;
+}
 .cp-support-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
 .cp-support-section { padding: 72px 0; }
 .cp-support-hero { position: relative; overflow: hidden; background: linear-gradient(135deg, #f7faff 0%, #eef5ff 100%); border-bottom: 1px solid #e3eaf4; }
