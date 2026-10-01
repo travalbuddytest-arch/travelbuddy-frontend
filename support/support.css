@@ -1,13 +1,58 @@
 /* CarryParcel Support — main content only. Navbar/footer styles remain in shared files. */
+body.support-page,
 .support-page { background: #f7f9fc; color: #18243a; }
-.support-page .hidden,
-.support-page .hidden.show {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition: none;
-  animation: none;
-  will-change: auto;
+
+/* Scope instant 100% visibility strictly to main Support page content */
+body.support-page main,
+body.support-page main section,
+body.support-page main div,
+body.support-page main article,
+body.support-page main a,
+body.support-page main p,
+body.support-page main h1,
+body.support-page main h2,
+body.support-page main h3,
+body.support-page main details,
+body.support-page main summary {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.support-page main .hidden,
+body.support-page main .hidden.show,
+body.support-page main [class*="hidden"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Ensure cookie modals and backdrops are hidden when not active */
+body.support-page .cp-notice-modal:not(.show),
+body.support-page .cp-banner-bar:not(.show),
+body.support-page .cp-banner-backdrop:not(.show),
+body.support-page .tb-cookie-modal:not(.show),
+body.support-page .tb-cookie-banner:not(.show),
+body.support-page .tb-cookie-backdrop:not(.show) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+/* Modal close button pointer-events and high z-index override */
+.cp-notice-close,
+.tb-cookie-close,
+.cp-banner-btn,
+.tb-cookie-btn,
+.cp-notice-modal-actions,
+.tb-cookie-modal-actions {
+  position: relative !important;
+  z-index: 100000 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }
 .cp-support-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
 .cp-support-section { padding: 72px 0; }

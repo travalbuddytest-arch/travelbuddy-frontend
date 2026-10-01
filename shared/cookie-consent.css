@@ -26,8 +26,14 @@
 .tb-cookie-option{display:flex;gap:14px;justify-content:space-between;padding:16px 0;border-top:1px solid var(--tb-cookie-border)}.tb-cookie-option:first-of-type{margin-top:18px}.tb-cookie-option h3{margin:0 0 4px;font-size:15px}.tb-cookie-option p{margin:0;color:var(--tb-cookie-muted);font-size:13px;line-height:1.45}
 .tb-cookie-always{font-size:12px;font-weight:800;color:#087443}.tb-cookie-switch{position:relative;width:46px;height:26px;flex:0 0 auto}.tb-cookie-switch input{opacity:0;width:0;height:0}.tb-cookie-slider{position:absolute;inset:0;background:#cfd6e2;border-radius:99px;cursor:pointer;transition:.2s}.tb-cookie-slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}.tb-cookie-switch input:checked+.tb-cookie-slider{background:var(--tb-cookie-blue)}.tb-cookie-switch input:checked+.tb-cookie-slider:before{transform:translateX(20px)}
 .tb-cookie-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
-.tb-cookie-settings-link{position:fixed;right:16px;bottom:16px;z-index:99990;border:1px solid var(--tb-cookie-border);background:#fff;color:#344054;border-radius:999px;padding:9px 14px;box-shadow:0 8px 24px rgba(15,23,42,.12);font:inherit;font-size:12px;font-weight:700;cursor:pointer;display:none}
-.tb-cookie-settings-link.show{display:block}
+.tb-cookie-settings-link,
+#tbCookieSettings,
+.tb-cookie-manage {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 @keyframes tbCookieUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(max-width:760px){.tb-cookie-banner{padding:18px 16px 16px}.tb-cookie-row{flex-direction:column;align-items:stretch;gap:14px}.tb-cookie-actions{justify-content:stretch}.tb-cookie-btn{flex:1}.tb-cookie-settings-link{right:10px;bottom:10px}}
 @media(max-width:760px){.tb-cookie-modal{left:12px;right:12px;top:12px;bottom:12px;transform:none;width:auto;max-height:none}.tb-cookie-modal.show{transform:none}}

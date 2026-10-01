@@ -55,16 +55,14 @@
 
 .cp-notice-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
 
-/* "Manage Cookies" re-open pill — shown once a choice has been saved. */
-.cp-banner-reopen{position:fixed;right:16px;bottom:16px;z-index:99990;border:1px solid var(--cp-banner-border);background:#fff;color: var(--text-primary, #17233d);border-radius: var(--radius-md, 12px);padding:9px 16px;box-shadow:0 8px 24px rgba(15,23,42,.12);font:inherit;font-size:12px;font-weight:700;cursor:pointer;display:none;align-items:center;gap:8px;transition:transform .18s ease,box-shadow .18s ease}
-.cp-banner-reopen svg{flex:0 0 auto; color: var(--cp-banner-accent); }
-.cp-banner-reopen.show{display:inline-flex;animation:cpReopenPop .4s cubic-bezier(.2,1.4,.4,1)}
-.cp-banner-reopen:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,.18)}
-.cp-banner-reopen:active{transform:translateY(0) scale(.96)}
-
-/* Helper to hide cookie pill on dashboards */
-body.cp-hide-cookie-pill .cp-banner-reopen {
+/* "Manage Cookies" re-open pill — hidden across all pages. */
+.cp-banner-reopen,
+#cpBannerReopen,
+.cp-banner-manage {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 @keyframes cpBannerSlideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
