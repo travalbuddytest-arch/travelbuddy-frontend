@@ -2,6 +2,16 @@
 body.support-page,
 .support-page { background: #f7f9fc; color: #18243a; }
 
+/* Establish dedicated stacking layer above injected background (.cp-bg-system at z-index: 0) */
+body.support-page main,
+body.support-page main.support-page,
+body.support-page .cp-support-section,
+body.support-page .cp-support-hero,
+body.support-page .cp-support-contact-strip {
+  position: relative;
+  z-index: 1;
+}
+
 /* Scope instant 100% visibility strictly to main Support page content */
 body.support-page main,
 body.support-page main section,
