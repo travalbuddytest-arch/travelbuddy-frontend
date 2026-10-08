@@ -6,11 +6,25 @@
   let isScanning = false;
   let isScanDone = false;
   let modalKeydownHandler = null;
+  let videoObserver = null;
   let scanResolve = null;
   let scanReject = null;
 
   function getVideoElement() {
     return activeModal?.querySelector('#qr-reader video') || document.querySelector('#qr-reader video');
+  }
+
+  function prepareVideo(video) {
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('autoplay', '');
+    video.setAttribute('muted', '');
+    video.playsInline = true;
+    video.muted = true;
+    video.autoplay = true;
+    video.style.display = 'block';
+    video.style.opacity = '1';
+    video.style.visibility = 'visible';
   }
 
   function describeCameraError(err) {
@@ -32,7 +46,7 @@
       return 'The camera is already in use by another app or browser tab.';
     }
     if (name === 'OverconstrainedError') {
-      return 'This camera does not support the requested mode. Trying an available camera.';
+      return 'This device could not start a camera in the requested mode.';
     }
     if (name === 'SecurityError') {
       return 'Camera access requires a secure connection (HTTPS or localhost).';
@@ -44,16 +58,6 @@
       return 'Camera access requires a secure connection (HTTPS or localhost).';
     }
     return message || 'Camera initialization failed';
-  }
-
-  function getCameraCandidates() {
-    return [
-      { facingMode: { ideal: 'environment' } },
-      { facingMode: 'environment' },
-      { facingMode: { ideal: 'user' } },
-      { facingMode: 'user' },
-      { video: true }
-    ];
   }
 
   const QRScanner = {
@@ -70,31 +74,60 @@
         console.warn('MediaDevices.getUserMedia is not available in this browser');
         return false;
       }
-      if (navigator.mediaDevices.enumerateDevices) {
-        navigator.mediaDevices.enumerateDevices().then((devices) => {
-          const videoInputs = devices.filter((device) => device.kind === 'videoinput');
-          console.info('[QRScanner] Video input devices found:', videoInputs.length);
-        }).catch((err) => {
-          console.warn('[QRScanner] enumerateDevices check failed:', err);
-        });
-      }
       return true;
     },
 
-    async startReaderWithFallback(reader, onResult) {
-      let lastError = null;
+    async startReaderWithFallback(onResult) {
+      const readerElement = activeModal?.querySelector('#qr-reader');
+      if (!readerElement) {
+        throw new Error('QR scanner preview element was not created.');
+      }
 
-      for (const cameraConfig of getCameraCandidates()) {
+      let cameras = [];
+      try {
+        cameras = await window.Html5Qrcode.getCameras();
+      } catch (err) {
+        console.warn('[QRScanner] Camera enumeration failed:', err);
+      }
+
+      const videoInputs = Array.isArray(cameras)
+        ? cameras.filter((camera) => camera?.id)
+        : [];
+      console.info('[QRScanner] Video input devices found:', videoInputs.length);
+      const rearCamera = videoInputs.find((camera) => /back|rear|environment/i.test(camera.label || ''));
+      const cameraOptions = rearCamera
+        ? [rearCamera.id, ...videoInputs.filter((camera) => camera.id !== rearCamera.id).map((camera) => camera.id)]
+        : [
+            { facingMode: { ideal: 'environment' } },
+            ...videoInputs.map((camera) => camera.id)
+          ];
+
+      if (cameraOptions.length === 0) {
+        cameraOptions.push({ facingMode: { ideal: 'environment' } });
+      }
+      cameraOptions.push({ facingMode: { ideal: 'user' } });
+
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      let lastError = null;
+      videoObserver = new MutationObserver(() => {
+        const video = getVideoElement();
+        if (video) prepareVideo(video);
+      });
+      videoObserver.observe(readerElement, { childList: true, subtree: true });
+
+      for (const cameraOption of cameraOptions) {
+        const reader = new window.Html5Qrcode('qr-reader');
+        activeScanner = reader;
+
         try {
           await reader.start(
-            cameraConfig,
-            { fps: 10, qrbox: { width: 250, height: 250 } },
+            cameraOption,
+            config,
             (decodedText) => {
+              if (isScanDone) return;
               isScanDone = true;
               this.stopScan().catch(() => {});
-              if (typeof onResult === 'function') {
-                onResult(decodedText);
-              }
+              if (typeof onResult === 'function') onResult(decodedText);
               if (scanResolve) {
                 const result = decodedText?.trim();
                 scanResolve(result || decodedText);
@@ -106,14 +139,51 @@
               // Ignore decode noise while scanning.
             }
           );
+
+          const video = getVideoElement();
+          if (!video) {
+            throw new Error('Camera started, but the video preview was not created.');
+          }
+
+          prepareVideo(video);
+          await video.play();
+          videoObserver.disconnect();
+          videoObserver = null;
+          const hint = activeModal?.querySelector('.qr-scanner-hint');
+          if (hint) hint.textContent = 'Position the QR code within the frame';
           return;
         } catch (err) {
           lastError = err;
-          console.warn('[QRScanner] Camera config failed:', cameraConfig, describeCameraError(err));
+          console.warn('[QRScanner] Camera startup failed:', {
+            camera: typeof cameraOption === 'string' ? 'device ID' : cameraOption,
+            ...{
+              name: err?.name || 'UnknownError',
+              message: err?.message || String(err),
+              constraint: err?.constraint || null,
+              code: err?.code || null
+            }
+          });
+
+          try {
+            await reader.stop();
+          } catch (stopError) {
+            // A failed start may leave the scanner stopped already.
+          }
+          try {
+            await reader.clear();
+          } catch (clearError) {
+            console.warn('[QRScanner] Failed to clear a camera after startup failure:', clearError);
+          }
+          readerElement.replaceChildren();
+
+          if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError' ||
+              err?.name === 'NotReadableError' || err?.name === 'SecurityError') {
+            break;
+          }
         }
       }
 
-      throw lastError || new Error('Camera initialization failed');
+      throw lastError || new Error('No usable camera was found on this device.');
     },
 
     async startScan(onResult) {
@@ -135,6 +205,8 @@
         const modal = this.createModal();
         activeModal = modal;
         document.body.appendChild(modal);
+        const hint = modal.querySelector('.qr-scanner-hint');
+        if (hint) hint.textContent = 'Starting camera…';
 
         const closeBtn = modal.querySelector('#qr-scanner-close');
         closeBtn?.focus();
@@ -147,24 +219,7 @@
         };
         document.addEventListener('keydown', modalKeydownHandler);
 
-        const reader = new window.Html5Qrcode('qr-reader');
-        activeScanner = reader;
-
-        this.startReaderWithFallback(reader, onResult).then(() => {
-          const videoEl = getVideoElement();
-          if (videoEl) {
-            videoEl.setAttribute('playsinline', 'true');
-            videoEl.setAttribute('autoplay', 'true');
-            videoEl.muted = true;
-            videoEl.playsInline = true;
-            videoEl.style.display = 'block';
-            videoEl.style.opacity = '1';
-            videoEl.style.visibility = 'visible';
-            videoEl.play().catch((playErr) => {
-              console.warn('QR video playback warning:', playErr);
-            });
-          }
-        }).catch((err) => {
+        this.startReaderWithFallback(onResult).catch((err) => {
           const friendlyMessage = describeCameraError(err);
           this.stopScan({ cancelled: false, reason: friendlyMessage }).catch(() => {});
           if (scanReject) {
@@ -185,6 +240,10 @@
       if (modalKeydownHandler) {
         document.removeEventListener('keydown', modalKeydownHandler);
         modalKeydownHandler = null;
+      }
+      if (videoObserver) {
+        videoObserver.disconnect();
+        videoObserver = null;
       }
 
       if (scanner && typeof scanner.stop === 'function') {
@@ -262,7 +321,7 @@
             </div>
           </div>
           <div class="qr-scanner-footer">
-            <p class="qr-scanner-hint">Position the QR code within the frame</p>
+            <p class="qr-scanner-hint">Starting camera…</p>
             <button type="button" class="btn-ghost qr-scanner-toggle-flash" id="qrScannerToggleFlash">
               <i class="fa-solid fa-bolt"></i> Toggle Flash
             </button>
