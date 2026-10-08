@@ -15,10 +15,6 @@
   const trackSubmitBtn = document.getElementById('trackSubmitBtn');
   const pasteBtn = document.getElementById('pasteBtn');
 
-  // URL params
-  const urlParams = new URLSearchParams(window.location.search);
-  const action = urlParams.get('action');
-
   const detOrderId = document.getElementById('detOrderId');
   const detAcceptedTime = document.getElementById('detAcceptedTime');
   const detStatusPill = document.getElementById('detStatusPill');
@@ -39,6 +35,7 @@
   let map = null;
   let travelerMarker = null;
   let firestoreUnsubscribe = null;
+  let latestTrackRequest = 0;
 
   // ---------- State Management & Routing ----------
 
@@ -82,31 +79,33 @@
   }
 
   async function handleTrackRequest(id) {
-    const parcelId = String(id || '').trim().toUpperCase();
+    const parcelId = String(id || '').trim();
     if (!parcelId) return window.showToast('Please enter a parcel ID.', 'warning');
 
+    const requestId = ++latestTrackRequest;
+    const normalizedId = parcelId.startsWith('TB-') ? parcelId.toUpperCase() : parcelId;
     showView('loading');
     resetState();
 
     try {
-      // Try by Order ID first
-      const res = await fetch(`${API_BASE}/track/order/${encodeURIComponent(parcelId)}`, authFetchOptions());
+      const isObjectId = /^[a-f\d]{24}$/i.test(normalizedId);
+      const endpoint = isObjectId
+        ? `${API_BASE}/tracking/${encodeURIComponent(normalizedId)}`
+        : `${API_BASE}/track/order/${encodeURIComponent(normalizedId)}`;
+      const res = await fetch(endpoint, authFetchOptions());
       const data = await res.json();
+      if (requestId !== latestTrackRequest) return;
+      if (!res.ok) throw new Error(data.error || 'Unable to load current tracking information.');
+      if (!data.parcel) throw new Error('Unable to load current tracking information.');
 
-      if (!res.ok) {
-         // If not found by Order ID, try by internal ID (fallback for deep links)
-         const res2 = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelId)}`, authFetchOptions());
-         const data2 = await res2.json();
-         if (!res2.ok) throw new Error(data2.error || 'Parcel not found.');
-         renderTrackingDetails(data2.parcel);
-         updateUrl(data2.parcel.parcelNumber || data2.parcel.id);
-      } else {
-         renderTrackingDetails(data.parcel);
-         updateUrl(parcelId);
-      }
+      renderTrackingDetails(data.parcel);
+      updateUrl(data.parcel.parcelNumber || data.parcel.id);
     } catch (err) {
+      if (requestId !== latestTrackRequest) return;
       console.error(err);
-      window.showToast(err.message || 'Unable to load tracking details.', 'error');
+      alertBox.textContent = err.message || 'Unable to load current tracking information.';
+      alertBox.classList.remove('hidden');
+      window.showToast(alertBox.textContent, 'error');
       showView('search');
     }
   }
@@ -131,71 +130,39 @@
 
   function renderTrackingDetails(p) {
     if (!p) return;
+    if (!Array.isArray(p.trackingTimeline) || !p.status) {
+      throw new Error('Unable to load current tracking information.');
+    }
     selectedId = p.id;
     showView('details');
 
     detOrderId.textContent = p.parcelNumber || p.id;
-    detAcceptedTime.textContent = p.acceptedAt ? `Accepted on ${formatDate(p.acceptedAt, { day: '2-digit', month: 'short', year: 'numeric' })}` : 'Waiting for traveler acceptance';
+    const acceptedStage = p.trackingTimeline.find((stage) => stage.key === 'accepted');
+    detAcceptedTime.textContent = acceptedStage?.state === 'done'
+      ? (acceptedStage.time ? `Accepted on ${formatDate(acceptedStage.time, { day: '2-digit', month: 'short', year: 'numeric' })}` : 'Traveler accepted')
+      : 'Waiting for traveler acceptance';
 
-    detStatusPill.textContent = (p.status || 'Pending').replace(/_/g, ' ');
-    detStatusLabel.textContent = p.statusLabel || 'Processing';
+    detStatusPill.textContent = p.status.replace(/_/g, ' ');
+    detStatusLabel.textContent = p.statusLabel || p.status.replace(/_/g, ' ');
 
     // Timeline Rendering
     renderTimelineV3(p);
 
     // Live Tracking
-    if (p.status === 'in_transit' && p.travelerId) {
+    if (['in_transit', 'delivery_point_pending', 'delivery_point_selected'].includes(p.status) && p.travelerId) {
       observeLiveTracking(p.travelerId);
     } else {
       mapContainer.classList.add('hidden');
     }
   }
 
-  const TIMELINE_STAGES = [
-    { key: 'posted', title: 'Parcel Posted', icon: 'fa-box', status: 'pending' },
-    { key: 'accepted', title: 'Traveler Accepted', icon: 'fa-handshake', status: 'accepted' },
-    { key: 'pickup_point', title: 'Pickup Point', icon: 'fa-location-dot', status: 'pickup_point_selected' },
-    { key: 'pickup_confirmed', title: 'Pickup Confirmed', icon: 'fa-box-open', status: 'pickup_confirmed' },
-    { key: 'in_transit', title: 'In Transit', icon: 'fa-truck-fast', status: 'in_transit' },
-    { key: 'delivery_point', title: 'Delivery Point Selection', icon: 'fa-map-pin', status: 'delivery_point_selected' },
-    { key: 'delivered', title: 'Delivered Successfully', icon: 'fa-circle-check', status: 'delivered' }
-  ];
-
-  const statusMap = {
-    'pending': 0,
-    'accepted': 1,
-    'pickup_point_pending': 1,
-    'pickup_point_selected': 2,
-    'pickup_confirmed': 3,
-    'in_transit': 4,
-    'delivery_point_pending': 4,
-    'delivery_point_selected': 5,
-    'delivered': 6,
-    'cancelled': -1,
-    'disputed': 4
-  };
-
   function renderTimelineV3(p) {
-    const currentIdx = statusMap[p.status] ?? 0;
-    const isCancelled = p.status.includes('cancelled');
-
-    journeyTimeline.innerHTML = TIMELINE_STAGES.map((stage, idx) => {
-      let state = 'pending';
-      let time = 'Pending';
+    journeyTimeline.innerHTML = p.trackingTimeline.map((stage) => {
+      const state = stage.state;
+      const time = stage.time
+        ? formatDate(stage.time)
+        : (state === 'done' ? 'Completed' : (state === 'skipped' ? 'Not reached' : 'Pending'));
       let details = '';
-
-      if (idx < currentIdx || (p.status === 'delivered' && idx === 6)) {
-        state = 'done';
-      } else if (idx === currentIdx && !isCancelled) {
-        state = 'current';
-      }
-
-      // Resolve Timestamps
-      if (idx === 0) time = formatDate(p.createdAt);
-      else if (idx === 1 && p.acceptedAt) time = formatDate(p.acceptedAt);
-      else if (idx === 3 && p.pickupConfirmedAt) time = formatDate(p.pickupConfirmedAt);
-      else if (idx === 4 && p.inTransitAt) time = formatDate(p.inTransitAt);
-      else if (idx === 6 && p.deliveredAt) time = formatDate(p.deliveredAt);
 
       // Special Stage: Pickup Point
       if (stage.key === 'pickup_point' && p.pickupPoint) {
@@ -211,7 +178,6 @@
                   </div>
                 </div>
               `;
-              if (state === 'pending' && currentIdx >= 2) state = 'done';
           }
       }
 
@@ -227,17 +193,14 @@
                   </div>
                 </div>
               `;
-              if (state === 'pending' && currentIdx >= 5) state = 'done';
           }
       }
-
-      const icon = state === 'done' ? 'fa-check' : (stage.key === 'delivered' ? 'fa-flag-checkered' : stage.icon);
 
       return `
         <div class="timeline-step ${state}">
           <div class="step-dot">${state === 'done' ? '<i class="fa-solid fa-check"></i>' : ''}</div>
           <div class="step-content">
-            <h4>${stage.title}</h4>
+            <h4>${escapeHTML(stage.title)}</h4>
             <p>${time === 'Pending' ? '<span style="opacity:0.6">Pending</span>' : escapeHTML(time)}</p>
             ${details}
           </div>
@@ -245,17 +208,16 @@
       `;
     }).join('');
 
-    if (isCancelled) {
-        journeyTimeline.insertAdjacentHTML('beforeend', `
-            <div class="timeline-step failed">
-              <div class="step-dot"><i class="fa-solid fa-xmark"></i></div>
+    if (p.trackingTerminal) {
+      const terminal = p.trackingTerminal;
+      const isCancelled = terminal.key === 'cancelled';
+      journeyTimeline.insertAdjacentHTML('beforeend', `
+            <div class="timeline-step ${terminal.state}">
+              <div class="step-dot"><i class="fa-solid ${isCancelled ? 'fa-xmark' : 'fa-circle-exclamation'}"></i></div>
               <div class="step-content">
-                <h4>Parcel Cancelled</h4>
-                <p>${formatDate(p.cancelledAt || p.updatedAt)}</p>
-                <div class="step-detail" style="color:var(--error); border-color:var(--error);">
-                  <i class="fa-solid fa-circle-exclamation"></i>
-                  <div>Reason: ${escapeHTML(p.cancellationReason || 'User cancelled')}</div>
-                </div>
+                <h4>${escapeHTML(terminal.title)}</h4>
+                <p>${terminal.time ? formatDate(terminal.time) : 'Time unavailable'}</p>
+                ${isCancelled ? `<div class="step-detail" style="color:var(--error); border-color:var(--error);"><i class="fa-solid fa-circle-exclamation"></i><div>Reason: ${escapeHTML(p.cancellationReason || 'Not provided')}</div></div>` : ''}
               </div>
             </div>
         `);
@@ -411,6 +373,12 @@
     const data = e.detail;
     if (selectedId && (String(data.parcelId) === String(selectedId))) {
       console.log('[Track] Parcel status updated remotely, refreshing details...');
+      handleTrackRequest(selectedId);
+    }
+  });
+  document.addEventListener('travelbuddy:notification', (e) => {
+    const parcelId = e.detail?.parcelId || e.detail?.relatedParcel;
+    if (selectedId && String(parcelId || '') === String(selectedId)) {
       handleTrackRequest(selectedId);
     }
   });

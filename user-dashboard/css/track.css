@@ -125,6 +125,8 @@
 }
 .timeline-step.done .step-dot { background: var(--success); color: #fff; border-color: var(--surface); }
 .timeline-step.current .step-dot { background: #fff; color: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 4px rgba(13,110,253,0.12); }
+.timeline-step.skipped { opacity: 0.55; }
+.timeline-step.failed .step-dot { background: var(--error); color: #fff; border-color: var(--surface); }
 .timeline-step.current .step-dot::after {
   content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--primary);
 }

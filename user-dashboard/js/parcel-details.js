@@ -82,6 +82,7 @@
 
   // State
   let parcelData = null;
+  let parcelLoadSequence = 0;
   let currentUserId = null;
   let currentOtpPurpose = 'pickup';
   let otpCooldownSeconds = 0;
@@ -175,6 +176,7 @@
       showError('No parcel specified. Please select a parcel from the list.');
       return;
     }
+    const requestId = ++parcelLoadSequence;
 
     if (window.TravelBuddySkeleton) {
         window.TravelBuddySkeleton.show('#detailsShell', 'parcel-details');
@@ -186,6 +188,7 @@
 
     try {
       const user = await window.TravelBuddy.getCurrentUser();
+      if (requestId !== parcelLoadSequence) return;
       currentUserId = user?._id || user?.id || '';
 
       const isOrderId = targetId.startsWith('TB-');
@@ -195,6 +198,7 @@
 
       const res = await fetch(url, authFetchOptions());
       const data = await res.json();
+      if (requestId !== parcelLoadSequence) return;
 
       if (!res.ok) {
         showError(data.error || 'You are not authorized to view this parcel or it does not exist.');
@@ -204,9 +208,11 @@
       parcelData = data.parcel;
       renderDetails(parcelData);
     } catch (err) {
+      if (requestId !== parcelLoadSequence) return;
       console.error('Failed to load parcel details:', err);
       showError('Could not reach the server to load parcel details.');
     } finally {
+      if (requestId !== parcelLoadSequence) return;
       const loader = detailsLoading();
       if (loader) loader.classList.add('hidden');
       // Ensure skeleton is hidden even on error
@@ -227,6 +233,10 @@
 
   function renderDetails(p) {
     if (!p) return;
+    if (!Array.isArray(p.trackingTimeline)) {
+      showError('Current tracking information is unavailable.');
+      return;
+    }
 
     if (window.TravelBuddySkeleton) {
         window.TravelBuddySkeleton.hide('#detailsShell');
@@ -502,37 +512,49 @@
   }
 
   function renderTimeline(p) {
-    const s = p.status;
     const timelineStepsList = ui('timelineStepsList');
     if (!timelineStepsList) return;
 
-    const stages = [
-      { id: 'posted', title: 'Parcel Posted', time: p.createdAt, done: true },
-      { id: 'accepted', title: 'Accepted by Traveler', time: p.acceptedAt, done: ['accepted', 'pickup_point_pending', 'pickup_point_selected', 'pickup_confirmed', 'in_transit', 'delivery_point_pending', 'delivery_point_selected', 'delivered'].includes(s) },
-      { id: 'pickup', title: 'Pickup Confirmed', time: p.pickupConfirmedAt, done: ['pickup_confirmed', 'in_transit', 'delivery_point_pending', 'delivery_point_selected', 'delivered'].includes(s) },
-      { id: 'transit', title: 'In Transit', time: p.inTransitAt, done: ['in_transit', 'delivery_point_pending', 'delivery_point_selected', 'delivered'].includes(s) },
-      { id: 'delivered', title: s.includes('cancel') ? 'Cancelled' : 'Delivered & Completed', time: s.includes('cancel') ? p.cancelledAt : p.deliveredAt, done: ['delivered', 'cancelled', 'cancelled_by_sender', 'cancelled_by_traveler', 'cancelled_by_system'].includes(s) }
-    ];
+    const stageByKey = new Map(p.trackingTimeline.map((stage) => [stage.key, stage]));
+    const visibleStageKeys = ['posted', 'accepted', 'pickup_confirmed', 'in_transit', 'delivered'];
+    const rows = visibleStageKeys.map((key) => {
+      const stage = stageByKey.get(key);
+      if (!stage) return '';
 
-    timelineStepsList.innerHTML = stages.map((st, idx) => {
-      let itemClass = '';
-      if (st.done) itemClass = 'is-done';
-      else if (idx > 0 && stages[idx - 1].done) itemClass = 'is-current';
-
-      const icon = st.done
+      const itemClass = stage.state === 'done'
+        ? 'is-done'
+        : (stage.state === 'current' ? 'is-current' : (stage.state === 'skipped' ? 'is-skipped' : ''));
+      const icon = stage.state === 'done'
         ? '<i class="fa-solid fa-check"></i>'
-        : (itemClass === 'is-current' ? '<i class="fa-solid fa-circle"></i>' : '<i class="fa-regular fa-circle"></i>');
+        : (stage.state === 'current' ? '<i class="fa-solid fa-circle"></i>' : '<i class="fa-regular fa-circle"></i>');
+      const time = stage.time
+        ? formatDateTime(stage.time)
+        : (stage.state === 'done' ? 'Completed' : (stage.state === 'skipped' ? 'Not reached' : 'Pending'));
 
       return `
         <div class="timeline-step-item ${itemClass}">
           <div class="timeline-step-icon">${icon}</div>
           <div class="timeline-step-body">
-            <h4 class="timeline-step-title">${escapeHTML(st.title)}</h4>
-            <span class="timeline-step-time">${escapeHTML(formatDateTime(st.time))}</span>
+            <h4 class="timeline-step-title">${escapeHTML(stage.title)}</h4>
+            <span class="timeline-step-time">${escapeHTML(time)}</span>
           </div>
         </div>
       `;
-    }).join('');
+    });
+
+    if (p.trackingTerminal) {
+      const isDisputed = p.trackingTerminal.key === 'disputed';
+      rows.push(`
+        <div class="timeline-step-item ${isDisputed ? 'is-current' : 'is-failed'}">
+          <div class="timeline-step-icon">${isDisputed ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-xmark"></i>'}</div>
+          <div class="timeline-step-body">
+            <h4 class="timeline-step-title">${escapeHTML(p.trackingTerminal.title)}</h4>
+            <span class="timeline-step-time">${escapeHTML(formatDateTime(p.trackingTerminal.time))}</span>
+          </div>
+        </div>
+      `);
+    }
+    timelineStepsList.innerHTML = rows.join('');
   }
 
   function renderContextualBanners(p, isSender) {
@@ -1405,6 +1427,11 @@
       String(notificationParcelId || '') === String(parcelData.id) ||
       e.detail?.text?.includes(parcelData.parcelNumber)
     )) {
+      loadParcelDetails();
+    }
+  });
+  document.addEventListener('travelbuddy:parcel-status', (e) => {
+    if (parcelData && String(e.detail?.parcelId || '') === String(parcelData.id)) {
       loadParcelDetails();
     }
   });
