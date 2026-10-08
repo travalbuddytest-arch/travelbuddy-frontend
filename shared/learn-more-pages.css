@@ -1,0 +1,340 @@
+/* =========================================================
+   CARRYPARCEL — DEDICATED LEARN MORE PAGES STYLESHEET
+   Safely scoped under .cp-learn-page to ensure zero side effects
+   on the shared navbar, shared footer, homepage, or other pages.
+   Immediate visibility rendering with no scroll/hover/JS triggers.
+   ========================================================= */
+
+.cp-learn-page {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8fafc;
+    color: #334155;
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+}
+
+.cp-learn-page .cp-learn-breadcrumb {
+    max-width: 1140px;
+    margin: 90px auto 0 auto;
+    padding: 16px 20px 0 20px;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.cp-learn-page .cp-learn-breadcrumb a {
+    color: #64748b;
+    text-decoration: none;
+}
+
+.cp-learn-page .cp-learn-breadcrumb a:hover {
+    color: #0d6efd;
+}
+
+/* Hero Section */
+.cp-learn-page .cp-learn-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 80px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cp-learn-page .cp-learn-hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    margin: 0 0 18px 0;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.cp-learn-page .cp-learn-hero p {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    max-width: 720px;
+    margin: 0 auto 30px auto;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.cp-learn-page .cp-learn-hero-btns {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.cp-learn-page .cp-learn-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.cp-learn-page .cp-learn-btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #3d8bff);
+    color: #ffffff;
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.25);
+}
+
+.cp-learn-page .cp-learn-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(13, 110, 253, 0.35);
+    color: #ffffff;
+}
+
+.cp-learn-page .cp-learn-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+}
+
+.cp-learn-page .cp-learn-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Feature Section Wrappers */
+.cp-learn-page .cp-learn-section {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 60px 20px;
+}
+
+.cp-learn-page .cp-learn-section.alt {
+    background: transparent;
+}
+
+.cp-learn-page .cp-learn-section h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+    text-align: center;
+}
+
+.cp-learn-page .cp-learn-section p.lead {
+    font-size: 1.05rem;
+    color: #64748b;
+    max-width: 760px;
+    margin: 0 auto 40px auto;
+    text-align: center;
+}
+
+/* Process Steps Grid */
+.cp-learn-page .cp-learn-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 30px;
+}
+
+.cp-learn-page .cp-learn-step {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 30px 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.cp-learn-page .cp-learn-step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    font-size: 1.1rem;
+}
+
+.cp-learn-page .cp-learn-step h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+}
+
+.cp-learn-page .cp-learn-step p {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Feature Cards Grid */
+.cp-learn-page .cp-learn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 30px;
+}
+
+.cp-learn-page .cp-learn-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 32px 26px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cp-learn-page .cp-learn-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+}
+
+.cp-learn-page .cp-learn-card i {
+    font-size: 2rem;
+    color: #0d6efd;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.cp-learn-page .cp-learn-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+}
+
+.cp-learn-page .cp-learn-card p {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* FAQ Section */
+.cp-learn-page .cp-learn-faq {
+    max-width: 800px;
+    margin: 30px auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cp-learn-page .cp-learn-faq-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.cp-learn-page .cp-learn-faq-item summary {
+    padding: 20px 24px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cp-learn-page .cp-learn-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.cp-learn-page .cp-learn-faq-item summary::after {
+    content: '+';
+    font-size: 1.4rem;
+    color: #0d6efd;
+}
+
+.cp-learn-page .cp-learn-faq-item[open] summary::after {
+    content: '−';
+}
+
+.cp-learn-page .cp-learn-faq-item p {
+    padding: 0 24px 20px 24px;
+    margin: 0;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+/* Cross-Links Row */
+.cp-learn-page .cp-learn-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.cp-learn-page .cp-learn-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 30px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #334155;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.cp-learn-page .cp-learn-links a:hover {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+
+/* CTA Band */
+.cp-learn-page .cp-learn-cta {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 24px;
+    padding: 60px 20px;
+    text-align: center;
+    color: #ffffff;
+    margin: 40px auto 80px auto;
+    max-width: 1140px;
+}
+
+.cp-learn-page .cp-learn-cta h2 {
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.cp-learn-page .cp-learn-cta p {
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 28px auto;
+}
+
+/* Focus outline */
+.cp-learn-page a:focus-visible,
+.cp-learn-page button:focus-visible {
+    outline: 3px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .cp-learn-page .cp-learn-section {
+        padding: 40px 16px;
+    }
+
+    .cp-learn-page .cp-learn-hero {
+        padding: 60px 16px;
+    }
+
+    .cp-learn-page .cp-learn-cta {
+        margin: 20px 16px 60px 16px;
+        padding: 40px 20px;
+    }
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About CarryParcel | Community-Powered Parcel Delivery</title>
+    <meta name="description" content="Learn how CarryParcel connects people who need to send parcels with travelers already traveling toward the same destination.">
+    <link rel="canonical" href="https://www.carryparcel.in/about/">
+    <meta property="og:title" content="About CarryParcel | Community-Powered Parcel Delivery">
+    <meta property="og:description" content="Learn how CarryParcel connects people who need to send parcels with travelers already traveling toward the same destination.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.carryparcel.in/about/">
+    <meta property="og:image" content="https://www.carryparcel.in/images/logo-horizontal.png">
+    <meta property="og:site_name" content="CarryParcel">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About CarryParcel | Community-Powered Parcel Delivery">
+    <meta name="twitter:description" content="Learn how CarryParcel connects people who need to send parcels with travelers already traveling toward the same destination.">
+    <meta name="twitter:image" content="https://www.carryparcel.in/images/logo-horizontal.png">
+    <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="stylesheet" href="../shared/design-system.css">
+    <link rel="stylesheet" href="../home/style.css">
+    <link rel="stylesheet" href="about.css?v=3">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../shared/navbar.css?v=8">
+    <link rel="stylesheet" href="../shared/footer.css">
+    <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+
+    <!-- Global Config & Auth (Required early for components) -->
+    <script src="../shared/config.js?v=1"></script>
+    <script src="../shared/auth-cookie-client.js?v=1"></script>
+    <script src="../shared/analytics-client.js?v=1"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "About CarryParcel",
+      "url": "https://www.carryparcel.in/about/",
+      "description": "Learn how CarryParcel connects people who need to send parcels with travelers already traveling toward the same destination.",
+      "mainEntity": {
+        "@type": "Organization",
+        "@id": "https://www.carryparcel.in/#organization",
+        "name": "CarryParcel",
+        "url": "https://www.carryparcel.in/"
+      }
+    }
+    </script>
+</head>
+
+<body data-page="about">
+
+<!-- ================= NAVBAR ================= -->
+<div id="tbNavbarInclude"></div>
+<!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
+<header class="cp-nav-header" data-v="7">
+    <div class="logo">
+        <a href="/" class="logo-link">
+            <img src="../images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
+        </a>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mainNav">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav id="mainNav">
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/" data-page="about">About</a>
+            <a href="/team/" data-page="team">Team</a>
+            <a href="/support/" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/" data-page="contact">Contact</a>
+        </div>
+
+        <div id="guestNavActions" class="guest-nav-actions">
+            <a href="/login/login.html" class="login-btn">Login</a>
+            <a href="/register/register.html" class="register-btn">Register</a>
+        </div>
+
+        <div class="home-user-chip" id="homeUserChip" hidden>
+            <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
+                <span class="home-avatar" id="homeAvatar">CP</span>
+                <span class="home-user-meta">
+                    <strong id="homeUserName">CarryParcel</strong>
+                    <small id="homeUserRole">Sender &amp; Traveler</small>
+                </span>
+                <i class="fa-solid fa-chevron-down home-user-chevron"></i>
+            </button>
+            <div class="home-user-menu" id="homeUserMenu">
+                <button type="button" id="homeProfileBtn"><i class="fa-solid fa-user"></i><span>My Profile</span></button>
+                <a href="/user-dashboard/overview.html" id="homeDashboardLink"><i class="fa-solid fa-gauge-high"></i><span id="homeDashboardLinkLabel">Dashboard</span></a>
+                <button type="button" id="homeSettingsBtn"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+                <button type="button" id="homeLogoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span></button>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="nav-overlay" id="navOverlay"></div>
+<script src="../shared/nav-include.js?v=2"></script>
+
+<main>
+<!-- ================= HERO ================= -->
+<section class="ab-hero">
+    <div class="ab-hero-inner">
+        <div class="ab-hero-content ab-reveal">
+            <span class="ab-eyebrow">ABOUT US</span>
+            <h1>About CarryParcel</h1>
+            <p class="ab-lead">
+                CarryParcel is a community-powered parcel delivery platform that connects people who need to send parcels with travelers who are already traveling toward the same destination.
+            </p>
+
+            <div class="ab-hero-cta">
+                <a href="/login/login.html" class="btn btn-primary" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
+                <a href="/contact/" class="btn btn-secondary">Talk to Us</a>
+            </div>
+
+            <div class="ab-tags">
+                <span><i class="fa-solid fa-bolt" aria-hidden="true"></i> Fast</span>
+                <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Local</span>
+                <span><i class="fa-solid fa-wallet" aria-hidden="true"></i> Affordable</span>
+                <span><i class="fa-solid fa-leaf" aria-hidden="true"></i> Eco-friendly</span>
+            </div>
+        </div>
+
+        <div class="ab-hero-media ab-reveal">
+            <img src="../images/trust-local-connection.webp" alt="A traveler handing a parcel to a local shopkeeper on a city street" width="1040" height="480" loading="lazy" decoding="async">
+
+            <div class="ab-floating-card ab-float-1">
+                <i class="fa-solid fa-route" aria-hidden="true"></i>
+                <div>
+                    <strong>Route matched</strong>
+                    <span>Traveler already en route</span>
+                </div>
+            </div>
+
+            <div class="ab-floating-card ab-float-2">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <div>
+                    <strong>ID verified</strong>
+                    <span>Every traveler &amp; sender</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= OUR STORY ================= -->
+<section class="ab-story">
+    <div class="ab-story-inner">
+        <div class="ab-story-media ab-reveal">
+            <img src="../images/Delivery_shortly.webp" alt="A traveler handing a parcel directly to its recipient on a city street" width="1040" height="567" loading="lazy" decoding="async">
+        </div>
+
+        <div class="ab-story-content ab-reveal">
+            <span class="ab-eyebrow">Our story</span>
+            <h2>Our Story</h2>
+            <p>
+                CarryParcel connects parcel requirements with existing journeys and provides a structured digital experience for senders and travelers.
+            </p>
+            <p>
+                Our goal is to make it easier for people to coordinate parcel delivery around journeys that are already happening.
+            </p>
+
+            <ul class="ab-check-list">
+                <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> A structured experience for parcel senders and travelers</li>
+                <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Parcel and journey details managed in one place</li>
+                <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> A community-powered approach to delivery</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="ab-process">
+    <div class="ab-process-inner">
+        <div class="ab-process-head ab-reveal">
+            <span class="ab-eyebrow">How it works</span>
+            <h2>Four steps from sender to doorstep</h2>
+            <p>CarryParcel removes the scheduling problem. Your parcel rides along a journey somebody is already making.</p>
+        </div>
+
+        <ol class="ab-steps">
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">01</span>
+                <div class="ab-step-body">
+                    <h3>Post your requirement</h3>
+                    <p>Add pickup and destination details, choose a parcel category, and declare weight and size so matches are accurate.</p>
+                </div>
+            </li>
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">02</span>
+                <div class="ab-step-body">
+                    <h3>Review matched travelers</h3>
+                    <p>We surface verified travelers already heading your way, with their trip history and ratings visible before you decide.</p>
+                </div>
+            </li>
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">03</span>
+                <div class="ab-step-body">
+                    <h3>Confirm and pay securely</h3>
+                    <p>Payment is held when you confirm a match and only released to the traveler once the receiver confirms delivery.</p>
+                </div>
+            </li>
+            <li class="ab-step ab-reveal">
+                <span class="ab-step-index">04</span>
+                <div class="ab-step-body">
+                    <h3>Track to the door</h3>
+                    <p>Follow live status updates through handover. The receiver confirms with a secure QR code at the moment of delivery.</p>
+                </div>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<!-- ================= FOR SENDERS / FOR TRAVELERS ================= -->
+<section class="ab-roles">
+    <div class="ab-roles-inner">
+        <div class="ab-roles-head ab-reveal">
+            <span class="ab-eyebrow">Who CarryParcel is for</span>
+            <h2>Two roles, one journey</h2>
+            <p>Every CarryParcel account can post a parcel, add a trip, or both. Most people end up doing the two on the same journey.</p>
+        </div>
+
+        <div class="ab-role-grid">
+            <article class="ab-role ab-reveal">
+                <span class="ab-role-icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span>
+                <h3>For Senders</h3>
+                <p>Post a parcel requirement with your pickup point, destination and category. CarryParcel surfaces verified travelers already heading your way, so you compare real options instead of guessing at couriers.</p>
+                <ul class="ab-role-list">
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Declare weight, size and category so matches are accurate</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Review a traveler's trip history before you confirm</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Payment is held and released only on confirmed delivery</li>
+                </ul>
+                <a href="../login/login.html" class="ab-role-link" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Post a parcel <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            </article>
+
+            <article class="ab-role ab-reveal">
+                <span class="ab-role-icon ab-role-icon-alt"><i class="fa-solid fa-route" aria-hidden="true"></i></span>
+                <h3>For Travelers</h3>
+                <p>Add an upcoming trip with your route and dates, then see the parcel requests that match it. You decide which ones to take, and your earnings post to your wallet after delivery.</p>
+                <ul class="ab-role-list">
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Carry only what you have room for and are comfortable with</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> See parcel details and prohibited-item rules before accepting</li>
+                    <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Earnings go to your wallet, withdrawable to your bank</li>
+                </ul>
+                <a href="../login/login.html" class="ab-role-link" data-auth-cta="/user-dashboard/earnings.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Add a trip <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ================= MISSION / VISION ================= -->
+<section class="ab-purpose">
+    <div class="ab-purpose-inner">
+        <article class="ab-purpose-card ab-reveal">
+            <span class="ab-purpose-label">Our Mission</span>
+            <h2>Make delivery fit the journey that already exists</h2>
+            <p>Most parcels travel routes somebody is already driving. CarryParcel's job is to make it simple to find that spare capacity when someone needs a parcel moved, and to make it worthwhile for the person carrying it.</p>
+        </article>
+        <article class="ab-purpose-card ab-purpose-card-alt ab-reveal">
+            <span class="ab-purpose-label">Our Vision</span>
+            <h2>A network people can rely on</h2>
+            <p>We want CarryParcel to be the obvious first choice for moving something between Indian cities without a courier: verified people, visible journeys, and payment that only moves when the parcel does.</p>
+        </article>
+    </div>
+</section>
+
+<!-- ================= TRUST STRIP ================= -->
+<section class="ab-trust">
+    <div class="ab-trust-inner">
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+            <h3>Verified identities</h3>
+            <p>Senders and travelers complete ID verification before matching.</p>
+        </article>
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            <h3>Held payments</h3>
+            <p>Funds release only after the receiver confirms delivery.</p>
+        </article>
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+            <h3>Reachable support</h3>
+            <p>Email <a href="mailto:support@carryparcel.in">support@carryparcel.in</a> or raise a ticket from your dashboard.</p>
+        </article>
+        <article class="ab-trust-card ab-reveal">
+            <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
+            <h3>Fewer empty miles</h3>
+            <p>Using journeys that already happen means fewer redundant trips.</p>
+        </article>
+    </div>
+</section>
+
+<!-- ================= CTA BANNER ================= -->
+<section class="ab-cta">
+    <div class="ab-cta-inner ab-reveal">
+        <h2>Ready to send your first parcel?</h2>
+        <p>Create a CarryParcel account to post a parcel or add a trip. It is free to register.</p>
+        <div class="ab-cta-buttons">
+            <a href="../login/login.html" class="btn btn-primary" data-auth-cta="/user-dashboard/post.html" data-auth-cta-admin="/admin_dashboard/html/admin.html">Get Started <i class="fa-solid fa-arrow-right arrow-icon" aria-hidden="true"></i></a>
+            <a href="../support/index.html" class="btn btn-secondary ab-ghost-btn">Visit Support</a>
+        </div>
+    </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<div id="tbFooterInclude"></div>
+<footer class="site-footer" data-v="6">
+    <div class="footer-container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="footer-logo" aria-label="CarryParcel home">
+                    <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async">
+                </a>
+
+                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered<br>delivery.</p>
+
+                <div class="footer-socials" aria-label="Social media links">
+                    <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h3>Support</h3>
+                <a href="/about/">About</a>
+                <a href="/support/">Help Center</a>
+                <a href="/contact/">Contact</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <a href="/legal/privacy.html">Privacy Policy</a>
+                <a href="/legal/terms.html">Terms &amp; Conditions</a>
+                <a href="/legal/prohibited-items.html">Prohibited Items</a>
+                <a href="/legal/community-guidelines.html">Community Guidelines</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarryParcel. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+<script>window.CPInclude.injectFooter();</script>
+
+<script src="about.js?v=2"></script>
+<script src="../shared/auth-aware-cta.js?v=1"></script>
+<script src="../shared/site-banner.js?v=3"></script>
+</body>
+</html>
