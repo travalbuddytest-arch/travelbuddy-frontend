@@ -27,6 +27,38 @@
     video.style.visibility = 'visible';
   }
 
+  function waitForVideoMetadata(video, timeoutMs = 8000) {
+    if (video.videoWidth > 0 && video.videoHeight > 0) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      const cleanup = () => {
+        window.clearTimeout(timeout);
+        video.removeEventListener('loadedmetadata', onMetadata);
+        video.removeEventListener('resize', onMetadata);
+        video.removeEventListener('error', onError);
+      };
+      const onMetadata = () => {
+        if (video.videoWidth > 0 && video.videoHeight > 0) {
+          cleanup();
+          resolve();
+        }
+      };
+      const onError = () => {
+        cleanup();
+        reject(new Error('The browser could not display the camera preview.'));
+      };
+      const timeout = window.setTimeout(() => {
+        cleanup();
+        reject(new Error('Camera opened, but the video preview did not produce frames.'));
+      }, timeoutMs);
+
+      video.addEventListener('loadedmetadata', onMetadata);
+      video.addEventListener('resize', onMetadata);
+      video.addEventListener('error', onError);
+      onMetadata();
+    });
+  }
+
   function describeCameraError(err) {
     const error = err && typeof err === 'object' ? err : { message: String(err) };
     const name = error.name || 'UnknownError';
@@ -85,7 +117,10 @@
 
       let cameras = [];
       try {
-        cameras = await window.Html5Qrcode.getCameras();
+        cameras = await Promise.race([
+          window.Html5Qrcode.getCameras(),
+          new Promise((resolve) => window.setTimeout(() => resolve([]), 4000))
+        ]);
       } catch (err) {
         console.warn('[QRScanner] Camera enumeration failed:', err);
       }
@@ -145,12 +180,15 @@
             throw new Error('Camera started, but the video preview was not created.');
           }
 
+          const hint = activeModal?.querySelector('.qr-scanner-hint');
+          if (hint) hint.textContent = 'Camera connected; waiting for video preview…';
           prepareVideo(video);
           await video.play();
+          await waitForVideoMetadata(video);
           videoObserver.disconnect();
           videoObserver = null;
-          const hint = activeModal?.querySelector('.qr-scanner-hint');
-          if (hint) hint.textContent = 'Position the QR code within the frame';
+          const readyHint = activeModal?.querySelector('.qr-scanner-hint');
+          if (readyHint) readyHint.textContent = 'Position the QR code within the frame';
           return;
         } catch (err) {
           lastError = err;
