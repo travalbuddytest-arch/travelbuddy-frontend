@@ -592,9 +592,9 @@
       actionBanner.className = 'journey-action-box is-info';
       title.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Awaiting Traveler';
       desc.textContent = 'Your parcel is visible to travelers travelling on this route. You will be notified when someone accepts.';
-      buttons.innerHTML = `
-        <a href="post.html" class="btn-ghost" style="text-decoration:none;"><i class="fa-solid fa-pen"></i> Edit Details</a>
-      `;
+      buttons.innerHTML = isSender && !p.traveler && !p.acceptedAt
+        ? `<a href="post.html?edit=${encodeURIComponent(p.id)}" class="btn-ghost" style="text-decoration:none;"><i class="fa-solid fa-pen"></i> Edit Details</a>`
+        : '';
       actionBanner.classList.remove('hidden');
     } else if (['accepted', 'pickup_point_pending', 'pickup_point_selected'].includes(s)) {
       actionBanner.className = 'journey-action-box';
@@ -701,8 +701,12 @@
     const counterpartChatBtn = ui('counterpartChatBtn');
     const chatCounterpartBtn = ui('chatCounterpartBtn');
     const counterpartBox = ui('counterpartBox');
+    const hasAcceptedTraveler = Boolean(p.traveler);
+    const isCompleted = ['delivered', 'cancelled', 'cancelled_by_sender', 'cancelled_by_traveler', 'cancelled_by_system'].includes(p.status);
 
     if (counterpartTitle) counterpartTitle.textContent = isSender ? 'Assigned Traveler' : 'Parcel Sender';
+    if (chatCounterpartBtn) chatCounterpartBtn.style.display = hasAcceptedTraveler ? 'inline-flex' : 'none';
+    if (counterpartChatBtn) counterpartChatBtn.style.display = hasAcceptedTraveler ? 'inline-flex' : 'none';
 
     if (!person) {
       if (counterpartAvatar) counterpartAvatar.textContent = '?';
@@ -732,11 +736,12 @@
       counterpartDeliveries.innerHTML = `<i class="fa-solid fa-truck-fast"></i> ${person.completedDeliveries || 0} trips`;
     }
     if (counterpartChatBtn) {
-      counterpartChatBtn.disabled = false;
-      counterpartChatBtn.onclick = () => startChatWithCounterpart(person.userId);
+      counterpartChatBtn.disabled = isCompleted;
+      counterpartChatBtn.onclick = isCompleted ? null : () => startChatWithCounterpart(person.userId);
     }
     if (chatCounterpartBtn) {
-      chatCounterpartBtn.onclick = () => startChatWithCounterpart(person.userId);
+      chatCounterpartBtn.disabled = isCompleted;
+      chatCounterpartBtn.onclick = isCompleted ? null : () => startChatWithCounterpart(person.userId);
     }
     if (counterpartBox) {
       counterpartBox.onclick = () => openPublicProfile(person.userId);
@@ -1204,7 +1209,7 @@
           window.showToast(data.error || 'Could not submit report.', 'error');
           return;
         }
-        window.showToast('Your report has been submitted to CarryParcel Trust & Safety.', 'success');
+        window.showToast('Report submitted successfully.', 'success');
         reportModal().classList.add('hidden');
       } catch (err) {
         console.error(err);
@@ -1395,7 +1400,11 @@
   });
 
   document.addEventListener('travelbuddy:notification', (e) => {
-    if (e.detail && parcelData && (e.detail.parcelId === parcelData.id || e.detail.text?.includes(parcelData.parcelNumber))) {
+    const notificationParcelId = e.detail?.parcelId || e.detail?.relatedParcel;
+    if (parcelData && (
+      String(notificationParcelId || '') === String(parcelData.id) ||
+      e.detail?.text?.includes(parcelData.parcelNumber)
+    )) {
       loadParcelDetails();
     }
   });

@@ -170,7 +170,7 @@
           return;
         }
 
-        window.showToast('Your report has been received and prioritized for review.', 'success');
+        window.showToast('Report submitted successfully.', 'success');
         submitReportModal.classList.add('hidden');
         loadMyReports();
       } catch (err) {

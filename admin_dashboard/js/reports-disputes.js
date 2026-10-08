@@ -39,7 +39,7 @@ async function loadDisputes() {
     const status = document.getElementById('disputeStatusFilter')?.value || 'open';
     const type = document.getElementById('disputeTypeFilter')?.value || 'all';
 
-    let url = `/api/admin/reports-disputes?page=${currentPage}&limit=20&status=${status}`;
+    let url = `/api/admin/reports?page=${currentPage}&limit=20&status=${status}`;
     if (type !== 'all') url += `&targetType=${type}`;
 
     const data = await apiGet(url);
@@ -58,7 +58,10 @@ async function loadDisputes() {
           <strong style="display:block">${esc(r.fromUser?.firstName)} ${esc(r.fromUser?.lastName)}</strong>
           <small style="color:var(--text-faint)">${esc(r.fromUser?.email)}</small>
         </td>
-        <td><span class="status-tag info" style="text-transform:capitalize">${esc(r.targetType)}</span></td>
+        <td>
+          <span class="status-tag info" style="text-transform:capitalize">${esc(r.targetType)}</span>
+          ${r.targetParcelId?.orderId ? `<small style="display:block;color:var(--text-muted);margin-top:4px">${esc(r.targetParcelId.orderId)}</small>` : ''}
+        </td>
         <td style="font-size:13px">${esc(r.reason)}</td>
         <td>${statusTag(r.status)}</td>
         <td>

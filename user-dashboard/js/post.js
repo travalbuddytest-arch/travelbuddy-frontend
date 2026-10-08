@@ -3,6 +3,7 @@
 
   const { API_ORIGIN, authHeaders, escapeHTML, formatPaise, setButtonLoading, formatDate } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/postparcel`;
+  const editParcelId = new URLSearchParams(window.location.search).get('edit');
 
   let currentStep = 1;
   const totalSteps = 6;
@@ -74,6 +75,55 @@
   let userWalletData = null;
   let isFreePostEligible = false;
   let matchStatsDebounce = null;
+
+  async function loadParcelForEdit() {
+    try {
+      const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(editParcelId)}`, { headers: authHeaders() });
+      const data = await res.json();
+      const parcel = data.parcel;
+
+      if (!res.ok || !parcel || parcel.role !== 'sender' || parcel.status !== 'pending' || parcel.traveler || parcel.acceptedAt) {
+        window.showToast(data.error || 'This parcel can no longer be edited.', 'error');
+        window.setTimeout(() => {
+          window.location.href = `parcel-details.html?id=${encodeURIComponent(editParcelId)}`;
+        }, 1200);
+        return;
+      }
+
+      const description = String(parcel.description || '');
+      const categoryMatch = description.match(/\s+\[([^\]]+)\]$/);
+      stepDesc.value = categoryMatch ? description.slice(0, categoryMatch.index).trim() : description;
+      if (categoryMatch) {
+        if (![...stepCategory.options].some(option => option.value === categoryMatch[1])) {
+          const option = document.createElement('option');
+          option.value = categoryMatch[1];
+          option.textContent = categoryMatch[1];
+          stepCategory.appendChild(option);
+        }
+        stepCategory.value = categoryMatch[1];
+      }
+      stepWeight.value = parcel.weight ?? '';
+      stepFromCity.value = parcel.fromCity || '';
+      stepToCity.value = parcel.toCity || '';
+      stepPrice.value = parcel.price == null ? '' : (Number(parcel.price) / 100).toFixed(2);
+      stepDate.value = parcel.pickupDate
+        ? new Date(new Date(parcel.pickupDate).getTime() + 330 * 60 * 1000).toISOString().slice(0, 10)
+        : '';
+      if (termsAgreeCheck) termsAgreeCheck.checked = true;
+
+      document.title = 'CarryParcel — Edit Parcel Details';
+      const heading = document.querySelector('.tb-page-title h2');
+      if (heading) heading.textContent = 'Edit Parcel Details';
+      const submitLabel = postSubmitFinalBtn?.querySelector('.btn-label');
+      if (submitLabel) submitLabel.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Parcel Changes';
+    } catch (err) {
+      console.error('Could not load parcel for editing:', err);
+      window.showToast('Could not load parcel details. Please try again.', 'error');
+      window.setTimeout(() => {
+        window.location.href = `parcel-details.html?id=${encodeURIComponent(editParcelId)}`;
+      }, 1200);
+    }
+  }
 
   // Set minimum date to today
   if (stepDate) {
@@ -312,13 +362,13 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      if (!termsAgreeCheck.checked) {
+      if (!editParcelId && !termsAgreeCheck.checked) {
         window.showToast('Please certify that the parcel contains no prohibited items.', 'warning');
         termsAgreeCheck.focus();
         return;
       }
 
-      window.TravelBuddy.FormLock(form, true, { loadingText: 'Publishing...' });
+      window.TravelBuddy.FormLock(form, true, { loadingText: editParcelId ? 'Saving...' : 'Publishing...' });
 
       const from = stepFromCity.value.trim();
       const to = stepToCity.value.trim();
@@ -329,10 +379,17 @@
       const date = stepDate.value;
 
       try {
-        const res = await fetch(`${API_BASE}/post`, {
-          method: 'POST',
+        const res = await fetch(editParcelId ? `${API_BASE}/${encodeURIComponent(editParcelId)}` : `${API_BASE}/post`, {
+          method: editParcelId ? 'PUT' : 'POST',
           headers: authHeaders(),
-          body: JSON.stringify({
+          body: JSON.stringify(editParcelId ? {
+            from,
+            to,
+            desc,
+            weight,
+            price: pricePaise,
+            date,
+          } : {
             from,
             to,
             desc,
@@ -358,16 +415,16 @@
           return;
         }
 
-        window.showToast(data.message || 'Parcel posted successfully! Redirecting to tracking...', 'success');
+        window.showToast(data.message || (editParcelId ? 'Parcel updated successfully.' : 'Parcel posted successfully! Redirecting to tracking...'), 'success');
 
         const newId = data.parcel?._id || data.parcel?.id;
-        if (data.recommendations && data.recommendations.length > 0) {
+        if (!editParcelId && data.recommendations && data.recommendations.length > 0) {
           renderRecommendations(data.recommendations);
         }
 
         setTimeout(() => {
-          if (newId) {
-            window.location.href = `parcel-details.html?id=${encodeURIComponent(newId)}`;
+          if (editParcelId || newId) {
+            window.location.href = `parcel-details.html?id=${encodeURIComponent(editParcelId || newId)}`;
           } else {
             window.location.href = 'parcels.html';
           }
@@ -420,5 +477,6 @@
     routeRecPanel.classList.remove('hidden');
   }
 
-  checkWalletStatus();
+  if (editParcelId) loadParcelForEdit();
+  else checkWalletStatus();
 })();
