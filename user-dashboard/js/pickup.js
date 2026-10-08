@@ -417,7 +417,17 @@
     }
   }
 
-  initTabFromQuery();
-  setTimeout(initTabFromQuery, 0);
-  document.addEventListener('DOMContentLoaded', initTabFromQuery);
+  let hasInitializedPickupPage = false;
+
+  function initializePickupPage() {
+    if (hasInitializedPickupPage) return;
+    hasInitializedPickupPage = true;
+    initTabFromQuery();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePickupPage, { once: true });
+  } else {
+    initializePickupPage();
+  }
 })();

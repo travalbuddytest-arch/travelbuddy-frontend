@@ -2229,9 +2229,13 @@ input:focus-visible {
 }
 
 /* ============================================================
-   LIVE CONNECTION STATUS (Centralized)
+   LIVE CONNECTION STATUS (Centralized - Hidden per user request)
 ============================================================ */
 .tb-live-status {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
     position: fixed;
     bottom: 20px;
     right: 20px;

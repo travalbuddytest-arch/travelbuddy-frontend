@@ -989,30 +989,8 @@
     if (!socket) return;
 
     const updateLiveStatus = (status) => {
-        let el = document.getElementById('tbLiveStatus');
-        if (!el) {
-            el = document.createElement('div');
-            el.id = 'tbLiveStatus';
-            el.className = 'tb-live-status';
-            el.innerHTML = '<span class="dot"></span> <span class="text">Live</span>';
-            document.body.appendChild(el);
-        }
-        const dot = el.querySelector('.dot');
-        const text = el.querySelector('.text');
-
-        if (status === 'connected') {
-            dot.className = 'dot connected';
-            text.textContent = 'Live';
-            setTimeout(() => el.classList.add('fade-out'), 3000);
-        } else if (status === 'connecting') {
-            dot.className = 'dot connecting';
-            text.textContent = 'Connecting...';
-            el.classList.remove('fade-out');
-        } else {
-            dot.className = 'dot disconnected';
-            text.textContent = 'Offline';
-            el.classList.remove('fade-out');
-        }
+      const el = document.getElementById('tbLiveStatus');
+      if (el) el.remove();
     };
 
     socket.on('connect', () => {
