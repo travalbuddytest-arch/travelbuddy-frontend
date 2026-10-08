@@ -8,25 +8,25 @@
   </url>
 
   <url>
-    <loc>https://www.carryparcel.in/about</loc>
+    <loc>https://www.carryparcel.in/about/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.carryparcel.in/team</loc>
+    <loc>https://www.carryparcel.in/team/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://www.carryparcel.in/contact</loc>
+    <loc>https://www.carryparcel.in/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://www.carryparcel.in/support/support.html</loc>
+    <loc>https://www.carryparcel.in/support/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

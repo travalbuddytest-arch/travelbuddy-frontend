@@ -63,6 +63,8 @@
     }
   }
 
+  window.loadMyRoutes = loadMyRoutes;
+
   async function cancelRoute(id) {
     if (!confirm('Cancel this route? Senders will no longer see you as a recommended traveler for it.')) return;
     try {

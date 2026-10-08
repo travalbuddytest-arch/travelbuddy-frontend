@@ -13,11 +13,9 @@ Disallow: /openapi.yaml
 
 Allow: /
 Allow: /about/
-Allow: /about
-Allow: /team
+Allow: /team/
 Allow: /support/
 Allow: /contact/
-Allow: /contact
 Allow: /post-your-parcel/
 Allow: /get-local-courier/
 Allow: /delivery-shortly/

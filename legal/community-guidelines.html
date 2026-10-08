@@ -4,29 +4,317 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Guidelines | CarryParcel — Trust &amp; Community Standards</title>
-    <meta name="description" content="How senders and travelers are expected to treat each other on CarryParcel.">
+    <meta name="description" content="Community standards, safety rules, and code of conduct for senders and travelers on the CarryParcel peer-to-peer delivery platform.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.carryparcel.in/legal/community-guidelines.html">
+
+    <!-- Open Graph / Social Media Meta -->
     <meta property="og:title" content="Community Guidelines | CarryParcel">
-    <meta property="og:description" content="The community standards every CarryParcel sender and traveler agrees to follow.">
+    <meta property="og:description" content="Community standards promoting respectful communication, safety, honesty, and anti-fraud measures on CarryParcel.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.carryparcel.in/legal/community-guidelines.html">
     <meta property="og:image" content="https://www.carryparcel.in/images/logo.jpeg">
     <meta property="og:site_name" content="CarryParcel">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Community Guidelines | CarryParcel">
-    <meta name="twitter:description" content="The community standards every CarryParcel sender and traveler agrees to follow.">
+    <meta name="twitter:description" content="Community standards promoting respectful communication, safety, honesty, and anti-fraud measures on CarryParcel.">
     <meta name="twitter:image" content="https://www.carryparcel.in/images/logo.jpeg">
+
     <link rel="icon" type="image/png" href="../images/logo-icon.png" sizes="32x32">
 
+    <!-- External Global CSS (Preserved for Nav/Footer Compatibility) -->
     <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="legal.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../shared/navbar.css?v=8">
     <link rel="stylesheet" href="../shared/footer.css">
     <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Page-Local CSS (Self-Contained) -->
+    <style>
+        :root {
+            --cp-legal-primary: #0d6efd;
+            --cp-legal-primary-hover: #0b5ed7;
+            --cp-legal-dark: #0f172a;
+            --cp-legal-text: #334155;
+            --cp-legal-muted: #64748b;
+            --cp-legal-bg-light: #f8fafc;
+            --cp-legal-card-bg: #ffffff;
+            --cp-legal-border: #e2e8f0;
+            --cp-legal-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+            --cp-legal-radius: 12px;
+        }
+
+        body[data-page="legal"] {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cp-legal-bg-light);
+            color: var(--cp-legal-text);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hero Section */
+        .legal-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 120px 20px 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legal-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .legal-hero h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+
+        .legal-hero p {
+            font-size: 1.125rem;
+            max-width: 720px;
+            margin: 0 auto 20px auto;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .legal-updated {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: #38bdf8;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Container */
+        .legal-wrap {
+            max-width: 1200px;
+            margin: -30px auto 80px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .legal-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Legal Navigation Sidebar */
+        .legal-nav {
+            background: var(--cp-legal-card-bg);
+            border-radius: var(--cp-legal-radius);
+            padding: 16px;
+            border: 1px solid var(--cp-legal-border);
+            box-shadow: var(--cp-legal-shadow);
+            position: sticky;
+            top: 90px;
+        }
+
+        .legal-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--cp-legal-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .legal-nav a:hover {
+            color: var(--cp-legal-primary);
+            background: rgba(13, 110, 253, 0.05);
+        }
+
+        .legal-nav a.active {
+            color: var(--cp-legal-primary);
+            background: rgba(13, 110, 253, 0.1);
+            font-weight: 600;
+        }
+
+        .legal-nav a i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Article Content */
+        .legal-content {
+            background: var(--cp-legal-card-bg);
+            border-radius: var(--cp-legal-radius);
+            padding: 48px;
+            border: 1px solid var(--cp-legal-border);
+            box-shadow: var(--cp-legal-shadow);
+        }
+
+        .legal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cp-legal-dark);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f1f5f9;
+            scroll-margin-top: 100px;
+        }
+
+        .legal-content h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .legal-content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 24px 0 12px 0;
+        }
+
+        .legal-content p {
+            margin: 0 0 16px 0;
+            color: var(--cp-legal-text);
+            font-size: 0.98rem;
+        }
+
+        .legal-content ul, .legal-content ol {
+            margin: 0 0 20px 0;
+            padding-left: 24px;
+        }
+
+        .legal-content li {
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+            color: var(--cp-legal-text);
+        }
+
+        .legal-callout {
+            display: flex;
+            gap: 16px;
+            background: #f0f7ff;
+            border-left: 4px solid var(--cp-legal-primary);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+        }
+
+        .legal-callout i {
+            color: var(--cp-legal-primary);
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+
+        .legal-callout p {
+            margin: 0;
+            color: #1e3a8a;
+            font-size: 0.95rem;
+        }
+
+        .legal-contact-box {
+            background: #f8fafc;
+            border: 1px solid var(--cp-legal-border);
+            border-radius: var(--cp-legal-radius);
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .legal-contact-box strong {
+            color: var(--cp-legal-dark);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .legal-contact-box a {
+            color: var(--cp-legal-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .legal-contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Focus States for Accessibility */
+        a:focus-visible, button:focus-visible {
+            outline: 3px solid var(--cp-legal-primary);
+            outline-offset: 2px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .legal-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .legal-nav {
+                position: static;
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 12px;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .legal-nav a {
+                margin-bottom: 0;
+            }
+
+            .legal-content {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .legal-hero {
+                padding: 100px 16px 40px 16px;
+            }
+
+            .legal-hero h1 {
+                font-size: 2rem;
+            }
+
+            .legal-hero p {
+                font-size: 1rem;
+            }
+
+            .legal-wrap {
+                margin-top: -20px;
+                padding: 0 12px;
+            }
+
+            .legal-content {
+                padding: 24px 16px;
+            }
+
+            .legal-content h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 <body data-page="legal">
 
@@ -34,9 +322,9 @@
 <script src="../shared/auth-cookie-client.js?v=1"></script>
 <script src="../shared/analytics-client.js?v=1"></script>
 
-<div id="tbNavbarInclude"></div>
-<!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
-<header class="tb-nav-header" data-v="6">
+<div id="cpNavbarInclude"></div>
+<!-- ================= CANONICAL PUBLIC NAVBAR ================= -->
+<header class="cp-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
@@ -50,14 +338,15 @@
     </button>
 
     <nav id="mainNav">
-        <a href="/" data-page="home">Home</a>
-        <a href="/about/about.html" data-page="about">About</a>
-        <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
-        <a href="/contact/contact.html" data-page="contact">Contact</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/about.html" data-page="about">About</a>
+            <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/contact.html" data-page="contact">Contact</a>
+        </div>
 
         <div id="guestNavActions" class="guest-nav-actions">
-            <a href="/login/login.html" class="login-btn">Login</a>
-            <a href="/register/register.html" class="register-btn">Register</a>
+            <a href="/login/login.html" class="auth-btn">Login / Register</a>
         </div>
 
         <div class="home-user-chip" id="homeUserChip" hidden>
@@ -81,88 +370,107 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js"></script>
 
+<!-- HERO SECTION -->
 <section class="legal-hero">
     <h1>Community Guidelines</h1>
-    <p>CarryParcel works because real people trust each other with real parcels. These guidelines keep that trust intact.</p>
-    <span class="legal-updated"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Last updated: January 2026</span>
+    <p>Building a safe, trustworthy, and respectful peer-to-peer parcel delivery network for all Senders and Travelers.</p>
+    <span class="legal-updated"><i class="fa-solid fa-heart" aria-hidden="true"></i> Last updated: October 2026</span>
 </section>
 
+<!-- MAIN CONTENT SECTION -->
 <section class="legal-wrap">
     <div class="legal-layout">
 
-        <nav class="legal-nav" aria-label="Legal pages">
-            <a href="privacy.html"><i class="fa-solid fa-user-shield"></i> Privacy Policy</a>
-            <a href="terms.html"><i class="fa-solid fa-file-contract"></i> Terms &amp; Conditions</a>
-            <a href="prohibited-items.html"><i class="fa-solid fa-ban"></i> Prohibited Items</a>
-            <a href="community-guidelines.html" class="active"><i class="fa-solid fa-people-group"></i> Community Guidelines</a>
+        <!-- INTERNAL LEGAL NAVIGATION -->
+        <nav class="legal-nav" aria-label="Legal pages navigation">
+            <a href="/legal/privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy Policy</a>
+            <a href="/legal/terms.html"><i class="fa-solid fa-file-contract" aria-hidden="true"></i> Terms &amp; Conditions</a>
+            <a href="/legal/prohibited-items.html"><i class="fa-solid fa-ban" aria-hidden="true"></i> Prohibited Items</a>
+            <a href="/legal/community-guidelines.html" class="active"><i class="fa-solid fa-people-group" aria-hidden="true"></i> Community Guidelines</a>
         </nav>
 
+        <!-- COMMUNITY GUIDELINES ARTICLE -->
         <article class="legal-content">
 
-            <h2 id="principle">1. Our guiding principle</h2>
-            <p>Every delivery on CarryParcel involves two real people trusting each other — a sender trusting a stranger with their parcel, and a traveler trusting that the parcel is exactly what it's described to be. These guidelines exist to protect that trust.</p>
+            <p>At <strong>CarryParcel</strong>, our platform thrives on mutual trust, clear communication, and personal safety. Senders trust Travelers with their valuable parcels, and Travelers trust Senders to declare item contents accurately. These Community Guidelines set the standard of conduct expected from every platform member.</p>
 
-            <h2 id="expected-senders">2. What we expect from senders</h2>
-            <ul>
-                <li>Describe your parcel honestly — category, size, weight, and anything a traveler should know before accepting it.</li>
-                <li>Have your parcel ready and properly packaged at the agreed pickup time and location.</li>
-                <li>Communicate promptly and respectfully with the traveler carrying your parcel.</li>
-                <li>Confirm delivery with the Secure QR Code only once you've actually received your parcel.</li>
-            </ul>
+            <h2 id="section-1">1. Respectful Communication</h2>
+            <p>Treat every member of the CarryParcel community with dignity and courtesy. In-app communication—whether via chat messages, calls, or pickup interactions—must remain civil, professional, and friendly.</p>
 
-            <h2 id="expected-travelers">3. What we expect from travelers</h2>
-            <ul>
-                <li>Only accept parcels you can genuinely deliver within the timeframe you commit to.</li>
-                <li>Handle every parcel with the same care you'd want for your own belongings.</li>
-                <li>Never open, inspect beyond what's needed for safety, or misuse a parcel's contents.</li>
-                <li>Communicate proactively if a trip is delayed or a delivery can't be completed as planned.</li>
-            </ul>
+            <h2 id="section-2">2. Harassment</h2>
+            <p>Harassment in any form is strictly forbidden. This includes sending repeated unwanted messages, using derogatory slurs, intimidating users, or pursuing personal relationships outside the context of parcel logistics.</p>
 
-            <h2 id="respect">4. Respectful communication</h2>
-            <p>All messages exchanged through CarryParcel's in-app chat should stay professional and courteous. We do not tolerate:</p>
-            <ul>
-                <li>Harassment, threats, or abusive language directed at another user.</li>
-                <li>Discrimination based on race, gender, religion, disability, or any other protected characteristic.</li>
-                <li>Requests to move payment or communication outside the platform to avoid our safety and dispute systems.</li>
-            </ul>
+            <h2 id="section-3">3. Threats and Intimidation</h2>
+            <p>Making physical, financial, or verbal threats against another user, their property, or CarryParcel staff will result in immediate permanent account termination and potential police escalation.</p>
 
-            <h2 id="honesty">5. Honesty &amp; accuracy</h2>
-            <ul>
-                <li>Use your real name and a genuine photo on your profile.</li>
-                <li>Keep your trip routes, availability, and parcel details accurate and up to date.</li>
-                <li>Don't create multiple accounts to get around a suspension or rating.</li>
-            </ul>
+            <h2 id="section-4">4. Hate and Abusive Conduct</h2>
+            <p>We enforce zero tolerance for hate speech, discrimination, or abusive conduct targeting individuals based on race, religion, ethnicity, gender identity, sexual orientation, disability, or national origin.</p>
 
-            <h2 id="ratings">6. Ratings &amp; feedback</h2>
-            <p>After every completed delivery, senders and travelers can rate each other. Ratings should reflect the actual experience — please don't leave retaliatory or false reviews. Patterns of consistently low ratings may trigger a review of an account by our trust &amp; safety team.</p>
+            <h2 id="section-5">5. Fraud</h2>
+            <p>Engaging in dishonest practices to extract unearned funds, claim false parcel damages, or circumvent platform fees violates core community standards.</p>
 
-            <h2 id="reporting-concerns">7. Reporting a concern</h2>
-            <p>If another user makes you uncomfortable, misrepresents a parcel, or behaves in a way that violates these guidelines, report it directly from the parcel or trip screen, or contact Support. Reports are reviewed confidentially, and we do not disclose who filed a report to the person it concerns.</p>
+            <h2 id="section-6">6. Scams</h2>
+            <p>Attempting to trick community members into transferring funds outside the CarryParcel escrow system, providing advance payments off-platform, or sharing banking credentials is strictly forbidden.</p>
 
-            <h2 id="consequences">8. Consequences of violating these guidelines</h2>
-            <ul>
-                <li><strong>First-time, minor issues:</strong> a warning and guidance on the expected behavior.</li>
-                <li><strong>Repeated or moderate violations:</strong> temporary suspension from posting parcels or accepting trips.</li>
-                <li><strong>Severe violations</strong> (safety threats, fraud, prohibited items, harassment): permanent removal from CarryParcel, and where relevant, a report to law enforcement.</li>
-            </ul>
+            <h2 id="section-7">7. Impersonation</h2>
+            <p>Users must not impersonate other individuals, CarryParcel support personnel, law enforcement officers, or corporate representatives.</p>
 
-            <h2 id="appeals">9. Appeals</h2>
-            <p>If you believe an enforcement action was made in error, you can appeal through the Support Center within 14 days. Include any context or evidence relevant to your case — our team reviews every appeal individually.</p>
+            <h2 id="section-8">8. Fake Accounts</h2>
+            <p>Creating dummy or duplicate accounts to artificially manipulate user ratings, bypass account bans, or orchestrate fraudulent parcel requests is prohibited.</p>
 
-            <hr class="legal-divider">
+            <h2 id="section-9">9. Spam</h2>
+            <p>Sending unsolicited commercial advertisements, repetitive unwanted messages, or promotional links through CarryParcel chat or support channels is prohibited.</p>
 
-            <h2 id="contact-community">10. Need to talk to someone?</h2>
+            <h2 id="section-10">10. Misleading Information</h2>
+            <p>Users must provide genuine information. Falsifying travel schedules, destination locations, or vehicle types misleads community members and disrupts logistics coordination.</p>
+
+            <h2 id="section-11">11. False Parcel Declarations</h2>
+            <p>Intentionally understating parcel weight, hiding hazardous items, or misrepresenting parcel contents undermines traveler safety and constitutes a severe breach of community trust.</p>
+
+            <h2 id="section-12">12. Privacy Violations</h2>
+            <p>Respect the personal privacy of fellow users. Photographing users without consent, recording pickup interactions inappropriately, or misusing personal contact information received for delivery coordination is forbidden.</p>
+
+            <h2 id="section-13">13. Sharing Personal Information</h2>
+            <p>Do not publicly post, share, or broadcast another user's private details, phone numbers, home addresses, or identity documents ("doxxing").</p>
+
+            <h2 id="section-14">14. Chat Misuse</h2>
+            <p>In-app chat tools are intended exclusively for delivery coordination, schedule confirmation, and location agreements. Misusing chat for spam, off-platform solicitations, or inappropriate conversations is prohibited.</p>
+
+            <h2 id="section-15">15. Calling Misuse</h2>
+            <p>In-app calling features should be used respectfully and solely for delivery coordination during active trips. Repeated late-night calling or harassing phone calls will result in feature restriction.</p>
+
+            <h2 id="section-16">16. Unsafe Behavior</h2>
+            <p>Always prioritize safety. Meet in public, well-lit areas for parcel handoffs whenever possible. Never drive recklessly while carrying parcels or demand that a Traveler break transit regulations.</p>
+
+            <h2 id="section-17">17. Illegal Activity</h2>
+            <p>Utilizing CarryParcel to facilitate illegal transactions, transport stolen property, or evade regulatory authorities is strictly forbidden.</p>
+
+            <h2 id="section-18">18. Manipulation</h2>
+            <p>Manipulating the review system through fake reviews, rating extortion ("give me a discount or I'll leave 1 star"), or collusion is prohibited.</p>
+
+            <h2 id="section-19">19. Platform Abuse</h2>
+            <p>Exploiting software bugs, attempting unauthorized API requests, or disrupting CarryParcel system infrastructure damages the platform for everyone.</p>
+
+            <h2 id="section-20">20. Reporting Violations</h2>
+            <p>If you experience or witness a violation of these Community Guidelines, please report it immediately through the in-app reporting tools or contact our support team confidentially.</p>
+
+            <h2 id="section-21">21. Enforcement</h2>
+            <p>CarryParcel investigates reported violations thoroughly and impartially. Depending on severity, enforcement actions include formal warnings, temporary feature limits, account suspension, or permanent ban and law enforcement escalation.</p>
+
             <div class="legal-contact-box">
-                <p><strong>We're here to help.</strong></p>
-                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> Reach our trust &amp; safety team through the <a href="../support/support.html">Support Center</a> or the <a href="../contact/contact.html">Contact page</a>.</p>
+                <strong>Need support or want to report a concern?</strong>
+                <p>Our Trust &amp; Safety team is dedicated to protecting our community members:</p>
+                <p><i class="fa-solid fa-building" aria-hidden="true"></i> <strong>CarryParcel</strong> — Pune, Maharashtra, India</p>
+                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email: <a href="mailto:support@carryparcel.in">support@carryparcel.in</a></p>
+                <p><i class="fa-solid fa-headset" aria-hidden="true"></i> Visit our <a href="/support/support.html">Support Center</a> or <a href="/contact/contact.html">Contact Page</a>.</p>
             </div>
 
         </article>
     </div>
 </section>
 
+<!-- ================= CANONICAL FOOTER ================= -->
 <div id="tbFooterInclude"></div>
-<!-- ================= CANONICAL FOOTER (Source of Truth) ================= -->
 <footer class="site-footer" data-v="6">
     <div class="footer-container">
         <div class="footer-grid">
@@ -170,12 +478,10 @@
                 <a href="/" class="footer-logo" aria-label="CarryParcel home">
                     <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async">
                 </a>
-
-                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered<br>delivery.</p>
-
+                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered delivery.</p>
                 <div class="footer-socials" aria-label="Social media links">
                     <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-<a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
             </div>

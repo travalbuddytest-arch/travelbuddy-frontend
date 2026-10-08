@@ -24,14 +24,16 @@
 
   function initFromQueryParams() {
     const params = new URLSearchParams(window.location.search);
-    const filterParam = params.get('filter');
+    const filterParam = params.get('filter') || params.get('status');
     const roleParam = params.get('role');
 
     if (filterParam) {
       currentStatusFilter = filterParam.toLowerCase();
-      filterTabs.querySelectorAll('.filter-pill').forEach((btn) => {
-        btn.classList.toggle('active', btn.dataset.status === currentStatusFilter);
-      });
+      if (filterTabs) {
+        filterTabs.querySelectorAll('.tab-btn, .filter-pill').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.status === currentStatusFilter);
+        });
+      }
     }
 
     if (roleParam) {
@@ -248,9 +250,9 @@
 
   // Filter Tabs Handler
   if (filterTabs) {
-    filterTabs.querySelectorAll('.filter-pill').forEach(btn => {
+    filterTabs.querySelectorAll('.tab-btn, .filter-pill').forEach(btn => {
       btn.addEventListener('click', () => {
-        filterTabs.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        filterTabs.querySelectorAll('.tab-btn, .filter-pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentStatusFilter = btn.dataset.status || 'all';
         renderParcels();

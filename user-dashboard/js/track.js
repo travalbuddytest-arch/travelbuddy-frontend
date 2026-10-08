@@ -2,7 +2,7 @@
   'use strict';
 
   const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/postparcel`;
-  const { authHeaders, escapeHTML, setButtonLoading, formatDate } = window.TravelBuddy;
+  const { authHeaders, authFetchOptions, escapeHTML, setButtonLoading, formatDate } = window.TravelBuddy;
 
   // Elements
   const viewSearch = document.getElementById('viewSearch');
@@ -14,6 +14,10 @@
   const orderTrackForm = document.getElementById('orderTrackForm');
   const trackSubmitBtn = document.getElementById('trackSubmitBtn');
   const pasteBtn = document.getElementById('pasteBtn');
+
+  // URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const action = urlParams.get('action');
 
   const detOrderId = document.getElementById('detOrderId');
   const detAcceptedTime = document.getElementById('detAcceptedTime');
@@ -86,12 +90,12 @@
 
     try {
       // Try by Order ID first
-      const res = await fetch(`${API_BASE}/track/order/${encodeURIComponent(parcelId)}`, { headers: authHeaders() });
+      const res = await fetch(`${API_BASE}/track/order/${encodeURIComponent(parcelId)}`, authFetchOptions());
       const data = await res.json();
 
       if (!res.ok) {
          // If not found by Order ID, try by internal ID (fallback for deep links)
-         const res2 = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelId)}`, { headers: authHeaders() });
+         const res2 = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelId)}`, authFetchOptions());
          const data2 = await res2.json();
          if (!res2.ok) throw new Error(data2.error || 'Parcel not found.');
          renderTrackingDetails(data2.parcel);
@@ -366,13 +370,28 @@
 
   pasteBtn.onclick = async () => {
     try {
+      // Check if clipboard API is available and permissions are granted
+      if (!navigator.clipboard || typeof navigator.clipboard.readText !== 'function') {
+        throw new Error('Clipboard API not supported');
+      }
+      
+      // Request clipboard permission if needed
+      const permission = await navigator.permissions.query({ name: 'clipboard-read' }).catch(() => ({ state: 'prompt' }));
+      if (permission.state === 'denied') {
+        throw new Error('Clipboard permission denied');
+      }
+
       const text = await navigator.clipboard.readText();
       if (text) {
         orderTrackInput.value = text.trim();
         orderTrackInput.dispatchEvent(new Event('input'));
+        window.showToast('Pasted from clipboard', 'success');
       }
     } catch (err) {
-      window.showToast('Unable to access clipboard.', 'warning');
+      console.warn('Clipboard read failed:', err.message);
+      // Fallback: focus input for manual paste
+      orderTrackInput.focus();
+      window.showToast('Please paste manually (Ctrl+V / Cmd+V)', 'info');
     }
   };
 
@@ -400,10 +419,83 @@
 
   const params = new URLSearchParams(window.location.search);
   const qId = params.get('id') || params.get('orderId');
+  const action = params.get('action');
+
   if (qId) {
     handleTrackRequest(qId);
+    
+    // If action=scan, open QR scanner after tracking details load
+    if (action === 'scan') {
+      // Wait for tracking details to load, then open scanner
+      const checkLoaded = setInterval(() => {
+        if (selectedId && !viewDetails.classList.contains('hidden')) {
+          clearInterval(checkLoaded);
+          openQrScanner(selectedId);
+        }
+      }, 300);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => clearInterval(checkLoaded), 10000);
+    }
   } else {
     showView('search');
+  }
+
+  // QR Scanner function
+  async function openQrScanner(parcelId) {
+    if (!window.CarryParcel?.QRScanner || !window.TravelBuddy?.QRVerification) {
+      window.showToast('QR scanner not available', 'error');
+      return;
+    }
+
+    try {
+      window.showToast('Opening camera...', 'info');
+      
+      const qrToken = await window.CarryParcel.QRScanner.startScan();
+      
+      if (!qrToken) {
+        window.showToast('No QR code detected', 'warning');
+        return;
+      }
+
+      window.showToast('Verifying QR code...', 'info');
+      
+      // Determine verification type based on parcel status
+      const parcelRes = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelId)}`, authFetchOptions());
+      const parcelData = await parcelRes.json();
+      
+      if (!parcelRes.ok || !parcelData.parcel) {
+        throw new Error('Parcel not found');
+      }
+      
+      const parcel = parcelData.parcel;
+      let verifyResult;
+      
+      if (['accepted', 'pickup_point_pending', 'pickup_point_selected'].includes(parcel.status)) {
+        // Pickup verification
+        verifyResult = await window.TravelBuddy.QRVerification.verifyPickupQr(parcelId, qrToken);
+      } else if (['in_transit', 'delivery_point_pending', 'delivery_point_selected'].includes(parcel.status)) {
+        // Delivery verification
+        verifyResult = await window.TravelBuddy.QRVerification.verifyDeliveryQr(parcelId, qrToken);
+      } else {
+        window.showToast('QR verification not available for this parcel status', 'warning');
+        return;
+      }
+      
+      if (verifyResult?.success) {
+        window.showToast('Verification successful!', 'success');
+        // Refresh tracking details
+        handleTrackRequest(parcelId);
+      } else {
+        window.showToast(verifyResult?.message || 'Verification failed', 'error');
+      }
+      
+    } catch (err) {
+      if (err.message !== 'Scan cancelled' && err.message !== 'Scan stopped') {
+        console.error('QR scan error:', err);
+        window.showToast(err.message || 'QR scan failed', 'error');
+      }
+    }
   }
 
 })();

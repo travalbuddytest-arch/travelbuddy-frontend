@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, formatPaise, statusBadge, setButtonLoading } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, authFetchOptions, escapeHTML, formatPaise, statusBadge, setButtonLoading } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/postparcel`;
 
   // UI Helper
@@ -104,7 +104,7 @@
     setTimeout(async () => {
       try {
         const url = `${API_BASE}/${parcelData.id}/${purpose}-qr`;
-        const res = await fetch(url, { method: 'POST', headers: authHeaders() });
+        const res = await fetch(url, authFetchOptions({ method: 'POST' }));
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message || 'QR generation failed');
@@ -193,7 +193,7 @@
         ? `${API_BASE}/track/order/${encodeURIComponent(targetId)}`
         : `${API_BASE}/tracking/${encodeURIComponent(targetId)}`;
 
-      const res = await fetch(url, { headers: authHeaders() });
+      const res = await fetch(url, authFetchOptions());
       const data = await res.json();
 
       if (!res.ok) {
@@ -612,7 +612,7 @@
         buttons.innerHTML = isPointNeeded
           ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('pickup', false)"><i class="fa-solid fa-location-dot"></i> Select Pickup Point</button>`
           : `
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Sender QR</a>
+          <button type="button" class="btn-primary scan-qr-btn" data-id="${escapeHTML(p.id)}" data-type="pickup"><i class="fa-solid fa-camera"></i> Scan Sender QR</button>
         `;
       }
       actionBanner.classList.remove('hidden');
@@ -645,7 +645,7 @@
         buttons.innerHTML = isPointNeeded
           ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('delivery', false)"><i class="fa-solid fa-location-dot"></i> Select Delivery Point</button>`
           : `
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;"><i class="fa-solid fa-camera"></i> Scan Recipient QR</a>
+          <button type="button" class="btn-primary scan-qr-btn" data-id="${escapeHTML(p.id)}" data-type="delivery"><i class="fa-solid fa-camera"></i> Scan Recipient QR</button>
         `;
       }
       actionBanner.classList.remove('hidden');
@@ -679,6 +679,15 @@
   function attachActionBannerEvents() {
     const startJourneyBtn = ui('startJourneyBtn');
     if (startJourneyBtn) startJourneyBtn.onclick = startJourneyAction;
+
+    // Attach QR Scanner buttons
+    document.querySelectorAll('.scan-qr-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const type = btn.dataset.type; // 'pickup' or 'delivery'
+        openQrScanner(id, type);
+      });
+    });
   }
 
   function renderCounterpart(p, isSender) {
@@ -876,7 +885,7 @@
 
     try {
       if (recommendedPointsList()) recommendedPointsList().innerHTML = '<p style="font-size:12px; color:var(--text-faint);">Loading recommendations...</p>';
-      const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-recommendations?purpose=${purpose}`, { headers: authHeaders() });
+      const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-recommendations?purpose=${purpose}`, authFetchOptions());
       const data = await res.json();
 
       if (data.recommendations?.length) {
@@ -961,11 +970,10 @@
        setButtonLoading(confirmLocationBtn(), true, 'Saving...');
        try {
          const url = `${API_BASE}/tracking/${parcelData.id}/${activePickerPurpose}-point`;
-         const res = await fetch(url, {
+         const res = await fetch(url, authFetchOptions({
            method: 'POST',
-           headers: authHeaders(),
            body: JSON.stringify(selectedLocation)
-         });
+         }));
          const data = await res.json();
          if (!res.ok) throw new Error(data.error);
          window.showToast(`${activePickerPurpose.toUpperCase()} point saved!`, 'success');
@@ -1000,15 +1008,14 @@
       }
       setButtonLoading(submitChangeRequestBtn(), true, 'Sending...');
       try {
-        const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-change/request`, {
+        const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-change/request`, authFetchOptions({
           method: 'POST',
-          headers: authHeaders(),
           body: JSON.stringify({
             type: activePickerPurpose,
             newLocation: selectedLocation,
             reason: changeReasonText().value.trim()
           })
-        });
+        }));
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
         window.showToast('Request sent to traveler!', 'success');
@@ -1027,10 +1034,7 @@
     if (!btn) return;
     setButtonLoading(btn, true, action === 'approve' ? 'Approving...' : 'Declining...');
     try {
-      const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-change/${action}`, {
-        method: 'POST',
-        headers: authHeaders()
-      });
+      const res = await fetch(`${API_BASE}/tracking/${parcelData.id}/location-change/${action}`, authFetchOptions({ method: 'POST' }));
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       window.showToast(`Request ${action}d successfully`, 'success');
@@ -1046,11 +1050,10 @@
     if (!userId || !parcelData) return;
     try {
       window.showToast('Connecting to conversation...', 'info');
-      const res = await fetch(`${API_ORIGIN}/api/messages/start`, {
+      const res = await fetch(`${API_ORIGIN}/api/messages/start`, authFetchOptions({
         method: 'POST',
-        headers: authHeaders(),
         body: JSON.stringify({ recipientId: userId, parcelId: parcelData.id })
-      });
+      }));
       const data = await res.json();
       if (res.ok && data.conversationId) {
         window.location.href = `messages.html?conversation=${encodeURIComponent(data.conversationId)}`;
@@ -1067,10 +1070,7 @@
     if (!parcelData) return;
     try {
       window.showToast('Starting journey...', 'info');
-      const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/actions/start-journey`, {
-        method: 'POST',
-        headers: authHeaders()
-      });
+      const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/actions/start-journey`, authFetchOptions({ method: 'POST' }));
       const data = await res.json();
       if (!res.ok) {
         window.showToast(data.error || 'Could not start journey.', 'error');
@@ -1084,17 +1084,57 @@
     }
   }
 
+  // QR Scanner function
+  async function openQrScanner(parcelId, type) {
+    if (!window.CarryParcel?.QRScanner || !window.TravelBuddy?.QRVerification) {
+      window.showToast('QR scanner not available', 'error');
+      return;
+    }
+
+    try {
+      window.showToast('Opening camera...', 'info');
+      
+      const qrToken = await window.CarryParcel.QRScanner.startScan();
+      
+      if (!qrToken) {
+        window.showToast('No QR code detected', 'warning');
+        return;
+      }
+
+      window.showToast('Verifying QR code...', 'info');
+      
+      let verifyResult;
+      if (type === 'pickup') {
+        verifyResult = await window.TravelBuddy.QRVerification.verifyPickupQr(parcelId, qrToken);
+      } else {
+        verifyResult = await window.TravelBuddy.QRVerification.verifyDeliveryQr(parcelId, qrToken);
+      }
+      
+      if (verifyResult?.success) {
+        window.showToast('Verification successful!', 'success');
+        loadParcelDetails();
+      } else {
+        window.showToast(verifyResult?.message || 'Verification failed', 'error');
+      }
+      
+    } catch (err) {
+      if (err.message !== 'Scan cancelled' && err.message !== 'Scan stopped') {
+        console.error('QR scan error:', err);
+        window.showToast(err.message || 'QR scan failed', 'error');
+      }
+    }
+  }
+
   if (confirmCancelBtn()) {
     confirmCancelBtn().onclick = async () => {
       if (!parcelData) return;
       const reason = cancelReason().value;
       setButtonLoading(confirmCancelBtn(), true, 'Cancelling...');
       try {
-        const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/cancel`, {
+        const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/cancel`, authFetchOptions({
           method: 'POST',
-          headers: authHeaders(),
           body: JSON.stringify({ reason })
-        });
+        }));
         const data = await res.json();
         if (!res.ok) {
           window.showToast(data.error || 'Could not cancel parcel.', 'error');
@@ -1117,16 +1157,15 @@
       if (!parcelData) return;
       setButtonLoading(submitReviewBtn(), true, 'Submitting...');
       try {
-        const res = await fetch(`${API_BASE}/review`, {
+        const res = await fetch(`${API_BASE}/review`, authFetchOptions({
           method: 'POST',
-          headers: authHeaders(),
           body: JSON.stringify({
             parcelId: parcelData.id,
             rating: selectedRating,
             comment: reviewComment().value.trim(),
             role: parcelData.role
           })
-        });
+        }));
         const data = await res.json();
         if (!res.ok) {
           window.showToast(data.error || 'Could not submit review.', 'error');
@@ -1156,11 +1195,10 @@
       }
       setButtonLoading(submitReportBtn(), true, 'Reporting...');
       try {
-        const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/report`, {
+        const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(parcelData.id)}/report`, authFetchOptions({
           method: 'POST',
-          headers: authHeaders(),
           body: JSON.stringify({ reason, description: desc })
-        });
+        }));
         const data = await res.json();
         if (!res.ok) {
           window.showToast(data.error || 'Could not submit report.', 'error');

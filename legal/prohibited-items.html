@@ -3,30 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prohibited Items Policy | CarryParcel</title>
-    <meta name="description" content="Items that can never be sent through CarryParcel, and items that need extra care or disclosure.">
+    <title>Prohibited Items Policy | CarryParcel — Transport Safety &amp; Restrictions</title>
+    <meta name="description" content="List of prohibited, hazardous, illegal, and restricted items that cannot be sent or carried on the CarryParcel peer-to-peer delivery platform.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.carryparcel.in/legal/prohibited-items.html">
+
+    <!-- Open Graph / Social Media Meta -->
     <meta property="og:title" content="Prohibited Items Policy | CarryParcel">
-    <meta property="og:description" content="Items you cannot send or carry through CarryParcel's parcel delivery platform.">
+    <meta property="og:description" content="Important safety regulations regarding forbidden cargo, dangerous materials, contraband, and restricted items on CarryParcel.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.carryparcel.in/legal/prohibited-items.html">
     <meta property="og:image" content="https://www.carryparcel.in/images/logo.jpeg">
     <meta property="og:site_name" content="CarryParcel">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Prohibited Items Policy | CarryParcel">
-    <meta name="twitter:description" content="Items you cannot send or carry through CarryParcel's parcel delivery platform.">
+    <meta name="twitter:description" content="Important safety regulations regarding forbidden cargo, dangerous materials, contraband, and restricted items on CarryParcel.">
     <meta name="twitter:image" content="https://www.carryparcel.in/images/logo.jpeg">
+
     <link rel="icon" type="image/png" href="../images/logo-icon.png" sizes="32x32">
 
+    <!-- External Global CSS (Preserved for Nav/Footer Compatibility) -->
     <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="legal.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../shared/navbar.css?v=8">
     <link rel="stylesheet" href="../shared/footer.css">
     <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Page-Local CSS (Self-Contained) -->
+    <style>
+        :root {
+            --cp-legal-primary: #0d6efd;
+            --cp-legal-primary-hover: #0b5ed7;
+            --cp-legal-dark: #0f172a;
+            --cp-legal-text: #334155;
+            --cp-legal-muted: #64748b;
+            --cp-legal-bg-light: #f8fafc;
+            --cp-legal-card-bg: #ffffff;
+            --cp-legal-border: #e2e8f0;
+            --cp-legal-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+            --cp-legal-radius: 12px;
+            --cp-danger-color: #dc3545;
+            --cp-warning-color: #ffc107;
+        }
+
+        body[data-page="legal"] {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cp-legal-bg-light);
+            color: var(--cp-legal-text);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hero Section */
+        .legal-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 120px 20px 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legal-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 53, 69, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .legal-hero h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+
+        .legal-hero p {
+            font-size: 1.125rem;
+            max-width: 720px;
+            margin: 0 auto 20px auto;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .legal-updated {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: #f87171;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Container */
+        .legal-wrap {
+            max-width: 1200px;
+            margin: -30px auto 80px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .legal-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Legal Navigation Sidebar */
+        .legal-nav {
+            background: var(--cp-legal-card-bg);
+            border-radius: var(--cp-legal-radius);
+            padding: 16px;
+            border: 1px solid var(--cp-legal-border);
+            box-shadow: var(--cp-legal-shadow);
+            position: sticky;
+            top: 90px;
+        }
+
+        .legal-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--cp-legal-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .legal-nav a:hover {
+            color: var(--cp-legal-primary);
+            background: rgba(13, 110, 253, 0.05);
+        }
+
+        .legal-nav a.active {
+            color: var(--cp-legal-primary);
+            background: rgba(13, 110, 253, 0.1);
+            font-weight: 600;
+        }
+
+        .legal-nav a i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Article Content */
+        .legal-content {
+            background: var(--cp-legal-card-bg);
+            border-radius: var(--cp-legal-radius);
+            padding: 48px;
+            border: 1px solid var(--cp-legal-border);
+            box-shadow: var(--cp-legal-shadow);
+        }
+
+        .legal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cp-legal-dark);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f1f5f9;
+            scroll-margin-top: 100px;
+        }
+
+        .legal-content h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .legal-content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 24px 0 12px 0;
+        }
+
+        .legal-content p {
+            margin: 0 0 16px 0;
+            color: var(--cp-legal-text);
+            font-size: 0.98rem;
+        }
+
+        .legal-content ul, .legal-content ol {
+            margin: 0 0 20px 0;
+            padding-left: 24px;
+        }
+
+        .legal-content li {
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+            color: var(--cp-legal-text);
+        }
+
+        /* Prohibited Grid Cards */
+        .prohibited-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .prohibited-card {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .prohibited-card h4 {
+            margin: 0 0 8px 0;
+            color: #c53030;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prohibited-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #742a2a;
+        }
+
+        .legal-callout-warning {
+            display: flex;
+            gap: 16px;
+            background: #fffbe3;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+        }
+
+        .legal-callout-warning i {
+            color: #d97706;
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+
+        .legal-callout-warning p {
+            margin: 0;
+            color: #78350f;
+            font-size: 0.95rem;
+        }
+
+        .legal-contact-box {
+            background: #f8fafc;
+            border: 1px solid var(--cp-legal-border);
+            border-radius: var(--cp-legal-radius);
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .legal-contact-box strong {
+            color: var(--cp-legal-dark);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .legal-contact-box a {
+            color: var(--cp-legal-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .legal-contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Focus States for Accessibility */
+        a:focus-visible, button:focus-visible {
+            outline: 3px solid var(--cp-legal-primary);
+            outline-offset: 2px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .legal-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .legal-nav {
+                position: static;
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 12px;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .legal-nav a {
+                margin-bottom: 0;
+            }
+
+            .legal-content {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .legal-hero {
+                padding: 100px 16px 40px 16px;
+            }
+
+            .legal-hero h1 {
+                font-size: 2rem;
+            }
+
+            .legal-hero p {
+                font-size: 1rem;
+            }
+
+            .legal-wrap {
+                margin-top: -20px;
+                padding: 0 12px;
+            }
+
+            .legal-content {
+                padding: 24px 16px;
+            }
+
+            .legal-content h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 <body data-page="legal">
 
@@ -34,9 +354,9 @@
 <script src="../shared/auth-cookie-client.js?v=1"></script>
 <script src="../shared/analytics-client.js?v=1"></script>
 
-<div id="tbNavbarInclude"></div>
-<!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
-<header class="tb-nav-header" data-v="6">
+<div id="cpNavbarInclude"></div>
+<!-- ================= CANONICAL PUBLIC NAVBAR ================= -->
+<header class="cp-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
@@ -50,14 +370,15 @@
     </button>
 
     <nav id="mainNav">
-        <a href="/" data-page="home">Home</a>
-        <a href="/about/about.html" data-page="about">About</a>
-        <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
-        <a href="/contact/contact.html" data-page="contact">Contact</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/about.html" data-page="about">About</a>
+            <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/contact.html" data-page="contact">Contact</a>
+        </div>
 
         <div id="guestNavActions" class="guest-nav-actions">
-            <a href="/login/login.html" class="login-btn">Login</a>
-            <a href="/register/register.html" class="register-btn">Register</a>
+            <a href="/login/login.html" class="auth-btn">Login / Register</a>
         </div>
 
         <div class="home-user-chip" id="homeUserChip" hidden>
@@ -81,82 +402,130 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js"></script>
 
+<!-- HERO SECTION -->
 <section class="legal-hero">
-    <h1>Prohibited Items</h1>
-    <p>Because a real person carries your parcel, some items can never be sent through CarryParcel — for their safety and yours.</p>
-    <span class="legal-updated"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Last updated: January 2026</span>
+    <h1>Prohibited Items Policy</h1>
+    <p>Essential safety guidelines detailing forbidden cargo, hazardous substances, and restricted items that must never be sent or carried on CarryParcel.</p>
+    <span class="legal-updated"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Last updated: October 2026</span>
 </section>
 
+<!-- MAIN CONTENT SECTION -->
 <section class="legal-wrap">
     <div class="legal-layout">
 
-        <nav class="legal-nav" aria-label="Legal pages">
-            <a href="privacy.html"><i class="fa-solid fa-user-shield"></i> Privacy Policy</a>
-            <a href="terms.html"><i class="fa-solid fa-file-contract"></i> Terms &amp; Conditions</a>
-            <a href="prohibited-items.html" class="active"><i class="fa-solid fa-ban"></i> Prohibited Items</a>
-            <a href="community-guidelines.html"><i class="fa-solid fa-people-group"></i> Community Guidelines</a>
+        <!-- INTERNAL LEGAL NAVIGATION -->
+        <nav class="legal-nav" aria-label="Legal pages navigation">
+            <a href="/legal/privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy Policy</a>
+            <a href="/legal/terms.html"><i class="fa-solid fa-file-contract" aria-hidden="true"></i> Terms &amp; Conditions</a>
+            <a href="/legal/prohibited-items.html" class="active"><i class="fa-solid fa-ban" aria-hidden="true"></i> Prohibited Items</a>
+            <a href="/legal/community-guidelines.html"><i class="fa-solid fa-people-group" aria-hidden="true"></i> Community Guidelines</a>
         </nav>
 
+        <!-- PROHIBITED ITEMS ARTICLE -->
         <article class="legal-content">
 
-            <h2 id="why">1. Why this list exists</h2>
-            <p>Every parcel on CarryParcel is carried by a verified member of our community, not a commercial freight service. Senders must accurately describe their parcel's contents when posting a request, and travelers are entitled to inspect a parcel before accepting it. Attempting to send a prohibited item, or misrepresenting a parcel's contents, may result in account suspension.</p>
+            <h2>1. Policy Overview &amp; Community Safety</h2>
+            <p>At <strong>CarryParcel</strong>, community safety is our paramount priority. Because items are transported by independent travelers, users must strictly adhere to this Prohibited Items Policy. Transporting illegal, dangerous, or unauthorized goods jeopardizes traveler safety, violates local and federal laws, and degrades community trust.</p>
 
-            <h2 id="never">2. Never allowed, under any circumstances</h2>
-            <ul>
-                <li>Firearms, ammunition, explosives, or fireworks of any kind.</li>
-                <li>Illegal drugs or controlled substances without valid, verifiable prescription documentation.</li>
-                <li>Live animals or animal remains.</li>
-                <li>Human remains or hazardous biological material.</li>
-                <li>Counterfeit goods or items that infringe on someone else's intellectual property.</li>
-                <li>Stolen goods or items obtained illegally.</li>
-                <li>Cash, bearer bonds, or other negotiable instruments.</li>
-                <li>Items that are illegal to possess, sell, or transport under applicable law at either the pickup or destination location.</li>
-            </ul>
+            <h2>2. Strictly Forbidden Categories</h2>
+            <p>The following items are <strong>strictly prohibited</strong> from being listed, packed, offered, or transported on CarryParcel under any circumstances:</p>
 
-            <h2 id="restricted">3. Restricted — require disclosure and traveler consent</h2>
-            <p>These items are not automatically blocked, but must be clearly disclosed when posting a parcel, and the accepting traveler must explicitly agree to carry them:</p>
-            <ul>
-                <li>Flammable liquids, aerosols, or compressed gas canisters.</li>
-                <li>Lithium batteries not installed in a device (spare power banks, loose cells).</li>
-                <li>Sharp objects such as knives, blades, or tools, which must be safely packaged.</li>
-                <li>Perishable food items that require refrigeration or have a short shelf life.</li>
-                <li>Fragile or high-value items such as electronics, jewelry, or glassware — travelers may decline these or request additional care instructions.</li>
-                <li>Medication, which must include original packaging and, where applicable, a prescription.</li>
-            </ul>
+            <div class="prohibited-grid">
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-capsules"></i> Illegal Drugs &amp; Narcotics</h4>
+                    <p>Controlled substances, illicit drugs, unapproved pharmaceuticals, or prescription medications without valid matching documentation.</p>
+                </div>
 
-            <div class="legal-callout">
-                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                <p>When in doubt, disclose it. Under-describing a parcel to get it accepted faster is a violation of our Terms &amp; Conditions and puts the traveler carrying it at risk.</p>
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-gun"></i> Firearms &amp; Ammunition</h4>
+                    <p>Handguns, rifles, stun guns, ammunition, weapon components, replica firearms, or martial arts weaponry.</p>
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-bomb"></i> Explosives &amp; Fireworks</h4>
+                    <p>Fireworks, flares, gunpowder, blasters, detonators, or any explosive pyrotechnic compound.</p>
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-fire-flame-curved"></i> Flammable Liquids &amp; Gas</h4>
+                    <p>Gasoline, lighter fluid, kerosene, aerosol paint cans, pressurized gas cylinders, or butane canisters.</p>
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-flask-vial"></i> Toxic &amp; Chemical Hazards</h4>
+                    <p>Pesticides, poisons, corrosive acids, biohazardous waste, radioactive elements, or infectious substances.</p>
+
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-skull-crossbones"></i> Dangerous Biological Material</h4>
+                    <p>Medical waste, blood samples, viral cultures, hazardous biological agents, or unregistered clinical specimens.</p>
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-mask"></i> Stolen &amp; Illicit Goods</h4>
+                    <p>Property obtained through theft, burglary, robbery, or unauthorized conversion.</p>
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-box-tissue"></i> Counterfeit &amp; Fraudulent Goods</h4>
+                    <p>Fake branded merchandise, forged identification documents, fake currency, or pirated copyright media.</p>
+                </div>
+
+                <div class="prohibited-card">
+                    <h4><i class="fa-solid fa-paw"></i> Illegal Wildlife Products</h4>
+                    <p>Protected animals, endangered species products, ivory, or contraband animal specimens restricted under wildlife protection laws.</p>
+                </div>
             </div>
 
-            <h2 id="high-value">4. High-value parcels</h2>
-            <p>For items above a certain declared value, we recommend using our optional parcel insurance add-on at checkout and packaging the item securely. CarryParcel's standard delivery protection does not cover items that were inaccurately declared.</p>
-
-            <h2 id="reporting">5. Reporting a suspicious parcel</h2>
-            <p>If you're a traveler and suspect a parcel request misrepresents its contents, decline the request and report it from the parcel details screen. If you've already accepted a parcel and have concerns after inspecting it, contact Support before proceeding with the delivery.</p>
-
-            <h2 id="enforcement">6. What happens if this policy is violated</h2>
+            <h2>3. Additional Restricted Items</h2>
+            <p>In addition to hazardous goods, the following items are forbidden from being sent via peer-to-peer transport on CarryParcel:</p>
             <ul>
-                <li>The parcel request will be cancelled and any held payment refunded to the sender where appropriate.</li>
-                <li>Repeated or serious violations may lead to temporary suspension or permanent removal from CarryParcel.</li>
-                <li>Where required, CarryParcel may report illegal items to the relevant authorities.</li>
+                <li><strong>Cash and Negotiable Instruments:</strong> Physical currency, bank notes, bearer bonds, traveler's checks, or gift cards.</li>
+                <li><strong>Human Remains:</strong> Cremated remains, body parts, or biological specimens.</li>
+                <li><strong>Unsecured Sharp Objects:</strong> Unsheathed blades, knives, scalpels, or loose industrial needles.</li>
+                <li><strong>Items Prohibited by Applicable Law:</strong> Any material or article whose transport or possession is restricted by state, federal, or transit transit laws in India.</li>
             </ul>
 
-            <hr class="legal-divider">
+            <h2>4. Mandatory Sender Declaration Rules</h2>
+            <p>Senders must provide a completely truthful and detailed description of the parcel's contents during order creation. The following acts constitute severe violations of CarryParcel policy:</p>
+            <ul>
+                <li><strong>Concealment:</strong> Hiding restricted or prohibited goods inside harmless items or double-boxed packaging.</li>
+                <li><strong>Misrepresentation:</strong> Falsely labeling electronic devices, liquids, or chemicals as clothing or books.</li>
+                <li><strong>Underdeclaration:</strong> Falsifying item valuation or package weights to bypass inspection or fee structures.</li>
+            </ul>
 
-            <h2 id="contact-prohibited">7. Still not sure?</h2>
+            <div class="legal-callout-warning">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                <p><strong>Traveler Inspection Right:</strong> Travelers have the right to visually inspect any package before accepting it. If a package appears suspicious, sealed suspiciously, or differs from the listing description, Travelers should refuse pickup immediately.</p>
+            </div>
+
+            <h2>5. Platform Interventions &amp; Violations</h2>
+            <p>If CarryParcel detects or receives reports of prohibited item violations, the platform will take swift action, including:</p>
+            <ul>
+                <li>Immediate cancellation of active delivery requests.</li>
+                <li>Temporary or permanent suspension of user accounts.</li>
+                <li>Forfeiture of associated wallet earnings or escrow holds.</li>
+                <li>Reporting suspicious or unlawful activity to law enforcement and regulatory authorities.</li>
+            </ul>
+
+            <h2>6. Reporting Suspicious Activity</h2>
+            <p>If you encounter a listing or package that appears suspicious, unsafe, or unlawful, please report it immediately via the in-app reporting button or contact our support team directly.</p>
+
             <div class="legal-contact-box">
-                <p><strong>Ask before you post.</strong></p>
-                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> If you're unsure whether an item is allowed, check with our <a href="../support/support.html">Support Center</a> before creating a parcel request.</p>
+                <strong>Have questions about item permissions?</strong>
+                <p>If you are unsure whether an item is permitted on CarryParcel, contact our support team prior to posting:</p>
+                <p><i class="fa-solid fa-building" aria-hidden="true"></i> <strong>CarryParcel</strong> — Pune, Maharashtra, India</p>
+                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email: <a href="mailto:support@carryparcel.in">support@carryparcel.in</a></p>
+                <p><i class="fa-solid fa-headset" aria-hidden="true"></i> Visit our <a href="/support/support.html">Support Center</a> or <a href="/contact/contact.html">Contact Page</a>.</p>
             </div>
 
         </article>
     </div>
 </section>
 
+<!-- ================= CANONICAL FOOTER ================= -->
 <div id="tbFooterInclude"></div>
-<!-- ================= CANONICAL FOOTER (Source of Truth) ================= -->
 <footer class="site-footer" data-v="6">
     <div class="footer-container">
         <div class="footer-grid">
@@ -164,12 +533,10 @@
                 <a href="/" class="footer-logo" aria-label="CarryParcel home">
                     <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async">
                 </a>
-
-                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered<br>delivery.</p>
-
+                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered delivery.</p>
                 <div class="footer-socials" aria-label="Social media links">
                     <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-<a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
             </div>

@@ -4,29 +4,324 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | CarryParcel — Data Protection &amp; Privacy</title>
-    <meta name="description" content="How CarryParcel collects, uses, and protects your data when you send parcels or travel with the platform.">
+    <meta name="description" content="How CarryParcel collects, processes, and protects your personal, KYC, parcel, and payment information when using our peer-to-peer delivery platform.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.carryparcel.in/legal/privacy.html">
+
+    <!-- Open Graph / Social Media Meta -->
     <meta property="og:title" content="Privacy Policy | CarryParcel">
-    <meta property="og:description" content="How CarryParcel collects, uses, and protects your data when you send parcels or travel with the platform.">
+    <meta property="og:description" content="Comprehensive details on data collection, privacy, identity verification (KYC), and safety practices at CarryParcel.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.carryparcel.in/legal/privacy.html">
     <meta property="og:image" content="https://www.carryparcel.in/images/logo.jpeg">
     <meta property="og:site_name" content="CarryParcel">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Privacy Policy | CarryParcel">
-    <meta name="twitter:description" content="How CarryParcel collects, uses, and protects your data when you send parcels or travel with the platform.">
+    <meta name="twitter:description" content="Comprehensive details on data collection, privacy, identity verification (KYC), and safety practices at CarryParcel.">
     <meta name="twitter:image" content="https://www.carryparcel.in/images/logo.jpeg">
+
     <link rel="icon" type="image/png" href="../images/logo-icon.png" sizes="32x32">
 
+    <!-- External Global CSS (Preserved for Nav/Footer Compatibility) -->
     <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="legal.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../shared/navbar.css?v=8">
     <link rel="stylesheet" href="../shared/footer.css">
     <link rel="stylesheet" href="../shared/site-banner.css?v=3">
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Page-Local CSS (Self-Contained) -->
+    <style>
+        :root {
+            --cp-legal-primary: #0d6efd;
+            --cp-legal-primary-hover: #0b5ed7;
+            --cp-legal-dark: #0f172a;
+            --cp-legal-text: #334155;
+            --cp-legal-muted: #64748b;
+            --cp-legal-bg-light: #f8fafc;
+            --cp-legal-card-bg: #ffffff;
+            --cp-legal-border: #e2e8f0;
+            --cp-legal-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+            --cp-legal-radius: 12px;
+        }
+
+        body[data-page="legal"] {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cp-legal-bg-light);
+            color: var(--cp-legal-text);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hero Section */
+        .legal-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 120px 20px 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legal-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .legal-hero h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+
+        .legal-hero p {
+            font-size: 1.125rem;
+            max-width: 720px;
+            margin: 0 auto 20px auto;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .legal-updated {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: #38bdf8;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Container */
+        .legal-wrap {
+            max-width: 1200px;
+            margin: -30px auto 80px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .legal-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Legal Navigation Sidebar */
+        .legal-nav {
+            background: var(--cp-legal-card-bg);
+            border-radius: var(--cp-legal-radius);
+            padding: 16px;
+            border: 1px solid var(--cp-legal-border);
+            box-shadow: var(--cp-legal-shadow);
+            position: sticky;
+            top: 90px;
+        }
+
+        .legal-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--cp-legal-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .legal-nav a:hover {
+            color: var(--cp-legal-primary);
+            background: rgba(13, 110, 253, 0.05);
+        }
+
+        .legal-nav a.active {
+            color: var(--cp-legal-primary);
+            background: rgba(13, 110, 253, 0.1);
+            font-weight: 600;
+        }
+
+        .legal-nav a i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Article Content */
+        .legal-content {
+            background: var(--cp-legal-card-bg);
+            border-radius: var(--cp-legal-radius);
+            padding: 48px;
+            border: 1px solid var(--cp-legal-border);
+            box-shadow: var(--cp-legal-shadow);
+        }
+
+        .legal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cp-legal-dark);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f1f5f9;
+            scroll-margin-top: 100px;
+        }
+
+        .legal-content h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .legal-content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 24px 0 12px 0;
+        }
+
+        .legal-content p {
+            margin: 0 0 16px 0;
+            color: var(--cp-legal-text);
+            font-size: 0.98rem;
+        }
+
+        .legal-content ul, .legal-content ol {
+            margin: 0 0 20px 0;
+            padding-left: 24px;
+        }
+
+        .legal-content li {
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+            color: var(--cp-legal-text);
+        }
+
+        .legal-callout {
+            display: flex;
+            gap: 16px;
+            background: #f0f7ff;
+            border-left: 4px solid var(--cp-legal-primary);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+        }
+
+        .legal-callout i {
+            color: var(--cp-legal-primary);
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+
+        .legal-callout p {
+            margin: 0;
+            color: #1e3a8a;
+            font-size: 0.95rem;
+        }
+
+        .legal-contact-box {
+            background: #f8fafc;
+            border: 1px solid var(--cp-legal-border);
+            border-radius: var(--cp-legal-radius);
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .legal-contact-box strong {
+            color: var(--cp-legal-dark);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .legal-contact-box a {
+            color: var(--cp-legal-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .legal-contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        .legal-divider {
+            border: 0;
+            height: 1px;
+            background: #e2e8f0;
+            margin: 40px 0;
+        }
+
+        /* Focus States for Accessibility */
+        a:focus-visible, button:focus-visible {
+            outline: 3px solid var(--cp-legal-primary);
+            outline-offset: 2px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .legal-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .legal-nav {
+                position: static;
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 12px;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .legal-nav a {
+                margin-bottom: 0;
+            }
+
+            .legal-content {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .legal-hero {
+                padding: 100px 16px 40px 16px;
+            }
+
+            .legal-hero h1 {
+                font-size: 2rem;
+            }
+
+            .legal-hero p {
+                font-size: 1rem;
+            }
+
+            .legal-wrap {
+                margin-top: -20px;
+                padding: 0 12px;
+            }
+
+            .legal-content {
+                padding: 24px 16px;
+            }
+
+            .legal-content h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 <body data-page="legal">
 
@@ -34,9 +329,9 @@
 <script src="../shared/auth-cookie-client.js?v=1"></script>
 <script src="../shared/analytics-client.js?v=1"></script>
 
-<div id="tbNavbarInclude"></div>
-<!-- ================= CANONICAL PUBLIC NAVBAR (Source of Truth) ================= -->
-<header class="tb-nav-header" data-v="6">
+<div id="cpNavbarInclude"></div>
+<!-- ================= CANONICAL PUBLIC NAVBAR ================= -->
+<header class="cp-nav-header" data-v="7">
     <div class="logo">
         <a href="/" class="logo-link">
             <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
@@ -50,14 +345,15 @@
     </button>
 
     <nav id="mainNav">
-        <a href="/" data-page="home">Home</a>
-        <a href="/about/about.html" data-page="about">About</a>
-        <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
-        <a href="/contact/contact.html" data-page="contact">Contact</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/about.html" data-page="about">About</a>
+            <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/contact.html" data-page="contact">Contact</a>
+        </div>
 
         <div id="guestNavActions" class="guest-nav-actions">
-            <a href="/login/login.html" class="login-btn">Login</a>
-            <a href="/register/register.html" class="register-btn">Register</a>
+            <a href="/login/login.html" class="auth-btn">Login / Register</a>
         </div>
 
         <div class="home-user-chip" id="homeUserChip" hidden>
@@ -81,112 +377,136 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="../shared/nav-include.js"></script>
 
+<!-- HERO SECTION -->
 <section class="legal-hero">
     <h1>Privacy Policy</h1>
-    <p>We only collect what CarryParcel needs to match senders with travelers, confirm deliveries, and keep the community safe.</p>
-    <span class="legal-updated"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Last updated: January 2026</span>
+    <p>How CarryParcel collects, uses, and safeguards your personal data, identity verification details, parcel requests, and payment information.</p>
+    <span class="legal-updated"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Last updated: October 2026</span>
 </section>
 
+<!-- MAIN CONTENT SECTION -->
 <section class="legal-wrap">
     <div class="legal-layout">
 
-        <nav class="legal-nav" aria-label="Legal pages">
-            <a href="privacy.html" class="active"><i class="fa-solid fa-user-shield"></i> Privacy Policy</a>
-            <a href="terms.html"><i class="fa-solid fa-file-contract"></i> Terms &amp; Conditions</a>
-            <a href="prohibited-items.html"><i class="fa-solid fa-ban"></i> Prohibited Items</a>
-            <a href="community-guidelines.html"><i class="fa-solid fa-people-group"></i> Community Guidelines</a>
+        <!-- INTERNAL LEGAL NAVIGATION -->
+        <nav class="legal-nav" aria-label="Legal pages navigation">
+            <a href="/legal/privacy.html" class="active"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy Policy</a>
+            <a href="/legal/terms.html"><i class="fa-solid fa-file-contract" aria-hidden="true"></i> Terms &amp; Conditions</a>
+            <a href="/legal/prohibited-items.html"><i class="fa-solid fa-ban" aria-hidden="true"></i> Prohibited Items</a>
+            <a href="/legal/community-guidelines.html"><i class="fa-solid fa-people-group" aria-hidden="true"></i> Community Guidelines</a>
         </nav>
 
+        <!-- PRIVACY POLICY ARTICLE -->
         <article class="legal-content">
 
-            <h2 id="overview">1. Overview</h2>
-            <p>CarryParcel connects people who need to send a parcel with verified travelers already heading the same way. To make that matching, delivery, and payment process work — and to keep everyone on the platform safe — we collect and process a limited set of personal data. This policy explains what we collect, why we collect it, how long we keep it, and what choices you have.</p>
+            <h2 id="section-1">1. Introduction</h2>
+            <p>Welcome to <strong>CarryParcel</strong>. We are committed to protecting your privacy and ensuring the security of your personal information. CarryParcel operates a peer-to-peer delivery platform connecting senders who need parcels carried with verified travelers heading to similar destinations.</p>
 
-            <div class="legal-callout">
-                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                <p>This policy applies to anyone using CarryParcel as a sender, a traveler, or a visitor to our website — on the web app, mobile app, or through our support channels.</p>
-            </div>
+            <h2 id="section-2">2. Information We Collect</h2>
+            <p>To facilitate secure parcel matching, identity verification, payment handling, and real-time support, CarryParcel collects various categories of information when you interact with our web and mobile applications.</p>
 
-            <h2 id="data-we-collect">2. Information we collect</h2>
-            <h3>Account &amp; identity information</h3>
-            <ul>
-                <li>Name, email address, phone number, and password (encrypted).</li>
-                <li>Government-issued ID details submitted for identity verification of travelers and senders.</li>
-                <li>Profile photo, if you choose to add one.</li>
-            </ul>
+            <h2 id="section-3">3. Information You Provide</h2>
+            <p>We collect information directly provided by you during registration, profile updates, parcel posting, trip declaration, customer support inquiries, and identity verification processes.</p>
 
-            <h3>Parcel &amp; trip information</h3>
-            <ul>
-                <li>Pickup and destination locations, parcel category, size, and delivery instructions.</li>
-                <li>Trip routes and travel dates posted by travelers.</li>
-                <li>Delivery status updates and the QR confirmation used to close out a delivery.</li>
-            </ul>
+            <h2 id="section-4">4. Account Information</h2>
+            <p>When creating a CarryParcel account, you provide essential account credentials including your full name, primary email address, phone number, and an encrypted password. This information is necessary to authenticate your identity and maintain your account state.</p>
 
-            <h3>Payment information</h3>
-            <ul>
-                <li>Wallet balance and transaction history within CarryParcel.</li>
-                <li>Payment method details, which are processed by our payment partners — CarryParcel does not store full card numbers on its own servers.</li>
-            </ul>
+            <h2 id="section-5">5. Profile Information</h2>
+            <p>You may optionally provide profile details such as a profile photograph, bio, preferred contact preferences, and emergency contact details to build trust within the CarryParcel peer community.</p>
 
-            <h3>Usage &amp; device information</h3>
-            <ul>
-                <li>Log data such as IP address, browser type, and pages visited, used for security and analytics.</li>
-                <li>Messages exchanged through in-app chat between a sender and a traveler, kept for dispute resolution and safety review.</li>
-            </ul>
+            <h2 id="section-6">6. Parcel Information</h2>
+            <p>When posting a parcel delivery request, senders provide details regarding the item category, dimensions, approximate weight, photos of the packaged parcel, declared item value, pickup location, drop-off destination, and special handling instructions.</p>
 
-            <h2 id="how-we-use">3. How we use your information</h2>
-            <ul>
-                <li>To match parcel requests with suitable travelers along the same route.</li>
-                <li>To verify identity and reduce fraud, impersonation, and unsafe activity.</li>
-                <li>To process payments, hold funds securely until delivery is confirmed, and release payouts.</li>
-                <li>To send delivery status updates, QR codes, and account notifications.</li>
-                <li>To provide customer support and investigate reported disputes or safety concerns.</li>
-                <li>To improve the platform through aggregated, non-identifying analytics.</li>
-            </ul>
+            <h2 id="section-7">7. Identity / KYC Information</h2>
+            <p>To uphold platform security and protect community members against fraud and illegal activities, CarryParcel facilitates Know Your Customer (KYC) identity verification for users, particularly travelers accepting parcels.</p>
 
-            <h2 id="sharing">4. When we share information</h2>
-            <p>We share the minimum information necessary for a delivery to happen — for example, a traveler sees the sender's pickup location and contact details only after accepting a parcel request. We also share information with:</p>
-            <ul>
-                <li><strong>Payment processors</strong>, to handle transactions securely.</li>
-                <li><strong>Identity verification providers</strong>, to confirm documents submitted during signup.</li>
-                <li><strong>Law enforcement or regulators</strong>, only when legally required or to protect the safety of our users.</li>
-            </ul>
-            <p>We do not sell personal data to advertisers or third parties.</p>
+            <h2 id="section-8">8. Government Identification Information</h2>
+            <p>During KYC submission, users provide official government-issued identification details (such as Aadhaar, Driving License, or Passport). This data is processed securely through verified third-party compliance services to confirm user identity.</p>
 
-            <h2 id="retention">5. Data retention</h2>
-            <p>We keep parcel, trip, and payment records for as long as your account is active and for a reasonable period afterward, to meet legal, tax, and dispute-resolution obligations. You can request deletion of your account at any time; some records may be retained where required by law.</p>
+            <h2 id="section-9">9. Selfie / Verification Information</h2>
+            <p>To ensure the person submitting government documentation matches the account holder, users may submit a facial selfie or liveness verification scan during identity checks. Real identity documents or live verification media are never publicly displayed or sold.</p>
 
-            <h2 id="your-choices">6. Your choices &amp; rights</h2>
-            <ul>
-                <li>Access, update, or correct your profile information from your account settings.</li>
-                <li>Request a copy of the personal data we hold about you.</li>
-                <li>Request deletion of your account and associated personal data, subject to legal retention requirements.</li>
-                <li>Opt out of non-essential notifications from your notification preferences.</li>
-            </ul>
+            <h2 id="section-10">10. Payment and Transaction Information</h2>
+            <p>CarryParcel collects payment-related details necessary to process delivery fees, retain escrow deposits during active trips, and disburse payouts to travelers upon successful QR code delivery confirmation.</p>
 
-            <h2 id="security">7. How we protect your data</h2>
-            <p>We use encryption in transit and at rest for sensitive data, restrict internal access on a need-to-know basis, and monitor the platform for suspicious activity. No online service can guarantee absolute security, so we encourage you to use a strong, unique password and report anything suspicious to our support team right away.</p>
+            <h2 id="section-11">11. Wallet Information</h2>
+            <p>We maintain transaction history records for your CarryParcel wallet balance, including credits, withdrawals, platform service fees, and pending escrow holds.</p>
 
-            <h2 id="children">8. Children's privacy</h2>
-            <p>CarryParcel is not intended for anyone under the age of 18. We do not knowingly collect personal data from minors. If you believe a minor has created an account, please contact us so we can remove it.</p>
+            <h2 id="section-12">12. Device and Technical Information</h2>
+            <p>When accessing CarryParcel services, our systems automatically log technical data such as your IP address, device hardware model, operating system version, browser type, unique device identifiers, and system diagnostic logs.</p>
 
-            <h2 id="changes">9. Changes to this policy</h2>
-            <p>We may update this policy as our services evolve. Material changes will be announced through the app or by email before they take effect. Continued use of CarryParcel after an update means you accept the revised policy.</p>
+            <h2 id="section-13">13. Location Information</h2>
+            <p>With your consent, CarryParcel processes location information (including pickup coordinates, destination addresses, and route progress) to facilitate accurate traveler-sender matching and verify delivery milestones.</p>
 
-            <hr class="legal-divider">
+            <h2 id="section-14">14. Communications</h2>
+            <p>In-app messages, chat history, call logs, and customer support correspondence exchanged through CarryParcel are retained to assist in dispute resolution, quality assurance, and community safety enforcement.</p>
 
-            <h2 id="contact">10. Contact us</h2>
+            <h2 id="section-15">15. How We Use Information</h2>
+            <p>We process your personal information strictly for legitimate operational, security, legal, and transactional purposes related to operating the CarryParcel platform.</p>
+
+            <h2 id="section-16">16. Account and Service Operations</h2>
+            <p>Your information is used to manage your account, match senders with suitable travelers along active travel routes, process orders, issue confirmation QR codes, and maintain platform availability.</p>
+
+            <h2 id="section-17">17. Safety and Fraud Prevention</h2>
+            <p>We utilize profile data, device diagnostics, and communication logs to detect unauthorized logins, prevent fraudulent listings, enforce prohibited item restrictions, and protect users against scams.</p>
+
+            <h2 id="section-18">18. Identity Verification</h2>
+            <p>KYC documents and selfie verification data are evaluated strictly to confirm user authenticity, reduce risks of parcel theft or contraband transportation, and foster community trust.</p>
+
+            <h2 id="section-19">19. Payment Processing</h2>
+            <p>Transaction details are transmitted securely to authorized payment gateways (such as Razorpay) to collect delivery charges, hold escrow funds safely during transport, and execute traveler payouts.</p>
+
+            <h2 id="section-20">20. Customer Support</h2>
+            <p>Personal data and parcel records are referenced by our support team to investigate user inquiries, resolve delivery disputes, address technical issues, and provide assistance.</p>
+
+            <h2 id="section-21">21. Notifications and Communications</h2>
+            <p>We send operational notifications regarding parcel status updates, QR verification alerts, payment receipts, policy changes, and security warnings via SMS, email, or push notifications.</p>
+
+            <h2 id="section-22">22. Sharing of Information</h2>
+            <p>CarryParcel limits data sharing to what is strictly necessary to fulfill delivery requests and legal obligations. Senders and matched travelers receive only essential contact and pickup/delivery details necessary for the task.</p>
+
+            <h2 id="section-23">23. Service Providers</h2>
+            <p>We engage trusted third-party service providers for cloud hosting, payment processing, SMS gateway delivery, and identity verification. These providers are bound by strict confidentiality obligations.</p>
+
+            <h2 id="section-24">24. Legal and Regulatory Requirements</h2>
+            <p>CarryParcel may disclose personal information if required to do so by applicable law, court orders, subpoena, or lawful requests by public and law enforcement authorities.</p>
+
+            <h2 id="section-25">25. Data Security</h2>
+            <p>We implement technical and organizational security measures, including HTTPS encryption in transit, hashed passwords, access controls, and firewall protections to prevent unauthorized access or disclosure.</p>
+
+            <h2 id="section-26">26. Data Retention</h2>
+            <p>We retain personal data for as long as your account remains active or as required to comply with financial, tax, dispute resolution, and legal compliance obligations.</p>
+
+            <h2 id="section-27">27. User Rights</h2>
+            <p>You have rights regarding your personal data, including the right to access your stored profile, update inaccurate information, request data export, or manage communication preferences.</p>
+
+            <h2 id="section-28">28. Account / Data Deletion Requests</h2>
+            <p>Users may request the deletion of their CarryParcel account and associated data by contacting Support. Account deletion is subject to resolving active deliveries, pending wallet balances, and statutory retention laws.</p>
+
+            <h2 id="section-29">29. Cookies and Similar Technologies</h2>
+            <p>CarryParcel uses essential cookies and local storage session data to keep you logged in, remember your preferences, and maintain security across web pages.</p>
+
+            <h2 id="section-30">30. Children's Privacy</h2>
+            <p>CarryParcel services are strictly intended for individuals aged 18 and older. We do not knowingly collect or solicit personal information from minors under the age of 18.</p>
+
+            <h2 id="section-31">31. Changes to this Privacy Policy</h2>
+            <p>We may update this Privacy Policy periodically to reflect changes in our services, technology, or legal standards. Updated policies will be posted with a revised effective date.</p>
+
+            <h2 id="section-32">32. Contact Us</h2>
             <div class="legal-contact-box">
-                <p><strong>Questions about this policy or your data?</strong></p>
-                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> Reach our team through the <a href="../contact/contact.html">Contact page</a> or the <a href="../support/support.html">Support Center</a>.</p>
+                <strong>Questions or concerns regarding your privacy?</strong>
+                <p>If you have questions about this Privacy Policy or wish to exercise your data rights, please reach out to our team:</p>
+                <p><i class="fa-solid fa-building" aria-hidden="true"></i> <strong>CarryParcel</strong> — Pune, Maharashtra, India</p>
+                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email: <a href="mailto:support@carryparcel.in">support@carryparcel.in</a></p>
+                <p><i class="fa-solid fa-headset" aria-hidden="true"></i> Visit our <a href="/support/support.html">Support Center</a> or <a href="/contact/contact.html">Contact Page</a>.</p>
             </div>
 
         </article>
     </div>
 </section>
 
+<!-- ================= CANONICAL FOOTER ================= -->
 <div id="tbFooterInclude"></div>
-<!-- ================= CANONICAL FOOTER (Source of Truth) ================= -->
 <footer class="site-footer" data-v="6">
     <div class="footer-container">
         <div class="footer-grid">
@@ -194,12 +514,10 @@
                 <a href="/" class="footer-logo" aria-label="CarryParcel home">
                     <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async">
                 </a>
-
-                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered<br>delivery.</p>
-
+                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered delivery.</p>
                 <div class="footer-socials" aria-label="Social media links">
                     <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-<a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
             </div>

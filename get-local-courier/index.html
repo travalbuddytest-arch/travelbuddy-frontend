@@ -3,89 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get a Local Courier | Trusted Delivery | CarryParcel</title>
-    <meta name="description" content="Find a local courier in your area through CarryParcel. Connect with verified travelers ready to deliver your packages safely and fast.">
+    <title>Get Local Courier | CarryParcel Delivery Support</title>
+    <meta name="description" content="Learn how CarryParcel connects senders with available local couriers and travelers. Fast, direct, community-driven local delivery support.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.carryparcel.in/get-local-courier/">
+
+    <!-- Open Graph / Social Media Meta -->
+    <meta property="og:title" content="Get Local Courier with CarryParcel">
+    <meta property="og:description" content="Connect with available local travelers and community couriers along your parcel's route on CarryParcel.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.carryparcel.in/get-local-courier/">
+    <meta property="og:image" content="https://www.carryparcel.in/images/logo.jpeg">
+    <meta property="og:site_name" content="CarryParcel">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Get Local Courier with CarryParcel">
+    <meta name="twitter:description" content="Connect with available local travelers and community couriers along your parcel's route on CarryParcel.">
+    <meta name="twitter:image" content="https://www.carryparcel.in/images/logo.jpeg">
+
     <link rel="icon" type="image/png" href="../images/logo-icon.png" sizes="32x32">
-    <link rel="stylesheet" href="../home/style.css">
-    <link rel="stylesheet" href="../shared/seo-page.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Links -->
     <link rel="stylesheet" href="/shared/navbar.css?v=8">
     <link rel="stylesheet" href="/shared/footer.css">
-    <link rel="stylesheet" href="/shared/site-banner.css?v=3">
+    <link rel="stylesheet" href="/shared/learn-more-pages.css?v=3">
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body data-page="get-courier">
+<body data-page="get-courier" class="cp-learn-page">
+
 <script src="/shared/config.js?v=1"></script>
 <script src="/shared/auth-cookie-client.js?v=1"></script>
 <script src="/shared/analytics-client.js?v=1"></script>
-<div id="tbNavbarInclude">
-    <header class="tb-nav-header" data-v="6">
-        <div class="logo"><a href="/" class="logo-link"><img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async"></a></div>
-        <button class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></button>
-        <nav id="mainNav">
-            <a href="/">Home</a><a href="/about/about.html">About</a><a href="/support/support.html">Support</a><a href="/contact/contact.html">Contact</a>
-            <div id="guestNavActions" class="guest-nav-actions">
-                <a href="/login/login.html" class="login-btn">Login</a><a href="/register/register.html" class="register-btn">Register</a>
+
+<div id="tbNavbarInclude"></div>
+<!-- ================= CANONICAL PUBLIC NAVBAR ================= -->
+<header class="cp-nav-header" data-v="7">
+    <div class="logo">
+        <a href="/" class="logo-link">
+            <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="eager" decoding="async">
+        </a>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mainNav">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav id="mainNav">
+        <div class="nav-links" id="navLinks">
+            <a href="/" data-page="home">Home</a>
+            <a href="/about/about.html" data-page="about">About</a>
+            <a href="/team" data-page="team">Team</a>
+            <a href="/support/support.html" data-page="support" id="navSupportLink">Support</a>
+            <a href="/contact/contact.html" data-page="contact">Contact</a>
+        </div>
+
+        <div id="guestNavActions" class="guest-nav-actions">
+            <a href="/login/login.html" class="login-btn">Login</a>
+            <a href="/register/register.html" class="register-btn">Register</a>
+        </div>
+
+        <div class="home-user-chip" id="homeUserChip" hidden>
+            <button class="home-user-trigger" id="homeUserTrigger" type="button" aria-expanded="false" aria-controls="homeUserMenu">
+                <span class="home-avatar" id="homeAvatar">CP</span>
+                <span class="home-user-meta">
+                    <strong id="homeUserName">CarryParcel</strong>
+                    <small id="homeUserRole">Sender &amp; Traveler</small>
+                </span>
+                <i class="fa-solid fa-chevron-down home-user-chevron"></i>
+            </button>
+            <div class="home-user-menu" id="homeUserMenu">
+                <button type="button" id="homeProfileBtn"><i class="fa-solid fa-user"></i><span>My Profile</span></button>
+                <a href="/user-dashboard/overview.html" id="homeDashboardLink"><i class="fa-solid fa-gauge-high"></i><span id="homeDashboardLinkLabel">Dashboard</span></a>
+                <button type="button" id="homeSettingsBtn"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+                <button type="button" id="homeLogoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log out</span></button>
             </div>
-            <div class="home-user-chip" id="homeUserChip" hidden>
-                <button class="home-user-trigger" id="homeUserTrigger"><span class="home-avatar" id="homeAvatar">CP</span></button>
-                <div class="home-user-menu" id="homeUserMenu">
-                    <a href="/user-dashboard/overview.html">Dashboard</a><button id="homeLogoutBtn">Log out</button>
+        </div>
+    </nav>
+</header>
+<div class="nav-overlay" id="navOverlay"></div>
+<script src="/shared/nav-include.js?v=2"></script>
+
+<main>
+    <!-- HERO SECTION -->
+    <section class="cp-learn-hero">
+        <!-- BREADCRUMB -->
+        <div class="cp-learn-breadcrumb"><a href="/">Home</a> / Get Local Courier</div>
+        <h1>Get Local Courier</h1>
+        <p>Connect with available local travelers and community courier participants along your parcel's route for fast, direct, point-to-point delivery support.</p>
+        <div class="cp-learn-hero-btns">
+            <a href="/login/login.html" data-cta-auth="/user-dashboard/pickup.html" class="cp-learn-btn cp-learn-btn-primary"><i class="fa-solid fa-person-walking-luggage" aria-hidden="true"></i> Earn as a Courier</a>
+            <a href="#how-it-works" class="cp-learn-btn cp-learn-btn-secondary">How It Works</a>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="cp-learn-section" id="how-it-works">
+        <h2>How It Works</h2>
+        <p class="lead">Getting local delivery support on CarryParcel follows a clear, step-by-step workflow designed for senders and travelers alike.</p>
+        <div class="cp-learn-steps">
+            <div class="cp-learn-step">
+                <div class="cp-learn-step-num">01</div>
+                <h3>Share Delivery Requirements</h3>
+                <p>Specify item category, package size category, photo, and preferred transport timeframe on your dashboard.</p>
+            </div>
+            <div class="cp-learn-step">
+                <div class="cp-learn-step-num">02</div>
+                <h3>Add Pickup Details</h3>
+                <p>Provide accurate pickup location instructions and contact details to assist the traveler with handover.</p>
+            </div>
+            <div class="cp-learn-step">
+                <div class="cp-learn-step-num">03</div>
+                <h3>Add Destination</h3>
+                <p>Include complete drop-off details, address landmarks, and recipient verification contact numbers.</p>
+            </div>
+            <div class="cp-learn-step">
+                <div class="cp-learn-step-num">04</div>
+                <h3>Find a Suitable Connection</h3>
+                <p>Review active travel participants heading along your route and evaluate user ratings and verification status.</p>
+            </div>
+            <div class="cp-learn-step">
+                <div class="cp-learn-step-num">05</div>
+                <h3>Coordinate Delivery</h3>
+                <p>Use built-in in-app messaging tools to agree on precise pickup times and meeting locations.</p>
+            </div>
+            <div class="cp-learn-step">
+                <div class="cp-learn-step-num">06</div>
+                <h3>Complete Delivery</h3>
+                <p>Handover is completed when the recipient receives the package and verifies delivery using the secure QR / OTP code.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY CARRYPARCEL -->
+    <section class="cp-learn-section alt">
+        <h2>Why CarryParcel?</h2>
+        <p class="lead">Factual, community-centered benefits of using active local route connections.</p>
+        <div class="cp-learn-grid">
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-route" aria-hidden="true"></i>
+                <h3>Direct Transport</h3>
+                <p>Parcels travel directly with community travelers along active routes without stopping at central sorting hubs.</p>
+            </div>
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-comments" aria-hidden="true"></i>
+                <h3>In-App Communication</h3>
+                <p>Senders and travelers communicate in real-time through built-in chat tools to coordinate handover timing.</p>
+            </div>
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+                <h3>Identity Verification Checks</h3>
+                <p>Travelers submit government ID details and liveness verification before accepting parcel delivery requests.</p>
+            </div>
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-handshake-angle" aria-hidden="true"></i>
+                <h3>Careful Individual Handling</h3>
+                <p>Community travelers transport packages personally rather than piling them in bulk freight containers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST & SAFETY -->
+    <section class="cp-learn-section">
+        <h2>Trust &amp; Safety</h2>
+        <p class="lead">All community participants agree to uphold high standards of safety, clear communication, and responsible behavior.</p>
+        <div class="cp-learn-grid">
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <h3>User Identity Verification</h3>
+                <p>KYC checks support user identity verification across the CarryParcel platform prior to route matches.</p>
+            </div>
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-box" aria-hidden="true"></i>
+                <h3>Responsible Handling</h3>
+                <p>Travelers must treat all items with care, inspect outer packaging at pickup, and never tamper with sealed packages.</p>
+            </div>
+            <div class="cp-learn-card">
+                <i class="fa-solid fa-people-group" aria-hidden="true"></i>
+                <h3>Respectful Conduct</h3>
+                <p>In-app communications and meetups must adhere strictly to CarryParcel's <a href="/legal/community-guidelines.html">Community Guidelines</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CROSS-LINKS -->
+    <section class="cp-learn-section alt">
+        <h2>Explore More CarryParcel Features</h2>
+        <div class="cp-learn-links">
+            <a href="/post-your-parcel/index.html"><i class="fa-solid fa-box" aria-hidden="true"></i> Post Your Parcel</a>
+            <a href="/delivery-shortly/index.html"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> Delivery Shortly</a>
+            <a href="/reach-every-customer/index.html"><i class="fa-solid fa-store" aria-hidden="true"></i> Reach Every Customer</a>
+            <a href="/trusted-local-connections/index.html"><i class="fa-solid fa-users" aria-hidden="true"></i> Trusted Local Connections</a>
+            <a href="/affordable-for-everyone/index.html"><i class="fa-solid fa-tag" aria-hidden="true"></i> Affordable For Everyone</a>
+        </div>
+    </section>
+
+    <!-- CTA BAND -->
+    <section class="cp-learn-cta">
+        <h2>Start Using Local Delivery Support</h2>
+        <p>Connect with available travelers or post your parcel request on CarryParcel today.</p>
+        <a href="/login/login.html" data-cta-auth="/user-dashboard/pickup.html" class="cp-learn-btn cp-learn-btn-primary">Get Started Now</a>
+    </section>
+</main>
+
+<!-- FOOTER -->
+<div id="tbFooterInclude"></div>
+<footer class="site-footer" data-v="6">
+    <div class="footer-container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="footer-logo" aria-label="CarryParcel home">
+                    <img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async">
+                </a>
+                <p>Connecting people and parcels through shared journeys.<br>Faster, affordable, community-powered delivery.</p>
+                <div class="footer-socials" aria-label="Social media links">
+                    <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
             </div>
-        </nav>
-    </header>
-</div>
-<script src="/shared/nav-include.js"></script>
-<div class="seo-breadcrumb"><a href="/">Home</a> / Get a Local Courier</div>
-<section class="seo-hero">
-    <h1>Get a Local Courier</h1>
-    <p>Once your parcel is posted, a registered member in your area accepts the task. These local couriers are part of our trusted community, ready to pick up and deliver your package right away.</p>
-    <div class="seo-hero-ctas">
-        <a href="/login/login.html" data-cta-auth="/user-dashboard/pickup.html" class="seo-btn seo-btn-primary">Become a Courier</a>
-        <a href="/safety/index.html" class="seo-btn seo-btn-ghost">Trust & Safety</a>
-    </div>
-</section>
-<section class="seo-section">
-    <div class="seo-inner">
-        <h2>Community-Powered Logistics</h2>
-        <p class="lead">By connecting directly with nearby couriers, you skip the middleman and save both time and money. It's fast, personal, and reliable.</p>
-        <div class="seo-grid">
-            <div class="seo-card"><h3>Verified Members</h3><p>Every courier undergoes identity verification before joining our network.</p></div>
-            <div class="seo-card"><h3>Real-time Matching</h3><p>Find someone heading your way in minutes, not days.</p></div>
-            <div class="seo-card"><h3>Personal Touch</h3><p>Direct communication with the person handling your parcel.</p></div>
-        </div>
-    </div>
-</section>
 
-<section class="seo-section alt">
-    <div class="seo-inner seo-split">
-        <div class="seo-split-text">
-            <h2>Why choose a local courier?</h2>
-            <p>Traditional logistics companies often treat parcels as just another number. Our local couriers are members of your own community who take pride in providing a personal, safe, and efficient service.</p>
-            <ul>
-                <li><strong>Speed</strong>: Local pickup means your parcel is on its way immediately.</li>
-                <li><strong>Flexibility</strong>: Arrange pickup times that work for you.</li>
-                <li><strong>Trust</strong>: See your courier's ratings and past performance.</li>
-            </ul>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <a href="/about/about.html">About</a>
+                <a href="/support/support.html">Help Center</a>
+                <a href="/contact/contact.html">Contact</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <a href="/legal/privacy.html">Privacy Policy</a>
+                <a href="/legal/terms.html">Terms &amp; Conditions</a>
+                <a href="/legal/prohibited-items.html">Prohibited Items</a>
+                <a href="/legal/community-guidelines.html">Community Guidelines</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>Social</h3>
+                <a href="https://www.facebook.com/profile.php?id=61594495887862" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                <a href="https://www.instagram.com/carryparcel.in/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                <a href="https://www.linkedin.com/company/carryparcel" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a>
+            </div>
         </div>
-        <div class="seo-split-media">
-            <img src="/images/get-local.webp" alt="Local courier in Pune accepting a delivery" width="500" height="333" loading="lazy" decoding="async">
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarryParcel. All rights reserved.</p>
         </div>
     </div>
-</section>
-<div id="tbFooterInclude">
-    <footer class="site-footer" data-v="6">
-        <div class="footer-container">
-            <div class="footer-brand"><img src="/images/logo-horizontal.webp" alt="CarryParcel logo" width="180" height="40" loading="lazy" decoding="async"></div>
-            <div class="footer-column"><h3>Support</h3><a href="/about/about.html">About</a><a href="/support/support.html">Help Center</a></div>
-            <div class="footer-column"><h3>Legal</h3><a href="/legal/privacy.html">Privacy Policy</a><a href="/legal/terms.html">Terms & Conditions</a></div>
-        </div>
-    </footer>
-</div>
+</footer>
 <script>window.CPInclude.injectFooter();</script>
-<script src="/shared/site-banner.js?v=3"></script>
-<script src="/shared/cta-auth-link.js?v=1"></script>
+
+<script src="/shared/auth-aware-cta.js?v=1"></script>
 </body>
 </html>

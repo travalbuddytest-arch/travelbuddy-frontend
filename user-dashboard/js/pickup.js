@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, formatDate, formatPaise, statusBadge, setButtonLoading } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, authFetchOptions, escapeHTML, formatDate, formatPaise, statusBadge, setButtonLoading } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/postparcel`;
 
   // Tab Elements
@@ -43,21 +43,33 @@
 
   // ---------------- Tabs ----------------
   function switchTab(tabKey) {
-    [tabDeliveriesBtn, tabFindBtn, tabRoutesBtn].forEach(b => b?.classList.remove('active'));
-    [sectionDeliveries, sectionFind, sectionRoutes].forEach(s => s?.classList.add('hidden'));
+    const dBtn = document.getElementById('tabDeliveriesBtn') || tabDeliveriesBtn;
+    const fBtn = document.getElementById('tabFindBtn') || tabFindBtn;
+    const rBtn = document.getElementById('tabRoutesBtn') || tabRoutesBtn;
+    const dSec = document.getElementById('sectionDeliveries') || sectionDeliveries;
+    const fSec = document.getElementById('sectionFind') || sectionFind;
+    const rSec = document.getElementById('sectionRoutes') || sectionRoutes;
+
+    [dBtn, fBtn, rBtn].forEach(b => b?.classList.remove('active'));
+    [dSec, fSec, rSec].forEach(s => s?.classList.add('hidden'));
 
     if (tabKey === 'find') {
-      tabFindBtn?.classList.add('active');
-      sectionFind?.classList.remove('hidden');
-    } else if (tabKey === 'routes') {
-      tabRoutesBtn?.classList.add('active');
-      sectionRoutes?.classList.remove('hidden');
+      fBtn?.classList.add('active');
+      fSec?.classList.remove('hidden');
+    } else if (tabKey === 'routes' || tabKey === 'trips' || tabKey === 'my-routes') {
+      rBtn?.classList.add('active');
+      rSec?.classList.remove('hidden');
+      if (typeof window.loadMyRoutes === 'function') {
+        window.loadMyRoutes();
+      }
     } else {
-      tabDeliveriesBtn?.classList.add('active');
-      sectionDeliveries?.classList.remove('hidden');
+      dBtn?.classList.add('active');
+      dSec?.classList.remove('hidden');
       loadActiveDeliveries();
     }
   }
+
+  window.switchPickupTab = switchTab;
 
   tabDeliveriesBtn?.addEventListener('click', () => switchTab('deliveries'));
   tabFindBtn?.addEventListener('click', () => switchTab('find'));
@@ -78,7 +90,7 @@
     // if (deliveriesList) deliveriesList.innerHTML = ''; // Skeleton replaces this
 
     try {
-      const res = await fetch(`${API_BASE}/tracking`, { headers: authHeaders() });
+      const res = await fetch(`${API_BASE}/tracking`, authFetchOptions());
       const data = await res.json();
 
       if (!res.ok) {
@@ -126,9 +138,9 @@
       let actionButtons = '';
       if (isAwaitingPickup) {
         actionButtons = `
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;">
+          <button type="button" class="btn-primary scan-qr-btn" data-id="${escapeHTML(p.id)}" data-type="pickup">
             <i class="fa-solid fa-camera"></i> Scan Sender QR
-          </a>
+          </button>
         `;
       } else if (isCollected) {
         actionButtons = `
@@ -138,9 +150,9 @@
         `;
       } else if (isInTransit) {
         actionButtons = `
-          <a href="track.html?id=${encodeURIComponent(p.id)}&action=scan" class="btn-primary" style="text-decoration:none;">
+          <button type="button" class="btn-primary scan-qr-btn" data-id="${escapeHTML(p.id)}" data-type="delivery">
             <i class="fa-solid fa-camera"></i> Scan Recipient QR
-          </a>
+          </button>
         `;
       }
 
@@ -191,15 +203,21 @@
         }
       });
     });
+
+    // Attach QR Scanner buttons
+    deliveriesList.querySelectorAll('.scan-qr-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const type = btn.dataset.type; // 'pickup' or 'delivery'
+        openQrScanner(id, type);
+      });
+    });
   }
 
   async function startJourney(id) {
     try {
       window.showToast('Starting journey...', 'info');
-      const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(id)}/actions/start-journey`, {
-        method: 'POST',
-        headers: authHeaders()
-      });
+      const res = await fetch(`${API_BASE}/tracking/${encodeURIComponent(id)}/actions/start-journey`, authFetchOptions({ method: 'POST' }));
       const data = await res.json();
       if (!res.ok) {
         window.showToast(data.error || 'Failed to start journey.', 'error');
@@ -214,6 +232,47 @@
   }
 
   refreshDeliveriesBtn?.addEventListener('click', loadActiveDeliveries);
+
+  // QR Scanner function
+  async function openQrScanner(parcelId, type) {
+    if (!window.CarryParcel?.QRScanner || !window.TravelBuddy?.QRVerification) {
+      window.showToast('QR scanner not available', 'error');
+      return;
+    }
+
+    try {
+      window.showToast('Opening camera...', 'info');
+      
+      const qrToken = await window.CarryParcel.QRScanner.startScan();
+      
+      if (!qrToken) {
+        window.showToast('No QR code detected', 'warning');
+        return;
+      }
+
+      window.showToast('Verifying QR code...', 'info');
+      
+      let verifyResult;
+      if (type === 'pickup') {
+        verifyResult = await window.TravelBuddy.QRVerification.verifyPickupQr(parcelId, qrToken);
+      } else {
+        verifyResult = await window.TravelBuddy.QRVerification.verifyDeliveryQr(parcelId, qrToken);
+      }
+      
+      if (verifyResult?.success) {
+        window.showToast('Verification successful!', 'success');
+        loadActiveDeliveries();
+      } else {
+        window.showToast(verifyResult?.message || 'Verification failed', 'error');
+      }
+      
+    } catch (err) {
+      if (err.message !== 'Scan cancelled' && err.message !== 'Scan stopped') {
+        console.error('QR scan error:', err);
+        window.showToast(err.message || 'QR scan failed', 'error');
+      }
+    }
+  }
 
   // ---------------- Find Parcels on Route ----------------
   function renderPickupResults(results) {
@@ -269,10 +328,7 @@
     btn.textContent = 'Accepting...';
 
     try {
-      const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}/accept`, {
-        method: 'POST',
-        headers: authHeaders(),
-      });
+      const res = await fetch(`${API_BASE}/${encodeURIComponent(id)}/accept`, authFetchOptions({ method: 'POST' }));
       const data = await res.json();
 
       if (!res.ok) {
@@ -318,9 +374,7 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE}/search?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {
-          headers: authHeaders(),
-        });
+        const res = await fetch(`${API_BASE}/search?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, authFetchOptions());
         const data = await res.json();
 
         if (!res.ok) {
@@ -340,20 +394,30 @@
     });
   }
 
-  // Pre-fill query parameters if routed from search
-  const params = new URLSearchParams(window.location.search);
-  const qFrom = params.get('from');
-  const qTo = params.get('to');
-  if (qFrom && qTo) {
-    switchTab('find');
-    const fInput = document.getElementById('routeFrom');
-    const tInput = document.getElementById('routeTo');
-    if (fInput && tInput) {
-      fInput.value = qFrom;
-      tInput.value = qTo;
-      routeForm?.dispatchEvent(new Event('submit'));
+  // Pre-fill query parameters if routed from search or KPI metrics
+  function initTabFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const qFrom = params.get('from');
+    const qTo = params.get('to');
+    const tabParam = params.get('tab') || params.get('view') || params.get('section');
+
+    if (tabParam === 'routes' || tabParam === 'trips' || tabParam === 'my-routes') {
+      switchTab('routes');
+    } else if (qFrom && qTo) {
+      switchTab('find');
+      const fInput = document.getElementById('routeFrom');
+      const tInput = document.getElementById('routeTo');
+      if (fInput && tInput) {
+        fInput.value = qFrom;
+        tInput.value = qTo;
+        routeForm?.dispatchEvent(new Event('submit'));
+      }
+    } else {
+      switchTab('deliveries');
     }
-  } else {
-    loadActiveDeliveries();
   }
+
+  initTabFromQuery();
+  setTimeout(initTabFromQuery, 0);
+  document.addEventListener('DOMContentLoaded', initTabFromQuery);
 })();

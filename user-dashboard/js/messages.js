@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, getAuthToken, resolveMediaUrl } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, authFetchOptions, escapeHTML, getAuthToken, resolveMediaUrl } = window.TravelBuddy;
   const API_BASE = `${API_ORIGIN}/api/messages`;
   
 
@@ -106,9 +106,7 @@
     const oldScrollHeight = chatMessages.scrollHeight;
 
     try {
-      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages?page=${nextPage}&limit=30`, {
-        headers: authHeaders(),
-      });
+      const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages?page=${nextPage}&limit=30`, authFetchOptions());
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not load older messages.');
 
@@ -409,10 +407,7 @@
       btn.textContent = 'Accepting...';
     }
     try {
-      const res = await fetch(`${API_ORIGIN}/api/postparcel/${encodeURIComponent(conversation.parcel.id)}/accept`, {
-        method: 'POST',
-        headers: authHeaders(),
-      });
+      const res = await fetch(`${API_ORIGIN}/api/postparcel/${encodeURIComponent(conversation.parcel.id)}/accept`, authFetchOptions({ method: 'POST' }));
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not accept parcel.');
       window.showToast('Parcel accepted. You can track the journey from Track Parcel.', 'success');
@@ -561,9 +556,7 @@
     currentPages.set(conversationId, 1);
     hasMoreMessages.set(conversationId, true);
 
-    const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages?page=1&limit=50`, {
-      headers: authHeaders(),
-    });
+    const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages?page=1&limit=50`, authFetchOptions());
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Could not load messages.');
     messagesByConversation.set(conversationId, data.messages || []);
@@ -575,10 +568,7 @@
     if (conversation) conversation.unreadCount = 0;
     renderThreads();
     socket?.emit('messages:read', { conversationId });
-    await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/read`, {
-      method: 'POST',
-      headers: authHeaders(),
-    }).catch(() => {});
+    await fetch(`${API_BASE}/conversations/${encodeURIComponent(conversationId)}/read`, authFetchOptions({ method: 'POST' })).catch(() => {});
   }
 
   async function openConversation(id) {
@@ -633,7 +623,7 @@
     const qs = searchParams.toString();
     if (qs) url += `?${qs}`;
 
-    const res = await fetch(url, { headers: authHeaders() });
+    const res = await fetch(url, authFetchOptions());
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Could not load conversations.');
     conversations = data.conversations || [];
@@ -1122,26 +1112,24 @@
   }
 
   function sendViaRest(payload) {
-    return fetch(`${API_BASE}/conversations/${encodeURIComponent(payload.conversationId)}/messages`, {
+    return fetch(`${API_BASE}/conversations/${encodeURIComponent(payload.conversationId)}/messages`, authFetchOptions({
       method: 'POST',
-      headers: authHeaders(),
       body: JSON.stringify(payload),
-    }).then((res) => res.json().then((data) => {
+    })).then((res) => res.json().then((data) => {
       if (!res.ok) throw new Error(data.error || 'Could not send message.');
       return data.message;
     }));
   }
 
   function sendMediaViaRest(payload) {
-    return fetch(`${API_BASE}/conversations/${encodeURIComponent(payload.conversationId)}/media`, {
+    return fetch(`${API_BASE}/conversations/${encodeURIComponent(payload.conversationId)}/media`, authFetchOptions({
       method: 'POST',
-      headers: authHeaders(),
       body: JSON.stringify({
         base64: payload.content,
         messageType: payload.messageType,
         clientMessageId: payload.clientMessageId,
       }),
-    }).then((res) => res.json().then((data) => {
+    })).then((res) => res.json().then((data) => {
       if (!res.ok) throw new Error(data.error || 'Could not send media.');
       return data.message;
     }));
@@ -1236,10 +1224,7 @@
     chatConfirmOverlay.classList.remove('hidden');
     chatConfirmOk.onclick = async () => {
       try {
-        const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}`, {
-          method: 'DELETE',
-          headers: authHeaders(),
-        });
+        const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}`, authFetchOptions({ method: 'DELETE' }));
         if (!res.ok) throw new Error('Failed to delete conversation.');
         conversations = conversations.filter(c => String(c.id) !== String(activeConversationId));
         activeConversationId = null;
@@ -1314,9 +1299,8 @@
 
       window.TravelBuddy.FormLock(reviewForm, true, { loadingText: 'Submitting...' });
       try {
-        const res = await fetch(`${API_ORIGIN}/api/postparcel/review`, {
+        const res = await fetch(`${API_ORIGIN}/api/postparcel/review`, authFetchOptions({
           method: 'POST',
-          headers: authHeaders(),
           body: JSON.stringify({
             parcelId: conv.parcel.id,
             rating: currentRating,
@@ -1354,9 +1338,7 @@
 
     try {
       // Fetch full parcel data for receipt
-      const res = await fetch(`${API_ORIGIN}/api/postparcel/${encodeURIComponent(conv.parcel.id)}`, {
-        headers: authHeaders()
-      });
+      const res = await fetch(`${API_ORIGIN}/api/postparcel/${encodeURIComponent(conv.parcel.id)}`, authFetchOptions());
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not fetch parcel details.');
       activeParcelFullData = data.parcel;

@@ -87,8 +87,15 @@
   function initTopbarEvents() {
     const pageTitleEl = document.getElementById('pageTitle');
     if (pageTitleEl) {
-      const titleText = document.title.replace('CarryParcel - ', '').replace('CarryParcel — ', '').trim();
-      pageTitleEl.textContent = titleText;
+      const rawTitle = document.title || '';
+      const titleText = rawTitle
+        .replace(/\|?\s*CarryParcel\s*\|?/gi, '')
+        .replace(/—\s*CarryParcel/gi, '')
+        .replace(/-\s*CarryParcel/gi, '')
+        .replace(/CarryParcel\s*—\s*/gi, '')
+        .replace(/CarryParcel\s*-\s*/gi, '')
+        .trim();
+      pageTitleEl.textContent = titleText || 'Dashboard Overview';
     }
 
     personalizeUser();
@@ -219,6 +226,22 @@
     // Security: Token is now handled by HttpOnly secure cookies via {credentials: 'include'}.
     // We no longer manually send the Authorization header from localStorage on the web.
     return headers;
+  }
+
+  /**
+   * Creates fetch options with auth headers and credentials for cookie-based auth
+   * @param {Object} options - Additional fetch options
+   * @returns {Object} Fetch options with headers and credentials
+   */
+  function authFetchOptions(options = {}) {
+    return {
+      ...options,
+      headers: {
+        ...authHeaders(),
+        ...(options.headers || {}),
+      },
+      credentials: 'include',
+    };
   }
 
   function getAuthToken() {
@@ -401,6 +424,7 @@
     API_ORIGIN,
     escapeHTML,
     authHeaders,
+    authFetchOptions,
     getAuthToken,
     setButtonLoading,
     FormLock,

@@ -210,7 +210,7 @@
             </p>
 
             <div class="hero-cta-group">
-                <a href="/login/login.html" class="cp-btn-primary hero-primary-btn" id="heroPostParcelBtn">
+                <a href="/login/login.html" class="cp-btn-primary hero-primary-btn" id="heroPostParcelBtn" data-auth-cta="/user-dashboard/post.html">
                     <i class="fa-solid fa-box" aria-hidden="true"></i>
                     <span>Post a Parcel</span>
                 </a>
@@ -393,7 +393,7 @@
                 <li><i class="fa-solid fa-check"></i> Real-time journey tracking</li>
                 <li><i class="fa-solid fa-check"></i> QR delivery confirmation</li>
             </ul>
-            <a href="/login/login.html" class="primary-btn way-btn">Send a Parcel</a>
+            <a href="/login/login.html" class="primary-btn way-btn" data-auth-cta="/user-dashboard/post.html">Send a Parcel</a>
         </div>
 
         <div class="way-card highlight">
@@ -407,7 +407,7 @@
                 <li><i class="fa-solid fa-check"></i> Complete verified delivery</li>
                 <li><i class="fa-solid fa-check"></i> Instant earnings release</li>
             </ul>
-            <a href="/login/login.html" class="primary-btn way-btn">Start Earning</a>
+            <a href="/login/login.html" class="primary-btn way-btn" data-auth-cta="/user-dashboard/pickup.html">Start Earning</a>
         </div>
     </div>
 </section>
@@ -842,5 +842,6 @@
 
 <script src="/home/script.js?v=4"></script>
 <script src="/shared/site-banner.js?v=3"></script>
+<script src="/shared/auth-aware-cta.js?v=1"></script>
 </body>
 </html>
