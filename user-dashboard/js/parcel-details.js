@@ -46,6 +46,8 @@
   const locationModalTitle = () => ui('locationModalTitle');
   const useCurrentLocationBtn = () => ui('useCurrentLocationBtn');
   const pickOnMapBtn = () => ui('pickOnMapBtn');
+  const locationSearchInput = () => ui('locationSearchInput');
+  const locationSearchResults = () => ui('locationSearchResults');
   const locationPickerMap = () => ui('locationPickerMap');
   const recommendedPointsList = () => ui('recommendedPointsList');
   const selectedPointCard = () => ui('selectedPointCard');
@@ -94,6 +96,7 @@
   let activePickerPurpose = 'pickup'; // pickup or delivery
   let isRequestChange = false; // true if sender is requesting a change
   let qrExpiryTimer = null;
+  let locationSearchTimer = null;
 
   function generateSecureQr(purpose) {
     if (!qrModal()) return;
@@ -170,6 +173,24 @@
     });
   }
 
+  function isValidCoordinate(coord) {
+    const value = Number(coord);
+    return Number.isFinite(value) && value >= -90 && value <= 90;
+  }
+
+  function handleLocationError(error, fallbackMessage) {
+    const code = error?.code;
+    if (code === 1) {
+      window.showToast('Location permission was denied. Please allow access or choose a pickup point manually.', 'error');
+    } else if (code === 2) {
+      window.showToast('Your current location could not be determined. Please try again or select a location manually.', 'error');
+    } else if (code === 3) {
+      window.showToast('We could not get your location in time. Please try again.', 'error');
+    } else {
+      window.showToast(fallbackMessage || 'We could not determine your location right now.', 'error');
+    }
+  }
+
   async function loadParcelDetails() {
     const targetId = getParcelIdFromUrl();
     if (!targetId) {
@@ -206,6 +227,13 @@
       }
 
       parcelData = data.parcel;
+      if (parcelData) {
+        const timeline = window.CarryParcelTrackingTimeline?.resolve(parcelData);
+        if (timeline) {
+          parcelData.trackingTimeline = timeline.stages;
+          parcelData.trackingTerminal = timeline.terminal;
+        }
+      }
       renderDetails(parcelData);
     } catch (err) {
       if (requestId !== parcelLoadSequence) return;
@@ -233,8 +261,8 @@
 
   function renderDetails(p) {
     if (!p) return;
-    if (!Array.isArray(p.trackingTimeline)) {
-      showError('Current tracking information is unavailable.');
+    if (!p.status || !Array.isArray(p.trackingTimeline)) {
+      showError('Current tracking information is unavailable. Please refresh and try again.');
       return;
     }
 
@@ -815,18 +843,19 @@
   }
 
   function initMap(lat, lng) {
+    const center = [Number(lat), Number(lng)];
     if (map) {
-      map.setView([lat, lng], 13);
-      if (mapMarker) mapMarker.setLatLng([lat, lng]);
+      map.setView(center, Math.max(map.getZoom(), 13));
+      if (mapMarker) mapMarker.setLatLng(center);
       return;
     }
 
-    map = L.map('locationPickerMap').setView([lat, lng], 13);
+    map = L.map('locationPickerMap').setView(center, 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    mapMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
+    mapMarker = L.marker(center, { draggable: true, autoPan: true }).addTo(map);
 
     mapMarker.on('dragend', function() {
       const pos = mapMarker.getLatLng();
@@ -839,22 +868,91 @@
     });
   }
 
+  function setLocationFromData(latitude, longitude, name, formattedAddress, city = '') {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+    if (!isValidCoordinate(lat) || !isValidCoordinate(lng)) {
+      window.showToast('Please select a valid location before confirming.', 'warning');
+      return;
+    }
+
+    selectedLocation = {
+      name: name || 'Pinned Location',
+      formattedAddress: formattedAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+      latitude: lat,
+      longitude: lng,
+      city
+    };
+
+    if (mapMarker) {
+      mapMarker.setLatLng([lat, lng]);
+    }
+    if (map) {
+      map.flyTo([lat, lng], Math.max(map.getZoom(), 15), { animate: true, duration: 1.2 });
+    }
+    renderSelectedPoint();
+  }
+
   async function updateSelectedLocationFromCoords(lat, lng) {
-     try {
-       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-       const data = await res.json();
-       selectedLocation = {
-          name: data.name || data.display_name.split(',')[0],
-          formattedAddress: data.display_name,
-          latitude: lat,
-          longitude: lng,
-          city: data.address.city || data.address.town || data.address.village || ''
-       };
-       renderSelectedPoint();
-     } catch (e) {
-       selectedLocation = { name: 'Pinned Location', formattedAddress: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, latitude: lat, longitude: lng };
-       renderSelectedPoint();
-     }
+    const latitude = Number(lat);
+    const longitude = Number(lng);
+    if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
+      window.showToast('Invalid latitude or longitude selected.', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`, {
+        headers: {
+          Accept: 'application/json',
+          'Accept-Language': 'en'
+        }
+      });
+      const data = await res.json();
+      const address = data.address || {};
+      const locationName = data.name || address.amenity || address.building || address.road || data.display_name?.split(',')[0] || 'Pinned Location';
+      const formattedAddress = data.display_name || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+      const city = address.city || address.town || address.village || address.county || address.state || '';
+      setLocationFromData(latitude, longitude, locationName, formattedAddress, city);
+    } catch (e) {
+      setLocationFromData(latitude, longitude, 'Pinned Location', `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+    }
+  }
+
+  async function searchLocationByQuery(query) {
+    const searchText = query.trim();
+    if (!locationSearchResults() || searchText.length < 2) {
+      if (locationSearchResults()) locationSearchResults().innerHTML = '';
+      return;
+    }
+
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=1&q=${encodeURIComponent(searchText)}`, {
+        headers: {
+          Accept: 'application/json',
+          'Accept-Language': 'en'
+        }
+      });
+      const data = await res.json();
+      if (!Array.isArray(data) || !data.length) {
+        locationSearchResults().innerHTML = '<div style="font-size:12px; color:var(--text-faint); padding:8px 0;">No matching location found. Try another address or landmark.</div>';
+        return;
+      }
+
+      locationSearchResults().innerHTML = data.map(item => {
+        const displayName = item.display_name || item.name || 'Location';
+        const lat = Number(item.lat);
+        const lon = Number(item.lon);
+        return `
+          <button type="button" data-search-result="true" data-lat="${lat}" data-lon="${lon}" data-name="${escapeHTML(item.name || displayName)}" data-display="${escapeHTML(displayName)}" style="width:100%; text-align:left; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text-main); cursor:pointer;">
+            <strong style="display:block; font-size:12.5px;">${escapeHTML(item.name || displayName)}</strong>
+            <span style="display:block; font-size:11px; color:var(--text-muted); margin-top:2px;">${escapeHTML(displayName)}</span>
+          </button>
+        `;
+      }).join('');
+    } catch (e) {
+      locationSearchResults().innerHTML = '<div style="font-size:12px; color:var(--error); padding:8px 0;">Could not search locations right now. Please try again.</div>';
+    }
   }
 
   function renderSelectedPoint() {
@@ -893,6 +991,45 @@
     }, 2500);
   }
 
+  if (locationSearchInput()) {
+    locationSearchInput().addEventListener('input', (event) => {
+      const query = event.target.value || '';
+      clearTimeout(locationSearchTimer);
+      if (!query.trim()) {
+        if (locationSearchResults()) locationSearchResults().innerHTML = '';
+        return;
+      }
+      locationSearchTimer = setTimeout(() => searchLocationByQuery(query), 350);
+    });
+
+    locationSearchResults()?.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-search-result]');
+      if (!button) return;
+
+      const latitude = Number(button.dataset.lat);
+      const longitude = Number(button.dataset.lon);
+      const displayName = button.dataset.display || button.dataset.name || 'Selected Location';
+      const name = button.dataset.name || displayName;
+      if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
+        window.showToast('This location is missing valid coordinates.', 'warning');
+        return;
+      }
+
+      locationSearchInput().value = displayName;
+      locationSearchResults().innerHTML = '';
+      setLocationFromData(latitude, longitude, name, displayName);
+      locationPickerMap().classList.remove('hidden');
+      if (map) {
+        map.flyTo([latitude, longitude], 15, { animate: true, duration: 1.2 });
+      } else {
+        setTimeout(() => {
+          initMap(latitude, longitude);
+          map.invalidateSize();
+        }, 100);
+      }
+    });
+  }
+
   window.openLocationPicker = async (purpose, requestChange = false) => {
     if (!parcelData || !parcelData.id) {
        window.showToast('Wait for parcel data to load...', 'warning');
@@ -901,6 +1038,8 @@
     activePickerPurpose = purpose;
     isRequestChange = requestChange;
     locationModalTitle().textContent = `Select ${purpose === 'pickup' ? 'Pickup' : 'Delivery'} Point`;
+    if (locationSearchInput()) locationSearchInput().value = '';
+    if (locationSearchResults()) locationSearchResults().innerHTML = '';
 
     const existing = purpose === 'pickup' ? parcelData.pickupPoint : parcelData.deliveryPoint;
     if (changingWarning()) changingWarning().classList.toggle('hidden', !existing?.name);
@@ -927,7 +1066,7 @@
         `).join('');
         window._points = data.recommendations;
       } else {
-        recommendedPointsList().innerHTML = '<p style="font-size:12px; color:var(--text-faint);">No specific recommendations for this city. Use the map to pick a point.</p>';
+        recommendedPointsList().innerHTML = '<p style="font-size:12px; color:var(--text-faint);">No specific recommendations for this city. Use the map or search to pick a point.</p>';
       }
     } catch (e) {
       recommendedPointsList().innerHTML = '<p style="font-size:12px; color:var(--error);">Failed to load recommendations.</p>';
@@ -935,18 +1074,32 @@
   };
 
   window.selectRecommendedPoint = (id) => {
-    const p = window._points.find(x => x._id === id);
+    const p = (window._points || []).find(x => x._id === id);
     if (!p) return;
+    if (!isValidCoordinate(p.latitude) || !isValidCoordinate(p.longitude)) {
+      window.showToast('This recommended point is missing valid coordinates.', 'warning');
+      return;
+    }
     selectedLocation = {
       travelPointId: p._id,
       name: p.name,
       type: p.type,
       formattedAddress: p.formattedAddress,
       city: p.city,
-      latitude: p.latitude,
-      longitude: p.longitude,
+      latitude: Number(p.latitude),
+      longitude: Number(p.longitude),
       compatibility: p.compatibility
     };
+    if (locationSearchInput()) locationSearchInput().value = p.formattedAddress;
+    if (locationPickerMap()) locationPickerMap().classList.remove('hidden');
+    if (map) {
+      map.flyTo([selectedLocation.latitude, selectedLocation.longitude], 15, { animate: true, duration: 1.2 });
+    } else {
+      setTimeout(() => {
+        initMap(selectedLocation.latitude, selectedLocation.longitude);
+        map.invalidateSize();
+      }, 100);
+    }
     renderSelectedPoint();
   };
 
@@ -965,23 +1118,40 @@
   if (useCurrentLocationBtn()) {
     useCurrentLocationBtn().onclick = () => {
        if (!navigator.geolocation) {
-         window.showToast('Geolocation is not supported by your browser', 'error');
+         window.showToast('Geolocation is not supported by your browser.', 'error');
+         return;
+       }
+       if (!window.isSecureContext && !['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+         window.showToast('Location access requires a secure connection. Please use HTTPS or choose a location manually.', 'warning');
          return;
        }
        setButtonLoading(useCurrentLocationBtn(), true, 'Locating...');
        navigator.geolocation.getCurrentPosition(
          (pos) => {
            setButtonLoading(useCurrentLocationBtn(), false);
-           updateSelectedLocationFromCoords(pos.coords.latitude, pos.coords.longitude);
+           const { latitude, longitude, accuracy } = pos.coords;
+           if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
+             window.showToast('The browser returned invalid coordinates. Please choose a point manually.', 'warning');
+             return;
+           }
+           updateSelectedLocationFromCoords(latitude, longitude);
            locationPickerMap().classList.remove('hidden');
            setTimeout(() => {
-             initMap(pos.coords.latitude, pos.coords.longitude);
-             map.invalidateSize();
+             initMap(latitude, longitude);
+             if (map) map.invalidateSize();
            }, 100);
+           if (accuracy && accuracy > 0) {
+             window.showToast('Current location found and map updated.', 'success');
+           }
          },
-         () => {
+         (error) => {
            setButtonLoading(useCurrentLocationBtn(), false);
-           window.showToast('Location access denied or unavailable', 'error');
+           handleLocationError(error, 'Your current location could not be determined. Please try again or choose a location manually.');
+         },
+         {
+           enableHighAccuracy: true,
+           timeout: 15000,
+           maximumAge: 30000
          }
        );
     };

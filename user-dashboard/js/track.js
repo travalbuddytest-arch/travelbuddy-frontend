@@ -98,6 +98,12 @@
       if (!res.ok) throw new Error(data.error || 'Unable to load current tracking information.');
       if (!data.parcel) throw new Error('Unable to load current tracking information.');
 
+      const timeline = window.CarryParcelTrackingTimeline?.resolve(data.parcel);
+      if (timeline) {
+        data.parcel.trackingTimeline = timeline.stages;
+        data.parcel.trackingTerminal = timeline.terminal;
+      }
+
       renderTrackingDetails(data.parcel);
       updateUrl(data.parcel.parcelNumber || data.parcel.id);
     } catch (err) {

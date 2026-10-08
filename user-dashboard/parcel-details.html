@@ -774,8 +774,14 @@
         </button>
       </div>
 
+      <div class="field" style="margin-bottom:12px;">
+        <label for="locationSearchInput">Search for an address, place, or landmark</label>
+        <input id="locationSearchInput" type="text" placeholder="Try 'Phoenix Marketcity Pune' or 'Railway Station Pune'" style="width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; font-size:13px; font-family:var(--font); outline:none;" />
+        <div id="locationSearchResults" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; padding-right:6px; margin-top:8px;"></div>
+      </div>
+
       <div class="field">
-        <label>Search Recommended Points</label>
+        <label>Recommended Points</label>
         <div id="recommendedPointsList" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; padding-right:6px; margin-top:6px;">
           <!-- Points list here -->
         </div>
@@ -1055,11 +1061,13 @@
   <script defer src="../shared/auth-cookie-client.js?v=1"></script>
   <script defer src="../shared/analytics-client.js?v=1"></script>
   <script defer src="../shared/date-utils.js"></script>
+  <script defer src="../shared/tracking-timeline.js?v=1"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script defer src="js/common.js?v=4"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
   <script defer src="../shared/qr-scanner.js"></script>
   <script defer src="js/qr-verification.js?v=qr-20260813"></script>
-  <script defer src="js/parcel-details.js"></script>
+  <script defer src="js/parcel-details.js?v=tracking-20261008"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>
 </body>
 </html>
