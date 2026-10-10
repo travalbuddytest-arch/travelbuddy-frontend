@@ -27,6 +27,22 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+    @media (max-width: 640px) {
+      .parcels-header-actions {
+        display: flex;
+        width: 100%;
+        flex-wrap: nowrap;
+        gap: 8px;
+      }
+      .parcels-header-actions > a {
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+        padding-right: 8px;
+        padding-left: 8px;
+        font-size: 12px;
+      }
+    }
     .parcels-controls {
       display: flex;
       flex-direction: column;
@@ -203,7 +219,7 @@
             <h2>Shipments &amp; Deliveries</h2>
             <p>Real-time overview of all parcels you've posted or accepted.</p>
           </div>
-          <div class="tb-page-actions">
+          <div class="tb-page-actions parcels-header-actions">
             <a href="post.html" class="btn-primary" style="text-decoration:none;">
               <i class="fa-solid fa-plus"></i> Post a Parcel
             </a>
@@ -231,7 +247,7 @@
               </div>
             </div>
 
-            <div class="field" style="flex: 0 0 200px; margin: 0;">
+            <div class="field" style="margin: 0;">
               <select id="roleFilterSelect" class="tb-select" aria-label="Filter by role" style="height: 48px; border-radius: 12px;">
                 <option value="all">All My Roles</option>
                 <option value="sender">As Sender</option>

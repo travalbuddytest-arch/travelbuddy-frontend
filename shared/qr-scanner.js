@@ -3,10 +3,14 @@
 
   let activeScanner = null;
   let activeModal = null;
-  let isScanning = false;
+  let scannerState = 'IDLE';
   let isScanDone = false;
   let modalKeydownHandler = null;
   let videoObserver = null;
+  let startupPromise = null;
+  let stopPromise = null;
+  let scannerStopRequested = false;
+  let scanGeneration = 0;
   let scanResolve = null;
   let scanReject = null;
 
@@ -69,25 +73,25 @@
     console.error('[QRScanner] Camera failure details:', { name, message, constraint, code });
 
     if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
-      return 'Camera permission was denied. Please allow camera access and try again.';
+      return 'Camera access is blocked for CarryParcel. Please allow camera access in your browser settings and try again.';
     }
     if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
       return 'No camera was found on this device.';
     }
     if (name === 'NotReadableError') {
-      return 'The camera is already in use by another app or browser tab.';
+      return 'The camera is currently being used by another application. Close it and try again.';
     }
     if (name === 'OverconstrainedError') {
       return 'This device could not start a camera in the requested mode.';
     }
     if (name === 'SecurityError') {
-      return 'Camera access requires a secure connection (HTTPS or localhost).';
+      return 'Camera scanning requires a secure HTTPS connection.';
     }
     if (name === 'AbortError') {
       return 'Camera startup was interrupted. Please try again.';
     }
     if (typeof window !== 'undefined' && !window.isSecureContext) {
-      return 'Camera access requires a secure connection (HTTPS or localhost).';
+      return 'Camera scanning requires a secure HTTPS connection.';
     }
     return message || 'Camera initialization failed';
   }
@@ -109,20 +113,23 @@
       return true;
     },
 
-    async startReaderWithFallback(onResult) {
+    async startReaderWithFallback(onResult, generation) {
       const readerElement = activeModal?.querySelector('#qr-reader');
       if (!readerElement) {
         throw new Error('QR scanner preview element was not created.');
       }
 
-      let cameras = [];
+      let cameras;
       try {
-        cameras = await Promise.race([
-          window.Html5Qrcode.getCameras(),
-          new Promise((resolve) => window.setTimeout(() => resolve([]), 4000))
-        ]);
+        cameras = await window.Html5Qrcode.getCameras();
       } catch (err) {
-        console.warn('[QRScanner] Camera enumeration failed:', err);
+        console.error('[QRScanner] Camera enumeration failed:', {
+          name: err?.name || 'UnknownError',
+          message: err?.message || String(err),
+          constraint: err?.constraint || null,
+          code: err?.code || null
+        });
+        throw err;
       }
 
       const videoInputs = Array.isArray(cameras)
@@ -133,17 +140,18 @@
       const cameraOptions = rearCamera
         ? [rearCamera.id, ...videoInputs.filter((camera) => camera.id !== rearCamera.id).map((camera) => camera.id)]
         : [
-            { facingMode: { ideal: 'environment' } },
+            { facingMode: { exact: 'environment' } },
             ...videoInputs.map((camera) => camera.id)
           ];
 
       if (cameraOptions.length === 0) {
-        cameraOptions.push({ facingMode: { ideal: 'environment' } });
+        cameraOptions.push({ facingMode: { exact: 'environment' } });
       }
-      cameraOptions.push({ facingMode: { ideal: 'user' } });
+      cameraOptions.push({ facingMode: { exact: 'user' } });
 
       const config = { fps: 10, qrbox: { width: 250, height: 250 } };
       let lastError = null;
+      if (generation !== scanGeneration) return;
       videoObserver = new MutationObserver(() => {
         const video = getVideoElement();
         if (video) prepareVideo(video);
@@ -151,10 +159,14 @@
       videoObserver.observe(readerElement, { childList: true, subtree: true });
 
       for (const cameraOption of cameraOptions) {
+        if (generation !== scanGeneration) return;
         const reader = new window.Html5Qrcode('qr-reader');
         activeScanner = reader;
+        scannerStopRequested = false;
+        let startSucceeded = false;
 
         try {
+          console.info('[QRScanner] Selecting camera:', typeof cameraOption === 'string' ? 'detected video input' : cameraOption);
           await reader.start(
             cameraOption,
             config,
@@ -174,6 +186,14 @@
               // Ignore decode noise while scanning.
             }
           );
+          startSucceeded = true;
+          if (generation !== scanGeneration) {
+            if (!scannerStopRequested) await reader.stop();
+            await reader.clear();
+            if (activeScanner === reader) activeScanner = null;
+            return;
+          }
+          scannerState = 'RUNNING';
 
           const video = getVideoElement();
           if (!video) {
@@ -185,10 +205,15 @@
           prepareVideo(video);
           await video.play();
           await waitForVideoMetadata(video);
+          if (generation !== scanGeneration) {
+            if (stopPromise) await stopPromise;
+            return;
+          }
           videoObserver.disconnect();
           videoObserver = null;
           const readyHint = activeModal?.querySelector('.qr-scanner-hint');
           if (readyHint) readyHint.textContent = 'Position the QR code within the frame';
+          console.info('[QRScanner] Scanner running');
           return;
         } catch (err) {
           lastError = err;
@@ -202,17 +227,24 @@
             }
           });
 
-          try {
-            await reader.stop();
-          } catch (stopError) {
-            // A failed start may leave the scanner stopped already.
+          if (startSucceeded && !scannerStopRequested) {
+            try {
+              await reader.stop();
+            } catch (stopError) {
+              console.warn('[QRScanner] Failed to stop a started camera after preview failure:', stopError);
+            }
           }
-          try {
-            await reader.clear();
-          } catch (clearError) {
-            console.warn('[QRScanner] Failed to clear a camera after startup failure:', clearError);
+          if (startSucceeded && stopPromise) await stopPromise;
+          if (!scannerStopRequested) {
+            try {
+              await reader.clear();
+            } catch (clearError) {
+              console.warn('[QRScanner] Failed to clear a camera after startup failure:', clearError);
+            }
           }
           readerElement.replaceChildren();
+          if (activeScanner === reader) activeScanner = null;
+          if (scannerState === 'RUNNING') scannerState = 'STARTING';
 
           if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError' ||
               err?.name === 'NotReadableError' || err?.name === 'SecurityError') {
@@ -229,14 +261,15 @@
         throw new Error(window.isSecureContext ? 'QR scanner library not available' : 'Camera access requires a secure connection (HTTPS or localhost).');
       }
 
-      if (isScanning) {
-        throw new Error('Scanner already running');
+      if (scannerState !== 'IDLE' || startupPromise || stopPromise) {
+        throw new Error('Scanner is already starting, running, or stopping.');
       }
 
-      isScanning = true;
+      scannerState = 'STARTING';
       isScanDone = false;
+      const generation = ++scanGeneration;
 
-      return new Promise((resolve, reject) => {
+      const resultPromise = new Promise((resolve, reject) => {
         scanResolve = resolve;
         scanReject = reject;
 
@@ -257,9 +290,11 @@
         };
         document.addEventListener('keydown', modalKeydownHandler);
 
-        this.startReaderWithFallback(onResult).catch((err) => {
+        console.info('[QRScanner] Starting scanner');
+        startupPromise = this.startReaderWithFallback(onResult, generation).catch(async (err) => {
+          if (generation !== scanGeneration) return;
           const friendlyMessage = describeCameraError(err);
-          this.stopScan({ cancelled: false, reason: friendlyMessage }).catch(() => {});
+          await this.stopScan({ cancelled: false, reason: friendlyMessage });
           if (scanReject) {
             const wrapped = err instanceof Error ? err : new Error(friendlyMessage);
             wrapped.message = friendlyMessage;
@@ -267,11 +302,23 @@
             scanResolve = null;
             scanReject = null;
           }
+        }).finally(() => {
+          startupPromise = null;
+          if (scannerState === 'STOPPING') scannerState = 'IDLE';
         });
       });
+
+      return resultPromise;
     },
 
     async stopScan({ cancelled = false, reason = 'Scan stopped' } = {}) {
+      if (stopPromise) return stopPromise;
+      if (scannerState === 'IDLE' && !activeModal && !activeScanner) return;
+
+      const shouldStopScanner = scannerState === 'RUNNING';
+      scannerStopRequested = shouldStopScanner;
+      scannerState = 'STOPPING';
+      scanGeneration++;
       const scanner = activeScanner;
       const modal = activeModal;
 
@@ -284,56 +331,61 @@
         videoObserver = null;
       }
 
-      if (scanner && typeof scanner.stop === 'function') {
-        try {
-          await scanner.stop();
-        } catch (err) {
-          console.warn('QR scanner stop warning:', err);
-        }
-      }
-
-      if (scanner && typeof scanner.clear === 'function') {
-        try {
-          await scanner.clear();
-        } catch (err) {
-          console.warn('QR scanner clear warning:', err);
-        }
-      }
-
-      if (modal) {
-        const video = modal.querySelector('#qr-reader video');
-        if (video) {
+      stopPromise = (async () => {
+        if (scanner && shouldStopScanner && typeof scanner.stop === 'function') {
           try {
-            video.pause();
+            await scanner.stop();
           } catch (err) {
-            console.warn('QR video pause warning:', err);
+            console.warn('[QRScanner] Scanner stop failed:', err);
           }
-
-          if (video.srcObject && typeof video.srcObject.getTracks === 'function') {
-            video.srcObject.getTracks().forEach((track) => {
-              try {
-                track.stop();
-              } catch (err) {
-                console.warn('QR media track stop warning:', err);
-              }
-            });
-          }
-          video.srcObject = null;
         }
-        modal.remove();
-      }
 
-      activeScanner = null;
-      activeModal = null;
-      isScanning = false;
+        if (scanner && shouldStopScanner && typeof scanner.clear === 'function') {
+          try {
+            await scanner.clear();
+          } catch (err) {
+            console.warn('[QRScanner] Scanner clear failed:', err);
+          }
+        }
 
-      if (!isScanDone && scanReject) {
-        scanReject(new Error(cancelled ? 'Scan cancelled' : reason));
-      }
+        if (modal) {
+          const video = modal.querySelector('#qr-reader video');
+          if (video) {
+            try {
+              video.pause();
+            } catch (err) {
+              console.warn('[QRScanner] Video pause failed:', err);
+            }
 
-      scanResolve = null;
-      scanReject = null;
-      isScanDone = false;
+            if (video.srcObject && typeof video.srcObject.getTracks === 'function') {
+              video.srcObject.getTracks().forEach((track) => {
+                try {
+                  track.stop();
+                } catch (err) {
+                  console.warn('[QRScanner] Media track stop failed:', err);
+                }
+              });
+            }
+            video.srcObject = null;
+          }
+          modal.remove();
+        }
+
+        activeScanner = null;
+        activeModal = null;
+        if (!isScanDone && scanReject) {
+          scanReject(new Error(cancelled ? 'Scan cancelled' : reason));
+        }
+
+        scanResolve = null;
+        scanReject = null;
+        isScanDone = false;
+        if (!startupPromise) scannerState = 'IDLE';
+      })().finally(() => {
+        stopPromise = null;
+      });
+
+      return stopPromise;
     },
 
     createModal() {
