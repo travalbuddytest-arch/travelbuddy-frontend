@@ -47,7 +47,9 @@
   const useCurrentLocationBtn = () => ui('useCurrentLocationBtn');
   const pickOnMapBtn = () => ui('pickOnMapBtn');
   const locationSearchInput = () => ui('locationSearchInput');
+  const locationSearchBtn = () => ui('locationSearchBtn');
   const locationSearchResults = () => ui('locationSearchResults');
+  const geocodingProviderAttribution = () => ui('geocodingProviderAttribution');
   const locationPickerMap = () => ui('locationPickerMap');
   const recommendedPointsList = () => ui('recommendedPointsList');
   const selectedPointCard = () => ui('selectedPointCard');
@@ -70,6 +72,15 @@
 
   const qrModal = () => ui('qrModal');
   const qrModalClose = () => ui('qrModalClose');
+  const handoverOtpModal = () => ui('handoverOtpModal');
+  const handoverOtpClose = () => ui('handoverOtpClose');
+  const handoverOtpTitle = () => ui('handoverOtpTitle');
+  const handoverOtpDescription = () => ui('handoverOtpDescription');
+  const handoverOtpStatus = () => ui('handoverOtpStatus');
+  const handoverOtpCountdown = () => ui('handoverOtpCountdown');
+  const handoverOtpInput = () => ui('handoverOtpInput');
+  const handoverOtpResend = () => ui('handoverOtpResend');
+  const handoverOtpVerify = () => ui('handoverOtpVerify');
   const qrLoadingState = () => ui('qrLoadingState');
   const qrReadyState = () => ui('qrReadyState');
   const qrCodeContainer = () => ui('qrCodeContainer');
@@ -97,6 +108,19 @@
   let isRequestChange = false; // true if sender is requesting a change
   let qrExpiryTimer = null;
   let locationSearchTimer = null;
+  let locationSearchSequence = 0;
+  let locationSearchAbortController = null;
+  let locationSearchPendingQuery = null;
+  const locationSearchCache = new Map();
+  let handoverOtpPurpose = null;
+  let handoverOtpResendAt = 0;
+  let handoverOtpExpiresAt = 0;
+  let handoverOtpTimer = null;
+  let handoverOtpSequence = 0;
+  let reverseGeocodeSequence = 0;
+  let reverseGeocodeTimer = null;
+  let reverseGeocodeAbortController = null;
+  let pendingReverseGeocodeKey = null;
 
   function generateSecureQr(purpose) {
     if (!qrModal()) return;
@@ -145,6 +169,9 @@
         clearInterval(qrExpiryTimer);
         return;
       }
+      clearTimeout(reverseGeocodeTimer);
+      reverseGeocodeAbortController?.abort();
+      reverseGeocodeSequence++;
       const mins = Math.floor(diff / 60000);
       const secs = Math.floor((diff % 60000) / 1000);
       qrExpiryTime().textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -173,15 +200,15 @@
     });
   }
 
-  function isValidCoordinate(coord) {
-    const value = Number(coord);
-    return Number.isFinite(value) && value >= -90 && value <= 90;
+  function isValidLocation(latitude, longitude) {
+    return typeof latitude === 'number' && Number.isFinite(latitude) && latitude >= -90 && latitude <= 90
+      && typeof longitude === 'number' && Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
   }
 
   function handleLocationError(error, fallbackMessage) {
     const code = error?.code;
     if (code === 1) {
-      window.showToast('Location permission was denied. Please allow access or choose a pickup point manually.', 'error');
+      window.showToast('Location permission was denied. Enable location access for CarryParcel in your browser or device settings, then try again. You can still search or select a point on the map.', 'error');
     } else if (code === 2) {
       window.showToast('Your current location could not be determined. Please try again or select a location manually.', 'error');
     } else if (code === 3) {
@@ -650,7 +677,7 @@
       actionBanner.className = 'journey-action-box';
       title.innerHTML = '<i class="fa-solid fa-handshake"></i> Ready for Handover';
       if (isSender) {
-        desc.textContent = 'Meet the traveler to hand over the parcel. Show the secure QR code for them to scan.';
+        desc.textContent = 'Meet the traveler to hand over the parcel. They can scan your secure QR code or request an email verification code.';
         buttons.innerHTML = `
           <button type="button" class="btn-primary" onclick="window.generateSecureQr('pickup')"><i class="fa-solid fa-qrcode"></i> Show Pickup QR</button>
         `;
@@ -663,6 +690,7 @@
           ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('pickup', false)"><i class="fa-solid fa-location-dot"></i> Select Pickup Point</button>`
           : `
           <button type="button" class="btn-primary scan-qr-btn" data-id="${escapeHTML(p.id)}" data-type="pickup"><i class="fa-solid fa-camera"></i> Scan Sender QR</button>
+          <button type="button" class="btn-ghost handover-otp-btn" data-id="${escapeHTML(p.id)}" data-type="pickup"><i class="fa-solid fa-envelope"></i> Verify using Email OTP</button>
         `;
       }
       actionBanner.classList.remove('hidden');
@@ -683,7 +711,7 @@
       actionBanner.className = 'journey-action-box';
       title.innerHTML = '<i class="fa-solid fa-truck-fast"></i> Parcel in Transit';
       if (isSender) {
-        desc.textContent = 'The parcel is on the way. Once arrived, show your secure QR code to the traveler to confirm delivery.';
+        desc.textContent = 'The parcel is on the way. At delivery, the recipient can show a QR code or provide an email verification code.';
         buttons.innerHTML = `
           <button type="button" class="btn-primary" onclick="window.generateSecureQr('delivery')"><i class="fa-solid fa-qrcode"></i> Show Delivery QR</button>
         `;
@@ -696,6 +724,7 @@
           ? `<button type="button" class="btn-primary" onclick="window.openLocationPicker('delivery', false)"><i class="fa-solid fa-location-dot"></i> Select Delivery Point</button>`
           : `
           <button type="button" class="btn-primary scan-qr-btn" data-id="${escapeHTML(p.id)}" data-type="delivery"><i class="fa-solid fa-camera"></i> Scan Recipient QR</button>
+          <button type="button" class="btn-ghost handover-otp-btn" data-id="${escapeHTML(p.id)}" data-type="delivery"><i class="fa-solid fa-envelope"></i> Verify using Email OTP</button>
         `;
       }
       actionBanner.classList.remove('hidden');
@@ -738,6 +767,127 @@
         openQrScanner(id, type);
       });
     });
+
+    document.querySelectorAll('.handover-otp-btn').forEach(btn => {
+      btn.addEventListener('click', () => openHandoverOtp(btn.dataset.id, btn.dataset.type));
+    });
+  }
+
+  function renderHandoverOtpCountdown() {
+    const secondsToResend = Math.max(0, Math.ceil((handoverOtpResendAt - Date.now()) / 1000));
+    const secondsToExpire = Math.max(0, Math.ceil((handoverOtpExpiresAt - Date.now()) / 1000));
+    if (handoverOtpResend()) {
+      handoverOtpResend().disabled = secondsToResend > 0;
+      handoverOtpResend().textContent = secondsToResend > 0 ? `Resend in ${secondsToResend}s` : 'Resend code';
+    }
+    if (secondsToExpire > 0 && handoverOtpCountdown()) {
+      handoverOtpCountdown().textContent = `Sent to ${handoverOtpStatus().dataset.maskedEmail}. Expires in ${Math.floor(secondsToExpire / 60)}:${String(secondsToExpire % 60).padStart(2, '0')}.`;
+    } else if (handoverOtpStatus()?.dataset.maskedEmail && handoverOtpCountdown()) {
+      handoverOtpCountdown().textContent = 'Code expired. Request a new code to continue.';
+    }
+    if (!secondsToResend && !secondsToExpire) clearInterval(handoverOtpTimer);
+  }
+
+  async function requestHandoverOtp() {
+    if (!parcelData?.id || !handoverOtpPurpose) return;
+    const sequence = ++handoverOtpSequence;
+    const parcelId = parcelData.id;
+    const purpose = handoverOtpPurpose;
+    if (handoverOtpResend()) handoverOtpResend().disabled = true;
+    if (handoverOtpVerify()) handoverOtpVerify().disabled = true;
+    handoverOtpStatus().textContent = 'Sending verification code…';
+    handoverOtpStatus().style.color = 'var(--text-muted)';
+    try {
+      const response = await fetch(
+        `${API_BASE}/tracking/${encodeURIComponent(parcelId)}/otp/${purpose}/request`,
+        authFetchOptions({ method: 'POST' })
+      );
+      const data = await response.json();
+      if (sequence !== handoverOtpSequence) return;
+      if (!response.ok || data.success === false) {
+        if (data.retryAfterSeconds) {
+          handoverOtpResendAt = Date.now() + data.retryAfterSeconds * 1000;
+          renderHandoverOtpCountdown();
+        } else if (handoverOtpResend()) {
+          handoverOtpResend().disabled = false;
+        }
+        throw new Error(data.error || 'Could not send verification code.');
+      }
+      handoverOtpStatus().dataset.maskedEmail = data.sentTo?.email || 'the registered email';
+      handoverOtpResendAt = Date.now() + Number(data.resendAfterSeconds || 60) * 1000;
+      handoverOtpExpiresAt = Date.now() + Number(data.expiresInSeconds || 300) * 1000;
+      handoverOtpStatus().textContent = 'Verification code sent.';
+      handoverOtpStatus().style.color = 'var(--success)';
+      renderHandoverOtpCountdown();
+      if (handoverOtpVerify()) handoverOtpVerify().disabled = false;
+      clearInterval(handoverOtpTimer);
+      handoverOtpTimer = setInterval(renderHandoverOtpCountdown, 1000);
+      handoverOtpInput()?.focus();
+    } catch (error) {
+      if (sequence !== handoverOtpSequence) return;
+      handoverOtpStatus().textContent = error.message || 'Email delivery failed. No code was issued.';
+      handoverOtpStatus().style.color = 'var(--error)';
+      if (handoverOtpVerify()) handoverOtpVerify().disabled = true;
+    }
+  }
+
+  function openHandoverOtp(parcelId, purpose) {
+    if (!parcelData || parcelId !== String(parcelData.id) || !['pickup', 'delivery'].includes(purpose)) return;
+    handoverOtpPurpose = purpose;
+    handoverOtpExpiresAt = 0;
+    handoverOtpResendAt = 0;
+    handoverOtpInput().value = '';
+    handoverOtpStatus().dataset.maskedEmail = '';
+    handoverOtpStatus().textContent = '';
+    handoverOtpCountdown().textContent = '';
+    handoverOtpTitle().textContent = `Verify ${purpose === 'pickup' ? 'Pickup' : 'Delivery'} by Email OTP`;
+    handoverOtpDescription().textContent = purpose === 'pickup'
+      ? 'A one-time code will be sent to the parcel sender’s registered email. Ask them to share it when they are ready to hand over the parcel.'
+      : 'A one-time code will be sent to the linked recipient’s registered email. Ask them to share it when they are ready to receive the parcel.';
+    handoverOtpModal().classList.remove('hidden');
+    requestHandoverOtp();
+  }
+
+  async function verifyHandoverOtp() {
+    const otp = handoverOtpInput()?.value.trim() || '';
+    if (!/^\d{6}$/.test(otp)) {
+      handoverOtpStatus().textContent = 'Enter the six-digit code from the email.';
+      handoverOtpStatus().style.color = 'var(--error)';
+      return;
+    }
+    const sequence = ++handoverOtpSequence;
+    const parcelId = parcelData.id;
+    const purpose = handoverOtpPurpose;
+    handoverOtpVerify().disabled = true;
+    handoverOtpVerify().textContent = 'Verifying…';
+    handoverOtpStatus().textContent = 'Verifying handover…';
+    handoverOtpStatus().style.color = 'var(--text-muted)';
+    try {
+      const response = await fetch(
+        `${API_BASE}/tracking/${encodeURIComponent(parcelId)}/otp/${purpose}/verify`,
+        authFetchOptions({ method: 'POST', body: JSON.stringify({ otp }) })
+      );
+      const data = await response.json();
+      if (sequence !== handoverOtpSequence) return;
+      if (!response.ok || data.success === false) {
+        if (data.retryAfterSeconds) {
+          handoverOtpResendAt = Date.now() + data.retryAfterSeconds * 1000;
+          renderHandoverOtpCountdown();
+        }
+        throw new Error(data.error || 'Could not verify handover.');
+      }
+      clearInterval(handoverOtpTimer);
+      handoverOtpModal().classList.add('hidden');
+      window.showToast(data.message || 'Handover verified successfully.', 'success');
+      loadParcelDetails();
+    } catch (error) {
+      if (sequence !== handoverOtpSequence) return;
+      handoverOtpStatus().textContent = error.message || 'Could not verify handover.';
+      handoverOtpStatus().style.color = 'var(--error)';
+      handoverOtpVerify().disabled = false;
+    } finally {
+      if (sequence === handoverOtpSequence) handoverOtpVerify().textContent = 'Verify handover';
+    }
   }
 
   function renderCounterpart(p, isSender) {
@@ -852,33 +1002,39 @@
 
     map = L.map('locationPickerMap').setView(center, 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     mapMarker = L.marker(center, { draggable: true, autoPan: true }).addTo(map);
 
     mapMarker.on('dragend', function() {
       const pos = mapMarker.getLatLng();
-      updateSelectedLocationFromCoords(pos.lat, pos.lng);
+      scheduleLocationResolution(pos.lat, pos.lng);
     });
 
     map.on('click', function(e) {
       mapMarker.setLatLng(e.latlng);
-      updateSelectedLocationFromCoords(e.latlng.lat, e.latlng.lng);
+      scheduleLocationResolution(e.latlng.lat, e.latlng.lng);
+    });
+
+    map.on('dragend', function() {
+      const centerPoint = map.getCenter();
+      mapMarker.setLatLng(centerPoint);
+      scheduleLocationResolution(centerPoint.lat, centerPoint.lng);
     });
   }
 
   function setLocationFromData(latitude, longitude, name, formattedAddress, city = '') {
-    const lat = Number(latitude);
-    const lng = Number(longitude);
-    if (!isValidCoordinate(lat) || !isValidCoordinate(lng)) {
-      window.showToast('Please select a valid location before confirming.', 'warning');
+    if (!isValidLocation(latitude, longitude) || !name?.trim() || !formattedAddress?.trim()) {
+      window.showToast('Please select a valid location with an address before confirming.', 'warning');
       return;
     }
+    const lat = Number(latitude);
+    const lng = Number(longitude);
 
     selectedLocation = {
-      name: name || 'Pinned Location',
-      formattedAddress: formattedAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+      name,
+      formattedAddress,
       latitude: lat,
       longitude: lng,
       city
@@ -893,73 +1049,169 @@
     renderSelectedPoint();
   }
 
-  async function updateSelectedLocationFromCoords(lat, lng) {
-    const latitude = Number(lat);
-    const longitude = Number(lng);
-    if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
+  function showLocationResolutionStatus(name, address) {
+    const coordinates = /Coordinates: (-?\d+(?:\.\d+)?), (-?\d+(?:\.\d+)?)/.exec(address || '');
+    if (name === 'Address unavailable' && coordinates) {
+      selectedLocation = {
+        name: 'Map point (address unavailable)',
+        formattedAddress: `Address unavailable; coordinates: ${coordinates[1]}, ${coordinates[2]}`,
+        latitude: Number(coordinates[1]),
+        longitude: Number(coordinates[2]),
+        city: '',
+        addressResolved: false
+      };
+    } else {
+      selectedLocation = null;
+    }
+    selectedPointCard().classList.remove('hidden');
+    selectedPointName().textContent = name;
+    selectedPointAddress().textContent = address;
+    selectedPointAddress().style.color = selectedLocation ? 'var(--error)' : 'var(--text-muted)';
+    confirmLocationBtn().disabled = !selectedLocation;
+  }
+
+  function scheduleLocationResolution(lat, lng) {
+    if (!isValidLocation(lat, lng)) {
       window.showToast('Invalid latitude or longitude selected.', 'warning');
       return;
     }
+    const latitude = Number(lat);
+    const longitude = Number(lng);
+    const coordinateKey = `${latitude},${longitude}`;
+    if ((selectedLocation?.latitude === latitude && selectedLocation?.longitude === longitude)
+      || pendingReverseGeocodeKey === coordinateKey) return;
 
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`, {
-        headers: {
-          Accept: 'application/json',
-          'Accept-Language': 'en'
+    clearTimeout(reverseGeocodeTimer);
+    reverseGeocodeAbortController?.abort();
+    reverseGeocodeAbortController = new AbortController();
+    const controller = reverseGeocodeAbortController;
+    const requestSequence = ++reverseGeocodeSequence;
+    pendingReverseGeocodeKey = coordinateKey;
+    showLocationResolutionStatus('Resolving address…', `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+    reverseGeocodeTimer = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `${API_ORIGIN}/api/geocoding/reverse?lat=${latitude}&lon=${longitude}`,
+          { headers: { Accept: 'application/json' }, signal: controller.signal }
+        );
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not resolve the selected location.');
+        if (requestSequence !== reverseGeocodeSequence) return;
+        const address = data.address || {};
+        const formattedAddress = data.display_name;
+        if (!formattedAddress) {
+          throw new Error('The geocoding provider returned no address for this point.');
         }
-      });
-      const data = await res.json();
-      const address = data.address || {};
-      const locationName = data.name || address.amenity || address.building || address.road || data.display_name?.split(',')[0] || 'Pinned Location';
-      const formattedAddress = data.display_name || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-      const city = address.city || address.town || address.village || address.county || address.state || '';
-      setLocationFromData(latitude, longitude, locationName, formattedAddress, city);
-    } catch (e) {
-      setLocationFromData(latitude, longitude, 'Pinned Location', `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
-    }
+        const locationName = data.name || address.amenity || address.building || address.road
+          || formattedAddress.split(',')[0];
+        const city = address.city || address.town || address.village || address.county || address.state || '';
+        setLocationFromData(latitude, longitude, locationName, formattedAddress, city);
+        pendingReverseGeocodeKey = null;
+        setGeocodingProviderAttribution(response);
+      } catch (error) {
+        if (requestSequence !== reverseGeocodeSequence || error.name === 'AbortError') return;
+        pendingReverseGeocodeKey = null;
+        console.error('Reverse geocoding failed:', error);
+        showLocationResolutionStatus(
+          'Address unavailable',
+          `Address lookup failed. You can still confirm this exact map point. Coordinates: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}.`
+        );
+        window.showToast(error.message || 'Could not resolve the selected location.', 'error');
+      }
+    }, 500);
   }
 
   async function searchLocationByQuery(query) {
-    const searchText = query.trim();
+    clearTimeout(locationSearchTimer);
+    const searchText = String(query || '').trim();
+    const normalizedQuery = searchText.toLocaleLowerCase();
+    if (locationSearchPendingQuery === normalizedQuery && locationSearchAbortController) return;
+    const cachedResults = locationSearchCache.get(normalizedQuery);
+    if (cachedResults && cachedResults.expiresAt > Date.now()) {
+      renderLocationSearchResults(cachedResults.results);
+      return;
+    }
+    const requestSequence = ++locationSearchSequence;
+    locationSearchAbortController?.abort();
+    locationSearchPendingQuery = null;
+    clearTimeout(reverseGeocodeTimer);
+    reverseGeocodeAbortController?.abort();
+    reverseGeocodeSequence++;
+    pendingReverseGeocodeKey = null;
+    selectedLocation = null;
+    selectedPointCard()?.classList.add('hidden');
+    if (confirmLocationBtn()) confirmLocationBtn().disabled = true;
     if (!locationSearchResults() || searchText.length < 2) {
-      if (locationSearchResults()) locationSearchResults().innerHTML = '';
+      if (locationSearchResults()) {
+        locationSearchResults().innerHTML = '<div style="font-size:12px; color:var(--text-faint); padding:8px 0;">Enter at least 2 characters to search.</div>';
+      }
+      if (locationSearchBtn()) locationSearchBtn().disabled = false;
       return;
     }
 
+    locationSearchAbortController = new AbortController();
+    const controller = locationSearchAbortController;
+    locationSearchPendingQuery = normalizedQuery;
+    locationSearchResults().textContent = 'Searching…';
+    if (locationSearchBtn()) locationSearchBtn().disabled = true;
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=1&q=${encodeURIComponent(searchText)}`, {
-        headers: {
-          Accept: 'application/json',
-          'Accept-Language': 'en'
-        }
-      });
-      const data = await res.json();
-      if (!Array.isArray(data) || !data.length) {
-        locationSearchResults().innerHTML = '<div style="font-size:12px; color:var(--text-faint); padding:8px 0;">No matching location found. Try another address or landmark.</div>';
-        return;
-      }
-
-      locationSearchResults().innerHTML = data.map(item => {
-        const displayName = item.display_name || item.name || 'Location';
-        const lat = Number(item.lat);
-        const lon = Number(item.lon);
-        return `
-          <button type="button" data-search-result="true" data-lat="${lat}" data-lon="${lon}" data-name="${escapeHTML(item.name || displayName)}" data-display="${escapeHTML(displayName)}" style="width:100%; text-align:left; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text-main); cursor:pointer;">
-            <strong style="display:block; font-size:12.5px;">${escapeHTML(item.name || displayName)}</strong>
-            <span style="display:block; font-size:11px; color:var(--text-muted); margin-top:2px;">${escapeHTML(displayName)}</span>
-          </button>
-        `;
-      }).join('');
-    } catch (e) {
-      locationSearchResults().innerHTML = '<div style="font-size:12px; color:var(--error); padding:8px 0;">Could not search locations right now. Please try again.</div>';
+      const response = await fetch(
+        `${API_ORIGIN}/api/geocoding/search?q=${encodeURIComponent(searchText)}`,
+        { headers: { Accept: 'application/json' }, signal: controller.signal }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not search locations right now.');
+      if (requestSequence !== locationSearchSequence) return;
+      if (!Array.isArray(data)) throw new Error('The geocoding service returned an invalid search response.');
+      locationSearchCache.set(normalizedQuery, { results: data, expiresAt: Date.now() + 5 * 60 * 1000 });
+      if (locationSearchCache.size > 20) locationSearchCache.delete(locationSearchCache.keys().next().value);
+      setGeocodingProviderAttribution(response);
+      renderLocationSearchResults(data);
+    } catch (error) {
+      if (requestSequence !== locationSearchSequence || error.name === 'AbortError') return;
+      console.error('Address search failed:', error);
+      locationSearchResults().innerHTML = `<div style="font-size:12px; color:var(--error); padding:8px 0;">${escapeHTML(error.message || 'Could not search locations right now. Please try again.')}</div>`;
+    } finally {
+      if (requestSequence === locationSearchSequence) locationSearchPendingQuery = null;
+      if (requestSequence === locationSearchSequence && locationSearchBtn()) locationSearchBtn().disabled = false;
     }
   }
 
+  function setGeocodingProviderAttribution(response) {
+    const provider = response?.headers?.get('X-Geocoding-Provider');
+    if (geocodingProviderAttribution() && ['photon', 'nominatim'].includes(provider)) {
+      geocodingProviderAttribution().textContent = provider === 'photon' ? 'Photon' : 'Nominatim';
+    }
+  }
+
+  function renderLocationSearchResults(data) {
+    if (!locationSearchResults()) return;
+    if (!data.length) {
+      locationSearchResults().innerHTML = '<div style="font-size:12px; color:var(--text-faint); padding:8px 0;">No matching location found. Try another address or landmark.</div>';
+      return;
+    }
+    locationSearchResults().innerHTML = data.map(item => {
+      const displayName = item.display_name || item.name || '';
+      const name = item.name || displayName.split(',')[0];
+      const latitude = Number(item.lat);
+      const longitude = Number(item.lon);
+      if (!displayName || !name || !isValidLocation(latitude, longitude)) return '';
+      const address = item.address || {};
+      const city = address.city || address.town || address.village || address.county || address.state || '';
+      return `<button type="button" data-search-result="true" data-lat="${latitude}" data-lon="${longitude}" data-name="${escapeHTML(name)}" data-display="${escapeHTML(displayName)}" data-city="${escapeHTML(city)}" style="width:100%; text-align:left; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text-main); cursor:pointer;">
+        <strong style="display:block; font-size:12.5px;">${escapeHTML(name)}</strong>
+        <span style="display:block; font-size:11px; color:var(--text-muted); margin-top:2px;">${escapeHTML(displayName)}</span>
+      </button>`;
+    }).join('') || '<div style="font-size:12px; color:var(--text-faint); padding:8px 0;">No usable locations found. Try another search.</div>';
+  }
   function renderSelectedPoint() {
     if (!selectedLocation) return;
     selectedPointCard().classList.remove('hidden');
     selectedPointName().textContent = selectedLocation.name;
     selectedPointAddress().textContent = selectedLocation.formattedAddress;
+    selectedPointAddress().style.color = selectedLocation.addressResolved === false
+      ? 'var(--error)'
+      : 'var(--text-muted)';
     confirmLocationBtn().disabled = false;
 
     if (selectedLocation.compatibility && compatibilityBadge()) {
@@ -992,14 +1244,34 @@
   }
 
   if (locationSearchInput()) {
-    locationSearchInput().addEventListener('input', (event) => {
-      const query = event.target.value || '';
+    locationSearchInput().addEventListener('input', () => {
       clearTimeout(locationSearchTimer);
-      if (!query.trim()) {
-        if (locationSearchResults()) locationSearchResults().innerHTML = '';
-        return;
+      locationSearchAbortController?.abort();
+      locationSearchPendingQuery = null;
+      clearTimeout(reverseGeocodeTimer);
+      reverseGeocodeAbortController?.abort();
+      locationSearchSequence++;
+      reverseGeocodeSequence++;
+      pendingReverseGeocodeKey = null;
+      selectedLocation = null;
+      selectedPointCard()?.classList.add('hidden');
+      if (confirmLocationBtn()) confirmLocationBtn().disabled = true;
+      if (locationSearchResults()) locationSearchResults().innerHTML = '';
+      if (locationSearchBtn()) locationSearchBtn().disabled = false;
+      const query = locationSearchInput().value.trim();
+      if (query.length >= 2) {
+        locationSearchResults().textContent = 'Searching shortly…';
+        locationSearchTimer = setTimeout(() => searchLocationByQuery(query), 550);
+      } else if (query) {
+        locationSearchResults().textContent = 'Enter at least 2 characters to search.';
       }
-      locationSearchTimer = setTimeout(() => searchLocationByQuery(query), 350);
+    });
+
+    locationSearchInput().addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        searchLocationByQuery(locationSearchInput().value);
+      }
     });
 
     locationSearchResults()?.addEventListener('click', (event) => {
@@ -1010,16 +1282,24 @@
       const longitude = Number(button.dataset.lon);
       const displayName = button.dataset.display || button.dataset.name || 'Selected Location';
       const name = button.dataset.name || displayName;
-      if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
+      if (!isValidLocation(latitude, longitude)) {
         window.showToast('This location is missing valid coordinates.', 'warning');
         return;
       }
 
+      clearTimeout(reverseGeocodeTimer);
+      reverseGeocodeAbortController?.abort();
+      reverseGeocodeSequence++;
+      locationSearchSequence++;
+      locationSearchAbortController?.abort();
+      locationSearchPendingQuery = null;
+      pendingReverseGeocodeKey = null;
       locationSearchInput().value = displayName;
       locationSearchResults().innerHTML = '';
-      setLocationFromData(latitude, longitude, name, displayName);
+      setLocationFromData(latitude, longitude, name, displayName, button.dataset.city || '');
       locationPickerMap().classList.remove('hidden');
       if (map) {
+        mapMarker.setLatLng([latitude, longitude]);
         map.flyTo([latitude, longitude], 15, { animate: true, duration: 1.2 });
       } else {
         setTimeout(() => {
@@ -1030,6 +1310,10 @@
     });
   }
 
+  if (locationSearchBtn()) {
+    locationSearchBtn().onclick = () => searchLocationByQuery(locationSearchInput()?.value || '');
+  }
+
   window.openLocationPicker = async (purpose, requestChange = false) => {
     if (!parcelData || !parcelData.id) {
        window.showToast('Wait for parcel data to load...', 'warning');
@@ -1037,9 +1321,19 @@
     }
     activePickerPurpose = purpose;
     isRequestChange = requestChange;
+    selectedLocation = null;
+    clearTimeout(reverseGeocodeTimer);
+    reverseGeocodeAbortController?.abort();
+    clearTimeout(locationSearchTimer);
+    locationSearchAbortController?.abort();
+    locationSearchPendingQuery = null;
+    locationSearchSequence++;
+    reverseGeocodeSequence++;
+    pendingReverseGeocodeKey = null;
     locationModalTitle().textContent = `Select ${purpose === 'pickup' ? 'Pickup' : 'Delivery'} Point`;
     if (locationSearchInput()) locationSearchInput().value = '';
     if (locationSearchResults()) locationSearchResults().innerHTML = '';
+    if (locationSearchBtn()) locationSearchBtn().disabled = false;
 
     const existing = purpose === 'pickup' ? parcelData.pickupPoint : parcelData.deliveryPoint;
     if (changingWarning()) changingWarning().classList.toggle('hidden', !existing?.name);
@@ -1076,10 +1370,14 @@
   window.selectRecommendedPoint = (id) => {
     const p = (window._points || []).find(x => x._id === id);
     if (!p) return;
-    if (!isValidCoordinate(p.latitude) || !isValidCoordinate(p.longitude)) {
+    if (!isValidLocation(p.latitude, p.longitude)) {
       window.showToast('This recommended point is missing valid coordinates.', 'warning');
       return;
     }
+    clearTimeout(reverseGeocodeTimer);
+    reverseGeocodeAbortController?.abort();
+    reverseGeocodeSequence++;
+    pendingReverseGeocodeKey = null;
     selectedLocation = {
       travelPointId: p._id,
       name: p.name,
@@ -1093,6 +1391,7 @@
     if (locationSearchInput()) locationSearchInput().value = p.formattedAddress;
     if (locationPickerMap()) locationPickerMap().classList.remove('hidden');
     if (map) {
+      mapMarker.setLatLng([selectedLocation.latitude, selectedLocation.longitude]);
       map.flyTo([selectedLocation.latitude, selectedLocation.longitude], 15, { animate: true, duration: 1.2 });
     } else {
       setTimeout(() => {
@@ -1106,10 +1405,13 @@
   if (pickOnMapBtn()) {
     pickOnMapBtn().onclick = () => {
       locationPickerMap().classList.remove('hidden');
-      const defaultLat = selectedLocation?.latitude || 19.9975;
-      const defaultLng = selectedLocation?.longitude || 73.7898;
+      const center = selectedLocation
+        ? [selectedLocation.latitude, selectedLocation.longitude]
+        : map
+          ? [map.getCenter().lat, map.getCenter().lng]
+          : [20.5937, 78.9629];
       setTimeout(() => {
-        initMap(defaultLat, defaultLng);
+        initMap(center[0], center[1]);
         map.invalidateSize();
       }, 100);
     };
@@ -1125,24 +1427,30 @@
          window.showToast('Location access requires a secure connection. Please use HTTPS or choose a location manually.', 'warning');
          return;
        }
+       selectedLocation = null;
+       selectedPointCard()?.classList.add('hidden');
+       if (confirmLocationBtn()) confirmLocationBtn().disabled = true;
        setButtonLoading(useCurrentLocationBtn(), true, 'Locating...');
        navigator.geolocation.getCurrentPosition(
          (pos) => {
            setButtonLoading(useCurrentLocationBtn(), false);
            const { latitude, longitude, accuracy } = pos.coords;
-           if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
+           if (!isValidLocation(latitude, longitude)) {
              window.showToast('The browser returned invalid coordinates. Please choose a point manually.', 'warning');
              return;
            }
-           updateSelectedLocationFromCoords(latitude, longitude);
+           scheduleLocationResolution(latitude, longitude);
            locationPickerMap().classList.remove('hidden');
            setTimeout(() => {
              initMap(latitude, longitude);
              if (map) map.invalidateSize();
            }, 100);
-           if (accuracy && accuracy > 0) {
-             window.showToast('Current location found and map updated.', 'success');
-           }
+           window.showToast(
+             accuracy > 0
+               ? `Current location found (accuracy about ${Math.round(accuracy)} m). Resolving address…`
+               : 'Current location found. Resolving address…',
+             'success'
+           );
          },
          (error) => {
            setButtonLoading(useCurrentLocationBtn(), false);
@@ -1160,6 +1468,12 @@
   if (confirmLocationBtn()) {
     confirmLocationBtn().onclick = async () => {
        if (!selectedLocation) return;
+       if (!isValidLocation(selectedLocation.latitude, selectedLocation.longitude)
+         || !selectedLocation.name?.trim()
+         || !selectedLocation.formattedAddress?.trim()) {
+         window.showToast('Select a valid location with a resolved address before confirming.', 'warning');
+         return;
+       }
        if (isRequestChange) {
           locationModal().classList.add('hidden');
           return;
@@ -1413,7 +1727,7 @@
   }
 
   const closeModalElements = [
-    cancelModalClose, cancelModalDismiss, otpModalClose,
+    cancelModalClose, cancelModalDismiss, otpModalClose, handoverOtpClose,
     reviewModalClose, reportModalClose, locationModalClose,
     profileModalClose, locationChangeModalClose, qrModalClose,
     receiptPreviewModalClose, closeReceiptPreviewBtn
@@ -1421,10 +1735,32 @@
   closeModalElements.forEach(fn => {
     const el = fn();
     if (el) el.onclick = () => {
-      [cancelModal, otpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal, receiptPreviewModal].forEach(m => m() && m().classList.add('hidden'));
+      if (el === handoverOtpClose()) handoverOtpSequence++;
+      if (el === locationModalClose()) {
+        clearTimeout(reverseGeocodeTimer);
+        reverseGeocodeAbortController?.abort();
+        clearTimeout(locationSearchTimer);
+        locationSearchAbortController?.abort();
+        locationSearchPendingQuery = null;
+        reverseGeocodeSequence++;
+        pendingReverseGeocodeKey = null;
+        locationSearchSequence++;
+      }
+      [cancelModal, otpModal, handoverOtpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal, receiptPreviewModal].forEach(m => m() && m().classList.add('hidden'));
       clearInterval(qrExpiryTimer);
+      clearInterval(handoverOtpTimer);
     };
   });
+  if (handoverOtpResend()) handoverOtpResend().onclick = requestHandoverOtp;
+  if (handoverOtpVerify()) handoverOtpVerify().onclick = verifyHandoverOtp;
+  if (handoverOtpInput()) {
+    handoverOtpInput().addEventListener('input', () => {
+      handoverOtpInput().value = handoverOtpInput().value.replace(/\D/g, '').slice(0, 6);
+    });
+    handoverOtpInput().addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') verifyHandoverOtp();
+    });
+  }
 
   window.generateSecureQr = generateSecureQr;
   window.generateReceipt = async () => {
@@ -1586,8 +1922,18 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      [cancelModal, otpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal].forEach(m => m() && m().classList.add('hidden'));
+      handoverOtpSequence++;
+      clearTimeout(reverseGeocodeTimer);
+      reverseGeocodeAbortController?.abort();
+      clearTimeout(locationSearchTimer);
+      locationSearchAbortController?.abort();
+      locationSearchPendingQuery = null;
+      reverseGeocodeSequence++;
+      locationSearchSequence++;
+      pendingReverseGeocodeKey = null;
+      [cancelModal, otpModal, handoverOtpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal].forEach(m => m() && m().classList.add('hidden'));
       clearInterval(qrExpiryTimer);
+      clearInterval(handoverOtpTimer);
     }
   });
 

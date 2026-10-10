@@ -29,6 +29,7 @@
   const stepDeliveryAddress = document.getElementById('stepDeliveryAddress');
   const stepRecipientName = document.getElementById('stepRecipientName');
   const stepRecipientPhone = document.getElementById('stepRecipientPhone');
+  const stepRecipientEmail = document.getElementById('stepRecipientEmail');
   const stepDate = document.getElementById('stepDate');
   const stepTimePreference = document.getElementById('stepTimePreference');
   const stepPrice = document.getElementById('stepPrice');
@@ -401,6 +402,7 @@
             deliveryAddress: stepDeliveryAddress?.value.trim() || '',
             recipientName: stepRecipientName?.value.trim() || '',
             recipientPhone: stepRecipientPhone?.value.trim() || '',
+            recipientEmail: stepRecipientEmail?.value.trim() || '',
           })
         });
 

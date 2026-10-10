@@ -776,8 +776,12 @@
 
       <div class="field" style="margin-bottom:12px;">
         <label for="locationSearchInput">Search for an address, place, or landmark</label>
-        <input id="locationSearchInput" type="text" placeholder="Try 'Phoenix Marketcity Pune' or 'Railway Station Pune'" style="width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; font-size:13px; font-family:var(--font); outline:none;" />
+        <div style="display:flex; gap:8px;">
+          <input id="locationSearchInput" type="search" placeholder="Try 'Phoenix Marketcity Pune' or 'Railway Station Pune'" style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; font-size:13px; font-family:var(--font); outline:none;" />
+          <button type="button" class="btn-ghost" id="locationSearchBtn" style="font-size:12px; padding:0 14px;">Search</button>
+        </div>
         <div id="locationSearchResults" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; padding-right:6px; margin-top:8px;"></div>
+        <div style="font-size:10px; color:var(--text-faint); margin-top:6px;">Search and address lookup via <span id="geocodingProviderAttribution">the server-configured geocoder</span>. Map and geocoding data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>.</div>
       </div>
 
       <div class="field">
@@ -958,6 +962,23 @@
     </div>
   </div>
 
+  <!-- Handover Email OTP Modal -->
+  <div class="modal-overlay hidden" id="handoverOtpModal">
+    <div class="modal-card" style="max-width:420px;">
+      <button class="modal-close" id="handoverOtpClose">&times;</button>
+      <h3 class="modal-title" id="handoverOtpTitle">Verify Handover by Email</h3>
+      <p id="handoverOtpDescription" style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Request a one-time code sent to the authorized person's registered email.</p>
+      <div id="handoverOtpStatus" role="status" aria-live="polite" style="font-size:12px; color:var(--text-muted); margin-bottom:12px;"></div>
+      <div id="handoverOtpCountdown" aria-live="polite" style="font-size:12px; color:var(--text-muted); margin-bottom:12px;"></div>
+      <label for="handoverOtpInput" style="display:block; font-size:12px; font-weight:600; margin-bottom:6px;">Six-digit verification code</label>
+      <input id="handoverOtpInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" aria-describedby="handoverOtpStatus handoverOtpCountdown" style="width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:12px; font-size:18px; letter-spacing:0.35em; text-align:center; font-family:var(--font);">
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button type="button" class="btn-ghost" id="handoverOtpResend" style="flex:1;">Resend code</button>
+        <button type="button" class="btn-primary" id="handoverOtpVerify" style="flex:1;">Verify handover</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Review Modal -->
   <div class="modal-overlay hidden" id="reviewModal">
     <div class="modal-card" style="max-width:440px;">
@@ -1067,7 +1088,7 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
   <script defer src="../shared/qr-scanner.js?v=20261008-camera-3"></script>
   <script defer src="js/qr-verification.js?v=qr-20260813"></script>
-  <script defer src="js/parcel-details.js?v=tracking-20261008"></script>
+  <script defer src="js/parcel-details.js?v=location-picker-20261010"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>
 </body>
 </html>
