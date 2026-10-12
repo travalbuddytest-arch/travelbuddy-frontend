@@ -243,7 +243,9 @@
     if (emptyState) emptyState.classList.add('hidden');
 
     try {
-      const res = await fetch(`${API_BASE}/history`, { headers: authHeaders() });
+      const fetchOpts = { headers: authHeaders() };
+      // Use fetchWithCache with 30s TTL
+      const res = await window.CarryParcel.fetchWithCache(`${API_BASE}/history`, fetchOpts, 30000);
       const data = await res.json();
 
       if (!res.ok) {

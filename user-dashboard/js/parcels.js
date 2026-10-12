@@ -68,10 +68,14 @@
       const user = await window.TravelBuddy.getCurrentUser();
       currentUserId = user?._id || user?.id || '';
 
+      const fetchOpts = { headers: authHeaders() };
+      // Use fetchWithCache with 30s TTL to deduplicate and cache responses
+      const fetchCached = (url) => window.CarryParcel.fetchWithCache(url, fetchOpts, 30000);
+
       const [trackingRes, myParcelsRes, historyRes] = await Promise.allSettled([
-        fetch(`${API_BASE}/tracking`, { headers: authHeaders() }).then(r => r.ok ? r.json() : { parcels: [] }),
-        fetch(`${API_BASE}/my-parcels?limit=100`, { headers: authHeaders() }).then(r => r.ok ? r.json() : { parcels: [] }),
-        fetch(`${API_BASE}/history?limit=100`, { headers: authHeaders() }).then(r => r.ok ? r.json() : { parcels: [] })
+        fetchCached(`${API_BASE}/tracking`).then(r => r.ok ? r.json() : { parcels: [] }),
+        fetchCached(`${API_BASE}/my-parcels?limit=100`).then(r => r.ok ? r.json() : { parcels: [] }),
+        fetchCached(`${API_BASE}/history?limit=100`).then(r => r.ok ? r.json() : { parcels: [] })
       ]);
 
       const trackingList = trackingRes.status === 'fulfilled' ? (trackingRes.value.parcels || []) : [];

@@ -22,7 +22,9 @@
 
     // 2. Fetch fresh data
     try {
-      const res = await fetch(`${API_ORIGIN}/api/postparcel/dashboard-aggregator`, { headers: authHeaders() });
+      const fetchOpts = { headers: authHeaders() };
+      // Use fetchWithCache with 60s TTL for dashboard aggregator
+      const res = await window.CarryParcel.fetchWithCache(`${API_ORIGIN}/api/postparcel/dashboard-aggregator`, fetchOpts, 60000);
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));

@@ -90,7 +90,9 @@
     // if (deliveriesList) deliveriesList.innerHTML = ''; // Skeleton replaces this
 
     try {
-      const res = await fetch(`${API_BASE}/tracking`, authFetchOptions());
+      const fetchOpts = { headers: authHeaders() };
+      // Use fetchWithCache with 30s TTL to deduplicate and cache responses
+      const res = await window.CarryParcel.fetchWithCache(`${API_BASE}/tracking`, fetchOpts, 30000);
       const data = await res.json();
 
       if (!res.ok) {

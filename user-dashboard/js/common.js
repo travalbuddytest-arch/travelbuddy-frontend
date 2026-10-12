@@ -443,12 +443,13 @@
   const inFlightRequests = new Map();
 
   /**
-   * Enhanced fetch with memory caching and request deduplication.
+   * Enhanced fetch with memory caching, request deduplication, and 429 backoff.
    * @param {string} url
    * @param {Object} options
    * @param {number} ttl - Cache TTL in milliseconds (default 0, no cache)
+   * @param {number} maxRetries - Max retries for 429 (default 3)
    */
-  async function fetchWithCache(url, options = {}, ttl = 0) {
+  async function fetchWithCache(url, options = {}, ttl = 0, maxRetries = 3) {
     const method = options.method || 'GET';
     const isCacheable = method === 'GET' && ttl > 0;
     const cacheKey = `${url}:${JSON.stringify(options.headers || {})}`;
@@ -466,21 +467,36 @@
       return pending.clone();
     }
 
-    const requestPromise = fetch(url, options);
-    inFlightRequests.set(cacheKey, requestPromise);
+    const makeRequest = async (attempt = 0) => {
+      const requestPromise = fetch(url, options);
+      inFlightRequests.set(cacheKey, requestPromise);
 
-    try {
-      const response = await requestPromise;
-      if (response.ok && isCacheable) {
-        fetchCache.set(cacheKey, {
-          timestamp: Date.now(),
-          data: response.clone()
-        });
+      try {
+        const response = await requestPromise;
+
+        // Handle 429 with exponential backoff
+        if (response.status === 429 && attempt < maxRetries) {
+          const retryAfter = response.headers.get('Retry-After');
+          let delay = retryAfter ? parseInt(retryAfter, 10) * 1000 : Math.min(1000 * Math.pow(2, attempt) + Math.random() * 1000, 30000);
+          console.warn(`[fetchWithCache] 429 received for ${url}, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+          await new Promise(r => setTimeout(r, delay));
+          inFlightRequests.delete(cacheKey);
+          return makeRequest(attempt + 1);
+        }
+
+        if (response.ok && isCacheable) {
+          fetchCache.set(cacheKey, {
+            timestamp: Date.now(),
+            data: response.clone()
+          });
+        }
+        return response;
+      } finally {
+        inFlightRequests.delete(cacheKey);
       }
-      return response;
-    } finally {
-      inFlightRequests.delete(cacheKey);
-    }
+    };
+
+    return makeRequest();
   }
 
   function clearClientCache() {
