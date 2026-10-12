@@ -24,10 +24,19 @@ img { height: auto; }
 /* ---------- HERO ---------- */
 .team-hero {
     position: relative;
-    padding: var(--team-pad) var(--container-px);
+    /* Account for fixed navbar: 70px desktop, 64px mobile */
+    padding-top: calc(var(--team-pad) + 70px);
+    padding-bottom: var(--team-pad);
+    padding-inline: var(--container-px);
     background: linear-gradient(135deg, #f2f7ff 0%, #ffffff 68%);
     text-align: center;
     overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .team-hero {
+        padding-top: calc(var(--team-pad) + 64px);
+    }
 }
 .team-hero-glow {
     position: absolute;

@@ -1306,7 +1306,7 @@
             rating: currentRating,
             comment: reviewComment.value.trim()
           })
-        });
+        }));
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Could not submit review.');
         window.showToast('Review submitted successfully!', 'success');

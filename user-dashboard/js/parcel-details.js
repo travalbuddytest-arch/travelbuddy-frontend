@@ -1560,17 +1560,10 @@
   async function startChatWithCounterpart(userId) {
     if (!userId || !parcelData) return;
     try {
-      window.showToast('Connecting to conversation...', 'info');
-      const res = await fetch(`${API_ORIGIN}/api/messages/start`, authFetchOptions({
-        method: 'POST',
-        body: JSON.stringify({ recipientId: userId, parcelId: parcelData.id })
-      }));
-      const data = await res.json();
-      if (res.ok && data.conversationId) {
-        window.location.href = `messages.html?conversation=${encodeURIComponent(data.conversationId)}`;
-      } else {
-        window.location.href = `messages.html?parcel=${encodeURIComponent(parcelData.id)}`;
-      }
+      // For accepted parcels, the conversation is created automatically via
+      // backfillUserConversations when the messages page loads. Navigate directly
+      // to the messages page with the parcel ID to let the backend handle it.
+      window.location.href = `messages.html?parcel=${encodeURIComponent(parcelData.id)}`;
     } catch (err) {
       console.error(err);
       window.location.href = 'messages.html';
