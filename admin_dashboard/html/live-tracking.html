@@ -1,46 +1,248 @@
 <div class="live-tracking-container">
+    <!-- Sidebar with Filters -->
     <div class="tracking-sidebar">
+        <!-- Header -->
         <div class="sidebar-header">
-            <h3><i class="fa-solid fa-truck-fast"></i> In-Transit Parcels</h3>
-            <button class="btn secondary sm" id="refreshInTransit"><i class="fa-solid fa-arrows-rotate"></i></button>
+            <h3><i class="fa-solid fa-map-location-dot"></i> Live Tracking</h3>
+            <button class="btn secondary sm" id="refreshBtn" title="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
         </div>
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="trackingSearch" placeholder="Search order ID...">
-        </div>
-        <div class="parcel-list" id="inTransitList">
-            <!-- Loaded via JS -->
-            <div class="loading-state">Loading parcels...</div>
-        </div>
-    </div>
 
-    <div class="map-main">
-        <div id="liveTrackingMap"></div>
-        <div class="map-overlay hidden" id="trackingDetails">
-            <div class="tracking-card">
-                <div class="card-head">
-                    <span class="status-pill live"><i></i>LIVE</span>
-                    <h4 id="detOrderId">Order #—</h4>
-                    <button class="close-btn" id="closeDet">&times;</button>
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" role="tablist">
+            <button class="filter-tab active" role="tab" data-filter="parcels" aria-selected="true">
+                <i class="fa-solid fa-box"></i> Parcels
+            </button>
+            <button class="filter-tab" role="tab" data-filter="users" aria-selected="false">
+                <i class="fa-solid fa-users"></i> Users
+            </button>
+        </div>
+
+        <!-- Parcel Filters -->
+        <div class="filter-panel active" id="parcelFilters" role="tabpanel">
+            <div class="filter-section">
+                <label>Search</label>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="parcelSearch" placeholder="Parcel ID, order ID, sender, traveler...">
                 </div>
-                <div class="card-body">
-                    <div class="info-row"><span>Traveler:</span><strong id="detTraveler">—</strong></div>
-                    <div class="info-row"><span>From:</span><span id="detFrom">—</span></div>
-                    <div class="info-row"><span>To:</span><span id="detTo">—</span></div>
-                    <hr>
-                    <div class="telemetry">
-                        <div class="tel-item"><i class="fa-solid fa-gauge-high"></i><span id="detSpeed">0 km/h</span></div>
-                        <div class="tel-item"><i class="fa-solid fa-clock"></i><span id="detLastUpdate">Never</span></div>
+            </div>
+
+            <div class="filter-section">
+                <label>Status</label>
+                <select id="parcelStatusFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="in_transit">In Transit</option>
+                    <option value="pickup_confirmed">Pickup Confirmed</option>
+                    <option value="delivery_point_selected">Delivery Point Selected</option>
+                    <option value="pickup_point_selected">Pickup Point Selected</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="disputed">Disputed</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label>Origin City</label>
+                <select id="parcelFromFilter" class="filter-select">
+                    <option value="all">All Cities</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label>Destination City</label>
+                <select id="parcelToFilter" class="filter-select">
+                    <option value="all">All Cities</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label>Date Range</label>
+                <div class="date-range">
+                    <input type="date" id="dateFrom" class="date-input">
+                    <span>to</span>
+                    <input type="date" id="dateTo" class="date-input">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <label>Location Freshness</label>
+                <select id="locationFreshnessFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="live">Live (< 2 min)</option>
+                    <option value="stale">Stale (2-10 min)</option>
+                    <option value="offline">Offline (> 10 min)</option>
+                    <option value="none">No Location</option>
+                </select>
+            </div>
+
+            <button class="btn secondary full sm" id="resetParcelFilters">
+                <i class="fa-solid fa-arrows-rotate"></i> Reset Filters
+            </button>
+        </div>
+
+        <!-- User Filters -->
+        <div class="filter-panel hidden" id="userFilters" role="tabpanel">
+            <div class="filter-section">
+                <label>Search</label>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="userSearch" placeholder="Name, email, ID, phone...">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <label>Role</label>
+                <select id="userRoleFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="sender">Sender</option>
+                    <option value="traveler">Traveler</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label>City</label>
+                <select id="userCityFilter" class="filter-select">
+                    <option value="all">All Cities</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label>Online Status</label>
+                <select id="userOnlineFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="online">Online</option>
+                    <option value="offline">Offline</option>
+                </select>
+            </div>
+
+            <button class="btn secondary full sm" id="resetUserFilters">
+                <i class="fa-solid fa-arrows-rotate"></i> Reset Filters
+            </button>
+        </div>
+
+        <!-- Parcel List -->
+        <div class="list-container" id="parcelListContainer">
+            <div class="list-header">
+                <h4>Parcels <span class="count-badge" id="parcelCount">0</span></h4>
+            </div>
+            <div class="parcel-list" id="parcelList">
+                <div class="loading-state">Loading parcels...</div>
+            </div>
+        </div>
+
+        <!-- User List -->
+        <div class="list-container hidden" id="userListContainer">
+            <div class="list-header">
+                <h4>Users <span class="count-badge" id="userCount">0</span></h4>
+            </div>
+            <div class="user-list" id="userList">
+                <div class="loading-state">Loading users...</div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-panel">
+            <h4>Summary</h4>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <span class="summary-icon"><i class="fa-solid fa-box"></i></span>
+                    <div class="summary-info">
+                        <span class="summary-value" id="activeParcelsCount">0</span>
+                        <span class="summary-label">Active Parcels</span>
                     </div>
-                    <div class="actions">
-                        <button class="btn primary full sm" id="btnViewParcel">View Full Details</button>
-                        <button class="btn secondary full sm" id="btnContactUsers">Message Participants</button>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-icon in-transit"><i class="fa-solid fa-truck-fast"></i></span>
+                    <div class="summary-info">
+                        <span class="summary-value" id="inTransitCount">0</span>
+                        <span class="summary-label">In Transit</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-icon pending"><i class="fa-solid fa-clock"></i></span>
+                    <div class="summary-info">
+                        <span class="summary-value" id="pendingPickupCount">0</span>
+                        <span class="summary-label">Pending Pickups</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-icon users"><i class="fa-solid fa-users"></i></span>
+                    <div class="summary-info">
+                        <span class="summary-value" id="usersWithLocationCount">0</span>
+                        <span class="summary-label">Users w/ Location</span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<link rel="stylesheet" href="../css/operations.css">
-<script type="module" src="../js/live-tracking.js"></script>
+        <!-- Live Activity Feed -->
+        <div class="activity-panel">
+            <div class="activity-header">
+                <h4>Live Activity</h4>
+                <span class="live-indicator" id="liveIndicator"><i></i> Live</span>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+                <div class="activity-empty">Waiting for activity...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Panel -->
+    <div class="map-panel">
+        <div class="map-header">
+            <div class="map-title">
+                <h3>Live Tracking Map</h3>
+                <span class="map-status" id="mapStatus"><i></i> Initializing...</span>
+            </div>
+            <div class="map-controls">
+                <button class="map-btn" id="fullscreenBtn" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+                <button class="map-btn" id="recenterBtn" title="Recenter on India"><i class="fa-solid fa-location-crosshairs"></i></button>
+                <button class="map-btn" id="toggle3DBtn" title="Toggle 3D"><i class="fa-solid fa-cube"></i></button>
+            </div>
+        </div>
+
+        <div id="liveTrackingMap" class="map-container"></div>
+
+        <!-- Map Legend -->
+        <div class="map-legend" id="mapLegend">
+            <h4><i class="fa-solid fa-circle-info"></i> Legend</h4>
+            <div class="legend-items" id="legendItems"></div>
+            <div class="legend-timestamp">Last updated: <span id="lastUpdated">—</span></div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="map-loading-overlay" id="mapLoadingOverlay">
+            <div class="loading-spinner"></div>
+            <span>Loading map data...</span>
+        </div>
+
+        <!-- Error Overlay -->
+        <div class="map-error-overlay hidden" id="mapErrorOverlay">
+            <div class="error-content">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h3>Unable to Load Map</h3>
+                <p id="mapErrorMessage">An error occurred while loading the map.</p>
+                <button class="btn primary" id="retryMapLoad">Retry</button>
+            </div>
+        </div>
+
+        <!-- Detail Panel (Popup) -->
+        <div class="detail-popup hidden" id="detailPopup">
+            <div class="popup-header">
+                <h4 id="popupTitle">Parcel Details</h4>
+                <button class="close-btn" id="closePopup"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="popup-body" id="popupBody">
+                <div class="popup-loading">Loading details...</div>
+            </div>
+            <div class="popup-actions">
+                <button class="btn secondary" id="popupCloseBtn">Close</button>
+                <button class="btn primary" id="popupViewDetails">View Full Details</button>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="../css/operations.css">
+    <link rel="stylesheet" href="../css/live-tracking-3d.css">
+    <script type="module" src="../js/live-tracking-3d.js"></script>
+</div>

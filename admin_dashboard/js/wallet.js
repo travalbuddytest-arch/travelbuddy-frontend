@@ -169,7 +169,7 @@ function wireWithdrawalActions() {
     const utr = prompt('Enter UTR/Transaction Reference:');
     if (utr === null) return;
     try {
-      await apiPost('/api/admin/withdrawals/admin/complete', { withdrawalId: activeWithdrawal.withdrawalId, utr });
+      await apiPost('/api/withdraw/admin/complete', { withdrawalId: activeWithdrawal.withdrawalId, utr });
       window.showToast('Withdrawal marked as completed');
       $('#wdActionModal').classList.remove('show');
       loadWithdrawals();
@@ -183,7 +183,7 @@ function wireWithdrawalActions() {
     const reason = prompt('Enter rejection reason:');
     if (reason === null) return;
     try {
-      await apiPost('/api/admin/withdrawals/admin/reject', { withdrawalId: activeWithdrawal.withdrawalId, reason });
+      await apiPost('/api/withdraw/admin/reject', { withdrawalId: activeWithdrawal.withdrawalId, reason });
       window.showToast('Withdrawal rejected and funds reversed');
       $('#wdActionModal').classList.remove('show');
       loadWithdrawals();

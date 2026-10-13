@@ -14,6 +14,14 @@
       return data;
     }
 
+    async function apiPost(url, body) {
+      const headers = { 'X-CP-Admin-Request': 'true', 'Content-Type': 'application/json' };
+      const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, credentials: 'include', body: JSON.stringify(body) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw { status: res.status, data };
+      return data;
+    }
+
     // Tab Switching
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -184,19 +192,10 @@
         messagesContainer.innerHTML = 'Loading...';
 
         try {
-            const data = await apiGet(`/api/admin/support-tickets/${id}/messages`); // Assuming this exists or using user route
-            // Actually, I should use /api/support/tickets/:id/messages if it's accessible or add admin route
-            // My backend has GET /api/support/tickets/:id/messages. Admin can use it too if middleware allows.
-            // Let's use the one I added to support.js
-
-            const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/support/tickets/${id}/messages`, {
-                headers: { 'X-CP-Admin-Request': 'true' },
-                credentials: 'include'
-            });
-            const chatData = await res.json();
+            const data = await apiGet(`/api/admin/support-tickets/${id}/messages`);
 
             messagesContainer.innerHTML = '';
-            chatData.messages.forEach(appendMessage);
+            data.messages.forEach(appendMessage);
         } catch (err) {
             messagesContainer.innerHTML = 'Error loading chat.';
         }
@@ -224,7 +223,7 @@
         if (!content || !currentTicketId) return;
 
         try {
-            await apiPatch(`/api/admin/support-tickets/${currentTicketId}/messages`, { content });
+            await apiPost(`/api/admin/support-tickets/${currentTicketId}/messages`, { content });
             input.value = '';
             // appendMessage will happen via socket or I can manually append
             // For better UX, append manually

@@ -312,6 +312,9 @@ function activatePage(id, { historyMode = 'push', restoreScroll = false } = {}) 
     if (currentPageId === 'support-reports' && typeof window.destroySupportReports === 'function') {
       window.destroySupportReports();
     }
+    if (currentPageId === 'live-tracking' && typeof window.destroyLiveTracking === 'function') {
+      window.destroyLiveTracking();
+    }
   }
 
   const activeBtn = document.querySelector('nav .active');
