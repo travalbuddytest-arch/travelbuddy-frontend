@@ -2032,32 +2032,7 @@ input:focus-visible {
   .user-menu { width:min(190px, calc(100vw - 24px)); right:-4px; }
 
   .search-wrap {
-    max-width: 44px;
-    min-width: 44px;
-    flex-shrink: 0;
-    transition: max-width 0.3s ease;
-    overflow: hidden;
-  }
-  .search-wrap:focus-within {
-    max-width: calc(100vw - 80px);
-    position: absolute;
-    right: var(--container-px);
-    z-index: 10;
-    background: #fff;
-    border-radius: var(--radius-pill);
-    box-shadow: var(--shadow-lg);
-  }
-  .search-wrap i {
-    z-index: 2;
-  }
-  .search-wrap input {
-    width: 100%;
-  }
-  .search-wrap input::placeholder {
-    color: transparent;
-  }
-  .search-wrap:focus-within input::placeholder {
-    color: var(--tb-text-faint);
+    display: none;
   }
   .form-row { flex-direction: column; }
   .search-row { flex-direction: column; align-items: stretch; }

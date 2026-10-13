@@ -361,14 +361,7 @@
       margin-top: 2px;
     }
 
-    /* Location Change Request Card */
-    .location-request-card {
-      background: rgba(13, 110, 253, 0.03);
-      border: 1.5px dashed var(--primary);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      margin-bottom: 20px;
-    }
+    
 
     /* Map Styles */
     #locationPickerMap {
@@ -511,28 +504,6 @@
               <p id="actionBannerDesc" style="margin:0; font-size:13px; color:var(--text-muted);">Please complete the verification step to advance this delivery.</p>
             </div>
             <div id="actionBannerButtons" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-          </div>
-
-          <!-- Location Change Request (Visible to Traveler) -->
-          <div id="locationRequestCard" class="location-request-card hidden">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-              <i class="fa-solid fa-location-crosshairs" style="color:var(--primary);"></i>
-              <strong style="font-size:14px; color:var(--primary);">Location Change Request</strong>
-            </div>
-            <p style="font-size:13px; color:var(--text-main); margin-bottom:8px;">
-              The sender requested to change the <span id="reqLocationType">pickup</span> point to:
-            </p>
-            <div style="background:#fff; padding:12px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:14px;">
-               <strong id="reqLocationName" style="display:block; font-size:14px;">Location Name</strong>
-               <span id="reqLocationAddress" style="display:block; font-size:12px; color:var(--text-muted);">Formatted Address</span>
-               <div id="reqReasonBox" style="margin-top:8px; padding-top:8px; border-top:1px solid #f1f5f9; font-style:italic; font-size:12px; color:var(--text-faint);">
-                 "Reason for change"
-               </div>
-            </div>
-            <div style="display:flex; gap:10px;">
-              <button type="button" class="btn-ghost" id="declineLocationBtn" style="flex:1;">Decline</button>
-              <button type="button" class="btn-primary" id="approveLocationBtn" style="flex:1;">Accept Change</button>
-            </div>
           </div>
 
           <div class="details-grid">

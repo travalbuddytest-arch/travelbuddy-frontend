@@ -122,6 +122,7 @@
   let reverseGeocodeTimer = null;
   let reverseGeocodeAbortController = null;
   let pendingReverseGeocodeKey = null;
+  let geocodingProviderAvailable = true; // Track if geocoding provider is configured
 
   // Review Modal Logic
   function openReviewModal() {
@@ -1158,6 +1159,8 @@
         if (requestSequence !== reverseGeocodeSequence || error.name === 'AbortError') return;
         pendingReverseGeocodeKey = null;
         console.error('Reverse geocoding failed:', error);
+        const isProviderUnconfigured = error.message?.includes('geocoding provider is configured') || error.message?.includes('503');
+        if (isProviderUnconfigured) geocodingProviderAvailable = false;
         showLocationResolutionStatus(
           'Address unavailable',
           `Address lookup failed. You can still confirm this exact map point. Coordinates: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}.`
@@ -1216,7 +1219,21 @@
     } catch (error) {
       if (requestSequence !== locationSearchSequence || error.name === 'AbortError') return;
       console.error('Address search failed:', error);
-      locationSearchResults().innerHTML = `<div style="font-size:12px; color:var(--error); padding:8px 0;">${escapeHTML(error.message || 'Could not search locations right now. Please try again.')}</div>`;
+      const isProviderUnconfigured = error.message?.includes('geocoding provider is configured') || error.message?.includes('503');
+      if (isProviderUnconfigured) geocodingProviderAvailable = false;
+      const msg = isProviderUnconfigured
+        ? 'Address search is currently unavailable. You can still select a location on the map.'
+        : (error.message || 'Could not search locations right now. Please try again.');
+      locationSearchResults().innerHTML = `<div style="font-size:12px; color:var(--error); padding:8px 0;">${escapeHTML(msg)}</div>`;
+      if (isProviderUnconfigured) {
+        locationPickerMap().classList.remove('hidden');
+        if (!map) {
+          setTimeout(() => {
+            initMap(20.5937, 78.9629);
+            map.invalidateSize();
+          }, 100);
+        }
+      }
     } finally {
       if (requestSequence === locationSearchSequence) locationSearchPendingQuery = null;
       if (requestSequence === locationSearchSequence && locationSearchBtn()) locationSearchBtn().disabled = false;
@@ -1511,18 +1528,24 @@
     };
   }
 
-  if (confirmLocationBtn()) {
+    if (confirmLocationBtn()) {
     confirmLocationBtn().onclick = async () => {
        if (!selectedLocation) return;
+       const hasAddress = selectedLocation.name?.trim() && selectedLocation.formattedAddress?.trim();
        if (!isValidLocation(selectedLocation.latitude, selectedLocation.longitude)
-         || !selectedLocation.name?.trim()
-         || !selectedLocation.formattedAddress?.trim()) {
+         || (!hasAddress && geocodingProviderAvailable)) {
          window.showToast('Select a valid location with a resolved address before confirming.', 'warning');
          return;
        }
+       // If geocoding provider is not available, allow confirming with just coordinates
+       if (!hasAddress && !geocodingProviderAvailable) {
+         selectedLocation.name = selectedLocation.name || 'Map point';
+         selectedLocation.formattedAddress = selectedLocation.formattedAddress || `Coordinates: ${selectedLocation.latitude.toFixed(6)}, ${selectedLocation.longitude.toFixed(6)}`;
+         selectedLocation.addressResolved = false;
+       }
        if (isRequestChange) {
           locationModal().classList.add('hidden');
-          return;
+           return;
        }
        setButtonLoading(confirmLocationBtn(), true, 'Saving...');
        try {
