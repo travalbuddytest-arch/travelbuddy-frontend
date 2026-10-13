@@ -100,13 +100,14 @@
   let currentOtpPurpose = 'pickup';
   let otpCooldownSeconds = 0;
   let otpCooldownTimer = null;
-  let selectedRating = 5;
+  let selectedRating = 0; // 0 = not selected yet
   let map = null;
   let mapMarker = null;
   let selectedLocation = null;
   let activePickerPurpose = 'pickup'; // pickup or delivery
   let isRequestChange = false; // true if sender is requesting a change
   let qrExpiryTimer = null;
+  let activeQrPurpose = null; // 'pickup' or 'delivery' when QR modal is open
   let locationSearchTimer = null;
   let locationSearchSequence = 0;
   let locationSearchAbortController = null;
@@ -122,12 +123,47 @@
   let reverseGeocodeAbortController = null;
   let pendingReverseGeocodeKey = null;
 
+  // Review Modal Logic
+  function openReviewModal() {
+    if (!parcelData) return;
+    selectedRating = 0;
+    updateStarUI(0);
+    reviewComment().value = '';
+    reviewTargetName().textContent = parcelData.role === 'sender'
+      ? (parcelData.traveler?.displayName || 'the traveler')
+      : (parcelData.sender?.displayName || 'the sender');
+    reviewModal().classList.remove('hidden');
+  }
+
+  function updateStarUI(rating) {
+    const stars = starRatingBox().querySelectorAll('i');
+    stars.forEach(star => {
+      const r = parseInt(star.dataset.rating);
+      star.className = r <= rating ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    });
+    const labels = ['Select a rating', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+    starRatingLabel().textContent = labels[rating] || labels[0];
+  }
+
+  if (starRatingBox()) {
+    starRatingBox().addEventListener('click', (e) => {
+      const star = e.target.closest('i');
+      if (star) {
+        selectedRating = parseInt(star.dataset.rating);
+        updateStarUI(selectedRating);
+      }
+    });
+  }
+
+  window.openReviewModal = openReviewModal;
+
   function generateSecureQr(purpose) {
     if (!qrModal()) return;
     qrModal().classList.remove('hidden');
     qrLoadingState().classList.remove('hidden');
     qrReadyState().classList.add('hidden');
     qrCodeContainer().innerHTML = '';
+    activeQrPurpose = purpose; // Track which QR is active
 
     setTimeout(async () => {
       try {
@@ -153,6 +189,7 @@
       } catch (err) {
         window.showToast(err.message, 'error');
         qrModal().classList.add('hidden');
+        activeQrPurpose = null; // Clear on error
       }
     }, 1500);
   }
@@ -484,6 +521,15 @@
         counterpartChatBtn.disabled = true;
         counterpartChatBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Chat Locked';
       }
+    }
+
+    // Hide Cancel and Report for terminal states
+    const isTerminal = ['delivered', 'cancelled', 'cancelled_by_sender', 'cancelled_by_traveler', 'cancelled_by_system'].includes(p.status);
+    if (cancelParcelBtn) {
+      cancelParcelBtn.style.display = isTerminal ? 'none' : 'inline-flex';
+    }
+    if (reportIssueBtn) {
+      reportIssueBtn.style.display = isTerminal ? 'none' : 'inline-flex';
     }
 
     // Sub-renders
@@ -1659,15 +1705,22 @@
   if (submitReviewBtn()) {
     submitReviewBtn().onclick = async () => {
       if (!parcelData) return;
+      if (!selectedRating || selectedRating < 1 || selectedRating > 5) {
+        window.showToast('Please select a star rating.', 'warning');
+        return;
+      }
       setButtonLoading(submitReviewBtn(), true, 'Submitting...');
       try {
         const res = await fetch(`${API_BASE}/review`, authFetchOptions({
           method: 'POST',
           body: JSON.stringify({
             parcelId: parcelData.id,
-            rating: selectedRating,
-            comment: reviewComment().value.trim(),
-            role: parcelData.role
+            score: selectedRating,
+            communication: selectedRating,
+            punctuality: selectedRating,
+            reliability: selectedRating,
+            helpfulness: selectedRating,
+            comment: reviewComment().value.trim()
           })
         }));
         const data = await res.json();
@@ -1738,6 +1791,13 @@
         reverseGeocodeSequence++;
         pendingReverseGeocodeKey = null;
         locationSearchSequence++;
+      }
+      if (el === qrModalClose()) {
+        activeQrPurpose = null; // Clear active QR purpose when modal is closed
+      }
+      if (el === reviewModalClose()) {
+        selectedRating = 0; // Reset rating when review modal is closed
+        updateStarUI(0);
       }
       [cancelModal, otpModal, handoverOtpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal, receiptPreviewModal].forEach(m => m() && m().classList.add('hidden'));
       clearInterval(qrExpiryTimer);
@@ -1927,6 +1987,9 @@
       [cancelModal, otpModal, handoverOtpModal, reviewModal, reportModal, locationModal, profileModal, locationChangeModal, qrModal].forEach(m => m() && m().classList.add('hidden'));
       clearInterval(qrExpiryTimer);
       clearInterval(handoverOtpTimer);
+      activeQrPurpose = null; // Clear active QR purpose on Escape
+      selectedRating = 0; // Reset rating on Escape
+      updateStarUI(0);
     }
   });
 
@@ -1940,7 +2003,25 @@
     }
   });
   document.addEventListener('travelbuddy:parcel-status', (e) => {
-    if (parcelData && String(e.detail?.parcelId || '') === String(parcelData.id)) {
+    const detail = e.detail || {};
+    const eventParcelId = detail.parcelId;
+    const eventAction = detail.action; // 'pickup' or 'delivery'
+    const eventStatus = detail.status; // 'PICKUP_CONFIRMED' or 'DELIVERED'
+
+    if (parcelData && String(eventParcelId || '') === String(parcelData.id)) {
+      // If the event matches the currently displayed parcel and an active QR modal,
+      // close the QR modal immediately (before refreshing)
+      if (activeQrPurpose && eventAction && activeQrPurpose === eventAction) {
+        const expectedStatus = eventAction === 'pickup' ? 'PICKUP_CONFIRMED' : 'DELIVERED';
+        if (eventStatus === expectedStatus) {
+          qrModal().classList.add('hidden');
+          activeQrPurpose = null;
+          clearInterval(qrExpiryTimer);
+          // Show brief success feedback
+          window.showToast(`${eventAction === 'pickup' ? 'Pickup' : 'Delivery'} verified!`, 'success');
+        }
+      }
+      // Refresh parcel details to reflect the new status
       loadParcelDetails();
     }
   });
