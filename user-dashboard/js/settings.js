@@ -62,4 +62,34 @@
     });
   }
 
+  // Appearance & preference toggles (dark mode, AI assistant, privacy mode)
+  const themeToggle = document.getElementById('themeToggle');
+  const aiAssistantToggle = document.getElementById('aiAssistantToggle');
+  const privacyModeToggle = document.getElementById('privacyModeToggle');
+
+  if (themeToggle) {
+    themeToggle.checked = window.TravelBuddy.getEffectiveTheme() === 'dark';
+    themeToggle.addEventListener('change', () => {
+      window.TravelBuddy.setTheme(themeToggle.checked ? 'dark' : 'light');
+    });
+  }
+
+  if (aiAssistantToggle) {
+    aiAssistantToggle.checked = window.TravelBuddy.isAiAssistantEnabled();
+    aiAssistantToggle.addEventListener('change', () => {
+      window.TravelBuddy.setAiAssistantEnabled(aiAssistantToggle.checked);
+    });
+  }
+
+  if (privacyModeToggle) {
+    privacyModeToggle.checked = window.TravelBuddy.isPrivacyMode();
+    privacyModeToggle.addEventListener('change', () => {
+      window.TravelBuddy.setPrivacyMode(privacyModeToggle.checked);
+    });
+    // Keep this switch in sync when privacy mode is toggled from the user menu.
+    document.addEventListener('travelbuddy:privacy-toggled', () => {
+      privacyModeToggle.checked = window.TravelBuddy.isPrivacyMode();
+    });
+  }
+
 })();

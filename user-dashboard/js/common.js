@@ -383,7 +383,12 @@
 
   function setPrivacyMode(enabled) {
     localStorage.setItem('tb_privacy_mode', String(enabled));
+    // Dispatch both the legacy and canonical event names. Some modules still
+    // listen for the older 'travelbuddy:*' name (profile.js, wallet.js) while
+    // others use 'carryparcel:*' (overview.js); emitting both keeps every
+    // listener in sync when the preference is toggled.
     document.dispatchEvent(new CustomEvent('travelbuddy:privacy-toggled', { detail: { enabled } }));
+    document.dispatchEvent(new CustomEvent('carryparcel:privacy-toggled', { detail: { enabled } }));
     showToast(`Privacy mode ${enabled ? 'enabled (balances hidden)' : 'disabled'}.`, 'info');
     updatePrivacyUI();
   }
@@ -399,6 +404,78 @@
       const label = btn.querySelector('.btn-label');
       if (label) label.textContent = isPrivate ? 'Show Balances' : 'Hide Balances';
     });
+  }
+
+  // ---- Appearance (light / dark) -------------------------------------------
+  // Persisted in localStorage under 'tb_theme' ('light' | 'dark'). When unset we
+  // follow the OS via prefers-color-scheme. shared/auth-guard.js applies the
+  // same value synchronously in <head> so the first paint never flashes.
+  const THEME_KEY = 'tb_theme';
+
+  function getTheme() {
+    const stored = localStorage.getItem(THEME_KEY);
+    return stored === 'light' || stored === 'dark' ? stored : null;
+  }
+
+  function getSystemTheme() {
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+
+  function getEffectiveTheme() {
+    return getTheme() || getSystemTheme();
+  }
+
+  function applyTheme() {
+    const theme = getEffectiveTheme();
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
+  }
+
+  function setTheme(theme) {
+    if (theme === 'light' || theme === 'dark') {
+      localStorage.setItem(THEME_KEY, theme);
+    } else {
+      localStorage.removeItem(THEME_KEY);
+    }
+    applyTheme();
+    document.dispatchEvent(new CustomEvent('travelbuddy:theme-changed', { detail: { theme: getEffectiveTheme() } }));
+  }
+
+  // Keep following the OS while the user has no explicit preference.
+  try {
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (!getTheme()) applyTheme();
+      });
+    }
+  } catch (e) { /* older browsers: matchMedia listener may be unsupported */ }
+  applyTheme();
+
+  // ---- AI assistant preference ---------------------------------------------
+  // Enabled by default (matches the Android app). Persisted in localStorage
+  // under 'tb_ai_assistant'. When disabled the assistant bundle is never loaded,
+  // so it cannot reopen on later navigation.
+  const AI_ASSISTANT_KEY = 'tb_ai_assistant';
+
+  function isAiAssistantEnabled() {
+    return localStorage.getItem(AI_ASSISTANT_KEY) !== 'false';
+  }
+
+  function setAiAssistantEnabled(enabled) {
+    localStorage.setItem(AI_ASSISTANT_KEY, String(Boolean(enabled)));
+    if (enabled) {
+      loadAsset('/shared/ai-assistant.css', 'css');
+      loadAsset('/shared/ai-assistant.js', 'js');
+    } else {
+      document.querySelectorAll('.tb-ai-widget').forEach((el) => el.remove());
+    }
+    showToast(`AI assistant ${enabled ? 'enabled' : 'disabled'}.`, 'info');
+  }
+
+  // Display-only money mask for privacy mode. It only changes on-screen text —
+  // it never touches stored values, API payloads, receipts or exports.
+  function formatPaisePrivate(paise) {
+    return isPrivacyMode() ? '••••' : formatPaise(paise);
   }
 
   function loadAsset(url, type) {
@@ -436,6 +513,12 @@
     highlightActiveNav,
     isPrivacyMode,
     setPrivacyMode,
+    formatPaisePrivate,
+    getTheme,
+    getEffectiveTheme,
+    setTheme,
+    isAiAssistantEnabled,
+    setAiAssistantEnabled,
     showToast,
   });
 
@@ -1496,8 +1579,10 @@
     });
   }
 
-  loadAsset('/shared/ai-assistant.css', 'css');
-  loadAsset('/shared/ai-assistant.js', 'js');
+  if (isAiAssistantEnabled()) {
+    loadAsset('/shared/ai-assistant.css', 'css');
+    loadAsset('/shared/ai-assistant.js', 'js');
+  }
   highlightActiveNav();
   refreshCurrentUser();
   refreshMessageBadge();

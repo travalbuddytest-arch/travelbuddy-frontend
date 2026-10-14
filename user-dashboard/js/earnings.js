@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, formatPaise, statusBadge } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, escapeHTML, formatPaisePrivate, statusBadge } = window.TravelBuddy;
 
   const earnTotalLifetime = document.getElementById('earnTotalLifetime');
   const earnWithdrawable = document.getElementById('earnWithdrawable');
@@ -20,8 +20,8 @@
 
       if (walletRes.status === 'fulfilled') {
         const w = walletRes.value;
-        if (earnTotalLifetime) earnTotalLifetime.textContent = formatPaise(w.totalEarnings || 0);
-        if (earnWithdrawable) earnWithdrawable.textContent = formatPaise(w.walletBalance || 0);
+        if (earnTotalLifetime) earnTotalLifetime.textContent = formatPaisePrivate(w.totalEarnings || 0);
+        if (earnWithdrawable) earnWithdrawable.textContent = formatPaisePrivate(w.walletBalance || 0);
       }
 
       if (statsRes.status === 'fulfilled') {
@@ -78,7 +78,7 @@
             <strong style="font-size:13.5px; color:var(--text-main); display:block;">${escapeHTML(tx.description || 'Delivery Earning')}</strong>
           </td>
           <td style="font-weight:800; font-size:14px; color:var(--success);">
-            +${formatPaise(tx.amount)}
+            +${formatPaisePrivate(tx.amount)}
           </td>
           <td>${statusBadge(tx.status || 'completed')}</td>
           <td>${actionCell}</td>
@@ -92,6 +92,11 @@
       window.open(`${API_ORIGIN}/api/payments/wallet-transactions/export?type=traveler_earning`, '_blank');
     });
   }
+
+  // Re-render the amounts when privacy mode is toggled (user menu or settings).
+  ['travelbuddy:privacy-toggled', 'carryparcel:privacy-toggled'].forEach((evt) => {
+    document.addEventListener(evt, () => loadEarningsData());
+  });
 
   loadEarningsData();
 })();

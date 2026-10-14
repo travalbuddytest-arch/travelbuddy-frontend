@@ -188,9 +188,12 @@
     ratingSubmit.disabled = true;
     ratingSubmit.textContent = 'Submitting...';
     try {
-      const res = await fetch(`${API_BASE}/${encodeURIComponent(activeParcelId)}/rate-traveler`, {
+      // The backend exposes a single universal review endpoint at
+      // POST /api/postparcel/review (the same one the Android app uses);
+      // there is no per-parcel /rate-traveler route.
+      const res = await fetch(`${API_BASE}/review`, {
         method: 'POST', headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: selectedRating, comment: ratingComment.value.trim() }),
+        body: JSON.stringify({ parcelId: activeParcelId, score: selectedRating, comment: ratingComment.value.trim() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not submit rating.');

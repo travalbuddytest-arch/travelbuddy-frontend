@@ -44,6 +44,21 @@
         }
     } catch (e) {}
 
+    // Synchronous Zero-FOUC appearance bootstrap (user dashboard only).
+    // Applies the persisted light/dark preference — or the OS preference when
+    // the user has not chosen one — before anything paints, so there is no
+    // theme flash on load. Mirrors getTheme()/setTheme() in js/common.js.
+    if (guardType !== 'admin') {
+        try {
+            var storedTheme = localStorage.getItem('tb_theme');
+            var theme = (storedTheme === 'light' || storedTheme === 'dark')
+                ? storedTheme
+                : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+        } catch (e) {}
+    }
+
     // Pre-load skeleton system early
     (function loadSkeletonAssets() {
         var base = guardType === 'admin' ? '../../shared/' : '../shared/';

@@ -243,9 +243,12 @@
     try {
       const res = await fetch(`${API_ORIGIN}/api/verification/submit`, {
         method: 'POST',
-        headers: {
-          'Authorization': authHeaders().Authorization
-        },
+        // Auth is the HttpOnly session cookie (sent automatically for this
+        // same-site request). We must not set an Authorization header here:
+        // the old code sent `Authorization: authHeaders().Authorization`,
+        // which is always `undefined` -> "Bearer undefined". We also must not
+        // set Content-Type, because the browser has to add the multipart
+        // boundary for this FormData body itself.
         body: formData
       });
 

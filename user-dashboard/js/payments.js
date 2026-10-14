@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const { API_ORIGIN, authHeaders, escapeHTML, formatDate, setButtonLoading } = window.TravelBuddy;
+  const { API_ORIGIN, authHeaders, escapeHTML, formatDate, setButtonLoading, formatPaisePrivate } = window.TravelBuddy;
   const paymentForm = document.getElementById('razorpayPaymentForm');
   const payNowBtn = document.getElementById('payNowBtn');
   const verifyPaymentBtn = document.getElementById('verifyPaymentBtn');
@@ -33,9 +33,11 @@
       const balance = Number(user.walletBalance || 0);
       const held = Number(user.lockedBalance || 0);
 
-      if (total) total.textContent = formatRupees(balance + held);
-      if (avail) avail.textContent = formatRupees(balance);
-      if (locked) locked.textContent = formatRupees(held);
+      // walletBalance/lockedBalance from /api/auth/me are in paise (see toSafeUser
+      // in routes/auth.js); formatPaisePrivate divides by 100 and honours privacy mode.
+      if (total) total.textContent = formatPaisePrivate(balance + held);
+      if (avail) avail.textContent = formatPaisePrivate(balance);
+      if (locked) locked.textContent = formatPaisePrivate(held);
     } catch (err) {
       console.error('Wallet refresh failed:', err);
     }
@@ -127,7 +129,7 @@
         <td>${escapeHTML(formatDate(tx.createdAt, { day: '2-digit', month: 'short', year: 'numeric' }))}</td>
         <td>${escapeHTML(tx.description || tx.orderId || walletTypeLabel(tx.type))}</td>
         <td>${escapeHTML(walletTypeLabel(tx.type))}</td>
-        <td>${escapeHTML(`${tx.direction === 'debit' ? '-' : '+'}Rs. ${Number(tx.amount || 0).toFixed(2)}`)}</td>
+        <td>${escapeHTML(`${tx.direction === 'debit' ? '-' : '+'}${formatPaisePrivate(tx.amount)}`)}</td>
         <td><span class="tag tag--${walletStatusClass(tx.status)}">${escapeHTML(walletStatusLabel(tx.status))}</span></td>
       </tr>
     `).join('');
@@ -314,5 +316,13 @@
       refreshWalletBalance();
       renderTransactions();
     }
+  });
+
+  // Re-render balances/amounts when privacy mode changes (user menu or settings).
+  ['travelbuddy:privacy-toggled', 'carryparcel:privacy-toggled'].forEach((evt) => {
+    document.addEventListener(evt, () => {
+      refreshWalletBalance();
+      renderTransactions();
+    });
   });
 })();
