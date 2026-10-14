@@ -90,6 +90,7 @@
   let isOpen = false;
   let isSending = false;
   let lastError = null;
+  let lastUserMessage = '';
 
   function resolveApiBase() {
     var cfg = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || '';
@@ -158,9 +159,11 @@
     input.focus();
   }
 
-  async function sendMessage(text) {
+  async function sendMessage(text, opts) {
     if (!text || isSending) return;
-    addMessage(text, 'user');
+    const appendUser = !opts || opts.appendUser !== false;
+    lastUserMessage = text;
+    if (appendUser) addMessage(text, 'user');
     input.value = '';
     setTyping(true);
     clearError();
@@ -240,8 +243,11 @@
   });
 
   retryBtn.addEventListener('click', function () {
-    if (lastError && !isSending) {
-      sendMessage(input.value.trim() || '');
+    // The failed message is still visible in the transcript, so resend it
+    // WITHOUT adding a second user bubble.
+    const toResend = lastUserMessage || input.value.trim();
+    if (toResend && !isSending) {
+      sendMessage(toResend, { appendUser: false });
     }
   });
 

@@ -13,7 +13,22 @@
  *    "location unavailable" state and are simply not plotted on the map.
  *
  * Map stack: Leaflet 1.9.4 (vendored in shared/vendor/leaflet.js, exposes
- * window.L) + Carto light tiles + a 2.5D CSS perspective-tilt presentation.
+ * window.L) + OpenStreetMap standard raster tiles (keyless) + a 2.5D CSS
+ * perspective-tilt presentation.
+ *
+ * Basemap: defaults to OSM's public raster tiles, which require NO API key.
+ * CARTO's basemaps.cartocdn.com raster style (light_all) now REQUIRES an API
+ * key — keyless requests are answered with an "API key required" watermark
+ * (see https://github.com/CartoDB/basemap-styles), which is what produced the
+ * blank/watermarked Live Tracking map. A different provider (keyed or not) can
+ * be selected by setting, before this script runs:
+ *   window.LIVE_TRACKING_MAP_OPTIONS = {
+ *     basemapTilesUrl: 'https://.../{z}/{x}/{y}.png',
+ *     basemapAttribution: '...',
+ *     basemapMaxZoom: 19,
+ *   };
+ * Never hardcode private keys in this file; keep them server-side.
+ *
  * An optional real terrain-tile provider can be plugged in without touching
  * this file via `window.LIVE_TRACKING_MAP_OPTIONS = { terrainTilesUrl: '...' }`
  * (e.g. Esri World Hillshade:
@@ -35,6 +50,19 @@ const STALE_MAX_MS = 10 * 60 * 1000;       // < 10 min -> STALE, else OFFLINE
 const ACTIVITY_KEY = 'cp_admin_live_activity_v1';
 const MAX_ACTIVITY = 100;
 const MAP_OPTIONS = window.LIVE_TRACKING_MAP_OPTIONS || {};
+
+// Keyless default basemap. OSM's public tile service has a documented usage
+// policy (https://operations.osmfoundation.org/policies/tiles/): keep the
+// attribution, don't bulk-download, and keep traffic modest — fine for an
+// internal admin dashboard. Providers are swapped via LIVE_TRACKING_MAP_OPTIONS
+// (not by editing this file), and keyed providers must be wired up with a
+// server-side key, never a hardcoded client credential.
+const DEFAULT_BASEMAP_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const DEFAULT_BASEMAP_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+const BASEMAP_URL = MAP_OPTIONS.basemapTilesUrl || DEFAULT_BASEMAP_URL;
+const BASEMAP_ATTRIBUTION = MAP_OPTIONS.basemapAttribution || DEFAULT_BASEMAP_ATTRIBUTION;
+const BASEMAP_MAX_ZOOM = MAP_OPTIONS.basemapMaxZoom || 19;
 
 // Static geographic reference grid of major Indian city centroids. Used ONLY
 // to name/group clusters of REAL parcel coords — never to place invented pins.
@@ -364,10 +392,12 @@ function createMap() {
     worldCopyJump: false,
   }).setView([20.5937, 78.9629], 5);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19,
+  // Keyless OpenStreetMap raster basemap by default (see note at top of file).
+  // CARTO's basemaps.cartocdn.com raster style now returns an "API key required"
+  // watermark for keyless requests — that was the blank Live Tracking map.
+  L.tileLayer(BASEMAP_URL, {
+    attribution: BASEMAP_ATTRIBUTION,
+    maxZoom: BASEMAP_MAX_ZOOM,
   }).addTo(map);
 
   L.control.zoom({ position: 'bottomright' }).addTo(map);
