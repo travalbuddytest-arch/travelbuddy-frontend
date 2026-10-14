@@ -4,10 +4,13 @@
   async function injectDashboardComponents() {
     const sidebarPlaceholder = document.getElementById('tbAppSidebarInclude');
     const topbarPlaceholder = document.getElementById('tbAppTopbarInclude');
-    const v = '3'; // Cache bust version
+    const v = '4'; // Cache bust version
 
-    const cachedSidebar = sessionStorage.getItem('cp_sidebar_html');
-    const cachedTopbar = sessionStorage.getItem('cp_topbar_html');
+    // Store the injected markup under a version-suffixed key so that shipping a
+    // new sidebar/topbar (or bumping `v`) invalidates the sessionStorage copy
+    // immediately, instead of leaving an already-open tab on stale markup.
+    const cachedSidebar = sessionStorage.getItem(`cp_sidebar_html_v${v}`);
+    const cachedTopbar = sessionStorage.getItem(`cp_topbar_html_v${v}`);
 
     if (sidebarPlaceholder) {
       if (cachedSidebar) {
@@ -19,7 +22,7 @@
         if (res.ok) {
           const html = await res.text();
           if (html !== cachedSidebar) {
-            sessionStorage.setItem('cp_sidebar_html', html);
+            sessionStorage.setItem(`cp_sidebar_html_v${v}`, html);
             if (!cachedSidebar) {
               sidebarPlaceholder.outerHTML = html;
               initSidebarEvents();
@@ -39,7 +42,7 @@
         if (res.ok) {
           const html = await res.text();
           if (html !== cachedTopbar) {
-            sessionStorage.setItem('cp_topbar_html', html);
+            sessionStorage.setItem(`cp_topbar_html_v${v}`, html);
             if (!cachedTopbar) {
               topbarPlaceholder.outerHTML = html;
               initTopbarEvents();
@@ -1042,11 +1045,17 @@
     return el;
   }
 
-  function showGlobalIncomingCall({ callId, conversationId, caller }) {
-    activeIncomingCall = { callId, conversationId, caller };
+  function showGlobalIncomingCall(payload = {}) {
+    const { callId, conversationId, fromName, fromPhoto } = payload;
+    activeIncomingCall = { callId, conversationId, fromName, fromPhoto };
     const el = ensureIncomingCallPopup();
-    document.getElementById('tbCallPopupAvatar').textContent = caller?.role === 'sender' ? 'VS' : 'VT';
-    document.getElementById('tbCallPopupName').textContent = caller?.label || 'TravelBuddy user';
+    const nameEl = document.getElementById('tbCallPopupName');
+    const avatarEl = document.getElementById('tbCallPopupAvatar');
+    if (nameEl) nameEl.textContent = fromName || 'TravelBuddy user';
+    if (avatarEl) {
+      const initials = (fromName || 'TB').trim().split(/\s+/).map((p) => p.charAt(0)).join('').slice(0, 2).toUpperCase();
+      avatarEl.textContent = initials || 'TB';
+    }
     el.classList.remove('hidden');
     // Restart the ring/pop animation even if a popup is already visible.
     el.classList.remove('show');
@@ -1066,7 +1075,9 @@
 
   function rejectGlobalIncomingCall() {
     if (!activeIncomingCall) return;
-    window.TravelBuddy.socket?.emit('reject-call', { callId: activeIncomingCall.callId });
+    // The backend expects "call:reject"; the previous "reject-call" event is
+    // not handled anywhere, so rejecting never told the caller.
+    window.TravelBuddy.socket?.emit('call:reject', { callId: activeIncomingCall.callId });
     hideGlobalIncomingCall();
   }
 
@@ -1123,12 +1134,12 @@
       showToast(`Parcel #${detail.parcelId ? String(detail.parcelId).slice(-6) : 'N/A'}: ${String(detail.status || 'updated').replace(/_/g, ' ')}`, 'info');
     });
 
-    socket.on('incoming-call', (payload) => {
+    socket.on('call:incoming', (payload) => {
       if (document.getElementById('incomingCallModal')) return;
       showGlobalIncomingCall(payload);
     });
 
-    socket.on('end-call', ({ callId }) => {
+    socket.on('call:end', ({ callId }) => {
       if (activeIncomingCall && String(activeIncomingCall.callId) === String(callId)) hideGlobalIncomingCall();
     });
 

@@ -104,8 +104,32 @@
 
       <div class="history-modal-meta">
         <span><i class="fa-solid fa-weight-hanging"></i> <span id="historyModalWeight"></span></span>
-        <span><i class="fa-solid fa-indian-rupee-sign"></i><span id="historyModalPrice"></span></span>
+        <span id="historyModalPrice"></span>
         <span><i class="fa-solid fa-user"></i> <span id="historyModalCounterpart"></span></span>
+      </div>
+
+      <div class="history-financials" id="historyModalFinancials">
+        <h3 class="history-financials-title">Payment breakdown</h3>
+        <div class="history-financial-row">
+          <span>Parcel Amount</span>
+          <span id="historyModalGross"></span>
+        </div>
+        <div class="history-financial-row" id="historyModalFeeRow">
+          <span>Platform Fee</span>
+          <span id="historyModalFee"></span>
+        </div>
+        <div class="history-financial-row history-financial-row--net" id="historyModalEarningRow">
+          <span>Traveler Earnings</span>
+          <span id="historyModalEarning"></span>
+        </div>
+        <div class="history-financial-row hidden" id="historyModalCancelFeeRow">
+          <span>Cancellation Fee</span>
+          <span id="historyModalCancelFee"></span>
+        </div>
+        <div class="history-financial-row hidden" id="historyModalCompRow">
+          <span>Traveler Compensation</span>
+          <span id="historyModalComp"></span>
+        </div>
       </div>
 
       <ol class="history-timeline" id="historyModalTimeline"></ol>
@@ -128,7 +152,7 @@
     <script defer src="../shared/analytics-client.js?v=1"></script>
     <script defer src="../shared/date-utils.js"></script>
 <script defer src="https://api.carryparcel.in/socket.io/socket.io.js"></script>
-  <script defer src="js/common.js?v=4"></script>
+  <script defer src="js/common.js?v=5"></script>
   <script defer src="js/history.js?v=archive-history-20260710"></script>
   <script defer src="../shared/site-banner.js?v=3"></script>
   <script defer src="../shared/firebase-config.js?v=1"></script>

@@ -100,15 +100,88 @@
       }
       return '/api';
     }
-    if (cfg.charAt(cfg.length - 1) === '/') cfg = cfg.slice(0, -1);
-    if (cfg.indexOf('/api') >= 0) return cfg;
+    // Strip any trailing slashes so the check below is reliable.
+    cfg = cfg.replace(/\/+$/, '');
+    // Only treat the value as already namespaced when the *path* ends in /api.
+    // A plain cfg.indexOf('/api') also matches hostnames like
+    // "api.carryparcel.in" (the "//api..." part). That made the open-source
+    // website call https://api.carryparcel.in/support/chat (404) instead of
+    // https://api.carryparcel.in/api/support/chat, while the Android app
+    // (Retrofit base "https://api.carryparcel.in/api/") kept working.
+    if (/\/api$/.test(cfg)) return cfg;
     return cfg + '/api';
   }
 
-  function addMessage(text, sender) {
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // The AI reply is untrusted text. Escape it first, then convert only the
+  // Markdown we expect, so raw "**" / "#" characters never reach the user and
+  // no HTML can be injected.
+  function renderMessageHtml(text) {
+    let safe = escapeHtml(text);
+    safe = safe.replace(/^[ \t]{0,3}#{1,6}[ \t]+(.*)$/gm, '<strong>$1</strong>');
+    safe = safe.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+    safe = safe.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
+    safe = safe.replace(/^[ \t]{0,3}[*+-][ \t]+/gm, '• ');
+    safe = safe.replace(/[ \t]{0,3}#{1,6}[ \t]*/g, '');
+    safe = safe.replace(/\*\*/g, '');
+    return safe.replace(/\n/g, '<br>');
+  }
+
+  // Display-only ₹ formatter. Uses the shared formatter when present and falls
+  // back to the identical algorithm otherwise. Values arrive as integer paise.
+  function formatPaise(value) {
+    const paise = Number(value) || 0;
+    if (window.TravelBuddy && typeof window.TravelBuddy.formatPaise === 'function') {
+      return window.TravelBuddy.formatPaise(paise);
+    }
+    return '₹' + (paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Authoritative wallet summary rendered from server-provided paise values,
+  // never from model-formatted text.
+  function buildWalletSummary(wallet) {
+    const wrap = document.createElement('div');
+    wrap.className = 'tb-ai-wallet';
+    const rows = [
+      ['Available balance', wallet.availablePaise, ''],
+      ['Locked balance', wallet.lockedPaise, ''],
+      ['Total balance', wallet.totalPaise, ' tb-ai-wallet-total'],
+    ];
+    rows.forEach(function (row) {
+      const line = document.createElement('div');
+      line.className = 'tb-ai-wallet-row' + row[2];
+      const label = document.createElement('span');
+      label.textContent = row[0];
+      const amount = document.createElement('span');
+      const numeric = Number(row[1]);
+      const available = row[1] !== null && row[1] !== undefined && Number.isFinite(numeric);
+      amount.textContent = available ? formatPaise(numeric) : '—';
+      line.appendChild(label);
+      line.appendChild(amount);
+      wrap.appendChild(line);
+    });
+    return wrap;
+  }
+
+  function addMessage(text, sender, wallet) {
     const div = document.createElement('div');
     div.className = 'tb-ai-msg ' + (sender === 'user' ? 'user' : 'bot');
-    div.textContent = text;
+    if (sender === 'user') {
+      div.textContent = text;
+    } else {
+      div.innerHTML = renderMessageHtml(text);
+      if (wallet && typeof wallet === 'object') {
+        div.appendChild(buildWalletSummary(wallet));
+      }
+    }
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }
@@ -193,7 +266,7 @@
       }
 
       const reply = data.message || data.reply || '';
-      if (reply) addMessage(reply, 'bot');
+      if (reply || data.wallet) addMessage(reply || 'Here is your current wallet balance:', 'bot', data.wallet);
 
       if (data.conversationId) {
         conversationId = data.conversationId;

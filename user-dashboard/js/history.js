@@ -2,7 +2,7 @@
   'use strict';
 
   const API_BASE = `${APP_CONFIG.API_BASE_URL}/api/postparcel`;
-  const { authHeaders, escapeHTML } = window.TravelBuddy;
+  const { authHeaders, escapeHTML, formatPaise } = window.TravelBuddy;
 
   const list = document.getElementById('historyList');
   const emptyState = document.getElementById('historyEmpty');
@@ -23,6 +23,15 @@
   const modalPrice = document.getElementById('historyModalPrice');
   const modalCounterpart = document.getElementById('historyModalCounterpart');
   const modalTimeline = document.getElementById('historyModalTimeline');
+  const modalGross = document.getElementById('historyModalGross');
+  const modalFee = document.getElementById('historyModalFee');
+  const modalFeeRow = document.getElementById('historyModalFeeRow');
+  const modalEarning = document.getElementById('historyModalEarning');
+  const modalEarningRow = document.getElementById('historyModalEarningRow');
+  const modalCancelFee = document.getElementById('historyModalCancelFee');
+  const modalCancelFeeRow = document.getElementById('historyModalCancelFeeRow');
+  const modalComp = document.getElementById('historyModalComp');
+  const modalCompRow = document.getElementById('historyModalCompRow');
   const ratingBox = document.getElementById('travelerRatingBox');
   const starRating = document.getElementById('travelerStarRating');
   const ratingComment = document.getElementById('travelerRatingComment');
@@ -101,7 +110,7 @@
           </div>
         </div>
         <div class="history-card-side">
-          <span class="history-card-price"><i class="fa-solid fa-indian-rupee-sign"></i>${escapeHTML(p.price)}</span>
+          <span class="history-card-price">${escapeHTML(formatPaise(p.price))}</span>
           <i class="fa-solid fa-chevron-right history-card-chevron"></i>
         </div>
       </li>
@@ -119,6 +128,36 @@
     });
   }
 
+  function setRowVisible(row, visible) {
+    if (row) row.classList.toggle('hidden', !visible);
+  }
+
+  // Renders the money breakdown for a history card. Every value is an integer
+  // paise amount from the backend and is formatted exactly once with the shared
+  // formatPaise() helper (₹ + Indian grouping). For cancelled parcels we only
+  // show amounts the backend actually recorded — never a refund inferred from
+  // the parcel status.
+  function renderFinancials(parcel) {
+    const fin = parcel.financials || {};
+    const gross = Number(fin.grossAmount != null ? fin.grossAmount : (parcel.price || 0));
+    const fee = Number(fin.platformFee != null ? fin.platformFee : (parcel.platformCommission || 0));
+    const earning = Number(fin.netEarnings != null ? fin.netEarnings : (parcel.travelerEarning || 0));
+    const cancelFee = Number(parcel.cancellationFee || 0);
+    const compensation = Number(parcel.cancellationTravelerCompensation || 0);
+    const isCancelled = parcel.status === 'cancelled';
+
+    if (modalGross) modalGross.textContent = formatPaise(gross);
+    if (modalFee) modalFee.textContent = formatPaise(fee);
+    if (modalEarning) modalEarning.textContent = formatPaise(earning);
+    if (modalCancelFee) modalCancelFee.textContent = formatPaise(cancelFee);
+    if (modalComp) modalComp.textContent = formatPaise(compensation);
+
+    setRowVisible(modalFeeRow, !isCancelled);
+    setRowVisible(modalEarningRow, !isCancelled);
+    setRowVisible(modalCancelFeeRow, isCancelled && cancelFee > 0);
+    setRowVisible(modalCompRow, isCancelled && compensation > 0);
+  }
+
   function openHistoryModal(id) {
     const parcel = historyCache.find((p) => String(p.id) === String(id));
     if (!parcel || !modalOverlay) return;
@@ -127,8 +166,9 @@
     modalRoutePill.innerHTML = `${escapeHTML(parcel.from)} <i class="fa-solid fa-arrow-right-long"></i> ${escapeHTML(parcel.to)}`;
     modalDesc.textContent = parcel.desc;
     modalWeight.textContent = `${parcel.weight}kg`;
-    modalPrice.textContent = parcel.price;
+    modalPrice.textContent = formatPaise(parcel.price);
     modalCounterpart.textContent = `${parcel.counterpartName} (${parcel.counterpartRole})`;
+    renderFinancials(parcel);
 
     const stages=parcel.status==='cancelled'
       ? [{icon:'fa-paper-plane',title:'Parcel Posted',time:parcel.postedAt},{icon:'fa-ban',title:parcel.cancelledByLabel,time:parcel.cancelledAt}]
