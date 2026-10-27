@@ -1144,31 +1144,163 @@
     }, 900);
   }
 
+  // ---------- Contact Profile Card ----------
+  // Public profile details are cached per user so reopening a profile (or
+  // switching back to the same contact) never refetches, and chatting itself
+  // never triggers profile requests.
+  const contactProfileCache = new Map();
+  let contactProfileTrigger = null;
+  let contactProfileUserId = null;
+
+  function lockPageScroll(lock) {
+    const body = document.body;
+    if (!body) return;
+    if (lock) {
+      if (body.dataset.contactProfileScroll !== 'locked') {
+        body.dataset.contactProfilePrevOverflow = body.style.overflow || '';
+        body.style.overflow = 'hidden';
+        body.dataset.contactProfileScroll = 'locked';
+      }
+    } else if (body.dataset.contactProfileScroll === 'locked') {
+      body.style.overflow = body.dataset.contactProfilePrevOverflow || '';
+      delete body.dataset.contactProfileScroll;
+      delete body.dataset.contactProfilePrevOverflow;
+    }
+  }
+
+  function formatMemberSince(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  }
+
+  function contactProfileInfoMarkup(conversation, profile) {
+    const parcel = conversation?.parcel || {};
+    const rows = [];
+
+    if (parcel.fromCity || parcel.toCity) {
+      rows.push(['Route', `${parcel.fromCity || '-'} to ${parcel.toCity || '-'}`]);
+    }
+    if (parcel.parcelNumber) rows.push(['Parcel', parcel.parcelNumber]);
+    if (parcel.statusLabel) rows.push(['Status', parcel.statusLabel]);
+
+    if (profile) {
+      const delivered = Number(profile.stats?.parcelsDelivered);
+      if (Number.isFinite(delivered)) rows.push(['Delivered parcels', String(delivered)]);
+      const posted = Number(profile.stats?.senderPosts);
+      if (Number.isFinite(posted)) rows.push(['Parcels posted', String(posted)]);
+      const memberSince = formatMemberSince(profile.createdAt);
+      if (memberSince) rows.push(['Member since', memberSince]);
+    }
+
+    return rows
+      .map(([label, value]) => (
+        `<div class="contact-profile-info-row"><span>${escapeHTML(label)}</span><strong>${escapeHTML(String(value))}</strong></div>`
+      ))
+      .join('');
+  }
+
+  function applyContactProfile(conversation, profile) {
+    const other = conversation?.other || {};
+
+    const deliveredEl = document.getElementById('contactProfileDelivered');
+    const ratingEl = document.getElementById('contactProfileRating');
+
+    const delivered = profile ? profile.stats?.parcelsDelivered : null;
+    if (deliveredEl) {
+      deliveredEl.textContent = Number.isFinite(Number(delivered)) ? String(delivered) : '-';
+    }
+
+    const rating = profile && profile.rating !== undefined && profile.rating !== null
+      ? profile.rating
+      : other.rating;
+    if (ratingEl) ratingEl.textContent = rating ? Number(rating).toFixed(1) : '-';
+
+    const infoEl = document.getElementById('contactProfileInfo');
+    if (infoEl) infoEl.innerHTML = contactProfileInfoMarkup(conversation, profile);
+  }
+
+  async function hydrateContactProfile(conversation, userId) {
+    if (!userId) return;
+    if (contactProfileCache.has(userId)) {
+      applyContactProfile(conversation, contactProfileCache.get(userId));
+      return;
+    }
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/auth/profile/${encodeURIComponent(userId)}`, authFetchOptions());
+      if (!res.ok) throw new Error('Profile unavailable');
+      const data = await res.json();
+      const profile = data.profile || null;
+      contactProfileCache.set(userId, profile);
+      // Only touch the DOM if the card still shows this same user.
+      if (contactProfileUserId === userId) applyContactProfile(conversation, profile);
+    } catch (err) {
+      // The conversation payload already provides the essential details; the
+      // optional public stats simply stay hidden/`-` when unavailable.
+      contactProfileCache.set(userId, null);
+    }
+  }
+
   function openContactProfile() {
     const conversation = activeConversation();
-    if (!conversation) return;
-    const contactAvatar = document.getElementById('contactProfileAvatar');
-    contactAvatar.innerHTML = avatarMarkup(conversation.other);
-    contactAvatar.classList.toggle('has-photo', Boolean(conversation.other?.profilePhoto));
-    document.getElementById('contactProfileName').textContent = conversation.other.label;
-    document.getElementById('contactProfileRole').textContent = [
-      conversation.other.publicId,
-      conversation.other.isVerified ? 'Identity Verified' : 'Verification pending',
-    ].join(' - ');
-    document.getElementById('contactProfileRating').textContent = conversation.other.rating ? conversation.other.rating.toFixed(1) : '-';
+    if (!conversation || !contactProfileOverlay) return;
+    const other = conversation.other || {};
 
-    document.getElementById('contactProfileInfo').innerHTML = `
-      <div><strong>Route</strong><br>${escapeHTML(conversation.parcel.fromCity)} → ${escapeHTML(conversation.parcel.toCity)}</div>
-      <div><strong>Parcel ID</strong><br>${escapeHTML(conversation.parcel.parcelNumber)}</div>
-      <div><strong>Status</strong><br>${escapeHTML(conversation.parcel.statusLabel)}</div>
-    `;
+    contactProfileTrigger = document.activeElement;
+    contactProfileUserId = other.userId ? String(other.userId) : null;
+
+    const contactAvatar = document.getElementById('contactProfileAvatar');
+    if (contactAvatar) {
+      contactAvatar.innerHTML = avatarMarkup(other);
+      contactAvatar.classList.toggle('has-photo', Boolean(other.profilePhoto));
+    }
+
+    const nameEl = document.getElementById('contactProfileName');
+    if (nameEl) nameEl.textContent = other.label || 'CarryParcel User';
+
+    const roleEl = document.getElementById('contactProfileRole');
+    if (roleEl) {
+      roleEl.textContent = [
+        other.publicId || null,
+        other.isVerified ? 'Identity verified' : 'Not verified yet',
+      ].filter(Boolean).join(' · ');
+    }
+
+    // Render the basics immediately, then enrich with the public profile.
+    applyContactProfile(conversation, null);
+
     contactProfileOverlay.classList.remove('hidden');
     bindAvatarFallbacks(contactProfileOverlay);
+    lockPageScroll(true);
+    contactProfileClose?.focus();
+    hydrateContactProfile(conversation, contactProfileUserId);
+  }
+
+  function closeContactProfile() {
+    if (!contactProfileOverlay || contactProfileOverlay.classList.contains('hidden')) return;
+    contactProfileOverlay.classList.add('hidden');
+    contactProfileUserId = null;
+    lockPageScroll(false);
+    const trigger = contactProfileTrigger;
+    contactProfileTrigger = null;
+    if (trigger && typeof trigger.focus === 'function' && document.contains(trigger)) {
+      trigger.focus();
+    }
   }
 
   chatAvatarBtn?.addEventListener('click', openContactProfile);
   chatIdentity?.addEventListener('click', openContactProfile);
-  contactProfileClose?.addEventListener('click', () => contactProfileOverlay.classList.add('hidden'));
+  chatIdentity?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      openContactProfile();
+    }
+  });
+  contactProfileClose?.addEventListener('click', closeContactProfile);
+  // Backdrop click closes; clicks inside the card are ignored.
+  contactProfileOverlay?.addEventListener('click', (e) => {
+    if (e.target === contactProfileOverlay) closeContactProfile();
+  });
 
   chatMenuBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1188,6 +1320,7 @@
     if (e.key === 'Escape') {
       chatMenuWrap?.classList.remove('open');
       chatMenuBtn?.setAttribute('aria-expanded', 'false');
+      closeContactProfile();
     }
   });
 

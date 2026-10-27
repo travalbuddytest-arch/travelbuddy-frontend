@@ -209,8 +209,16 @@
         }
     }
 
-    // Run after a short delay to ensure body is ready
-    setTimeout(initAppPromoBanner, 0);
+    function runDeferred(fn) {
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(fn, { timeout: 1500 });
+        } else {
+            setTimeout(fn, 100);
+        }
+    }
+
+    // Defer non-critical banner and UI decorations until idle
+    runDeferred(initAppPromoBanner);
 
     // Global Scroll Progress Bar Injection & Logic
     function initScrollProgress() {
@@ -236,10 +244,10 @@
         }, { passive: true });
     }
 
-    setTimeout(initScrollProgress, 0);
+    runDeferred(initScrollProgress);
 
     // Premium Background Injection
-    setTimeout(function injectBackground() {
+    runDeferred(function injectBackground() {
         if (document.querySelector('.cp-bg-system')) return;
         const bgEl = document.createElement('div');
         bgEl.className = 'cp-bg-system';
@@ -256,13 +264,16 @@
             <div class="cp-bg-shape" style="width:150px; height:150px; bottom:15%; right:20%; border-width:0.3px; border-style:dashed;"></div>
         `;
         document.body.prepend(bgEl);
-    }, 0);
+    });
 
-    loadAsset(basePath + 'toast.css', 'css');
-    loadAsset(basePath + 'toast.js', 'js');
-    loadAsset(basePath + 'ai-assistant.css', 'css');
-    loadAsset(basePath + 'ai-assistant.js', 'js');
-    loadAsset(basePath + 'nav-dropdown.js', 'js');
+    // Load non-critical helper widgets asynchronously when thread is idle
+    runDeferred(function() {
+        loadAsset(basePath + 'toast.css', 'css');
+        loadAsset(basePath + 'toast.js', 'js');
+        loadAsset(basePath + 'ai-assistant.css', 'css');
+        loadAsset(basePath + 'ai-assistant.js', 'js');
+        loadAsset(basePath + 'nav-dropdown.js', 'js');
+    });
     loadAsset(basePath + 'nav-basic-behavior.js', 'js');
 
     window.CPInclude = {

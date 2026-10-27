@@ -142,40 +142,47 @@
         activeObjectUrls = [];
     }
 
-    async function loadSecureImage(filename, imgElement) {
-        if (!filename || !imgElement) return;
+    async function loadSecureDocument(userId, docType, imgElement) {
+        if (!userId || !docType || !imgElement) return;
 
-        // Show generic placeholder while loading
+        // Show generic loading spinner placeholder
         imgElement.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath d="M21 12a9 9 0 1 1-6.219-8.56"/%3E%3C/svg%3E';
         imgElement.classList.add('loading');
 
         try {
-            const headers = { 'X-CP-Admin-Request': 'true' };
-
-            const res = await fetch(`${API_ORIGIN}/api/admin/docs/${filename}`, {
-                headers,
+            // Step 1: Request short-lived (5 min) signed access token from backend
+            const tokenRes = await fetch(`${API_ORIGIN}/api/admin/verification-requests/${userId}/signed-url?docType=${encodeURIComponent(docType)}`, {
+                headers: { 'X-CP-Admin-Request': 'true' },
                 credentials: 'include'
             });
 
-            if (!res.ok) throw new Error('Failed to load document');
+            if (!tokenRes.ok) throw new Error('Failed to obtain document token.');
+            const tokenData = await tokenRes.json();
+            if (!tokenData.viewUrl) throw new Error('Invalid view URL returned.');
 
-            const contentType = res.headers.get('content-type');
-            const blob = await res.blob();
+            // Step 2: Stream file using signed token URL
+            const docRes = await fetch(`${API_ORIGIN}${tokenData.viewUrl}`, {
+                headers: { 'X-CP-Admin-Request': 'true' },
+                credentials: 'include'
+            });
+
+            if (!docRes.ok) throw new Error('Failed to stream document.');
+
+            const contentType = docRes.headers.get('content-type');
+            const blob = await docRes.blob();
             const url = URL.createObjectURL(blob);
             activeObjectUrls.push(url);
 
             if (contentType?.startsWith('image/')) {
                 imgElement.src = url;
-                // Allow click to zoom/open
                 imgElement.parentElement.onclick = () => window.open(url, '_blank');
             } else {
-                // For PDF or other documents, show an icon and open on click
                 imgElement.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/%3E%3Cpolyline points="14 2 14 8 20 8"/%3E%3C/svg%3E';
                 imgElement.parentElement.onclick = () => window.open(url, '_blank');
                 imgElement.title = 'Click to open document';
             }
         } catch (err) {
-            console.error('Secure document load failed:', err);
+            console.error(`Secure document load failed for ${docType}:`, err);
             imgElement.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Crect width="18" height="18" x="3" y="3" rx="2" ry="2"/%3E%3Ccircle cx="9" cy="9" r="2"/%3E%3Cpath d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/%3E%3C/svg%3E';
             imgElement.alt = 'Error loading file';
         } finally {
@@ -235,9 +242,12 @@
 
         openDrawer();
 
-        // Load images securely via authenticated fetch
-        loadSecureImage(user.kyc.selfie?.url, document.getElementById('imgSelfie'));
-        loadSecureImage(user.kyc.governmentId?.url, document.getElementById('imgId'));
+        // Load images securely using 5-min short-lived signed tokens
+        loadSecureDocument(user._id, 'selfie', document.getElementById('imgSelfie'));
+        loadSecureDocument(user._id, 'governmentId', document.getElementById('imgId'));
+        if (user.kyc.selfieWithId?.url) {
+            loadSecureDocument(user._id, 'selfieWithId', document.getElementById('imgSelfieWithId'));
+        }
         if (user.kyc.selfieWithId?.url) {
             loadSecureImage(user.kyc.selfieWithId.url, document.getElementById('imgSelfieWithId'));
         }
