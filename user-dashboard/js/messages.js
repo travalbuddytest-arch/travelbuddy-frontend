@@ -1336,14 +1336,12 @@
     chatConfirmOverlay.classList.remove('hidden');
     chatConfirmOk.onclick = async () => {
       try {
-        const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}/messages`, {
-          method: 'DELETE',
-          headers: authHeaders(),
-        });
+        const res = await fetch(`${API_BASE}/conversations/${encodeURIComponent(activeConversationId)}/messages`, authFetchOptions({ method: 'DELETE' }));
         if (!res.ok) throw new Error('Failed to clear chat.');
         messagesByConversation.set(activeConversationId, []);
         renderMessages();
         chatConfirmOverlay.classList.add('hidden');
+        window.showToast('Chat cleared successfully.', 'success');
       } catch (err) {
         window.showToast(err.message, 'error');
       }
