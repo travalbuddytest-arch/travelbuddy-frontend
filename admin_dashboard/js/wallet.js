@@ -41,7 +41,8 @@ const TYPE_LABELS = {
   withdrawal: 'Withdrawal',
 };
 
-const fmtMoney = n => '₹' + ((n || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtMoney = n => '₹' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtMoneyPaise = n => '₹' + (Number(n || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function getFilters() {
   return {
@@ -229,7 +230,7 @@ async function loadWithdrawals() {
             <span class="cell-sub" style="font-size:9px">${escHtml(w.user?.email || '')}</span>
           </div>
         </td>
-        <td><span class="cell-mono">${fmtMoney(w.amount)}</span></td>
+        <td><span class="cell-mono">${fmtMoneyPaise(w.amount)}</span></td>
         <td><span class="status-tag info">${escHtml(w.method.toUpperCase())}</span></td>
         <td><span class="status-tag ${statusClass}">${escHtml(w.status)}</span></td>
         <td>
@@ -284,7 +285,7 @@ function openWithdrawalModal(w) {
 
   body.innerHTML = `
     <div class="wd-info-row"><span>User</span><span>${escHtml(user.firstName)} ${escHtml(user.lastName)}</span></div>
-    <div class="wd-info-row"><span>Amount</span><span style="color:var(--b);font-size:16px">${fmtMoney(w.amount)}</span></div>
+    <div class="wd-info-row"><span>Amount</span><span style="color:var(--b);font-size:16px">${fmtMoneyPaise(w.amount)}</span></div>
     <div class="wd-info-row"><span>User Balance</span><span>${fmtMoney(user.walletBalance)}</span></div>
     <div style="margin-top:15px;padding-top:10px;border-top:1px solid #eee">
       <b style="font-size:10px;text-transform:uppercase;color:#98a2b3">Payout Destination (${w.method.toUpperCase()})</b>

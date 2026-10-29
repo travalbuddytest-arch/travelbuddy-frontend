@@ -89,6 +89,33 @@ export default function initActiveUsers() {
     loadSummary();
     if (state.filter === 'online' || state.filter === '15min') loadList();
   }, POLL_MS);
+
+  // Real-time socket presence listener for instant user online / lastSeenAt updates
+  if (window.CarryParcelSocket) {
+    try {
+      const adminSocket = window.CarryParcelSocket.admin || window.CarryParcelSocket.connect('/admin');
+      if (adminSocket) {
+        adminSocket.on('user:presence', (presence) => {
+          if (!document.getElementById('au-panel')) return;
+          const user = state.users.find(u => String(u._id) === String(presence.userId));
+          if (user) {
+            user.isOnline = presence.isOnline;
+            user.lastSeenAt = presence.lastSeenAt;
+            renderList();
+          } else {
+            loadList();
+          }
+          loadSummary();
+        });
+
+        adminSocket.on('admin:stats', () => {
+          if (document.getElementById('au-panel')) loadSummary();
+        });
+      }
+    } catch (err) {
+      console.warn('Active users socket presence setup failed:', err);
+    }
+  }
 }
 
 /* ══════════════════════════════════════════════
