@@ -169,18 +169,19 @@
     } catch (e) { /* no-op */ }
 
     window.resolveCarryParcelAuth = function (authenticated) {
+        var skeleton = document.getElementById('initialPageSkeleton');
+        if (skeleton) {
+            skeleton.style.pointerEvents = 'none';
+            skeleton.classList.add('fade-out');
+            setTimeout(function() { if (skeleton.parentNode) skeleton.remove(); }, 300);
+        }
+
         if (window.CarryParcelAuthChecked && authenticated) return; // Already resolved ok
         window.CarryParcelAuthChecked = true;
         clearTimeout(safetyTimeout);
 
-        var skeleton = document.getElementById('initialPageSkeleton');
-
         if (authenticated) {
             console.log('[AuthGuard] Async auth confirmed. Access granted.');
-            if (skeleton) {
-                skeleton.classList.add('fade-out');
-                setTimeout(function() { if (skeleton.parentNode) skeleton.remove(); }, 300);
-            }
             document.documentElement.style.visibility = '';
         } else {
             console.log('[AuthGuard] Async auth denied. Redirecting to login.');

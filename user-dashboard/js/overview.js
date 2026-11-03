@@ -166,11 +166,16 @@
   }
 
   function saveStoredUser(user) {
-    localStorage.setItem('carryParcelUser', JSON.stringify(user || {}));
+    if (window.CarryParcel.saveStoredUser) {
+      window.CarryParcel.saveStoredUser(user);
+    } else {
+      localStorage.setItem('carryParcelUser', JSON.stringify(user || {}));
+    }
   }
 
   function personalizeUser() {
      if (window.personalizeUser) window.personalizeUser();
+     else if (window.CarryParcel.personalizeUser) window.CarryParcel.personalizeUser();
   }
 
   function setNotifBadge(count) {

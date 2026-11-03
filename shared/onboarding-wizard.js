@@ -75,7 +75,8 @@
             errorEl.textContent = '';
 
             try {
-              const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/auth/onboarding/submit-phone`, {
+              const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) ? window.APP_CONFIG.API_BASE_URL : (window.CarryParcel?.API_ORIGIN || '');
+              const res = await fetch(`${apiBase}/api/auth/onboarding/submit-phone`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -98,6 +99,9 @@
           });
         });
       } else if (currentStep === 'OTP') {
+        let resendTimer = null;
+        let cooldownSeconds = 60;
+
         overlay.innerHTML = `
           <div class="cp-onboarding-card">
             <div class="cp-onboarding-badge"><i class="fa-solid fa-envelope-circle-check"></i></div>
@@ -116,6 +120,13 @@
             </div>
 
             <button id="obVerifyOtpBtn" class="cp-onboarding-btn">Verify & Continue</button>
+
+            <div style="margin-top: 12px; text-align: center;">
+              <button id="obResendOtpBtn" type="button" class="cp-onboarding-btn-secondary" style="background: transparent; border: none; color: #0D6EFD; font-size: 14px; font-weight: 600; cursor: pointer;" disabled>
+                Resend Code (${cooldownSeconds}s)
+              </button>
+            </div>
+
             <div id="obError" class="cp-onboarding-error"></div>
           </div>
         `;
@@ -125,21 +136,78 @@
           if (otpInput) otpInput.focus();
 
           const btn = overlay.querySelector('#obVerifyOtpBtn');
+          const resendBtn = overlay.querySelector('#obResendOtpBtn');
           const errorEl = overlay.querySelector('#obError');
+
+          function startCooldownTimer(seconds) {
+            cooldownSeconds = seconds;
+            resendBtn.disabled = true;
+            resendBtn.textContent = `Resend Code (${cooldownSeconds}s)`;
+            clearInterval(resendTimer);
+            resendTimer = setInterval(() => {
+              cooldownSeconds--;
+              if (cooldownSeconds <= 0) {
+                clearInterval(resendTimer);
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend Code';
+              } else {
+                resendBtn.textContent = `Resend Code (${cooldownSeconds}s)`;
+              }
+            }, 1000);
+          }
+
+          startCooldownTimer(60);
+
+          resendBtn.addEventListener('click', async () => {
+            if (resendBtn.disabled) return;
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Sending...';
+            errorEl.style.color = '#0D6EFD';
+            errorEl.textContent = 'Sending new verification code...';
+
+            try {
+              const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) ? window.APP_CONFIG.API_BASE_URL : (window.CarryParcel?.API_ORIGIN || '');
+              const res = await fetch(`${apiBase}/api/auth/onboarding/submit-phone`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ phone: phoneValue })
+              });
+              const data = await res.json();
+              if (!res.ok) {
+                errorEl.style.color = '';
+                errorEl.textContent = data.error || 'Failed to resend code.';
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend Code';
+                return;
+              }
+              errorEl.style.color = '#17A673';
+              errorEl.textContent = 'New verification code sent to your email!';
+              startCooldownTimer(data.cooldownSeconds || 60);
+            } catch (err) {
+              errorEl.style.color = '';
+              errorEl.textContent = 'Network error. Please try again.';
+              resendBtn.disabled = false;
+              resendBtn.textContent = 'Resend Code';
+            }
+          });
 
           btn.addEventListener('click', async () => {
             const otp = otpInput.value.trim();
             if (!otp || otp.length < 6) {
+              errorEl.style.color = '';
               errorEl.textContent = 'Please enter the 6-digit OTP code.';
               return;
             }
 
             btn.disabled = true;
             btn.textContent = 'Verifying Code...';
+            errorEl.style.color = '';
             errorEl.textContent = '';
 
             try {
-              const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/auth/onboarding/verify-email-otp`, {
+              const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) ? window.APP_CONFIG.API_BASE_URL : (window.CarryParcel?.API_ORIGIN || '');
+              const res = await fetch(`${apiBase}/api/auth/onboarding/verify-email-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -147,11 +215,13 @@
               });
               const data = await res.json();
               if (!res.ok) {
+                errorEl.style.color = '';
                 errorEl.textContent = data.error || 'Invalid verification code.';
                 btn.disabled = false;
                 btn.textContent = 'Verify & Continue';
                 return;
               }
+              clearInterval(resendTimer);
               if (data.onboarding && data.onboarding.passwordSetupRequired) {
                 currentStep = 'PASSWORD';
                 renderStep();
@@ -159,6 +229,7 @@
                 finishOnboarding();
               }
             } catch (err) {
+              errorEl.style.color = '';
               errorEl.textContent = 'Network error. Please try again.';
               btn.disabled = false;
               btn.textContent = 'Verify & Continue';
@@ -218,7 +289,8 @@
             errorEl.textContent = '';
 
             try {
-              const res = await fetch(`${APP_CONFIG.API_BASE_URL}/api/auth/onboarding/create-password`, {
+              const apiBase = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) ? window.APP_CONFIG.API_BASE_URL : (window.CarryParcel?.API_ORIGIN || '');
+              const res = await fetch(`${apiBase}/api/auth/onboarding/create-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

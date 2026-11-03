@@ -10,11 +10,13 @@
   justify-content: center;
   padding: 20px;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.3s ease;
   font-family: 'Poppins', -apple-system, sans-serif;
 }
 .cp-onboarding-overlay.show {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .cp-onboarding-card {

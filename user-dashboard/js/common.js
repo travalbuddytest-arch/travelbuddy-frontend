@@ -523,7 +523,13 @@
     isAiAssistantEnabled,
     setAiAssistantEnabled,
     showToast,
+    parseStoredUser,
+    saveStoredUser,
+    personalizeUser,
+    openProfileModal,
+    closeProfileModal
   });
+  window.personalizeUser = personalizeUser;
 
   const fetchCache = new Map();
   const inFlightRequests = new Map();
@@ -536,9 +542,17 @@
    * @param {number} maxRetries - Max retries for 429 (default 3)
    */
   async function fetchWithCache(url, options = {}, ttl = 0, maxRetries = 3) {
-    const method = options.method || 'GET';
+    const reqOptions = {
+      ...options,
+      credentials: options.credentials || 'include',
+      headers: {
+        ...authHeaders(),
+        ...(options.headers || {})
+      }
+    };
+    const method = reqOptions.method || 'GET';
     const isCacheable = method === 'GET' && ttl > 0;
-    const cacheKey = `${url}:${JSON.stringify(options.headers || {})}`;
+    const cacheKey = `${url}:${JSON.stringify(reqOptions.headers || {})}`;
 
     if (isCacheable) {
       const cached = fetchCache.get(cacheKey);
@@ -554,7 +568,7 @@
     }
 
     const makeRequest = async (attempt = 0) => {
-      const requestPromise = fetch(url, options);
+      const requestPromise = fetch(url, reqOptions);
       inFlightRequests.set(cacheKey, requestPromise);
 
       try {
@@ -723,10 +737,9 @@
     const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s network timeout
 
     try {
-      const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, {
-        headers: authHeaders(),
+      const res = await fetchWithCache(`${API_ORIGIN}/api/auth/me`, authFetchOptions({
         signal: controller.signal
-      }, 30000);
+      }), 30000);
 
       clearTimeout(timeoutId);
       const data = await res.json();
@@ -751,26 +764,34 @@
       }
 
       if (data.onboarding && !data.onboarding.completed) {
-        if (!window.CarryParcel?.startOnboardingWizard) {
-          const css = document.createElement('link');
-          css.rel = 'stylesheet';
-          css.href = '../shared/onboarding-wizard.css?v=1';
-          document.head.appendChild(css);
+        if (!document.querySelector('.cp-onboarding-overlay')) {
+          if (!window.CarryParcel?.startOnboardingWizard) {
+            const css = document.createElement('link');
+            css.rel = 'stylesheet';
+            css.href = '../shared/onboarding-wizard.css?v=1';
+            document.head.appendChild(css);
 
-          const js = document.createElement('script');
-          js.src = '../shared/onboarding-wizard.js?v=1';
-          js.onload = () => {
-            window.CarryParcel?.startOnboardingWizard({
+            const js = document.createElement('script');
+            js.src = '../shared/onboarding-wizard.js?v=1';
+            js.onload = () => {
+              window.CarryParcel?.startOnboardingWizard({
+                onboarding: data.onboarding,
+                onComplete: () => {
+                  saveStoredUser({ ...mergedUser, onboarding: { completed: true } });
+                  personalizeUser();
+                }
+              });
+            };
+            document.head.appendChild(js);
+          } else {
+            window.CarryParcel.startOnboardingWizard({
               onboarding: data.onboarding,
-              onComplete: () => window.location.reload()
+              onComplete: () => {
+                saveStoredUser({ ...mergedUser, onboarding: { completed: true } });
+                personalizeUser();
+              }
             });
-          };
-          document.head.appendChild(js);
-        } else {
-          window.CarryParcel.startOnboardingWizard({
-            onboarding: data.onboarding,
-            onComplete: () => window.location.reload()
-          });
+          }
         }
       }
 

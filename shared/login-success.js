@@ -60,9 +60,13 @@
             overlay.classList.add('show');
         });
 
-        // Auto-navigation delay
+        // Auto-navigation delay & cleanup
         setTimeout(() => {
-            if (onComplete) onComplete();
-        }, 2500);
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                overlay.remove();
+                if (onComplete) onComplete();
+            }, 300);
+        }, 2200);
     };
 })();
