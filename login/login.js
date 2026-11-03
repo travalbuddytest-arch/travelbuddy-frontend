@@ -380,7 +380,14 @@
         user: data.user,
         method: 'GOOGLE',
         onComplete: () => {
-          goToDashboard(0);
+          if (data.onboarding && !data.onboarding.completed) {
+            window.CarryParcel.startOnboardingWizard({
+              onboarding: data.onboarding,
+              onComplete: () => goToDashboard(0)
+            });
+          } else {
+            goToDashboard(0);
+          }
         }
       });
     } catch (err) {

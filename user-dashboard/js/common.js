@@ -750,6 +750,30 @@
         document.dispatchEvent(new CustomEvent('travelbuddy:user-refreshed', { detail: { user: mergedUser } }));
       }
 
+      if (data.onboarding && !data.onboarding.completed) {
+        if (!window.CarryParcel?.startOnboardingWizard) {
+          const css = document.createElement('link');
+          css.rel = 'stylesheet';
+          css.href = '../shared/onboarding-wizard.css?v=1';
+          document.head.appendChild(css);
+
+          const js = document.createElement('script');
+          js.src = '../shared/onboarding-wizard.js?v=1';
+          js.onload = () => {
+            window.CarryParcel?.startOnboardingWizard({
+              onboarding: data.onboarding,
+              onComplete: () => window.location.reload()
+            });
+          };
+          document.head.appendChild(js);
+        } else {
+          window.CarryParcel.startOnboardingWizard({
+            onboarding: data.onboarding,
+            onComplete: () => window.location.reload()
+          });
+        }
+      }
+
       if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(true);
       return mergedUser;
     } catch (err) {

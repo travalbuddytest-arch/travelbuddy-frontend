@@ -1,0 +1,147 @@
+/* CarryParcel — Onboarding Wizard Overlay */
+.cp-onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-family: 'Poppins', -apple-system, sans-serif;
+}
+.cp-onboarding-overlay.show {
+  opacity: 1;
+}
+
+.cp-onboarding-card {
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 440px;
+  padding: 32px 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.cp-onboarding-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.cp-onboarding-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.cp-onboarding-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.cp-onboarding-steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.cp-onboarding-step-dot {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+  background: #e2e8f0;
+  transition: background 0.3s ease;
+}
+.cp-onboarding-step-dot.active {
+  background: #0d6efd;
+}
+
+.cp-onboarding-field {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.cp-onboarding-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.cp-onboarding-input-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cp-onboarding-select {
+  padding: 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #f8fafc;
+  color: #0f172a;
+  outline: none;
+  font-weight: 600;
+}
+
+.cp-onboarding-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+.cp-onboarding-input:focus {
+  border-color: #0d6efd;
+}
+
+.cp-onboarding-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #0d6efd;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 8px;
+}
+.cp-onboarding-btn:hover {
+  background: #0b5ed7;
+}
+.cp-onboarding-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cp-onboarding-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 12px;
+  font-weight: 500;
+}
