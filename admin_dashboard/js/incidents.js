@@ -4,6 +4,7 @@
  */
 
 const API_ORIGIN = APP_CONFIG.API_BASE_URL;
+let currentReports = [];
 
 async function apiGet(url) {
   const headers = { 'X-CP-Admin-Request': 'true' };
@@ -24,6 +25,7 @@ export default function initIncidents() {
 function wireEvents() {
   document.getElementById('incidentStatusFilter')?.addEventListener('change', loadIncidents);
   document.getElementById('incidentSearch')?.addEventListener('input', debounce(loadIncidents, 400));
+  document.getElementById('exportIncidentsBtn')?.addEventListener('click', exportSummaryPdf);
 }
 
 async function loadIncidents() {
@@ -41,14 +43,14 @@ async function loadIncidents() {
     if (search) url += `&search=${encodeURIComponent(search)}`;
 
     const data = await apiGet(url);
-    const reports = data.reports || [];
+    currentReports = data.reports || [];
 
-    if (!reports.length) {
+    if (!currentReports.length) {
       tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#98a2b3">No active parcel incidents found.</td></tr>`;
       return;
     }
 
-    tbody.innerHTML = reports.map(r => `
+    tbody.innerHTML = currentReports.map(r => `
       <tr>
         <td style="font-size:12px;color:var(--text-muted)">${formatDateShort(r.createdAt)}</td>
         <td><strong class="cell-mono">${esc(r.targetParcelId?.orderId || '—')}</strong></td>
@@ -60,14 +62,15 @@ async function loadIncidents() {
         <td style="font-size:11px;color:var(--text-muted)">Investigate to view map</td>
         <td>${statusTag(r.status)}</td>
         <td>
-          <div class="row-actions">
+          <div class="row-actions" style="display:flex; gap:6px;">
             <button class="btn sm secondary" onclick="window.investigateParcel('${r.targetParcelId?._id}', '${r._id}')">Investigate</button>
+            <button class="btn sm secondary" onclick="window.exportIncidentPdf('${r._id}')" title="Export PDF"><i class="fa-solid fa-file-pdf"></i></button>
           </div>
         </td>
       </tr>
     `).join('');
 
-    updateSummary(reports);
+    updateSummary(currentReports);
   } catch (err) {
     console.warn('Failed to load incidents:', err);
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--danger)">Error loading data.</td></tr>`;
@@ -75,21 +78,77 @@ async function loadIncidents() {
 }
 
 window.investigateParcel = (parcelId, reportId) => {
-  // Navigation strategy: Jump to Live Tracking and pre-select the parcel
   if (parcelId && parcelId !== 'undefined') {
     window.location.hash = `#live-tracking?id=${parcelId}`;
-    // admin.js will handle the hash change and page activation
   } else {
     alert('Parcel ID missing from report. Checking full details...');
-    window.fetchUserDetail(reportId); // Generic fallback
+    if (typeof window.fetchUserDetail === 'function') {
+      window.fetchUserDetail(reportId);
+    }
   }
 };
+
+window.exportIncidentPdf = (reportId) => {
+  const report = currentReports.find(r => String(r._id) === String(reportId));
+  if (!report) return;
+
+  try {
+    const { jsPDF } = window.jspdf || {};
+    if (!jsPDF) { window.print(); return; }
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('CarryParcel Incident Investigation Report', 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Report ID: ${report._id}`, 14, 30);
+    doc.text(`Order ID: ${report.targetParcelId?.orderId || 'N/A'}`, 14, 38);
+    doc.text(`Issue Type: ${report.reason}`, 14, 46);
+    doc.text(`Status: ${report.status}`, 14, 54);
+    doc.text(`Reported By: ${report.fromUser?.firstName || ''} ${report.fromUser?.lastName || ''} (${report.fromUser?.email || ''})`, 14, 62);
+    doc.text(`Date Reported: ${new Date(report.createdAt).toLocaleString('en-IN')}`, 14, 70);
+    doc.text(`Description:`, 14, 80);
+
+    const splitDesc = doc.splitTextToSize(report.description || 'No detailed description provided.', 180);
+    doc.text(splitDesc, 14, 88);
+
+    doc.save(`incident_${report.targetParcelId?.orderId || report._id}.pdf`);
+  } catch (err) {
+    console.error('PDF export failed:', err);
+    window.print();
+  }
+};
+
+function exportSummaryPdf() {
+  try {
+    const { jsPDF } = window.jspdf || {};
+    if (!jsPDF) { window.print(); return; }
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('CarryParcel Active Incidents Summary', 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Generated At: ${new Date().toLocaleString('en-IN')}`, 14, 28);
+    doc.text(`Total Active Cases: ${currentReports.length}`, 14, 36);
+
+    let y = 48;
+    currentReports.forEach((r, idx) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.text(`${idx + 1}. [${r.status.toUpperCase()}] ${r.targetParcelId?.orderId || 'N/A'} — ${r.reason}`, 14, y);
+      y += 8;
+    });
+
+    doc.save(`incidents_summary_${new Date().toISOString().slice(0, 10)}.pdf`);
+  } catch (err) {
+    console.error('Summary PDF export failed:', err);
+    window.print();
+  }
+}
 
 function updateSummary(reports) {
   const cards = document.querySelectorAll('.mini-card strong');
   if (cards.length < 3) return;
-  cards[0].textContent = reports.filter(r => r.status === 'under_review').length;
-  cards[1].textContent = reports.filter(r => r.reason.toLowerCase().includes('overdue')).length;
+  cards[0].textContent = reports.filter(r => r.status === 'under_review' || r.status === 'open').length;
+  cards[1].textContent = reports.filter(r => (r.reason || '').toLowerCase().includes('overdue')).length;
   cards[2].textContent = reports.filter(r => r.status === 'resolved').length;
 }
 

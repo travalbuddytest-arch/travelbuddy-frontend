@@ -2,7 +2,7 @@
     <h3><i class="fa-solid fa-gears"></i> System Settings & Configuration</h3>
     <p>Administrative environment overview and global platform controls.</p>
 
-    <div class="settings-grid">
+    <form id="systemSettingsForm" class="settings-grid">
         <div class="panel">
             <div class="head"><h4>Platform Environment</h4></div>
             <div class="setting-list" id="envInfo">
@@ -14,25 +14,44 @@
         </div>
 
         <div class="panel">
-            <div class="head"><h4>Global Controls</h4></div>
+            <div class="head"><h4>Global Platform Controls</h4></div>
             <div class="setting-list">
                 <div class="setting-item">
                     <div>
                         <strong>Maintenance Mode</strong>
-                        <p>Disable all user access to the platform.</p>
+                        <p>Disable all regular user access to the platform.</p>
                     </div>
-                    <label class="tb-toggle"><input type="checkbox" disabled><span class="tb-toggle-slider"></span></label>
+                    <label class="tb-toggle"><input type="checkbox" id="settingMaintenanceMode" aria-label="Maintenance Mode"><span class="tb-toggle-slider"></span></label>
                 </div>
                 <div class="setting-item">
                     <div>
-                        <strong>New Signups</strong>
+                        <strong>Allow New Signups</strong>
                         <p>Allow or block new user registrations.</p>
                     </div>
-                    <label class="tb-toggle"><input type="checkbox" checked disabled><span class="tb-toggle-slider"></span></label>
+                    <label class="tb-toggle"><input type="checkbox" id="settingAllowSignups" checked aria-label="Allow New Signups"><span class="tb-toggle-slider"></span></label>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <strong>Free Post Limit per User</strong>
+                        <p>Number of free parcel posts before wallet locking applies.</p>
+                    </div>
+                    <input type="number" id="settingFreePostLimit" min="0" max="100" value="2" aria-label="Free Post Limit per User" style="width: 80px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);" />
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <strong>Platform Commission (%)</strong>
+                        <p>Percentage of parcel delivery fee retained by platform.</p>
+                    </div>
+                    <input type="number" id="settingCommissionPercent" min="0" max="100" value="10" aria-label="Platform Commission Percent" style="width: 80px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);" />
                 </div>
             </div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button type="submit" id="saveSettingsBtn" class="btn-primary" style="padding: 10px 20px; border-radius: 8px; font-weight: 600;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save System Configuration
+                </button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <link rel="stylesheet" href="../css/system.css">

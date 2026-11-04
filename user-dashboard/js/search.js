@@ -13,26 +13,20 @@ const clearAllBtn = document.getElementById('clearAllBtn');
 let searchDebounce = null;
 
 async function apiGet(url) {
-  const token = localStorage.getItem('carryParcelToken');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const res = await fetch(`${API_ORIGIN}${url}`, { headers });
+  const res = await fetch(`${API_ORIGIN}${url}`, { credentials: 'include' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };
   return data;
 }
 
 async function apiPost(url, body) {
-  const token = localStorage.getItem('carryParcelToken');
   const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, body: JSON.stringify(body) });
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, credentials: 'include', body: JSON.stringify(body) });
   return res.json();
 }
 
 async function apiDelete(url) {
-  const token = localStorage.getItem('carryParcelToken');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'DELETE', headers });
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'DELETE', credentials: 'include' });
   return res.json();
 }
 

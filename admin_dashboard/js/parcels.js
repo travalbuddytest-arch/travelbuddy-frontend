@@ -535,7 +535,17 @@ async function bulkAction(action) {
    ══════════════════════════════════════════════ */
 async function exportCSV() {
   try {
+    const tokenRes = await fetch(`${API_ORIGIN}/api/admin/export-token`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'X-CP-Admin-Request': 'true' },
+      body: JSON.stringify({ exportType: 'parcels' })
+    });
+    const tokenData = await tokenRes.json();
+    const token = tokenData.token;
+
     const params = new URLSearchParams();
+    params.set('token', token);
     if (state.filters.status !== 'all') params.set('status', state.filters.status);
     if (state.filters.dateFrom) params.set('dateFrom', state.filters.dateFrom);
     if (state.filters.dateTo) params.set('dateTo', state.filters.dateTo);
@@ -543,6 +553,7 @@ async function exportCSV() {
       credentials: 'include',
       headers: { 'X-CP-Admin-Request': 'true' }
     });
+    if (!res.ok) throw new Error('Export download failed');
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

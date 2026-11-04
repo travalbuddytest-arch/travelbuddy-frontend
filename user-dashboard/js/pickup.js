@@ -360,6 +360,8 @@
       e.preventDefault();
       const from = document.getElementById('routeFrom').value.trim();
       const to = document.getElementById('routeTo').value.trim();
+      const sortEl = document.getElementById('routeSortSelect');
+      const sortBy = sortEl ? sortEl.value : 'date_desc';
 
       if (!from || !to) {
         window.showToast('Enter both starting point and destination.', 'error');
@@ -376,7 +378,7 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE}/search?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, authFetchOptions());
+        const res = await fetch(`${API_BASE}/search?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sortBy=${encodeURIComponent(sortBy)}`, authFetchOptions());
         const data = await res.json();
 
         if (!res.ok) {

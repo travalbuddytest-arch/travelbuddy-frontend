@@ -1,7 +1,10 @@
 <div class="incidents-container">
     <div class="header-row">
         <h3><i class="fa-solid fa-triangle-exclamation"></i> Parcel Incidents & Theft Investigation</h3>
-        <button class="btn primary sm" id="createNewIncident"><i class="fa-solid fa-plus"></i> Manual Flag</button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn secondary sm" id="exportIncidentsBtn"><i class="fa-solid fa-file-pdf"></i> Export Summary</button>
+            <button class="btn primary sm" id="createNewIncident"><i class="fa-solid fa-plus"></i> Manual Flag</button>
+        </div>
     </div>
 
     <div class="incident-summary-cards">
@@ -11,13 +14,13 @@
     </div>
 
     <div class="filters">
-        <select id="incidentStatusFilter">
+        <select id="incidentStatusFilter" aria-label="Filter Incidents by Status">
             <option value="open">Open Cases</option>
             <option value="investigating">Under Investigation</option>
             <option value="resolved">Resolved</option>
             <option value="all">All Cases</option>
         </select>
-        <input type="text" id="incidentSearch" placeholder="Search Order ID or User...">
+        <input type="text" id="incidentSearch" placeholder="Search Order ID or User..." aria-label="Search Order ID or User">
     </div>
 
     <div class="table-container">
@@ -41,4 +44,5 @@
 </div>
 
 <link rel="stylesheet" href="../css/support-reports.css">
+<script src="../../shared/vendor/jspdf.umd.min.js"></script>
 <script type="module" src="../js/incidents.js"></script>

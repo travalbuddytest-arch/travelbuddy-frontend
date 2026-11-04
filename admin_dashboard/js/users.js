@@ -276,7 +276,9 @@ async function handleBulkAction(action) {
 
 async function exportUsers(format) {
   try {
-    const res = await api(`/api/admin/users/export?format=${format}`);
+    const tokenRes = await api('/api/admin/export-token', { method: 'POST', body: { exportType: 'users' } });
+    const token = tokenRes.token;
+    const res = await api(`/api/admin/users/export?format=${format}&token=${encodeURIComponent(token)}`);
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

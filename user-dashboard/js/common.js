@@ -1188,6 +1188,22 @@
       if (activeIncomingCall && String(activeIncomingCall.callId) === String(callId)) hideGlobalIncomingCall();
     });
 
+    socket.on('admin:force-logout', (data) => {
+      console.warn('[Socket] Force logout event received from admin:', data);
+      showToast(data?.reason || 'Your session was terminated by an administrator.', 'error');
+      setTimeout(() => {
+        logoutNow();
+      }, 1200);
+    });
+
+    socket.on('user:session-revoked', (data) => {
+      console.warn('[Socket] Session revoked event received:', data);
+      showToast(data?.reason || 'Session revoked from device settings.', 'info');
+      setTimeout(() => {
+        logoutNow();
+      }, 1200);
+    });
+
     window.CarryParcel.socket = socket;
     window.TravelBuddy.socket = socket;
     return socket;

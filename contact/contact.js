@@ -67,15 +67,12 @@ ctForm?.addEventListener('submit', e => {
 
     // Make API call to backend
     const apiUrl = (window.APP_CONFIG?.API_BASE_URL || '') + '/api/contact/submit';
-
-    // Get token if user is logged in
-    const token = localStorage.getItem('carryParcelToken');
     const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
 
     fetch(apiUrl, {
         method: 'POST',
         headers: headers,
+        credentials: 'include',
         body: JSON.stringify({ fullName: name, email, subject, message, phone })
     })
     .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
