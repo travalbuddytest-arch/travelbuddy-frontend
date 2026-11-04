@@ -1379,60 +1379,71 @@
     `;
 
     document.body.appendChild(overlay);
-    attachRipple(overlay.querySelector('.btn-primary'));
-    attachRipple(overlay.querySelectorAll('.btn-primary')[1]);
+    attachRipple(overlay.querySelector('#dashboardProfileForm .btn-primary'));
+    attachRipple(overlay.querySelector('#dashboardPasswordForm .btn-primary'));
     bindProfileModal();
-    async function saveDashboardPhoto(profilePhoto) {
-      const u = parseStoredUser();
-      const payload = { firstName: u.firstName || 'Travel', lastName: u.lastName || 'Buddy', phone: u.phone || '', profilePhoto };
-      const res = await fetch(`${API_ORIGIN}/api/auth/me`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(payload) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not save profile photo.');
-      // The server has silently returned a saved user before without the
-      // photo actually taking (the toast still said "saved" either way).
-      // Comparing what came back against what we sent turns that into an
-      // honest error instead of a false success, and refetching /api/auth/me
-      // once catches the case where the PUT response itself is stale but
-      // the write did land.
-      const returnedPhoto = data.user?.profilePhoto || '';
-      const savedOk = profilePhoto
-        ? (returnedPhoto && (profilePhoto.startsWith('data:image/') || returnedPhoto === profilePhoto))
-        : !returnedPhoto;
-      if (!savedOk) {
-        try {
-          const check = await fetch(`${API_ORIGIN}/api/auth/me`, { headers: authHeaders() });
-          const checkData = await check.json();
-          const checkedPhoto = checkData.user?.profilePhoto || '';
-          const checkedOk = profilePhoto
-            ? (checkedPhoto && (profilePhoto.startsWith('data:image/') || checkedPhoto === profilePhoto))
-            : !checkedPhoto;
-          if (check.ok && checkedOk) {
-            data.user = checkData.user;
-          } else {
-            throw new Error('not saved');
-          }
-        } catch (verifyErr) {
-          throw new Error('The photo did not save on the server. Please try again, or use a smaller image.');
-        }
+
+    overlay.querySelector('#profilePhotoInput')?.addEventListener('change', async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const allowed = ['image/jpeg', 'image/png'];
+      if (!allowed.includes(f.type)) {
+        showToast('Invalid image format\nPlease upload a JPG, JPEG, or PNG image.', 'error');
+        e.target.value = '';
+        return;
       }
-      if (data.user?.profilePhoto) {
-        profilePhotoCacheBust = { path: data.user.profilePhoto, value: Date.now() };
-      } else {
-        profilePhotoCacheBust = null;
+      if (f.size > 5 * 1024 * 1024) {
+        showToast('Choose an image smaller than 5 MB.', 'error');
+        e.target.value = '';
+        return;
       }
-      updateDashboardUser(data.user);
-      return data.user;
-    }
-    document.getElementById('profilePhotoInput')?.addEventListener('change', async (e)=>{ const f=e.target.files?.[0]; if(!f)return; const allowed=['image/jpeg','image/png']; if(!allowed.includes(f.type)){ showToast('Invalid image format\nPlease upload a JPG, JPEG, or PNG image.', 'error'); e.target.value=''; return; } if(f.size>5*1024*1024){ showToast('Choose an image smaller than 5 MB.', 'error'); e.target.value=''; return; } try { const photo=await resizeProfilePhoto(f); const preview=document.getElementById('profilePhotoPreview'); if(preview) renderProfileAvatar(preview,{...parseStoredUser(),profilePhoto:photo},getDisplayName(parseStoredUser())); await saveDashboardPhoto(photo); showToast('Profile photo saved.', 'success'); } catch(err) { showToast(err.message, 'error'); } e.target.value=''; });
-    document.getElementById('removeProfilePhoto')?.addEventListener('click',async()=>{ try { await saveDashboardPhoto(''); showToast('Profile photo removed.', 'success'); } catch(err) { showToast(err.message, 'error'); } });
+      try {
+        const photo = await resizeProfilePhoto(f);
+        const preview = document.getElementById('profilePhotoPreview');
+        if (preview) renderProfileAvatar(preview, { ...parseStoredUser(), profilePhoto: photo }, getDisplayName(parseStoredUser()));
+        await saveDashboardPhoto(photo);
+        showToast('Profile photo saved successfully.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Could not upload photo.', 'error');
+      }
+      e.target.value = '';
+    });
+
+    overlay.querySelector('#removeProfilePhoto')?.addEventListener('click', async () => {
+      const confirmRemove = confirm('Are you sure you want to remove your profile photo?');
+      if (!confirmRemove) return;
+      try {
+        await saveDashboardPhoto('');
+        showToast('Profile photo removed.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Could not remove photo.', 'error');
+      }
+    });
   }
 
-  // BUG FIX: this function used to be declared in the middle of
-  // saveDashboardPhoto()'s body (only working because of `function`
-  // hoisting), and saveDashboardPhoto called populateProfileForms(user)
-  // directly AND through this helper, updating the profile form twice on
-  // every photo save. Moved to a normal top-level function and the
-  // duplicate call removed.
+  async function saveDashboardPhoto(profilePhoto) {
+    const u = parseStoredUser();
+    const fnInput = document.getElementById('profileFirstName');
+    const lnInput = document.getElementById('profileLastName');
+    const phInput = document.getElementById('profilePhone');
+    const firstName = (fnInput && fnInput.value.trim()) || u.firstName || 'CarryParcel';
+    const lastName = (lnInput && lnInput.value.trim()) || u.lastName || 'User';
+    const phone = (phInput && phInput.value.trim()) || u.phone || '';
+
+    const payload = { firstName, lastName, phone, profilePhoto };
+    const res = await fetch(`${API_ORIGIN}/api/auth/me`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not save profile photo.');
+
+    if (data.user?.profilePhoto) {
+      profilePhotoCacheBust = { path: data.user.profilePhoto, value: Date.now() };
+    } else {
+      profilePhotoCacheBust = null;
+    }
+    updateDashboardUser(data.user);
+    return data.user;
+  }
+
   function updateDashboardUser(user) {
     if (!user) return;
     saveStoredUser(user);
@@ -1440,9 +1451,6 @@
     document.querySelectorAll('[data-user-name], #userName, #profileName, .user-name').forEach((el) => {
       el.textContent = fullName;
     });
-    // Only hydrate avatars that represent the signed-in user. Message thread
-    // avatars and chat headers represent other people and must keep their
-    // conversation-specific photos.
     document.querySelectorAll('.user-chip .avatar, [data-user-avatar], #userAvatar, #profileAvatar, #profilePhotoPreview, .user-avatar, .profile-avatar').forEach((el) => {
       renderProfileAvatar(el, user, fullName);
     });
@@ -1450,7 +1458,6 @@
     personalizeUser();
     document.dispatchEvent(new CustomEvent('travelbuddy:profile-updated', { detail: { user } }));
   }
-
 
   function populateProfileForms(user) {
     const safeUser = user || parseStoredUser();
@@ -1463,6 +1470,8 @@
     const phone = document.getElementById('profilePhone');
     const photoActionText = document.getElementById('profilePhotoActionText');
     const removePhotoButton = document.getElementById('removeProfilePhoto');
+    const isGoogleAccount = safeUser.authProvider === 'google' || !safeUser.hasPassword;
+
     if (photoActionText) photoActionText.textContent = safeUser.profilePhoto ? 'Change Photo' : 'Add Photo';
     if (removePhotoButton) removePhotoButton.hidden = !safeUser.profilePhoto;
 
@@ -1474,6 +1483,25 @@
     if (lastName) lastName.value = safeUser.lastName || '';
     if (email) email.value = safeUser.email || '';
     if (phone) phone.value = safeUser.phone || '';
+
+    // Settings tab: Password form vs Google account banner
+    const passwordForm = document.getElementById('dashboardPasswordForm');
+    let googleNotice = document.getElementById('dashboardGooglePasswordNotice');
+    if (isGoogleAccount) {
+      if (passwordForm) passwordForm.style.display = 'none';
+      if (!googleNotice && passwordForm) {
+        googleNotice = document.createElement('div');
+        googleNotice.id = 'dashboardGooglePasswordNotice';
+        googleNotice.style.cssText = 'padding:14px 16px; background:var(--bg); border:1px solid var(--border); border-radius:12px; margin-bottom:16px; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:10px;';
+        googleNotice.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--primary); font-size:16px;"></i> <span>Your account uses Google Sign-In. Password settings are managed through your Google Account.</span>`;
+        passwordForm.parentNode.insertBefore(googleNotice, passwordForm);
+      } else if (googleNotice) {
+        googleNotice.style.display = 'flex';
+      }
+    } else {
+      if (passwordForm) passwordForm.style.display = 'block';
+      if (googleNotice) googleNotice.style.display = 'none';
+    }
   }
 
   function setProfileTab(tabName) {
@@ -1485,45 +1513,76 @@
     document.getElementById('profileTabSettings')?.classList.toggle('hidden', tabName !== 'settings');
   }
 
-  function openProfileModal(tabName) {
+  async function openProfileModal(tabName) {
     createProfileModal();
-    populateProfileForms();
+    let safeUser = parseStoredUser();
+    if (window.CarryParcel?.getCurrentUser) {
+      try {
+        const fresh = await window.CarryParcel.getCurrentUser();
+        if (fresh && fresh.id) safeUser = fresh;
+      } catch (e) {}
+    }
+    populateProfileForms(safeUser);
     setProfileTab(tabName || 'profile');
-    document.getElementById('profileModalOverlay').classList.remove('hidden');
+    const overlay = document.getElementById('profileModalOverlay');
+    if (overlay) {
+      overlay.classList.remove('hidden');
+      document.body.classList.add('modal-open');
+    }
     document.getElementById(tabName === 'settings' ? 'currentPassword' : tabName === 'details' ? 'profileFirstName' : 'profilePhotoInput')?.focus();
   }
 
   function closeProfileModal() {
-    document.getElementById('profileModalOverlay')?.classList.add('hidden');
+    const overlay = document.getElementById('profileModalOverlay');
+    if (overlay) {
+      overlay.classList.add('hidden');
+      document.body.classList.remove('modal-open');
+    }
   }
 
   async function logoutNow(){
     try{await window.CarryParcelAuth?.logout();}catch{}
     localStorage.removeItem('carryParcelUser');
     clearClientCache();
+    document.body.classList.remove('modal-open');
     showToast('Logged out successfully.','success');
     setTimeout(()=>{window.location.href='../login/login.html';},500);
   }
 
   function bindProfileModal() {
     const overlay = document.getElementById('profileModalOverlay');
-    document.getElementById('profileModalClose')?.addEventListener('click', closeProfileModal);
-    overlay?.addEventListener('click', (e) => {
+    if (!overlay) return;
+
+    // Scoped close button click handler
+    overlay.querySelector('#profileModalClose')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeProfileModal();
+    });
+
+    // Backdrop click handler
+    overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeProfileModal();
     });
 
-    document.querySelectorAll('[data-profile-tab]').forEach((btn) => {
-      btn.addEventListener('click', () => setProfileTab(btn.dataset.profileTab));
+    // Delegated tab switching
+    overlay.querySelector('.profile-tabs')?.addEventListener('click', (e) => {
+      const tabBtn = e.target.closest('[data-profile-tab]');
+      if (tabBtn) {
+        setProfileTab(tabBtn.dataset.profileTab);
+      }
     });
 
-    document.getElementById('dashboardProfileForm')?.addEventListener('submit', async (e) => {
+    // Details form submission
+    overlay.querySelector('#dashboardProfileForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = e.currentTarget.querySelector('.btn-primary');
+      const safeUser = parseStoredUser();
       const payload = {
         firstName: document.getElementById('profileFirstName').value.trim(),
         lastName: document.getElementById('profileLastName').value.trim(),
         phone: document.getElementById('profilePhone').value.trim(),
-        profilePhoto: parseStoredUser().profilePhoto || '',
+        profilePhoto: safeUser.profilePhoto || '',
       };
 
       if (!payload.firstName || !payload.lastName) {
@@ -1543,10 +1602,8 @@
           showToast(data.error || 'Could not update profile.', 'error');
           return;
         }
-        saveStoredUser(data.user);
-        personalizeUser();
-        populateProfileForms(data.user);
-        showToast('Profile updated.', 'success');
+        updateDashboardUser(data.user);
+        showToast('Profile updated successfully.', 'success');
       } catch (err) {
         console.error(err);
         showToast('Unable to connect to the server.', 'error');
@@ -1555,7 +1612,8 @@
       }
     });
 
-    document.getElementById('dashboardPasswordForm')?.addEventListener('submit', async (e) => {
+    // Password form submission
+    overlay.querySelector('#dashboardPasswordForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = e.currentTarget.querySelector('.btn-primary');
       const currentPassword = document.getElementById('currentPassword').value;
@@ -1592,7 +1650,8 @@
       }
     });
 
-    document.getElementById('profileLogoutBtn')?.addEventListener('click', logoutNow);
+    // Logout button inside modal
+    overlay.querySelector('#profileLogoutBtn')?.addEventListener('click', logoutNow);
   }
 
   /*

@@ -3,6 +3,16 @@
 
   window.CarryParcel = window.CarryParcel || {};
 
+  function maskPhoneNumber(phone) {
+    if (!phone) return '';
+    const clean = String(phone).trim();
+    if (clean.length < 8) return clean;
+    const countryPart = clean.slice(0, 3);
+    const middlePart = clean.slice(3, -3).replace(/\d/g, '*');
+    const lastPart = clean.slice(-3);
+    return `${countryPart} ${middlePart} ${lastPart}`;
+  }
+
   /**
    * Check onboarding status and show wizard modal if incomplete.
    * @param {Object} options
@@ -226,7 +236,8 @@
                 currentStep = 'PASSWORD';
                 renderStep();
               } else {
-                finishOnboarding();
+                currentStep = 'SUCCESS';
+                renderStep();
               }
             } catch (err) {
               errorEl.style.color = '';
@@ -235,6 +246,42 @@
               btn.textContent = 'Verify & Continue';
             }
           });
+        });
+      } else if (currentStep === 'SUCCESS') {
+        overlay.innerHTML = `
+          <div class="cp-onboarding-card" style="text-align: center;">
+            <div class="cp-onboarding-badge" style="background: rgba(23, 166, 115, 0.12); color: #17A673; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px;">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h2 class="cp-onboarding-title" style="color: #101828; font-size: 20px; font-weight: 700; margin-bottom: 8px;">
+              Mobile Number Verified Successfully!
+            </h2>
+            <p class="cp-onboarding-subtitle" style="color: #667085; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+              Your mobile number has been successfully saved to your CarryParcel account.
+            </p>
+
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-mobile-screen" style="color: #0D6EFD; font-size: 18px;"></i>
+                <span style="font-weight: 700; font-size: 15px; color: #1E293B; letter-spacing: 0.5px;">${maskPhoneNumber(phoneValue)}</span>
+              </div>
+              <span style="background: rgba(23, 166, 115, 0.12); color: #17A673; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="fa-solid fa-shield-check"></i> Verified
+              </span>
+            </div>
+
+            <button id="obSuccessDoneBtn" class="cp-onboarding-btn">Continue to Dashboard</button>
+          </div>
+        `;
+
+        requestAnimationFrame(() => {
+          const doneBtn = overlay.querySelector('#obSuccessDoneBtn');
+          if (doneBtn) {
+            doneBtn.focus();
+            doneBtn.addEventListener('click', () => {
+              finishOnboarding();
+            });
+          }
         });
       } else if (currentStep === 'PASSWORD') {
         overlay.innerHTML = `

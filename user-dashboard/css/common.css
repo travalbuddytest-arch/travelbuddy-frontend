@@ -1921,6 +1921,7 @@ input:focus-visible {
   animation: fade-in 0.18s ease both;
 }
 .modal-overlay.hidden { display: none; }
+body.modal-open { overflow: hidden !important; }
 
 .modal-card {
   position: relative;
@@ -1959,6 +1960,8 @@ input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 20;
+  pointer-events: auto;
   transition: background 0.15s ease;
 }
 .modal-close:hover { background: var(--border); }
