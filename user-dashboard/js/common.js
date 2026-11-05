@@ -136,6 +136,8 @@
       logoutNow();
     });
     document.querySelectorAll('.user-menu a, .user-menu button').forEach((link) => {
+      if (link.dataset.boundProfile) return;
+      link.dataset.boundProfile = 'true';
       const text = link.textContent.trim().toLowerCase();
       if (text.includes('my profile')) {
         link.addEventListener('click', (e) => { e.preventDefault(); closeUserMenu(); openProfileModal('profile'); });
@@ -1531,13 +1533,7 @@
 
   async function openProfileModal(tabName) {
     createProfileModal();
-    let safeUser = parseStoredUser();
-    if (window.CarryParcel?.getCurrentUser) {
-      try {
-        const fresh = await window.CarryParcel.getCurrentUser();
-        if (fresh && fresh.id) safeUser = fresh;
-      } catch (e) {}
-    }
+    const safeUser = parseStoredUser();
     populateProfileForms(safeUser);
     setProfileTab(tabName || 'profile');
     const overlay = document.getElementById('profileModalOverlay');
@@ -1546,6 +1542,16 @@
       document.body.classList.add('modal-open');
     }
     document.getElementById(tabName === 'settings' ? 'currentPassword' : tabName === 'details' ? 'profileFirstName' : 'profilePhotoInput')?.focus();
+
+    // Async background refresh to keep profile data updated with server
+    if (window.CarryParcel?.getCurrentUser) {
+      try {
+        const fresh = await window.CarryParcel.getCurrentUser();
+        if (fresh && fresh.id) {
+          populateProfileForms(fresh);
+        }
+      } catch (e) {}
+    }
   }
 
   function closeProfileModal() {
