@@ -3,119 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found (404) | CarryParcel</title>
-    <meta name="description" content="The page you are looking for does not exist. Use the links below to find parcels, trips, support, developer documentation, or return to the CarryParcel homepage.">
+    <title>404 – Page Not Found | CarryParcel</title>
+    <meta name="description" content="The page you're looking for may have moved, been removed, or is currently unavailable. Return to CarryParcel homepage, access your dashboard, or contact support.">
+    <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://www.carryparcel.in/404.html">
     <link rel="icon" type="image/webp" href="/images/logo-icon.webp" sizes="32x32">
 
+    <!-- Design System & Shared Styles -->
     <link rel="stylesheet" href="/home/style.css">
     <link rel="stylesheet" href="/shared/design-system.css">
     <link rel="stylesheet" href="/shared/navbar.css?v=8">
     <link rel="stylesheet" href="/shared/footer.css">
-    <link rel="stylesheet" href="/shared/seo-page.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        .error-container {
-            max-width: 800px;
-            margin: 120px auto 60px;
-            padding: 40px 24px;
-            text-align: center;
+        :root {
+            --cp-primary: #0d6efd;
+            --cp-primary-dark: #0a58ca;
+            --cp-primary-light: rgba(13, 110, 253, 0.08);
+            --cp-text-dark: #0f172a;
+            --cp-text-muted: #64748b;
+            --cp-border: #e2e8f0;
         }
-        .error-badge {
-            display: inline-block;
-            background: rgba(13, 110, 253, 0.12);
-            color: var(--tb-primary, #0d6efd);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            border: 1px solid rgba(13, 110, 253, 0.25);
-        }
-        .error-container h1 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 16px;
-            color: #1e293b;
-        }
-        .error-lead {
-            font-size: 1.15rem;
-            color: #64748b;
-            margin-bottom: 36px;
-            line-height: 1.6;
-        }
-        .recovery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            text-align: left;
-            margin: 36px 0 48px;
-        }
-        .recovery-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: var(--cp-text-dark);
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            min-height: 100vh;
         }
-        .recovery-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--tb-primary, #0d6efd);
-            box-shadow: 0 10px 15px -3px rgba(13, 110, 253, 0.1);
-        }
-        .recovery-card i {
-            font-size: 1.5rem;
-            color: var(--tb-primary, #0d6efd);
-            margin-bottom: 4px;
-        }
-        .recovery-card strong {
-            font-size: 1.05rem;
-            color: #0f172a;
-        }
-        .recovery-card span {
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-        .agent-links {
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: left;
-            margin-top: 24px;
-        }
-        .agent-links h2 {
-            font-size: 1.05rem;
-            color: #334155;
-            margin-bottom: 12px;
+
+        .cp-404-main {
+            flex: 1;
+            max-width: 860px;
+            margin: 100px auto 60px;
+            padding: 40px 24px;
+            text-align: center;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cp-404-badge {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+            background: var(--cp-primary-light);
+            color: var(--cp-primary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            border: 1px solid rgba(13, 110, 253, 0.2);
+            letter-spacing: 0.5px;
         }
-        .agent-links ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+
+        .cp-404-illustration {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            margin: 12px 0 28px;
+        }
+
+        .cp-404-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1.3;
+            color: var(--cp-text-dark);
+            margin: 0 0 16px;
+            max-width: 680px;
+        }
+
+        .cp-404-lead {
+            font-size: 1.05rem;
+            color: var(--cp-text-muted);
+            margin: 0 0 36px;
+            max-width: 580px;
+            line-height: 1.6;
+        }
+
+        .cp-404-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 640px;
         }
-        .agent-links a {
-            color: var(--tb-primary, #0d6efd);
+
+        .cp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            min-height: 48px;
+            box-sizing: border-box;
         }
-        .agent-links a:hover {
+
+        .cp-btn-primary {
+            background: var(--cp-primary);
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.3);
+        }
+
+        .cp-btn-primary:hover {
+            background: var(--cp-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        }
+
+        .cp-btn-secondary {
+            background: #ffffff;
+            color: var(--cp-primary) !important;
+            border: 1.5dp solid var(--cp-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .cp-btn-secondary:hover {
+            background: var(--cp-primary-light);
+            transform: translateY(-2px);
+        }
+
+        .cp-btn-outline {
+            background: #ffffff;
+            color: var(--cp-text-dark) !important;
+            border: 1.5dp solid var(--cp-border);
+        }
+
+        .cp-btn-outline:hover {
+            border-color: var(--cp-primary);
+            color: var(--cp-primary) !important;
+            transform: translateY(-2px);
+        }
+
+        .cp-btn-ghost {
+            background: transparent;
+            color: var(--cp-text-muted) !important;
+        }
+
+        .cp-btn-ghost:hover {
+            color: var(--cp-text-dark) !important;
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .cp-404-help {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: var(--cp-text-muted);
+        }
+
+        .cp-404-help a {
+            color: var(--cp-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .cp-404-help a:hover {
             text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .cp-404-main {
+                margin: 80px auto 40px;
+                padding: 24px 16px;
+            }
+            .cp-404-title {
+                font-size: 1.65rem;
+            }
+            .cp-404-lead {
+                font-size: 0.95rem;
+            }
+            .cp-404-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            .cp-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -168,50 +246,63 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <script src="/shared/nav-include.js"></script>
 
-<main class="error-container" id="mainContent">
-    <div class="error-badge"><i class="fa-solid fa-triangle-exclamation"></i> Error 404</div>
-    <h1>Page Not Found</h1>
-    <p class="error-lead">
-        The requested resource or page does not exist on CarryParcel. If you entered a URL manually, please verify the spelling or use the verified links below to navigate our platform.
-    </p>
-
-    <div class="recovery-grid">
-        <a href="/" class="recovery-card">
-            <i class="fa-solid fa-house"></i>
-            <strong>Homepage</strong>
-            <span>Return to the main CarryParcel portal</span>
-        </a>
-        <a href="/about/about.html" class="recovery-card">
-            <i class="fa-solid fa-circle-info"></i>
-            <strong>About Us</strong>
-            <span>Learn how CarryParcel works</span>
-        </a>
-        <a href="/support/support.html" class="recovery-card">
-            <i class="fa-solid fa-headset"></i>
-            <strong>Support Center</strong>
-            <span>Get help and answers to common questions</span>
-        </a>
-        <a href="/contact/contact.html" class="recovery-card">
-            <i class="fa-solid fa-envelope"></i>
-            <strong>Contact Team</strong>
-            <span>Reach out directly to CarryParcel support</span>
-        </a>
-        <a href="/sitemap.xml" class="recovery-card">
-            <i class="fa-solid fa-sitemap"></i>
-            <strong>XML Sitemap</strong>
-            <span>Machine-readable index of public URLs</span>
-        </a>
+<!-- ================= 404 MAIN ERROR SECTION ================= -->
+<main class="cp-404-main" id="mainContent">
+    <div class="cp-404-badge">
+        <i class="fa-solid fa-triangle-exclamation"></i> 404 &bull; PAGE NOT FOUND
     </div>
 
-    <section class="agent-links" aria-label="Agent and Machine Readable Resources">
-        <h2><i class="fa-solid fa-robot"></i> Machine-Readable &amp; Agent Discovery Resources</h2>
-        <ul>
-            <li><a href="/.well-known/mcp">/.well-known/mcp (Model Context Protocol Discovery)</a></li>
-            <li><a href="/robots.txt">/robots.txt (Crawler Directives)</a></li>
-            <li><a href="/legal/privacy.html">Privacy Policy</a></li>
-            <li><a href="/legal/terms.html">Terms &amp; Conditions</a></li>
-        </ul>
-    </section>
+    <!-- Delivery Vector Graphic -->
+    <svg class="cp-404-illustration" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parcel delivery route 404 illustration">
+        <!-- Dashed Delivery Route Path -->
+        <path d="M 30 150 Q 90 70, 160 140 T 290 80" stroke="#0d6efd" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" opacity="0.6"/>
+
+        <!-- Start Location Node -->
+        <circle cx="30" cy="150" r="10" fill="#0d6efd" fill-opacity="0.15" stroke="#0d6efd" stroke-width="3"/>
+        <circle cx="30" cy="150" r="4" fill="#0d6efd"/>
+
+        <!-- CarryParcel Delivery Box -->
+        <g transform="translate(130, 95)">
+            <rect x="0" y="0" width="60" height="50" rx="8" fill="#ffffff" stroke="#0d6efd" stroke-width="3" filter="drop-shadow(0px 8px 16px rgba(13,110,253,0.15))"/>
+            <!-- Box Flap Lines -->
+            <path d="M 0 15 L 30 30 L 60 15" stroke="#0d6efd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 30 30 L 30 50" stroke="#0d6efd" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Tape Seal -->
+            <rect x="22" y="10" width="16" height="22" rx="2" fill="#0d6efd" fill-opacity="0.15" stroke="#0d6efd" stroke-width="1.5"/>
+        </g>
+
+        <!-- Broken/Misplaced Location Pin -->
+        <g transform="translate(270, 50)">
+            <path d="M 20 0 C 8.95 0 0 8.95 0 20 C 0 35 20 50 20 50 C 20 50 40 35 40 20 C 40 8.95 31.05 0 20 0 Z" fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-width="3"/>
+            <circle cx="20" cy="20" r="7" fill="#ef4444"/>
+            <!-- Small Question Mark / Exclamation -->
+            <path d="M 32 8 L 44 20 M 44 8 L 32 20" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+    </svg>
+
+    <h1 class="cp-404-title">Oops! This page seems to have gone on a different delivery route.</h1>
+    <p class="cp-404-lead">
+        The page you're looking for may have moved, been removed, or is currently unavailable. Let's get your journey back on track.
+    </p>
+
+    <div class="cp-404-actions">
+        <a href="/" class="cp-btn cp-btn-primary">
+            <i class="fa-solid fa-house"></i> Back to Homepage
+        </a>
+        <a href="/user-dashboard/overview.html" class="cp-btn cp-btn-secondary">
+            <i class="fa-solid fa-gauge-high"></i> Go to User Dashboard
+        </a>
+        <a href="/support/support.html" class="cp-btn cp-btn-outline">
+            <i class="fa-solid fa-headset"></i> Contact Support
+        </a>
+        <button type="button" class="cp-btn cp-btn-ghost" onclick="if(history.length > 1){history.back();}else{location.href='/';}">
+            <i class="fa-solid fa-arrow-left"></i> Go Back
+        </button>
+    </div>
+
+    <div class="cp-404-help">
+        Need assistance with a parcel or trip? <a href="/support/support.html">Visit our Help Center</a> or <a href="/contact/contact.html">contact CarryParcel Support</a>.
+    </div>
 </main>
 
 <div id="tbFooterInclude"></div>
@@ -228,7 +319,7 @@
 
                 <div class="footer-socials" aria-label="Social media links">
                     <a href="https://www.facebook.com/profile.php?id=61594495887862" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-<a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/carryparcel.in/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://www.linkedin.com/company/carryparcel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
             </div>

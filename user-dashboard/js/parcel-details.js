@@ -62,7 +62,7 @@
   const verificationSuccessOverlay = () => ui('verificationSuccessOverlay');
 
   const profileModal = () => ui('profileModal');
-  const profileModalClose = () => ui('profileModalClose');
+  const profileModalClose = () => ui('publicProfileModalClose');
   const locationChangeModal = () => ui('locationChangeModal');
   const locationChangeModalClose = () => ui('locationChangeModalClose');
   const chosenLocationText = () => ui('chosenLocationText');

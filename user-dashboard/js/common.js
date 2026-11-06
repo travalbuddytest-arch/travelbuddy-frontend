@@ -225,11 +225,13 @@
   }
 
   function authHeaders() {
+    const token = getAuthToken() || parseStoredUser()?.token;
     const headers = {
       'Content-Type': 'application/json',
     };
-    // Security: Token is now handled by HttpOnly secure cookies via {credentials: 'include'}.
-    // We no longer manually send the Authorization header from localStorage on the web.
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     return headers;
   }
 
@@ -1328,7 +1330,7 @@
     overlay.id = 'profileModalOverlay';
     overlay.innerHTML = `
       <div class="modal-card profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
-        <button class="modal-close" id="profileModalClose" aria-label="Close">
+        <button class="modal-close" id="myProfileModalClose" aria-label="Close">
           <i class="fa-solid fa-xmark"></i>
         </button>
 
@@ -1404,9 +1406,12 @@
     overlay.querySelector('#profilePhotoInput')?.addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       if (!f) return;
-      const allowed = ['image/jpeg', 'image/png'];
-      if (!allowed.includes(f.type)) {
-        showToast('Invalid image format\nPlease upload a JPG, JPEG, or PNG image.', 'error');
+      const mime = (f.type || '').toLowerCase();
+      const ext = (f.name || '').split('.').pop().toLowerCase();
+      const isAllowedMime = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(mime);
+      const isAllowedExt = ['jpg', 'jpeg', 'png', 'webp'].includes(ext);
+      if (!isAllowedMime && !isAllowedExt) {
+        showToast('Invalid image format\nPlease upload a JPG, JPEG, PNG, or WEBP image.', 'error');
         e.target.value = '';
         return;
       }
@@ -1449,7 +1454,7 @@
     const phone = (phInput && phInput.value.trim()) || u.phone || '';
 
     const payload = { firstName, lastName, phone, profilePhoto };
-    const res = await fetch(`${API_ORIGIN}/api/auth/me`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(payload) });
+    const res = await fetch(`${API_ORIGIN}/api/auth/me`, authFetchOptions({ method: 'PUT', body: JSON.stringify(payload) }));
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Could not save profile photo.');
 
@@ -1575,22 +1580,25 @@
     const overlay = document.getElementById('profileModalOverlay');
     if (!overlay) return;
 
-    // Scoped close button click handler
-    overlay.querySelector('#profileModalClose')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      closeProfileModal();
-    });
-
-    // Backdrop click handler
+    // Scoped close button and backdrop click handler
     overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) closeProfileModal();
+      const closeBtn = e.target.closest('.modal-close, #myProfileModalClose, #profileModalClose');
+      if (closeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeProfileModal();
+        return;
+      }
+      if (e.target === overlay) {
+        closeProfileModal();
+      }
     });
 
     // Delegated tab switching
     overlay.querySelector('.profile-tabs')?.addEventListener('click', (e) => {
       const tabBtn = e.target.closest('[data-profile-tab]');
       if (tabBtn) {
+        e.preventDefault();
         setProfileTab(tabBtn.dataset.profileTab);
       }
     });
@@ -1614,11 +1622,10 @@
 
       setButtonLoading(submitBtn, true);
       try {
-        const res = await fetch(`${API_ORIGIN}/api/auth/me`, {
+        const res = await fetch(`${API_ORIGIN}/api/auth/me`, authFetchOptions({
           method: 'PUT',
-          headers: authHeaders(),
           body: JSON.stringify(payload),
-        });
+        }));
         const data = await parseJsonSafe(res);
         if (!res.ok) {
           showToast(data.error || 'Could not update profile.', 'error');
@@ -1652,11 +1659,10 @@
 
       setButtonLoading(submitBtn, true);
       try {
-        const res = await fetch(`${API_ORIGIN}/api/auth/me/password`, {
+        const res = await fetch(`${API_ORIGIN}/api/auth/me/password`, authFetchOptions({
           method: 'PUT',
-          headers: authHeaders(),
           body: JSON.stringify({ currentPassword, newPassword }),
-        });
+        }));
         const data = await parseJsonSafe(res);
         if (!res.ok) {
           showToast(data.error || requestErrorMessage(res.status, 'Could not change password.'), 'error');
