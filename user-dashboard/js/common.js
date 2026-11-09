@@ -153,6 +153,22 @@
       }
     });
 
+    // Delegated event listener on body as fail-safe for dynamically injected topbars
+    document.body.addEventListener('click', (e) => {
+      const link = e.target.closest('#userMenu a, #userMenu button, .user-menu a, .user-menu button');
+      if (!link) return;
+      const text = link.textContent.trim().toLowerCase();
+      if (text.includes('my profile')) {
+        e.preventDefault();
+        closeUserMenu();
+        openProfileModal('profile');
+      } else if (text.includes('settings')) {
+        e.preventDefault();
+        closeUserMenu();
+        openProfileModal('settings');
+      }
+    });
+
     const userMenu = document.getElementById('userMenu');
     if (userMenu && !userMenu.querySelector('.privacy-toggle-btn')) {
        const hr = userMenu.querySelector('hr');
@@ -530,6 +546,7 @@
     parseStoredUser,
     saveStoredUser,
     personalizeUser,
+    attachRipple,
     openProfileModal,
     closeProfileModal
   });
@@ -629,6 +646,34 @@
 
   window.CarryParcel.parseJsonSafe = parseJsonSafe;
   window.CarryParcel.requestErrorMessage = requestErrorMessage;
+
+  /**
+   * Safe standalone ripple binder for programmatic attachments.
+   */
+  function attachRipple(button) {
+    if (!button || !(button instanceof Element)) return;
+    if (button.dataset.hasRippleAttached) return;
+    button.dataset.hasRippleAttached = 'true';
+
+    button.addEventListener('click', function (e) {
+      if (button.classList.contains('btn-loading') || button.disabled) return;
+      const rect = button.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      const size = Math.max(rect.width, rect.height);
+
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+
+      const x = e.clientX > 0 ? (e.clientX - rect.left) : (rect.width / 2);
+      const y = e.clientY > 0 ? (e.clientY - rect.top) : (rect.height / 2);
+
+      ripple.style.left = (x - size / 2) + 'px';
+      ripple.style.top = (y - size / 2) + 'px';
+
+      button.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  }
 
   /**
    * Universal Ripple Effect with Event Delegation.
@@ -1399,8 +1444,10 @@
     `;
 
     document.body.appendChild(overlay);
-    attachRipple(overlay.querySelector('#dashboardProfileForm .btn-primary'));
-    attachRipple(overlay.querySelector('#dashboardPasswordForm .btn-primary'));
+    const profileSubmitBtn = overlay.querySelector('#dashboardProfileForm .btn-primary');
+    if (profileSubmitBtn) attachRipple(profileSubmitBtn);
+    const passwordSubmitBtn = overlay.querySelector('#dashboardPasswordForm .btn-primary');
+    if (passwordSubmitBtn) attachRipple(passwordSubmitBtn);
     bindProfileModal();
 
     overlay.querySelector('#profilePhotoInput')?.addEventListener('change', async (e) => {
@@ -1578,7 +1625,8 @@
 
   function bindProfileModal() {
     const overlay = document.getElementById('profileModalOverlay');
-    if (!overlay) return;
+    if (!overlay || overlay.dataset.bound === 'true') return;
+    overlay.dataset.bound = 'true';
 
     // Scoped close button and backdrop click handler
     overlay.addEventListener('click', (e) => {
