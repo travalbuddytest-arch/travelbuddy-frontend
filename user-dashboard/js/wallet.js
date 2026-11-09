@@ -271,6 +271,30 @@
     addMoneyAmount.value = topupParam;
   }
 
+  async function checkFeatureFlags() {
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/config/feature-flags`);
+      const data = await res.json();
+      if (data && data.walletTransactionsEnabled === false) {
+        const pauseMsg = data.walletTransactionsPausedMessage || "Wallet transactions are temporarily paused. Please check back when services resume.";
+        const bannerHtml = `<div class="alert alert-warning mb-4" id="walletPausedBanner" style="background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 1rem; border-radius: 12px; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.75rem;"><i class="fa-solid fa-triangle-exclamation" style="font-size: 1.25rem;"></i><span>${escapeHTML(pauseMsg)}</span></div>`;
+
+        const walletHeader = document.querySelector('.wallet-header') || document.querySelector('main');
+        if (walletHeader && !document.getElementById('walletPausedBanner')) {
+          walletHeader.insertAdjacentHTML('afterbegin', bannerHtml);
+        }
+
+        if (openAddMoneyBtn) {
+          openAddMoneyBtn.disabled = true;
+          openAddMoneyBtn.innerHTML = `<i class="fa-solid fa-ban me-2"></i>Add Money Paused`;
+        }
+      }
+    } catch (e) {
+      console.error('Wallet feature flags check failed:', e);
+    }
+  }
+
+  checkFeatureFlags();
   loadWalletSummary();
   loadTransactions();
 })();

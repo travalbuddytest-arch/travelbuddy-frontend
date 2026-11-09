@@ -479,6 +479,30 @@
     routeRecPanel.classList.remove('hidden');
   }
 
+  async function checkFeatureFlags() {
+    try {
+      const res = await fetch(`${API_ORIGIN}/api/config/feature-flags`);
+      const data = await res.json();
+      if (data && data.parcelPostingEnabled === false) {
+        const pauseMsg = data.parcelPostingPausedMessage || "Parcel posting is temporarily paused. We'll notify you when this feature resumes.";
+        const bannerHtml = `<div class="alert alert-warning mb-4" id="pausedBanner" style="background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 1rem; border-radius: 12px; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.75rem;"><i class="fa-solid fa-triangle-exclamation" style="font-size: 1.25rem;"></i><span>${escapeHTML(pauseMsg)}</span></div>`;
+
+        const cardHeader = document.querySelector('.wizard-container') || document.querySelector('.card-header') || document.querySelector('main');
+        if (cardHeader && !document.getElementById('pausedBanner')) {
+          cardHeader.insertAdjacentHTML('afterbegin', bannerHtml);
+        }
+
+        if (postSubmitFinalBtn) {
+          postSubmitFinalBtn.disabled = true;
+          postSubmitFinalBtn.innerHTML = `<i class="fa-solid fa-ban"></i> Parcel Posting Paused`;
+        }
+      }
+    } catch (e) {
+      console.error('Feature flags check failed:', e);
+    }
+  }
+
+  checkFeatureFlags();
   if (editParcelId) loadParcelForEdit();
   else checkWalletStatus();
 })();
