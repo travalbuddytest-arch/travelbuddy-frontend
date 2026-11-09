@@ -337,6 +337,16 @@ async function loadWallet() {
     const data = await apiGet(`/api/admin/wallet-transactions?${buildQuery()}`);
     const { transactions, total, summary: summ, recent } = data;
 
+    const modeBadge = document.getElementById('adminPaymentModeBadge');
+    if (modeBadge) {
+      const mode = (data.paymentGatewayMode || 'test').toUpperCase();
+      const isLive = mode === 'LIVE';
+      modeBadge.style.background = isLive ? 'rgba(18, 183, 106, 0.15)' : 'rgba(247, 144, 9, 0.15)';
+      modeBadge.style.color = isLive ? '#12b76a' : '#f79009';
+      modeBadge.style.border = `1px solid ${isLive ? '#12b76a' : '#f79009'}`;
+      modeBadge.innerHTML = `<i class="fa-solid ${isLive ? 'fa-shield-halved' : 'fa-vial'}"></i> ${mode} MODE${data.paymentsPaused ? ' (PAUSED)' : ''}`;
+    }
+
     if (summary && summ) {
       summary.innerHTML = `
         <div class="metric-card">

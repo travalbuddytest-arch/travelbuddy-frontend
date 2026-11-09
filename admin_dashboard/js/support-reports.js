@@ -124,7 +124,8 @@
 
     // Socket Connection
     function connectSocket() {
-        const socketInstance = window.TravelBuddySocket?.admin;
+        const client = window.CarryParcelSocket || window.TravelBuddySocket;
+        const socketInstance = client?.admin || client?.connect?.('/admin');
         if (!socketInstance) return;
 
         supportSocket = socketInstance;

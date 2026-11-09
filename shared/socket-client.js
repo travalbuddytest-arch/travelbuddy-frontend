@@ -146,5 +146,6 @@
   }
 
   window.CarryParcelSocket = new SocketClient();
+  window.TravelBuddySocket = window.CarryParcelSocket;
 
 })();

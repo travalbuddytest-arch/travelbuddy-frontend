@@ -106,17 +106,17 @@
 
             <div class="panel">
               <div class="panel-head">
-                <h2>Razorpay Test Payment</h2>
-                <p class="panel-sub">Create a test order and pay through Razorpay's test mode checkout.</p>
+                <h2>Razorpay Payment Gateway</h2>
+                <p class="panel-sub">Create a payment order and complete checkout securely.</p>
               </div>
               <form class="sandbox-form" id="razorpayPaymentForm">
                 <div class="field">
-                  <label for="testAmount">Test amount</label>
+                  <label for="testAmount">Payment amount (₹)</label>
                   <input type="number" id="testAmount" min="1" step="0.01" value="10" required />
                   <p class="field-hint"><i class="fa-solid fa-circle-info"></i> CarryParcel platform fee is included in this amount.</p>
                 </div>
                 <button class="btn-primary" type="submit" id="payNowBtn">
-                  <span class="btn-label"><i class="fa-solid fa-credit-card"></i> Pay in Test Mode</span>
+                  <span class="btn-label"><i class="fa-solid fa-credit-card"></i> Pay via Razorpay</span>
                   <span class="spinner" aria-hidden="true"></span>
                 </button>
               </form>

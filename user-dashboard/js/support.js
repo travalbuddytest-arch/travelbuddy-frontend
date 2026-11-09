@@ -265,25 +265,39 @@
     }
   }
 
-  function renderThreadMessages(messages) {
+  let renderedMessageIds = new Set();
+
+  function appendSingleMessage(m) {
     if (!ticketMessagesContainer) return;
+    const msgId = m._id || m.id || `${m.senderType}_${m.createdAt}_${(m.content || '').slice(0, 15)}`;
+    if (renderedMessageIds.has(msgId)) return;
+    renderedMessageIds.add(msgId);
 
-    ticketMessagesContainer.innerHTML = messages.map(m => {
-      const isUser = m.senderType === 'user';
-      return `
-        <div class="ticket-msg-bubble ${isUser ? 'is-user' : 'is-support'}">
-          <span style="font-size:10.5px; opacity:0.8; display:block; margin-bottom:2px; font-weight:700;">
-            ${isUser ? 'You' : 'CarryParcel Support Team'}
-          </span>
-          ${escapeHTML(m.content)}
-        </div>
-      `;
-    }).join('');
-
+    const isUser = m.senderType === 'user';
+    const div = document.createElement('div');
+    div.className = `ticket-msg-bubble ${isUser ? 'is-user' : 'is-support'}`;
+    div.dataset.msgId = msgId;
+    div.innerHTML = `
+      <span style="font-size:10.5px; opacity:0.8; display:block; margin-bottom:2px; font-weight:700;">
+        ${isUser ? 'You' : 'CarryParcel Support Team'}
+      </span>
+      ${escapeHTML(m.content || m.message || '')}
+    `;
+    ticketMessagesContainer.appendChild(div);
     ticketMessagesContainer.scrollTop = ticketMessagesContainer.scrollHeight;
   }
 
-  ticketThreadClose?.addEventListener('click', () => ticketThreadModal.classList.add('hidden'));
+  function renderThreadMessages(messages) {
+    if (!ticketMessagesContainer) return;
+    ticketMessagesContainer.innerHTML = '';
+    renderedMessageIds.clear();
+    messages.forEach(appendSingleMessage);
+  }
+
+  ticketThreadClose?.addEventListener('click', () => {
+    ticketThreadModal.classList.add('hidden');
+    currentActiveTicket = null;
+  });
 
   if (replyTicketForm) {
     replyTicketForm.addEventListener('submit', async (e) => {
@@ -303,7 +317,11 @@
 
         if (res.ok) {
           replyTicketInput.value = '';
-          openTicketThread(currentActiveTicket._id);
+          if (data.message) {
+            appendSingleMessage(data.message);
+          } else {
+            openTicketThread(currentActiveTicket._id);
+          }
         } else {
           window.showToast(data.error || 'Failed to send reply.', 'error');
         }
@@ -314,6 +332,31 @@
     });
   }
 
+  // ---------------- Real-Time Socket Connection ----------------
+  function initSupportSocket() {
+    const client = window.CarryParcelSocket || window.TravelBuddySocket;
+    if (!client) return;
+
+    const socket = client.root || client.connect('/');
+    if (!socket) return;
+
+    socket.off('support:message', handleSupportMessage);
+    socket.on('support:message', handleSupportMessage);
+  }
+
+  function handleSupportMessage(data) {
+    if (!data) return;
+    const targetTicketId = String(data.ticket || data.ticketId || data.conversation || data.conversationId || '');
+
+    if (currentActiveTicket && String(currentActiveTicket._id) === targetTicketId && !ticketThreadModal.classList.contains('hidden')) {
+      appendSingleMessage(data);
+    }
+
+    // Refresh tickets table in background to update last message time / status
+    loadTickets();
+  }
+
   loadFaqs();
   loadTickets();
+  initSupportSocket();
 })();

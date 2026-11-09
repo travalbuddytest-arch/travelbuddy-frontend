@@ -333,6 +333,30 @@
     }
   });
 
+  // Real-time support message listener for human agent responses during handoff
+  function initAiSocket() {
+    const client = window.CarryParcelSocket || window.TravelBuddySocket;
+    if (!client) return;
+    const socket = client.root || client.connect('/');
+    if (!socket) return;
+
+    socket.off('support:message', handleLiveSupportMessage);
+    socket.on('support:message', handleLiveSupportMessage);
+  }
+
+  function handleLiveSupportMessage(data) {
+    if (!data) return;
+    const isSupportAgent = data.senderType === 'support' || data.senderType === 'agent' || data.senderType === 'admin';
+    if (!isSupportAgent) return;
+
+    const agentContent = data.content || data.message || '';
+    if (agentContent) {
+      addMessage(agentContent, 'bot');
+    }
+  }
+
+  initAiSocket();
+
   window.TBAiAssistant = window.TBAiAssistant || {
     open: function () {
       isOpen = true;
