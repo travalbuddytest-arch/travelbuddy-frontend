@@ -12,7 +12,20 @@ async function apiGet(url) {
   return data;
 }
 
+async function apiPatch(url, body) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-CP-Admin-Request': 'true'
+  };
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PATCH', headers, credentials: 'include', body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, data };
+  return data;
+}
+
 let currentPage = 1;
+let currentReports = [];
+let activeReport = null;
 
 export default function initReportsDisputes() {
   const el = document.getElementById('disputes-list');
@@ -26,7 +39,59 @@ function wireEvents() {
   document.getElementById('refreshDisputes')?.addEventListener('click', loadDisputes);
   document.getElementById('disputeStatusFilter')?.addEventListener('change', () => { currentPage = 1; loadDisputes(); });
   document.getElementById('disputeTypeFilter')?.addEventListener('change', () => { currentPage = 1; loadDisputes(); });
+
+  const modal = document.getElementById('reportResolveModal');
+  const closeBtn = document.getElementById('reportResolveClose');
+  const cancelBtn = document.getElementById('reportResolveCancel');
+  const form = document.getElementById('reportResolveForm');
+
+  const closeModal = () => modal?.classList.remove('show');
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!activeReport) return;
+    const status = document.getElementById('reportResolveStatus').value;
+    const adminNotes = document.getElementById('reportResolveNotes').value.trim();
+
+    try {
+      await apiPatch(`/api/admin/reports/${activeReport._id}`, { status, adminNotes });
+      if (window.showToast) window.showToast('Report updated successfully');
+      closeModal();
+      loadDisputes();
+    } catch (err) {
+      if (window.showToast) window.showToast('Failed to update report', 'error');
+    }
+  });
 }
+
+window.openReportResolveModal = function(reportId) {
+  const r = currentReports.find(item => String(item._id) === String(reportId));
+  if (!r) return;
+  activeReport = r;
+
+  const modal = document.getElementById('reportResolveModal');
+  const body = document.getElementById('reportResolveBody');
+  const statusSelect = document.getElementById('reportResolveStatus');
+  const notesInput = document.getElementById('reportResolveNotes');
+
+  if (statusSelect) statusSelect.value = r.status === 'open' ? 'resolved' : r.status;
+  if (notesInput) notesInput.value = r.adminNotes || '';
+
+  if (body) {
+    const reporter = r.fromUser ? `${r.fromUser.firstName || ''} ${r.fromUser.lastName || ''}`.trim() : 'Unknown';
+    body.innerHTML = `
+      <div style="font-size:12px; margin-bottom: 8px;"><strong>Reporter:</strong> ${esc(reporter)} (${esc(r.fromUser?.email || '')})</div>
+      <div style="font-size:12px; margin-bottom: 8px;"><strong>Type:</strong> <span class="status-tag info">${esc(r.targetType)}</span> ${r.targetParcelId?.orderId ? `(${esc(r.targetParcelId.orderId)})` : ''}</div>
+      <div style="font-size:12px; margin-bottom: 8px;"><strong>Reason:</strong> ${esc(r.reason)}</div>
+      ${r.description ? `<div style="font-size:11px; color:#64748b; background:#f8fafc; padding:8px; border-radius:6px; margin-bottom:8px;">${esc(r.description)}</div>` : ''}
+    `;
+  }
+
+  modal?.classList.add('show');
+};
 
 async function loadDisputes() {
   const tbody = document.getElementById('disputes-list');
@@ -43,15 +108,16 @@ async function loadDisputes() {
     if (type !== 'all') url += `&targetType=${type}`;
 
     const data = await apiGet(url);
-    const { reports, total } = data;
+    currentReports = data.reports || [];
+    const { total } = data;
 
-    if (!reports || reports.length === 0) {
+    if (!currentReports || currentReports.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#98a2b3">No reports or disputes found.</td></tr>`;
       if (pagi) pagi.innerHTML = '';
       return;
     }
 
-    tbody.innerHTML = reports.map(r => `
+    tbody.innerHTML = currentReports.map(r => `
       <tr>
         <td style="font-size:12px;color:var(--text-muted)">${formatDateShort(r.createdAt)}</td>
         <td>
@@ -68,7 +134,7 @@ async function loadDisputes() {
           <div class="row-actions">
             <button class="btn sm secondary" onclick="window.fetchUserDetail('${r.fromUser?._id}')">Reporter</button>
             <button class="btn sm secondary" onclick="window.fetchUserDetail('${r.targetUserId?._id || r.targetParcelId?.sender}')">Target</button>
-            <button class="btn sm primary" onclick="alert('Case review opened.')">Resolve</button>
+            <button class="btn sm primary" onclick="window.openReportResolveModal('${r._id}')">Resolve</button>
           </div>
         </td>
       </tr>

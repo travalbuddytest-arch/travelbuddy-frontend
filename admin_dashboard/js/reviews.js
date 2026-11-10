@@ -12,6 +12,17 @@ async function apiGet(url) {
   return data;
 }
 
+async function apiPatch(url, body) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-CP-Admin-Request': 'true'
+  };
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'PATCH', headers, credentials: 'include', body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, data };
+  return data;
+}
+
 let currentPage = 1;
 
 export default function initReviews() {
@@ -27,6 +38,19 @@ function wireEvents() {
   document.getElementById('reviewScoreFilter')?.addEventListener('change', () => { currentPage = 1; loadReviews(); });
   document.getElementById('reviewUserSearch')?.addEventListener('input', debounce(() => { currentPage = 1; loadReviews(); }, 400));
 }
+
+window.flagReview = async (reviewId) => {
+  const reason = prompt('Enter flag reason for review moderation:');
+  if (reason === null) return;
+
+  try {
+    await apiPatch(`/api/admin/reviews/${reviewId}/flag`, { isFlagged: true, reason });
+    if (window.showToast) window.showToast('Review flagged for investigation');
+    loadReviews();
+  } catch (err) {
+    if (window.showToast) window.showToast('Could not flag review', 'error');
+  }
+};
 
 async function loadReviews() {
   const tbody = document.getElementById('reviews-list');
@@ -55,7 +79,7 @@ async function loadReviews() {
     }
 
     tbody.innerHTML = reviews.map(r => `
-      <tr>
+      <tr class="${r.isFlagged ? 'unread-row' : ''}">
         <td style="font-size:12px;color:var(--text-muted)">${formatDateShort(r.createdAt)}</td>
         <td>
           <strong style="display:block">${esc(r.fromUserId?.firstName)} ${esc(r.fromUserId?.lastName)}</strong>
@@ -65,12 +89,15 @@ async function loadReviews() {
           <strong style="display:block">${esc(r.targetUserId?.firstName)} ${esc(r.targetUserId?.lastName)}</strong>
           <small style="color:var(--text-faint)">${esc(r.targetUserId?.email)}</small>
         </td>
-        <td><strong style="color:#F59E0B">★ ${r.score.toFixed(1)}</strong></td>
+        <td>
+          <strong style="color:#F59E0B">★ ${r.score.toFixed(1)}</strong>
+          ${r.isFlagged ? '<span class="status-tag danger" style="margin-left:4px">Flagged</span>' : ''}
+        </td>
         <td style="font-size:13px;max-width:300px;white-space:normal">${esc(r.comment || '—')}</td>
         <td>
           <div class="row-actions">
             <button class="btn sm secondary" onclick="window.fetchUserDetail('${r.targetUserId?._id}')">Review Receiver</button>
-            <button class="btn sm danger" title="Flag review" onclick="alert('Review flagged for investigation.')"><i class="fa-solid fa-flag"></i></button>
+            <button class="btn sm danger" title="Flag review" onclick="window.flagReview('${r._id}')"><i class="fa-solid fa-flag"></i></button>
           </div>
         </td>
       </tr>

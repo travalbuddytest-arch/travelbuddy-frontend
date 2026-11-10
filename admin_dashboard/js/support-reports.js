@@ -243,12 +243,16 @@
         currentTicketId = null;
     });
 
+    window.initSupportReports = function() {
+        loadReports();
+    };
+
     // Initial Load
     loadReports();
     connectSocket();
 
     // Filter listeners
-    document.getElementById('report-status-filter').addEventListener('change', loadReports);
-    document.getElementById('report-type-filter').addEventListener('change', loadReports);
-    document.getElementById('ticket-status-filter').addEventListener('change', loadTickets);
+    document.getElementById('report-status-filter')?.addEventListener('change', loadReports);
+    document.getElementById('report-type-filter')?.addEventListener('change', loadReports);
+    document.getElementById('ticket-status-filter')?.addEventListener('change', loadTickets);
 })();

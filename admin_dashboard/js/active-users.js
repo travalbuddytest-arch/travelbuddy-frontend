@@ -319,4 +319,5 @@ function renderPagination() {
   $$('#auPagination button[data-p]').forEach(b => b.addEventListener('click', () => { state.page = Number(b.dataset.p); loadList(); }));
 }
 
+window.initActiveUsers = initActiveUsers;
 try { initActiveUsers(); } catch (e) { console.warn('active-users init failed', e); }

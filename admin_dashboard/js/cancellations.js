@@ -180,4 +180,5 @@ function escHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+window.initCancellations = initCancellations;
 try { initCancellations(); } catch (e) { console.warn('cancellations init failed', e); }

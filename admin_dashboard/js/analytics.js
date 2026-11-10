@@ -97,4 +97,5 @@ function renderBarChart(container, data, valueKey, label) {
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+window.initAnalytics = initAnalytics;
 try { initAnalytics(); } catch (e) { console.warn('analytics init failed', e); }

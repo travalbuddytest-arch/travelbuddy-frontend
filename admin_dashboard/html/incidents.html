@@ -43,6 +43,41 @@
     </div>
 </div>
 
+<!-- Manual Incident Modal -->
+<div class="modal" id="incidentModal">
+    <div class="admin-profile-box" style="width: 500px;">
+        <button class="admin-profile-close" id="incidentModalClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        <h3>Manual Flag Incident</h3>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 15px;">Create a new incident report for investigation.</p>
+        <form id="incidentForm">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px;">Target Type</label>
+                <select id="incidentTargetType" class="pc-select" style="width: 100%;">
+                    <option value="parcel">Parcel</option>
+                    <option value="user">User</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px;">Target Parcel ID / User ID</label>
+                <input type="text" id="incidentTargetId" class="pc-filter-input" style="width: 100%;" placeholder="e.g. Mongo ID or Order ID">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px;">Issue / Reason</label>
+                <input type="text" id="incidentReason" class="pc-filter-input" style="width: 100%;" placeholder="e.g. Suspected Theft, Lost Package" required>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px;">Description</label>
+                <textarea id="incidentDescription" class="pc-filter-input" style="width: 100%; height: 80px; padding: 8px;" placeholder="Details about the incident..."></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" class="btn secondary sm" id="incidentCancel">Cancel</button>
+                <button type="submit" class="btn primary sm" id="incidentSubmit">Create Incident</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <link rel="stylesheet" href="../css/support-reports.css">
 <script src="../../shared/vendor/jspdf.umd.min.js"></script>
 <script type="module" src="../js/incidents.js"></script>

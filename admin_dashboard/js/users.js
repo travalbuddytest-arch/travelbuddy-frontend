@@ -300,9 +300,97 @@ async function loadHighRisk() {
 async function loadAnalytics() {
   try {
     const d = await api('/api/admin/users/analytics');
-    // Simplified rendering for brevity
-    $('#usChartDaily').innerHTML = '<p>Daily data loaded</p>';
-  } catch (e) {}
+
+    // Daily Registrations Chart
+    const daily = d.dailyRegistrations || [];
+    const dailyEl = $('#usChartDaily');
+    if (dailyEl) {
+      if (!daily.length) {
+        dailyEl.innerHTML = '<p class="us-empty-sm">No daily registration data.</p>';
+      } else {
+        const max = Math.max(...daily.map(x => x.count), 1);
+        dailyEl.innerHTML = daily.map(x => {
+          const pct = Math.round((x.count / max) * 100);
+          return `<div class="us-chart-col" title="${x.date}: ${x.count} registrations"><i class="bar" style="height:${pct}%"></i><span>${x.date.slice(5)}</span></div>`;
+        }).join('');
+      }
+    }
+
+    // Monthly Growth Chart
+    const monthly = d.monthlyGrowth || [];
+    const monthlyEl = $('#usChartMonthly');
+    if (monthlyEl) {
+      if (!monthly.length) {
+        monthlyEl.innerHTML = '<p class="us-empty-sm">No monthly data.</p>';
+      } else {
+        const max = Math.max(...monthly.map(x => x.count), 1);
+        monthlyEl.innerHTML = monthly.map(x => {
+          const pct = Math.round((x.count / max) * 100);
+          return `<div class="us-chart-col" title="${x.month}: ${x.count} signups"><i class="bar" style="height:${pct}%;background:var(--p)"></i><span>${x.month}</span></div>`;
+        }).join('');
+      }
+    }
+
+    // Role Distribution
+    const roles = d.roleDistribution || {};
+    const rolesEl = $('#usChartRoles');
+    if (rolesEl) {
+      rolesEl.innerHTML = `
+        <div class="us-stat-list">
+          <div class="stat-bar"><span>Senders Only</span><b>${roles.sendersOnly || 0}</b></div>
+          <div class="stat-bar"><span>Travelers Only</span><b>${roles.travelersOnly || 0}</b></div>
+          <div class="stat-bar"><span>Both</span><b>${roles.both || 0}</b></div>
+        </div>
+      `;
+    }
+
+    // Verification Distribution
+    const verif = d.verificationDistribution || {};
+    const verifEl = $('#usChartVerification');
+    if (verifEl) {
+      verifEl.innerHTML = `
+        <div class="us-stat-list">
+          <div class="stat-bar"><span>Verified</span><b>${verif.verified || 0}</b></div>
+          <div class="stat-bar"><span>Pending</span><b>${verif.pending || 0}</b></div>
+          <div class="stat-bar"><span>Rejected</span><b>${verif.rejected || 0}</b></div>
+          <div class="stat-bar"><span>Not Submitted</span><b>${verif.not_submitted || 0}</b></div>
+        </div>
+      `;
+    }
+
+    // Active vs Inactive
+    const act = d.activeVsInactive || {};
+    const actEl = $('#usChartActive');
+    if (actEl) {
+      actEl.innerHTML = `
+        <div class="us-stat-list">
+          <div class="stat-bar"><span>Active (30d)</span><b class="green">${act.active || 0}</b></div>
+          <div class="stat-bar"><span>Inactive</span><b class="muted">${act.inactive || 0}</b></div>
+        </div>
+      `;
+    }
+
+    // Top Travelers
+    const travs = d.topTravelers || [];
+    const travsEl = $('#usTopTravelers');
+    if (travsEl) {
+      travsEl.innerHTML = travs.length
+        ? travs.map(t => `<div class="us-rank-row"><span>${esc(t.name)}</span><b>${t.deliveries} deliveries</b><small>₹${((t.earnings||0)/100).toLocaleString('en-IN')}</small></div>`).join('')
+        : '<p class="us-empty-sm">No traveler data</p>';
+    }
+
+    // Top Senders
+    const senders = d.topSenders || [];
+    const sendersEl = $('#usTopSenders');
+    if (sendersEl) {
+      sendersEl.innerHTML = senders.length
+        ? senders.map(s => `<div class="us-rank-row"><span>${esc(s.name)}</span><b>${s.parcels} parcels</b></div>`).join('')
+        : '<p class="us-empty-sm">No sender data</p>';
+    }
+  } catch (e) {
+    console.warn('User analytics load failed', e);
+  }
 }
 
+window.initUsers = initUsers;
 try { initUsers(); } catch (e) { console.warn('users init failed', e); }

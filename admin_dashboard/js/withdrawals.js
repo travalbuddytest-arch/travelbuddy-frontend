@@ -13,6 +13,7 @@ async function apiGet(url) {
 }
 
 let currentPage = 1;
+let searchDebounce = null;
 
 export default function initWithdrawals() {
   const el = document.getElementById('withdrawals-list');
@@ -28,6 +29,13 @@ function wireEvents() {
     currentPage = 1;
     loadWithdrawals();
   });
+  document.getElementById('withdrawalSearch')?.addEventListener('input', (e) => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => {
+      currentPage = 1;
+      loadWithdrawals();
+    }, 350);
+  });
 }
 
 async function loadWithdrawals() {
@@ -39,8 +47,10 @@ async function loadWithdrawals() {
 
   try {
     const status = document.getElementById('withdrawalStatusFilter')?.value || 'pending';
+    const search = document.getElementById('withdrawalSearch')?.value.trim() || '';
     let url = `/api/admin/withdrawals?page=${currentPage}&limit=20`;
     if (status !== 'all') url += `&status=${status}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
 
     const data = await apiGet(url);
     const { withdrawals, total } = data;

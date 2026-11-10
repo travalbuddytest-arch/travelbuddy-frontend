@@ -686,4 +686,5 @@ export default function initParcels() {
 }
 
 // Auto-init
+window.initParcels = initParcels;
 try { initParcels(); } catch(e) { console.warn('parcels init failed', e); }

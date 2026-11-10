@@ -14,6 +14,17 @@ async function apiGet(url) {
   return data;
 }
 
+async function apiPost(url, body) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-CP-Admin-Request': 'true'
+  };
+  const res = await fetch(`${API_ORIGIN}${url}`, { method: 'POST', headers, credentials: 'include', body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, data };
+  return data;
+}
+
 export default function initIncidents() {
   const el = document.getElementById('incidents-list');
   if (!el) return;
@@ -26,6 +37,43 @@ function wireEvents() {
   document.getElementById('incidentStatusFilter')?.addEventListener('change', loadIncidents);
   document.getElementById('incidentSearch')?.addEventListener('input', debounce(loadIncidents, 400));
   document.getElementById('exportIncidentsBtn')?.addEventListener('click', exportSummaryPdf);
+
+  const modal = document.getElementById('incidentModal');
+  const createBtn = document.getElementById('createNewIncident');
+  const closeBtn = document.getElementById('incidentModalClose');
+  const cancelBtn = document.getElementById('incidentCancel');
+  const form = document.getElementById('incidentForm');
+
+  const openModal = () => modal?.classList.add('show');
+  const closeModal = () => modal?.classList.remove('show');
+
+  createBtn?.addEventListener('click', openModal);
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const targetType = document.getElementById('incidentTargetType').value;
+    const targetId = document.getElementById('incidentTargetId').value.trim();
+    const reason = document.getElementById('incidentReason').value.trim();
+    const description = document.getElementById('incidentDescription').value.trim();
+
+    if (!reason) {
+      if (window.showToast) window.showToast('Please enter an incident reason', 'error');
+      return;
+    }
+
+    try {
+      await apiPost('/api/admin/reports', { targetType, targetId, reason, description });
+      if (window.showToast) window.showToast('Incident created successfully');
+      form.reset();
+      closeModal();
+      loadIncidents();
+    } catch (err) {
+      if (window.showToast) window.showToast(err.data?.error || 'Could not create incident', 'error');
+    }
+  });
 }
 
 async function loadIncidents() {

@@ -92,4 +92,5 @@ async function loadSystem() {
 
 function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+window.initSystem = initSystem;
 try { initSystem(); } catch (e) { console.warn('system init failed', e); }

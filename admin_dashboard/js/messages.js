@@ -425,4 +425,5 @@ function escHtml(s) {
 
 window.openThread = openThread;
 
+window.initMessages = initMessages;
 try { initMessages(); } catch (e) { console.warn('messages init failed', e); }

@@ -248,9 +248,6 @@
         if (user.kyc.selfieWithId?.url) {
             loadSecureDocument(user._id, 'selfieWithId', document.getElementById('imgSelfieWithId'));
         }
-        if (user.kyc.selfieWithId?.url) {
-            loadSecureImage(user.kyc.selfieWithId.url, document.getElementById('imgSelfieWithId'));
-        }
 
         document.getElementById('btnApprove')?.addEventListener('click', () => processReview(userId, 'verified'));
         document.getElementById('btnReject')?.addEventListener('click', () => processReview(userId, 'rejected'));

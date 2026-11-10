@@ -463,4 +463,5 @@ function escHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+window.initWallet = initWallet;
 try { initWallet(); } catch (e) { console.warn('wallet init failed', e); }

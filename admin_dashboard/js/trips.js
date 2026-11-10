@@ -147,4 +147,5 @@ function escHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+window.initTrips = initTrips;
 initTrips();
