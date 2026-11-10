@@ -104,10 +104,15 @@
     }, delay);
   }
 
-  async function verifyAdminSession() {
+  async function verifyAdminSession(explicitToken) {
+    const headers = { 'X-CP-Admin-Request': 'true' };
+    const adminToken = explicitToken || localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
+    if (adminToken) {
+      headers['Authorization'] = `Bearer ${adminToken}`;
+    }
     const response = await fetch(`${APP_CONFIG.API_BASE_URL}/api/admin/profile`, {
       credentials: 'include',
-      headers: { 'X-CP-Admin-Request': 'true' },
+      headers,
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.admin) {
@@ -294,14 +299,19 @@
             const adminObj = { ...data.admin, role: 'admin' };
             localStorage.setItem('carryParcelUser', JSON.stringify(adminObj));
             localStorage.setItem('carryParcelAdmin', JSON.stringify(adminObj));
-            // Security: We no longer store the JWT token in localStorage.
-            // It is handled by HttpOnly secure cookies.
+            if (data.token) {
+              localStorage.setItem('carryParcelAdminToken', data.token);
+              localStorage.setItem('admin_token', data.token);
+            }
             localStorage.setItem('carryParcelAdminLoggedIn', 'true');
           }
         } else {
           if (data.user) {
             const userObj = { ...data.user, role: data.role || 'user' };
             localStorage.setItem('carryParcelUser', JSON.stringify(userObj));
+            if (data.token) {
+              localStorage.setItem('carryParcelToken', data.token);
+            }
             localStorage.setItem('carryParcelLoggedIn', 'true');
           }
         }
@@ -312,14 +322,16 @@
 
       if (data.role === 'admin') {
         try {
-          const verifiedAdmin = await verifyAdminSession();
+          const verifiedAdmin = await verifyAdminSession(data.token);
           localStorage.setItem('carryParcelAdmin', JSON.stringify({ ...verifiedAdmin, role: 'admin' }));
         } catch (sessionError) {
           localStorage.removeItem('carryParcelAdminLoggedIn');
           localStorage.removeItem('carryParcelAdmin');
+          localStorage.removeItem('carryParcelAdminToken');
+          localStorage.removeItem('admin_token');
           localStorage.removeItem('carryParcelUser');
           showToast(
-            'Authentication succeeded, but the admin session could not be verified. Please try again.',
+            sessionError.message || 'Authentication succeeded, but the admin session could not be verified. Please try again.',
             'error'
           );
           return;
@@ -365,17 +377,59 @@
         return;
       }
       try {
-        const userObj = { ...data.user, role: data.role || 'user' };
-        localStorage.setItem('carryParcelUser', JSON.stringify(userObj));
-        // auth-guard.js's synchronous hasSession() gates every user-dashboard
-        // page on this exact flag, and /api/auth/me is the only async fallback.
-        // Omitting it makes the guard redirect back here the moment
-        // goToDashboard() navigates — i.e. right after the account is selected.
-        localStorage.setItem('carryParcelLoggedIn', 'true');
+        if (data.role === 'admin') {
+          if (data.admin) {
+            const adminObj = { ...data.admin, role: 'admin' };
+            localStorage.setItem('carryParcelUser', JSON.stringify(adminObj));
+            localStorage.setItem('carryParcelAdmin', JSON.stringify(adminObj));
+            if (data.token) {
+              localStorage.setItem('carryParcelAdminToken', data.token);
+              localStorage.setItem('admin_token', data.token);
+            }
+            localStorage.setItem('carryParcelAdminLoggedIn', 'true');
+          }
+        } else {
+          if (data.user) {
+            const userObj = { ...data.user, role: data.role || 'user' };
+            localStorage.setItem('carryParcelUser', JSON.stringify(userObj));
+            if (data.token) {
+              localStorage.setItem('carryParcelToken', data.token);
+            }
+            localStorage.setItem('carryParcelLoggedIn', 'true');
+          }
+        }
         clearLoginState();
       } catch (storageErr) {
         console.error('Could not persist login session:', storageErr);
       }
+
+      if (data.role === 'admin') {
+        try {
+          const verifiedAdmin = await verifyAdminSession(data.token);
+          localStorage.setItem('carryParcelAdmin', JSON.stringify({ ...verifiedAdmin, role: 'admin' }));
+        } catch (sessionError) {
+          localStorage.removeItem('carryParcelAdminLoggedIn');
+          localStorage.removeItem('carryParcelAdmin');
+          localStorage.removeItem('carryParcelAdminToken');
+          localStorage.removeItem('admin_token');
+          localStorage.removeItem('carryParcelUser');
+          showToast(
+            sessionError.message || 'Authentication succeeded, but the admin session could not be verified. Please try again.',
+            'error'
+          );
+          return;
+        }
+
+        window.CarryParcel.showLoginSuccess({
+          user: data.admin,
+          method: 'GOOGLE',
+          onComplete: () => {
+            goToRoleDashboard('admin', 0);
+          }
+        });
+        return;
+      }
+
       window.CarryParcel.showLoginSuccess({
         user: data.user,
         method: 'GOOGLE',

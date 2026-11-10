@@ -13,6 +13,10 @@ const API_ORIGIN = APP_CONFIG.API_BASE_URL;
 
 async function apiGet(url) {
   const headers = { 'X-CP-Admin-Request': 'true' };
+  const adminToken = localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
+  if (adminToken) {
+    headers['Authorization'] = `Bearer ${adminToken}`;
+  }
   const res = await fetch(`${API_ORIGIN}${url}`, { headers, credentials: 'include' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data };

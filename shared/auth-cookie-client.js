@@ -14,7 +14,22 @@
       return Boolean(guardedPage) || path.includes('/user-dashboard/') || path.includes('/admin_dashboard/');
     };
 
-    const response = await nativeFetch(input, isCarryParcelApi ? { ...init, credentials: 'include' } : init);
+    let fetchOptions = isCarryParcelApi ? { ...init, credentials: 'include' } : { ...init };
+
+    if (isCarryParcelApi) {
+      const token = localStorage.getItem('carryParcelAdminToken') ||
+                    localStorage.getItem('admin_token') ||
+                    localStorage.getItem('carryParcelToken');
+      if (token) {
+        const headers = new Headers(fetchOptions.headers || {});
+        if (!headers.has('Authorization')) {
+          headers.set('Authorization', `Bearer ${token}`);
+        }
+        fetchOptions.headers = headers;
+      }
+    }
+
+    const response = await nativeFetch(input, fetchOptions);
 
     if (isCarryParcelApi) {
       if (response.status === 401) {
