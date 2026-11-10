@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>CarryParcel — Verify Mobile Number</title>
+<meta name="description" content="Verify your mobile number to complete registration and access CarryParcel.">
+<link rel="canonical" href="https://www.carryparcel.in/mobile-verification/">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/webp" href="../images/logo-icon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="mobile-verification.css" />
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <main class="stage">
+    <section class="card" role="main">
+
+      <header class="card-header">
+        <div class="header-top">
+          <a id="backBtn" href="../login/login.html" class="back-btn" aria-label="Back to login">
+            <i class="fa-solid fa-arrow-left"></i>
+          </a>
+          <div class="logo">
+            <span class="logo-mark" aria-hidden="true">
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                <path d="M20 4L34 11V29L20 36L6 29V11L20 4Z" fill="#0D6EFD" opacity="0.15"/>
+                <path d="M20 6L32 12V28L20 34L8 28V12L20 6Z" stroke="#0D6EFD" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M20 6V18M20 18L32 12M20 18L8 12" stroke="#0D6EFD" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="logo-text">CarryParcel</span>
+          </div>
+          <div style="width: 36px;"></div>
+        </div>
+
+        <div class="header-icon-badge">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+        </div>
+        <h1 class="title">Verify Your Mobile Number</h1>
+        <p class="subtitle">Verify your mobile number to continue to CarryParcel.</p>
+      </header>
+
+      <!-- Alert Message Box -->
+      <div id="alertBox" class="alert-box" style="display: none;"></div>
+
+      <!-- Step 1: Send OTP Section -->
+      <form id="phoneForm" class="form-step active" novalidate>
+        <div class="field">
+          <label for="phoneInput">Mobile Number</label>
+          <div class="phone-input-group">
+            <select id="countryCodeSelect" class="country-select" aria-label="Country Code">
+              <option value="+91" selected>🇮🇳 +91 (India)</option>
+              <option value="+1">🇺🇸 +1 (USA/Canada)</option>
+              <option value="+44">🇬🇧 +44 (UK)</option>
+              <option value="+971">🇦🇪 +971 (UAE)</option>
+              <option value="+65">🇸🇬 +65 (Singapore)</option>
+              <option value="+61">🇦🇺 +61 (Australia)</option>
+            </select>
+            <input
+              type="tel"
+              id="phoneInput"
+              class="input"
+              placeholder="98765 43210"
+              maxlength="15"
+              required
+              autocomplete="tel-national"
+            />
+          </div>
+          <span class="field-hint">Enter your 10-digit mobile number for OTP verification.</span>
+        </div>
+
+        <button type="submit" id="sendOtpBtn" class="btn btn-primary">
+          <span>Send OTP Code</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <!-- Step 2: Verify OTP Section -->
+      <form id="otpForm" class="form-step" novalidate style="display: none;">
+        <div class="phone-info-banner">
+          <div class="phone-info-text">
+            <span class="sent-label">Verification code sent to</span>
+            <strong id="displayPhone">+91 98765 43210</strong>
+          </div>
+          <button type="button" id="changePhoneBtn" class="btn-text">
+            <i class="fa-solid fa-pen"></i> Change
+          </button>
+        </div>
+
+        <div class="field">
+          <label for="otpInput">Enter 6-Digit OTP</label>
+          <input
+            type="text"
+            id="otpInput"
+            class="input input-otp"
+            placeholder="• • • • • •"
+            maxlength="6"
+            pattern="\d{6}"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            required
+          />
+        </div>
+
+        <button type="submit" id="verifyOtpBtn" class="btn btn-primary">
+          <span>Verify & Access Dashboard</span>
+          <i class="fa-solid fa-check"></i>
+        </button>
+
+        <div class="resend-wrap">
+          <button type="button" id="resendOtpBtn" class="btn-resend" disabled>
+            Resend OTP <span id="cooldownTimer">(60s)</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Success Overlay State -->
+      <div id="successOverlay" class="success-overlay" style="display: none;">
+        <div class="success-icon">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h2>Verification Complete!</h2>
+        <p>Redirecting you to CarryParcel User Dashboard...</p>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="../shared/config.js?v=1"></script>
+  <script src="../shared/auth-cookie-client.js?v=1"></script>
+  <script src="mobile-verification.js?v=1"></script>
+</body>
+</html>
