@@ -380,7 +380,16 @@
         user: data.user,
         method: 'GOOGLE',
         onComplete: () => {
-          goToDashboard(0);
+          const isMobileVerified = Boolean(
+            data.user && (data.user.isPhoneVerified || (data.onboarding && !data.onboarding.mobileVerificationRequired))
+          );
+          if (!isMobileVerified) {
+            const redirectTarget = getSafeRedirectTarget();
+            const targetUrl = `../mobile-verification/index.html${redirectTarget ? `?redirect=${encodeURIComponent(redirectTarget.replace(/^\.\./, ''))}` : ''}`;
+            window.location.replace(targetUrl);
+          } else {
+            goToDashboard(0);
+          }
         }
       });
     } catch (err) {

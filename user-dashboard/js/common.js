@@ -605,6 +605,16 @@
           return makeRequest(attempt + 1);
         }
 
+        if (response.status === 403) {
+          const clone = response.clone();
+          clone.json().then(errData => {
+            if (errData && (errData.code === 'MOBILE_VERIFICATION_REQUIRED' || (errData.onboarding && errData.onboarding.mobileVerificationRequired))) {
+              const returnTo = window.location.pathname + window.location.search;
+              window.location.replace(`../mobile-verification/index.html?redirect=${encodeURIComponent(returnTo)}`);
+            }
+          }).catch(() => {});
+        }
+
         if (response.ok && isCacheable) {
           fetchCache.set(cacheKey, {
             timestamp: Date.now(),
@@ -799,7 +809,18 @@
           if (window.resolveCarryParcelAuth) window.resolveCarryParcelAuth(false);
           return {};
         }
+        if (res.status === 403 && (data.code === 'MOBILE_VERIFICATION_REQUIRED' || data.onboarding?.mobileVerificationRequired)) {
+          const returnTo = window.location.pathname + window.location.search;
+          window.location.replace(`../mobile-verification/index.html?redirect=${encodeURIComponent(returnTo)}`);
+          return {};
+        }
         return cached || {};
+      }
+
+      if (data.user && data.user.isPhoneVerified === false) {
+        const returnTo = window.location.pathname + window.location.search;
+        window.location.replace(`../mobile-verification/index.html?redirect=${encodeURIComponent(returnTo)}`);
+        return {};
       }
 
       const mergedUser = { ...cached, ...data.user };
