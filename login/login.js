@@ -458,9 +458,16 @@
         await handleGoogleCredential(idToken);
       } catch (err) {
         console.error('Firebase Google login failed:', err);
-        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+        const isPopupOrCoopError =
+          err?.code === 'auth/popup-blocked' ||
+          err?.code === 'auth/popup-closed-by-user' ||
+          err?.code === 'auth/cancelled-popup-request' ||
+          String(err?.message || '').includes('Cross-Origin-Opener-Policy') ||
+          String(err?.message || '').includes('closed');
+
+        if (isPopupOrCoopError) {
           try {
-            showToast(googleErrorMessage(err), 'info');
+            showToast('Opening Google sign-in redirect...', 'info');
             await auth.signInWithRedirect(provider);
             return;
           } catch (redirectErr) {
