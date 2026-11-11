@@ -1,0 +1,17 @@
+[debug] [2026-11-11T15:59:49.735Z] ----------------------------------------------------------------------
+[debug] [2026-11-11T15:59:49.737Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-11-11T15:59:49.737Z] CLI Version:   15.27.0
+[debug] [2026-11-11T15:59:49.737Z] Platform:      win32
+[debug] [2026-11-11T15:59:49.737Z] Node Version:  v24.18.0
+[debug] [2026-11-11T15:59:49.737Z] Detected Agent: unknown
+[debug] [2026-11-11T15:59:49.738Z] Time:          Wed Nov 11 2026 21:29:49 GMT+0530 (India Standard Time)
+[debug] [2026-11-11T15:59:49.738Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-11-11T15:59:54.030Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-11-11T15:59:54.031Z] > authorizing via signed-in user (kumbharbhushan27@gmail.com)
+[debug] [2026-11-11T15:59:54.031Z] [iam] checking project travalbuddy for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-11-11T15:59:54.064Z] Checked if tokens are valid: true, expires at: 1794416199717
+[debug] [2026-11-11T15:59:54.064Z] Checked if tokens are valid: true, expires at: 1794416199717
+[debug] [2026-11-11T15:59:54.067Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions [none]
+[debug] [2026-11-11T15:59:54.067Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions  x-goog-user-project=travalbuddy
+[debug] [2026-11-11T15:59:54.067Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/travalbuddy:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
