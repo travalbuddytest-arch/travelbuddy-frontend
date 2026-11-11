@@ -45,6 +45,18 @@
         }
       } else if (response.status === 403) {
         console.warn('Access denied (403):', url);
+        try {
+          const clone = response.clone();
+          const data = await clone.json().catch(() => ({}));
+          if (data && data.code === 'PRIVATE_BETA_FEATURE_RESTRICTED') {
+            const msg = data.message || data.error || 'This feature is currently available only to approved CarryParcel beta testers.';
+            if (window.TBToast && typeof window.TBToast.show === 'function') {
+              window.TBToast.show(msg, 'warning');
+            } else {
+              alert(msg);
+            }
+          }
+        } catch (e) {}
       } else if (response.status === 429 && window.TBToast) {
         window.TBToast.show('Too many requests. Please wait a moment.', 'warning');
       }
