@@ -175,7 +175,7 @@
       otpForm.style.display = 'block';
       hideAlert();
 
-      showToast(data.message || 'OTP sent successfully!', 'success');
+      showToast('Verification code sent to your registered email address!', 'success');
       if (data.devOtp) {
         showAlert(`[DEV MODE] Your verification code is: ${data.devOtp}`, 'success');
       }
@@ -271,7 +271,7 @@
         return;
       }
 
-      showToast(data.message || 'New OTP sent to your mobile number!', 'success');
+      showToast('New verification code sent to your registered email address!', 'success');
       if (data.devOtp) {
         showAlert(`[DEV MODE] Your new verification code is: ${data.devOtp}`, 'success');
       }
