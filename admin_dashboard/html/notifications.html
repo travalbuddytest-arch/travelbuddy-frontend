@@ -1,7 +1,10 @@
 <div class="notifications-container">
     <div class="header-row">
         <h3><i class="fa-solid fa-bell"></i> Platform Notifications</h3>
-        <button class="btn secondary sm" id="refreshNotifications"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+        <div style="display:flex; gap:8px;">
+            <button class="btn primary sm" onclick="window.adminBroadcastNotification()"><i class="fa-solid fa-bullhorn"></i> Broadcast Announcement</button>
+            <button class="btn secondary sm" id="refreshNotifications"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+        </div>
     </div>
 
     <div class="filters">

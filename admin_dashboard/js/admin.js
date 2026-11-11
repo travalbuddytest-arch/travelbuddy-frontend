@@ -705,6 +705,12 @@ function renderUserDetail(data) {
           <div class="dp-meta-item"><span>Risk</span><strong class="${u.riskScore > 40 ? 'danger-text' : u.riskScore > 15 ? 'warning-text' : 'success-text'}">${u.riskScore || 0}</strong></div>
           <div class="dp-meta-item"><span>Status</span><span class="status-tag ${escHtml(u.status)}">${escHtml(u.status)}</span></div>
         </div>
+        <div class="dp-admin-actions" style="margin-top:10px; display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn sm secondary" onclick="window.adminAdjustWallet('${u._id}', '${escHtml(name)}')"><i class="fa-solid fa-wallet"></i> Adjust Wallet</button>
+          <button class="btn sm secondary" onclick="window.adminChangeUserStatus('${u._id}', '${escHtml(u.status)}')"><i class="fa-solid fa-user-gear"></i> Status</button>
+          <button class="btn sm primary" onclick="window.adminCreateParcelForUser('${u._id}')"><i class="fa-solid fa-plus"></i> Post Parcel</button>
+          <button class="btn sm primary" onclick="window.adminCreateTripForUser('${u._id}')"><i class="fa-solid fa-route"></i> Post Trip</button>
+        </div>
       </div>
     </div>
 
@@ -1668,6 +1674,263 @@ function hydrateAdminChip() {
 }
 
 window.fetchUserDetail = fetchUserDetail;
+
+/* ---------- Super Admin Action Modal Helper ---------- */
+function openSuperAdminModal({ title, sub, icon, fieldsHtml, onSubmit }) {
+  const modal = document.getElementById('superAdminActionModal');
+  const titleEl = document.getElementById('superAdminModalTitle');
+  const subEl = document.getElementById('superAdminModalSub');
+  const iconEl = document.getElementById('superAdminModalIcon');
+  const fieldsEl = document.getElementById('superAdminModalFields');
+  const form = document.getElementById('superAdminModalForm');
+
+  if (!modal || !form || !fieldsEl) return;
+
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub || 'Super Admin Administrative Task';
+  if (iconEl && icon) iconEl.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  fieldsEl.innerHTML = fieldsHtml;
+
+  const closeModal = () => {
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+  };
+
+  const closeBtn = document.getElementById('superAdminModalClose');
+  const cancelBtn = document.getElementById('superAdminModalCancel');
+  if (closeBtn) closeBtn.onclick = closeModal;
+  if (cancelBtn) cancelBtn.onclick = closeModal;
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await onSubmit(form);
+      closeModal();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  modal.style.display = 'flex';
+  modal.classList.add('show');
+}
+
+/* ---------- Super Admin Actions On Behalf of Users ---------- */
+window.adminAdjustWallet = function(userId, userName) {
+  openSuperAdminModal({
+    title: `Adjust Wallet Balance`,
+    sub: `Adjusting wallet balance for ${userName || 'User'}`,
+    icon: 'fa-wallet',
+    fieldsHtml: `
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>Adjustment Type</label>
+        <select name="direction" class="pc-filter-input" style="width:100%; padding:8px;" required>
+          <option value="credit">Credit (+) — Add funds to user wallet</option>
+          <option value="debit">Debit (-) — Deduct funds from user wallet</option>
+        </select>
+      </div>
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>Amount (in ₹ Rupees)</label>
+        <input name="amount" type="number" step="0.01" min="1" placeholder="e.g. 150" style="width:100%; padding:8px;" required>
+      </div>
+      <div class="admin-profile-field">
+        <label>Mandatory Audit Reason</label>
+        <textarea name="reason" rows="3" placeholder="Reason for balance correction..." style="width:100%; padding:8px;" required></textarea>
+      </div>
+    `,
+    onSubmit: async (form) => {
+      const direction = form.direction.value;
+      const amount = Number(form.amount.value);
+      const reason = form.reason.value.trim();
+      if (!amount || amount <= 0 || !reason) {
+        showToast('Valid amount and reason are required.', 'error');
+        return;
+      }
+      const res = await apiPost(`/api/admin/users/${userId}/adjust-wallet`, { amountRupees: amount, direction, reason });
+      showToast(res.message || 'Wallet balance adjusted.', 'success');
+      if (typeof window.fetchUserDetail === 'function') window.fetchUserDetail(userId);
+    }
+  });
+};
+
+window.adminChangeUserStatus = function(userId, currentStatus) {
+  openSuperAdminModal({
+    title: `Change Account Status`,
+    sub: `Current status: ${currentStatus}`,
+    icon: 'fa-user-gear',
+    fieldsHtml: `
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>New Account Status</label>
+        <select name="status" class="pc-filter-input" style="width:100%; padding:8px;" required>
+          <option value="active" ${currentStatus === 'active' ? 'selected' : ''}>Active — Normal access</option>
+          <option value="suspended" ${currentStatus === 'suspended' ? 'selected' : ''}>Suspended — Temporary lock</option>
+          <option value="blocked" ${currentStatus === 'blocked' ? 'selected' : ''}>Blocked — Permanent block</option>
+        </select>
+      </div>
+      <div class="admin-profile-field">
+        <label>Mandatory Status Change Reason</label>
+        <textarea name="reason" rows="3" placeholder="Reason for status change..." style="width:100%; padding:8px;" required></textarea>
+      </div>
+    `,
+    onSubmit: async (form) => {
+      const status = form.status.value;
+      const reason = form.reason.value.trim();
+      if (!reason) {
+        showToast('Reason is required.', 'error');
+        return;
+      }
+      const res = await apiPatch(`/api/admin/users/${userId}/status`, { status, reason });
+      showToast(res.message || 'User status updated.', 'success');
+      if (typeof window.fetchUserDetail === 'function') window.fetchUserDetail(userId);
+    }
+  });
+};
+
+window.adminCreateParcelForUser = function(senderId) {
+  openSuperAdminModal({
+    title: `Create Parcel for Sender`,
+    sub: `Posting parcel on behalf of User ID: ${senderId}`,
+    icon: 'fa-box',
+    fieldsHtml: `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div class="admin-profile-field"><label>Pickup City</label><input name="from" placeholder="e.g. Mumbai" required style="padding:8px;"></div>
+        <div class="admin-profile-field"><label>Destination City</label><input name="to" placeholder="e.g. Pune" required style="padding:8px;"></div>
+      </div>
+      <div class="admin-profile-field" style="margin-bottom:12px;"><label>Parcel Description & Category</label><input name="desc" placeholder="e.g. Laptops & Electronics [Electronics]" required style="padding:8px;"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div class="admin-profile-field"><label>Weight (kg)</label><input name="weight" type="number" step="0.1" min="0.1" placeholder="2.5" required style="padding:8px;"></div>
+        <div class="admin-profile-field"><label>Price (₹)</label><input name="price" type="number" step="1" min="50" placeholder="300" required style="padding:8px;"></div>
+        <div class="admin-profile-field"><label>Pickup Date</label><input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" required style="padding:8px;"></div>
+      </div>
+    `,
+    onSubmit: async (form) => {
+      const res = await apiPost('/api/admin/parcels/create-for-user', {
+        senderId,
+        from: form.from.value.trim(),
+        to: form.to.value.trim(),
+        desc: form.desc.value.trim(),
+        weight: Number(form.weight.value),
+        price: Number(form.price.value),
+        date: form.date.value
+      });
+      showToast(res.message || 'Parcel created for user.', 'success');
+      if (typeof window.fetchUserDetail === 'function') window.fetchUserDetail(senderId);
+    }
+  });
+};
+
+window.adminCreateTripForUser = function(travelerId) {
+  openSuperAdminModal({
+    title: `Create Travel Route for Traveler`,
+    sub: `Posting trip on behalf of User ID: ${travelerId}`,
+    icon: 'fa-route',
+    fieldsHtml: `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div class="admin-profile-field"><label>Starting City</label><input name="from" placeholder="e.g. Delhi" required style="padding:8px;"></div>
+        <div class="admin-profile-field"><label>Destination City</label><input name="to" placeholder="e.g. Jaipur" required style="padding:8px;"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div class="admin-profile-field"><label>Travel Date</label><input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" required style="padding:8px;"></div>
+        <div class="admin-profile-field"><label>Capacity (kg)</label><input name="capacity" type="number" min="1" value="5" required style="padding:8px;"></div>
+      </div>
+      <div class="admin-profile-field"><label>Trip Notes</label><input name="notes" placeholder="e.g. Travelling by train morning slot..." style="padding:8px;"></div>
+    `,
+    onSubmit: async (form) => {
+      const res = await apiPost('/api/admin/trips/create-for-user', {
+        travelerId,
+        from: form.from.value.trim(),
+        to: form.to.value.trim(),
+        date: form.date.value,
+        capacityKg: Number(form.capacity.value || 5),
+        notes: form.notes.value.trim()
+      });
+      showToast(res.message || 'Travel route created.', 'success');
+      if (typeof window.fetchUserDetail === 'function') window.fetchUserDetail(travelerId);
+    }
+  });
+};
+
+window.adminOverrideParcelStatus = function(parcelId, currentStatus) {
+  openSuperAdminModal({
+    title: `Override Parcel Status`,
+    sub: `Parcel ID: ${parcelId} (Current: ${currentStatus || 'pending'})`,
+    icon: 'fa-pen-to-square',
+    fieldsHtml: `
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>New Operational Stage</label>
+        <select name="newStatus" class="pc-filter-input" style="width:100%; padding:8px;" required>
+          <option value="pending">pending — Awaiting Traveler</option>
+          <option value="accepted">accepted — Traveler Accepted</option>
+          <option value="pickup_point_pending">pickup_point_pending — Select Pickup Point</option>
+          <option value="pickup_confirmed">pickup_confirmed — Pickup Confirmed</option>
+          <option value="in_transit">in_transit — In Transit</option>
+          <option value="delivery_point_pending">delivery_point_pending — Select Delivery Point</option>
+          <option value="delivered">delivered — Delivered</option>
+          <option value="cancelled">cancelled — Cancelled</option>
+        </select>
+      </div>
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>Mandatory Operational Reason</label>
+        <textarea name="reason" rows="2" placeholder="Explain why status override is required..." style="width:100%; padding:8px;" required></textarea>
+      </div>
+      <div class="admin-profile-field">
+        <label>Evidence Reference (Optional)</label>
+        <input name="evidence" placeholder="e.g. Ticket #1042 / Verified by Support Phone Call" style="width:100%; padding:8px;">
+      </div>
+    `,
+    onSubmit: async (form) => {
+      const newStatus = form.newStatus.value;
+      const reason = form.reason.value.trim();
+      const evidence = form.evidence.value.trim();
+      if (!reason) {
+        showToast('Mandatory reason is required.', 'error');
+        return;
+      }
+      const res = await apiPatch(`/api/admin/parcels/${parcelId}/override-status`, {
+        newStatus,
+        reason,
+        evidenceNote: evidence || null
+      });
+      showToast(res.message || 'Parcel status updated.', 'success');
+      if (typeof window.loadParcels === 'function') window.loadParcels();
+    }
+  });
+};
+
+window.adminBroadcastNotification = function() {
+  openSuperAdminModal({
+    title: `Broadcast Announcement`,
+    sub: `Send in-app & push notifications to platform users`,
+    icon: 'fa-bullhorn',
+    fieldsHtml: `
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>Recipient Target</label>
+        <select name="recipientType" class="pc-filter-input" style="width:100%; padding:8px;" required>
+          <option value="all">All Active Platform Users</option>
+        </select>
+      </div>
+      <div class="admin-profile-field" style="margin-bottom:12px;">
+        <label>Announcement Title</label>
+        <input name="title" placeholder="e.g. System Maintenance Notice" style="width:100%; padding:8px;" required>
+      </div>
+      <div class="admin-profile-field">
+        <label>Message Body</label>
+        <textarea name="body" rows="3" placeholder="Write announcement details..." style="width:100%; padding:8px;" required></textarea>
+      </div>
+    `,
+    onSubmit: async (form) => {
+      const title = form.title.value.trim();
+      const body = form.body.value.trim();
+      const recipientType = form.recipientType.value;
+      if (!title || !body) {
+        showToast('Title and body are required.', 'error');
+        return;
+      }
+      const res = await apiPost('/api/admin/notifications/broadcast', { title, body, recipientType });
+      showToast(res.message || 'Broadcast announcement sent.', 'success');
+    }
+  });
+};
 
 /* ---------- Initialize Dashboard ---------- */
 function initializeDashboard() {

@@ -249,6 +249,29 @@
         </div>
     </div>
 
+    <!-- Super Admin Action Modal -->
+    <div class="modal" id="superAdminActionModal">
+        <div class="admin-profile-box" style="max-width:520px; padding:24px;">
+            <button class="admin-profile-close" id="superAdminModalClose" type="button" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            <div class="admin-profile-head" style="margin-bottom:16px;">
+                <div class="admin-profile-avatar" id="superAdminModalIcon" style="background:#eff6ff; color:#1769ff;"><i class="fa-solid fa-user-shield"></i></div>
+                <div>
+                    <h2 id="superAdminModalTitle" style="font-size:18px; font-weight:700;">Super Admin Action</h2>
+                    <p id="superAdminModalSub" style="font-size:12px; color:var(--m);">Perform administrative task</p>
+                </div>
+            </div>
+
+            <!-- Form Body -->
+            <form id="superAdminModalForm">
+                <div id="superAdminModalFields"></div>
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn sm secondary" id="superAdminModalCancel">Cancel</button>
+                    <button type="submit" class="btn sm primary" id="superAdminModalSubmit"><i class="fa-solid fa-check"></i> Submit Action</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
         <i class="fa-solid fa-circle-check"></i>
