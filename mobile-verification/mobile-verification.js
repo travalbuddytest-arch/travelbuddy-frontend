@@ -24,6 +24,17 @@
   let timerInterval = null;
   let secondsRemaining = 0;
 
+  function getAuthHeaders(extra = {}) {
+    const headers = { ...extra };
+    const token = localStorage.getItem('carryParcelToken') ||
+                  localStorage.getItem('carryParcelAdminToken') ||
+                  localStorage.getItem('admin_token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  }
+
   function getSafeRedirectTarget() {
     try {
       const raw = new URLSearchParams(window.location.search).get('redirect');
