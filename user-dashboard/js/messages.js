@@ -409,7 +409,20 @@
     try {
       const res = await fetch(`${API_ORIGIN}/api/postparcel/${encodeURIComponent(conversation.parcel.id)}/accept`, authFetchOptions({ method: 'POST' }));
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not accept parcel.');
+      if (!res.ok) {
+        if (data.code === 'KYC_REQUIRED') {
+          window.showToast(data.error || 'Identity verification is required before accepting parcels.', 'warning');
+          setTimeout(() => {
+            window.location.href = 'verification.html';
+          }, 1500);
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Accept this parcel';
+          }
+          return;
+        }
+        throw new Error(data.error || 'Could not accept parcel.');
+      }
       window.showToast('Parcel accepted. You can track the journey from Track Parcel.', 'success');
       if (!socket?.connected) {
         await loadConversations();

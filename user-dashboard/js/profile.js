@@ -117,7 +117,11 @@
 
     heroFullName.textContent = fullName;
     heroEmail.textContent = user.email || '';
-    if (heroVerifiedBadge) heroVerifiedBadge.style.display = user.isVerified ? 'inline' : 'none';
+    if (heroVerifiedBadge) {
+      const isVerified = Boolean(user.isVerified || user.kyc?.status === 'verified');
+      heroVerifiedBadge.style.display = isVerified ? 'inline-flex' : 'none';
+      heroVerifiedBadge.title = 'Identity verified by CarryParcel';
+    }
     if (heroRating) heroRating.textContent = Number(user.rating || 0).toFixed(1);
     if (heroRatingCount) heroRatingCount.textContent = user.ratingCount || 0;
     if (heroMemberSince && user.createdAt) heroMemberSince.textContent = new Date(user.createdAt).getFullYear();

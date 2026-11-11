@@ -260,30 +260,34 @@
     return true;
   }
 
+  let userEligibilityData = null;
+
   async function checkWalletStatus() {
     try {
-      const [walletRes, statsRes] = await Promise.allSettled([
+      const [walletRes, eligRes] = await Promise.allSettled([
         fetch(`${API_ORIGIN}/api/payments/wallet-summary`, { headers: authHeaders() }).then(r => r.json()),
-        fetch(`${API_BASE}/stats`, { headers: authHeaders() }).then(r => r.json())
+        fetch(`${API_BASE}/eligibility`, { headers: authHeaders() }).then(r => r.json())
       ]);
 
       userWalletData = walletRes.status === 'fulfilled' ? walletRes.value : { walletBalance: 0 };
-      const stats = statsRes.status === 'fulfilled' ? statsRes.value : { activeParcels: 0 };
+      userEligibilityData = eligRes.status === 'fulfilled' ? eligRes.value : null;
 
-      // Backend rule: Free posts for the first 2 parcels across the platform
-      const totalPosts = Number(stats.tripsPosted || 0) + Number(stats.activeParcels || 0);
-      isFreePostEligible = totalPosts < 2;
+      isFreePostEligible = userEligibilityData ? Boolean(userEligibilityData.isFreePostingEligible) : false;
 
       if (isFreePostEligible) {
-        freePostNotice.classList.remove('hidden');
-        walletPaymentStatus.classList.add('hidden');
+        if (freePostNotice) {
+          const used = userEligibilityData ? userEligibilityData.freePostsUsed : 0;
+          freePostNotice.innerHTML = `<i class="fa-solid fa-gift"></i> <strong>Free Parcel Posting (${used + 1} of 2)</strong> — No posting fee required for your first 2 parcels.`;
+          freePostNotice.classList.remove('hidden');
+        }
+        if (walletPaymentStatus) walletPaymentStatus.classList.add('hidden');
       } else {
-        freePostNotice.classList.add('hidden');
-        walletPaymentStatus.classList.remove('hidden');
+        if (freePostNotice) freePostNotice.classList.add('hidden');
+        if (walletPaymentStatus) walletPaymentStatus.classList.remove('hidden');
         updateWalletPaymentDisplay();
       }
     } catch (err) {
-      console.error('Wallet check failed:', err);
+      console.error('Wallet and eligibility check failed:', err);
     }
   }
 
@@ -409,6 +413,13 @@
         const data = await res.json();
 
         if (!res.ok) {
+          if (data.code === 'KYC_REQUIRED') {
+            window.showToast(data.error || 'Identity verification is required before posting your 3rd parcel.', 'error');
+            setTimeout(() => {
+              window.location.href = 'verification.html';
+            }, 1500);
+            return;
+          }
           if (res.status === 402 || data.code === 'INSUFFICIENT_WALLET') {
             showWalletTopupModal(data);
             return;

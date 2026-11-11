@@ -334,6 +334,15 @@
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.code === 'KYC_REQUIRED') {
+          window.showToast(data.error || 'Identity verification is required before accepting parcels as a traveler.', 'warning');
+          setTimeout(() => {
+            window.location.href = 'verification.html';
+          }, 1500);
+          btn.disabled = false;
+          btn.textContent = 'Accept & Carry';
+          return;
+        }
         window.showToast(data.error || 'Could not accept parcel.', 'error');
         btn.disabled = false;
         btn.textContent = 'Accept & Carry';
