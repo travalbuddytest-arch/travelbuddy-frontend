@@ -15,6 +15,34 @@
       this.reconnectAttemptedAt = null;
 
       console.log('[Realtime] Initializing Unified Socket Service...');
+
+      this._setupBFCacheListeners();
+    }
+
+    _setupBFCacheListeners() {
+      if (typeof window === 'undefined') return;
+      window.addEventListener('pagehide', () => {
+        this.connections.forEach((socket, ns) => {
+          if (socket && socket.connected) {
+            console.log(`[Realtime] Gracefully disconnecting ${ns} before BFCache entry.`);
+            socket.disconnect();
+          }
+        });
+      });
+
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          console.log('[Realtime] Page restored from BFCache, reconnecting sockets...');
+          this.connections.forEach((socket, ns) => {
+            if (socket && !socket.connected) {
+              const token = this._readSessionToken(ns);
+              if (token) {
+                socket.connect();
+              }
+            }
+          });
+        }
+      });
     }
 
     _readSessionToken(namespace = '/') {
