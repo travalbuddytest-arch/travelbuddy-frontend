@@ -1567,6 +1567,7 @@
 
   function updateDashboardUser(user) {
     if (!user) return;
+    try { fetchCache.clear(); } catch (_) {}
     saveStoredUser(user);
     const fullName = getDisplayName(user);
     document.querySelectorAll('[data-user-name], #userName, #profileName, .user-name').forEach((el) => {
@@ -1843,6 +1844,23 @@
     closeSidebar();
     closeUserMenu();
     closeProfileModal();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.CarryParcelSocket) {
+      const socket = window.CarryParcelSocket.root || window.CarryParcelSocket.connect('/');
+      if (socket) {
+        socket.on('profile_update', (data) => {
+          if (data && data.user) {
+            console.log('[Realtime] Profile update received from server:', data.user);
+            if (data.user.profilePhoto) {
+              profilePhotoCacheBust = { path: data.user.profilePhoto, value: Date.now() };
+            }
+            updateDashboardUser(data.user);
+          }
+        });
+      }
+    }
   });
 
   /*
