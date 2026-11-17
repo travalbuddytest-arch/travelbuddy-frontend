@@ -1673,7 +1673,13 @@ function hydrateAdminChip() {
   } catch (e) {}
 }
 
-window.fetchUserDetail = fetchUserDetail;
+window.fetchUserDetail = function(userId) {
+  if (typeof window.openUserProfileView === 'function') {
+    window.openUserProfileView(userId);
+  } else {
+    fetchUserDetail(userId);
+  }
+};
 
 /* ---------- Super Admin Action Modal Helper ---------- */
 function openSuperAdminModal({ title, sub, icon, fieldsHtml, onSubmit }) {
