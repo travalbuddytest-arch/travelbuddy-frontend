@@ -252,6 +252,15 @@
         ]
       },
       {
+        "source": "/mobile-verification/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, max-age=0"
+          }
+        ]
+      },
+      {
         "source": "/reach-every-customer/**",
         "headers": [
           {
