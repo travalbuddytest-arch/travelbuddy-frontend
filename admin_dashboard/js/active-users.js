@@ -20,8 +20,10 @@ const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 const fmtDate = d => window.CarryParcelDate ? window.CarryParcelDate.formatDate(d) : (d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—');
 const timeAgo = d => window.CarryParcelDate ? window.CarryParcelDate.formatRelative(d) : (d ? (()=>{ if(!d) return 'Never'; const m=Math.floor((Date.now()-new Date(d))/60000); if(m<1) return 'Just now'; if(m<60) return m+'m ago'; const h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago'; })() : 'Never');
 const avatarSrc = u => {
-  const photo = u.profilePhoto ? esc(u.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
-  return photo;
+  if (u.profilePhoto) {
+    return window.resolveAdminMediaUrl ? window.resolveAdminMediaUrl(u.profilePhoto, u) : (API_ORIGIN + (u.profilePhoto.startsWith('/') ? u.profilePhoto : '/' + u.profilePhoto));
+  }
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
 };
 
 async function api(url, opts = {}) {

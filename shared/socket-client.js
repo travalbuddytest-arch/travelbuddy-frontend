@@ -17,9 +17,22 @@
       console.log('[Realtime] Initializing Unified Socket Service...');
     }
 
-    _readSessionToken() {
+    _readSessionToken(namespace = '/') {
       if (typeof document === 'undefined') return null;
       try {
+        if (namespace === '/admin') {
+          const match = document.cookie.split('; ').find((entry) => entry.startsWith('carryparcel_admin_session='));
+          if (match) {
+            const val = decodeURIComponent(match.split('=').slice(1).join('='));
+            if (val) return val;
+          }
+          if (typeof localStorage !== 'undefined') {
+            const token = localStorage.getItem('carryParcelAdminToken') || localStorage.getItem('admin_token');
+            if (token) return token;
+          }
+          return null;
+        }
+
         const match = document.cookie.split('; ').find((entry) => entry.startsWith('carryparcel_session='));
         if (!match) return null;
         const value = decodeURIComponent(match.split('=').slice(1).join('='));
@@ -45,7 +58,7 @@
       }
 
       const url = namespace === '/' ? APP_CONFIG.SOCKET_URL : `${APP_CONFIG.SOCKET_URL}${namespace}`;
-      const sessionToken = token || this._readSessionToken();
+      const sessionToken = token || this._readSessionToken(namespace);
       const socketOptions = {
         transports: ['websocket', 'polling'],
         reconnection: true,

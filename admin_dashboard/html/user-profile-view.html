@@ -51,9 +51,10 @@
     </div>
   </div>
 
-  <!-- 10 Responsive Navigation Tabs -->
+  <!-- 11 Responsive Navigation Tabs -->
   <div class="upv-tabs-nav">
     <button type="button" class="upv-tab-btn active" data-upv-tab="overview"><i class="fa-solid fa-gauge-high"></i> Overview</button>
+    <button type="button" class="upv-tab-btn" data-upv-tab="controls"><i class="fa-solid fa-user-lock"></i> User Access &amp; Feature Controls</button>
     <button type="button" class="upv-tab-btn" data-upv-tab="personal"><i class="fa-solid fa-address-card"></i> Personal Info</button>
     <button type="button" class="upv-tab-btn" data-upv-tab="verification"><i class="fa-solid fa-user-shield"></i> Verification &amp; KYC</button>
     <button type="button" class="upv-tab-btn" data-upv-tab="parcels"><i class="fa-solid fa-boxes-packing"></i> Parcels</button>
@@ -80,6 +81,115 @@
         <h3><i class="fa-solid fa-chart-pie"></i> Account Performance &amp; Risk Overview</h3>
         <div id="upvOverviewDetails" class="upv-detail-grid">
           <!-- Dynamic Overview content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: User Access & Feature Controls -->
+    <div class="upv-tab-pane" id="upvTabControls">
+      <div id="upvGlobalBanner" class="upv-global-banner hidden">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span><strong>Global Platform Safety Restriction Active:</strong> Individual ON settings do not override global platform flags.</span>
+      </div>
+
+      <div class="upv-perm-grid">
+        <!-- Account Access -->
+        <div class="upv-perm-card">
+          <h4><i class="fa-solid fa-id-card"></i> Account Access</h4>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Dashboard Access</span><span class="upv-perm-sub">Allow signing in &amp; viewing user dashboard</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_accountAccess_dashboardAccess" data-cat="accountAccess" data-feat="dashboardAccess"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Profile Editing</span><span class="upv-perm-sub">Allow updating name, photo &amp; personal info</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_accountAccess_profileEditing" data-cat="accountAccess" data-feat="profileEditing"><span class="upv-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Sender Permissions -->
+        <div class="upv-perm-card">
+          <h4><i class="fa-solid fa-box-open"></i> Sender Permissions</h4>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Post Parcel</span><span class="upv-perm-sub">Allow creating new parcel delivery requests</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_sender_postParcel" data-cat="sender" data-feat="postParcel"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Edit Parcel</span><span class="upv-perm-sub">Allow updating pending parcel details</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_sender_editParcel" data-cat="sender" data-feat="editParcel"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Cancel Parcel</span><span class="upv-perm-sub">Allow cancelling posted parcels</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_sender_cancelParcel" data-cat="sender" data-feat="cancelParcel"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">View History</span><span class="upv-perm-sub">Access historical parcel records</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_sender_viewParcelHistory" data-cat="sender" data-feat="viewParcelHistory"><span class="upv-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Traveler Permissions -->
+        <div class="upv-perm-card">
+          <h4><i class="fa-solid fa-plane-arrival"></i> Traveler Permissions</h4>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Post Trip</span><span class="upv-perm-sub">Allow posting travel routes &amp; dates</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_traveler_postTrip" data-cat="traveler" data-feat="postTrip"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Accept Parcel</span><span class="upv-perm-sub">Allow accepting parcel delivery offers</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_traveler_acceptParcel" data-cat="traveler" data-feat="acceptParcel"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Pickup Confirmation</span><span class="upv-perm-sub">Confirm OTP/QR parcel pickup</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_traveler_pickupConfirmation" data-cat="traveler" data-feat="pickupConfirmation"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Delivery Confirmation</span><span class="upv-perm-sub">Confirm OTP/QR parcel delivery</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_traveler_deliveryConfirmation" data-cat="traveler" data-feat="deliveryConfirmation"><span class="upv-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Communication Permissions -->
+        <div class="upv-perm-card">
+          <h4><i class="fa-solid fa-comments"></i> Communication Permissions</h4>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">In-App Messaging</span><span class="upv-perm-sub">Allow sending &amp; receiving chat messages</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_communication_messaging" data-cat="communication" data-feat="messaging"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Voice Calling</span><span class="upv-perm-sub">Allow WebRTC audio call connections</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_communication_voiceCalling" data-cat="communication" data-feat="voiceCalling"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Support Access</span><span class="upv-perm-sub">Allow submitting help tickets &amp; AI chat</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_communication_supportAccess" data-cat="communication" data-feat="supportAccess"><span class="upv-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Financial Permissions -->
+        <div class="upv-perm-card">
+          <h4><i class="fa-solid fa-wallet"></i> Financial Permissions</h4>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Wallet Transactions</span><span class="upv-perm-sub">Allow internal wallet credits &amp; debits</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_financial_walletTransactions" data-cat="financial" data-feat="walletTransactions"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Wallet Top-ups</span><span class="upv-perm-sub">Allow adding funds via Razorpay</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_financial_walletTopups" data-cat="financial" data-feat="walletTopups"><span class="upv-slider"></span></label>
+          </div>
+          <div class="upv-perm-item">
+            <div class="upv-perm-info"><span class="upv-perm-title">Withdrawal Requests</span><span class="upv-perm-sub">Allow submitting bank/UPI withdrawal requests</span></div>
+            <label class="upv-switch"><input type="checkbox" id="perm_financial_withdrawalRequests" data-cat="financial" data-feat="withdrawalRequests"><span class="upv-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Account Lifecycle & Removal Controls -->
+        <div class="upv-perm-card" style="grid-column: 1 / -1;">
+          <h4><i class="fa-solid fa-user-gear"></i> Account Lifecycle &amp; Super Admin Actions</h4>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
+            <button type="button" class="btn secondary" id="btnUpvSuspendAccount"><i class="fa-solid fa-user-clock"></i> Suspend Account</button>
+            <button type="button" class="btn secondary" id="btnUpvRestoreAccount"><i class="fa-solid fa-user-check"></i> Restore Account</button>
+            <button type="button" class="btn danger" id="btnUpvRemoveAccount"><i class="fa-solid fa-user-slash"></i> Deactivate / Remove Account</button>
+          </div>
         </div>
       </div>
     </div>

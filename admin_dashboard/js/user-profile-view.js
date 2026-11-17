@@ -27,7 +27,9 @@ export function resolveAdminMediaUrl(value, options) {
   const source = String(value || '').trim();
   if (!source || source.startsWith('data:')) return source;
   try {
-    const url = /^https?:\/\//i.test(source) ? new URL(source) : new URL(source, `${API_ORIGIN}/`);
+    const base = API_ORIGIN.endsWith('/') ? API_ORIGIN : `${API_ORIGIN}/`;
+    const cleanSource = source.startsWith('/') ? source.slice(1) : source;
+    const url = /^https?:\/\//i.test(source) ? new URL(source) : new URL(cleanSource, base);
     const v = (options && options.cacheBust) || (options && options.updatedAt ? new Date(options.updatedAt).getTime() : null);
     if (v && !isNaN(v)) url.searchParams.set('v', String(v));
     return url.href;
@@ -51,6 +53,21 @@ async function apiGet(url) {
   const res = await fetch(`${API_ORIGIN}${url}`, {
     credentials: 'include',
     headers: { 'X-CP-Admin-Request': 'true' }
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw data;
+  return data;
+}
+
+async function apiPatch(url, body) {
+  const res = await fetch(`${API_ORIGIN}${url}`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CP-Admin-Request': 'true'
+    },
+    body: JSON.stringify(body)
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw data;
@@ -143,6 +160,10 @@ function renderUserProfileHeader(data) {
   const photoUrl = u.profilePhoto ? resolveAdminMediaUrl(u.profilePhoto, u) : null;
 
   if (photoUrl && imgEl) {
+    imgEl.onerror = () => {
+      imgEl.style.display = 'none';
+      if (initEl) { initEl.textContent = initials; initEl.style.display = 'flex'; }
+    };
     imgEl.src = photoUrl;
     imgEl.style.display = 'block';
     if (initEl) initEl.style.display = 'none';
@@ -173,6 +194,7 @@ function renderUserProfileHeader(data) {
 
 function renderAllTabs(data) {
   renderOverviewTab(data);
+  renderControlsTab(data);
   renderPersonalTab(data);
   renderVerificationTab(data);
   renderParcelsTab(data);
@@ -202,6 +224,131 @@ function renderOverviewTab(data) {
     <div class="upv-detail-item"><label>Total Delivered</label><span>${p.completedDeliveries || 0}</span></div>
     <div class="upv-detail-item"><label>Total Cancelled</label><span>${p.cancelledDeliveries || 0}</span></div>
   `;
+}
+
+function renderControlsTab(data) {
+  const u = data.user || {};
+  const perms = u.permissions || {};
+  const globalFlags = data.globalFeatureFlags || {};
+
+  const banner = $('#upvGlobalBanner');
+  if (banner) {
+    const hasGlobalRestriction = !globalFlags.parcelPostingEnabled || !globalFlags.walletTransactionsEnabled || !globalFlags.userWithdrawalsEnabled || globalFlags.paymentsPaused;
+    if (hasGlobalRestriction) {
+      banner.classList.remove('hidden');
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
+
+  $$('#upvTabControls input[type="checkbox"]').forEach(checkbox => {
+    const cat = checkbox.dataset.cat;
+    const feat = checkbox.dataset.feat;
+    if (cat && feat) {
+      const isChecked = perms[cat] ? (perms[cat][feat] !== false) : true;
+      checkbox.checked = isChecked;
+
+      checkbox.onchange = async () => {
+        const newValue = checkbox.checked;
+        const confirmMsg = (!newValue && (feat === 'withdrawalRequests' || feat === 'walletTransactions' || feat === 'postParcel'))
+          ? `Are you sure you want to disable ${feat} for ${u.firstName} ${u.lastName}?`
+          : null;
+        if (confirmMsg && !confirm(confirmMsg)) {
+          checkbox.checked = !newValue;
+          return;
+        }
+
+        const reason = prompt(`Reason for changing ${cat}.${feat} permission:`, 'Super Admin permission update') || 'Super Admin permission update';
+        try {
+          await apiPatch(`/api/admin/users/${currentUserId}/permissions`, {
+            category: cat,
+            feature: feat,
+            value: newValue,
+            reason
+          });
+          if (currentUserData?.user?.permissions) {
+            currentUserData.user.permissions[cat] = currentUserData.user.permissions[cat] || {};
+            currentUserData.user.permissions[cat][feat] = newValue;
+          }
+          if (window.showToast) window.showToast(`Permission ${feat} updated to ${newValue ? 'ENABLED' : 'DISABLED'}`);
+        } catch (err) {
+          checkbox.checked = !newValue;
+          alert(`Failed to update permission: ${err.error || 'Server error'}`);
+        }
+      };
+    }
+  });
+
+  const btnSuspend = $('#btnUpvSuspendAccount');
+  const btnRestore = $('#btnUpvRestoreAccount');
+  const btnRemove = $('#btnUpvRemoveAccount');
+
+  if (btnSuspend) {
+    btnSuspend.onclick = async () => {
+      const nextStatus = u.status === 'suspended' ? 'active' : 'suspended';
+      const reason = prompt(`Reason for setting status to ${nextStatus}:`, 'Super Admin status update') || 'Super Admin status update';
+      try {
+        await apiPatch(`/api/admin/users/${currentUserId}/status`, { status: nextStatus, reason });
+        alert(`User status changed to ${nextStatus}.`);
+        openUserProfileView(currentUserId);
+      } catch (err) {
+        alert(`Status update failed: ${err.error || 'Server error'}`);
+      }
+    };
+  }
+
+  if (btnRestore) {
+    btnRestore.onclick = async () => {
+      const reason = prompt('Reason for restoring account:', 'Super Admin restoration') || 'Super Admin restoration';
+      try {
+        const res = await fetch(`${API_ORIGIN}/api/admin/users/${currentUserId}/restore`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-CP-Admin-Request': 'true' },
+          body: JSON.stringify({ reason })
+        });
+        const respData = await res.json();
+        if (!res.ok) throw respData;
+        alert('User account restored successfully.');
+        openUserProfileView(currentUserId);
+      } catch (err) {
+        alert(`Restore failed: ${err.error || 'Server error'}`);
+      }
+    };
+  }
+
+  if (btnRemove) {
+    btnRemove.onclick = async () => {
+      try {
+        const preview = await apiGet(`/api/admin/users/${currentUserId}/removal-preview`);
+        const info = `User: ${preview.user.name} (${preview.user.email})
+Active Posted Parcels: ${preview.activeSentParcels}
+Active Carried Parcels: ${preview.activeCarriedParcels}
+Active Trips: ${preview.activeTrips}
+Pending Withdrawals: ${preview.pendingWithdrawals}
+Open Reports: ${preview.openReports}
+
+${preview.hasActiveObligations ? 'WARNING: User has active obligations or pending withdrawals!' : ''}
+Are you sure you want to deactivate/soft-delete this account?`;
+
+        if (confirm(info)) {
+          const reason = prompt('Admin reason for account deactivation:', 'Compliance deactivation') || 'Compliance deactivation';
+          const delRes = await fetch(`${API_ORIGIN}/api/admin/users/${currentUserId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json', 'X-CP-Admin-Request': 'true' },
+            body: JSON.stringify({ reason })
+          });
+          const delData = await delRes.json();
+          if (!delRes.ok) throw delData;
+          alert('Account deactivated successfully.');
+          openUserProfileView(currentUserId);
+        }
+      } catch (err) {
+        alert(`Deactivation failed: ${err.error || 'Server error'}`);
+      }
+    };
+  }
 }
 
 function renderPersonalTab(data) {
