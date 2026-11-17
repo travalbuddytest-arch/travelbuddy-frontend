@@ -319,9 +319,6 @@
       setButtonLoading(resendOtpBtn, false);
     }
   });
-      setButtonLoading(resendOtpBtn, false);
-    }
-  });
 
   // Change phone button handler
   changePhoneBtn.addEventListener('click', () => {
