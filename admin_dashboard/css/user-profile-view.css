@@ -1,0 +1,308 @@
+/* Frontend/admin_dashboard/css/user-profile-view.css */
+
+.upv-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background: var(--bg-body, #f8fafc);
+  min-height: 100vh;
+}
+
+/* Top Action Bar */
+.upv-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+.upv-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upv-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Header Card */
+.upv-header-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.upv-avatar-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--primary-light, #eff6ff);
+  border: 3px solid var(--primary, #3b82f6);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.upv-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.upv-avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary, #3b82f6);
+  text-transform: uppercase;
+}
+
+.upv-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.upv-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.upv-user-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.upv-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--text-sub, #64748b);
+}
+
+.upv-contact-row i {
+  color: var(--primary, #3b82f6);
+  margin-right: 4px;
+}
+
+.upv-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.upv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg-body, #f1f5f9);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-main, #334155);
+}
+
+/* 10 Navigation Tabs */
+.upv-tabs-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--border, #e2e8f0);
+  scrollbar-width: thin;
+}
+
+.upv-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-sub, #64748b);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.upv-tab-btn:hover {
+  color: var(--primary, #3b82f6);
+}
+
+.upv-tab-btn.active {
+  color: var(--primary, #3b82f6);
+  border-bottom-color: var(--primary, #3b82f6);
+}
+
+/* Tab Panes */
+.upv-tab-content {
+  margin-top: 16px;
+}
+
+.upv-tab-pane {
+  display: none;
+}
+
+.upv-tab-pane.active {
+  display: block;
+}
+
+/* KPI Grid */
+.upv-grid-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1f));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.upv-kpi-card {
+  padding: 16px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.upv-kpi-card span {
+  font-size: 12px;
+  color: var(--text-sub, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.upv-kpi-card strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+}
+
+/* Section Cards & Tables */
+.upv-card-section {
+  padding: 20px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+.upv-card-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--text-heading, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upv-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.upv-detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-body, #f8fafc);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.upv-detail-item label {
+  color: var(--text-sub, #64748b);
+  font-weight: 500;
+}
+
+.upv-detail-item span {
+  color: var(--text-heading, #0f172a);
+  font-weight: 600;
+}
+
+/* Tables in UPV */
+.upv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.upv-table th, .upv-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+.upv-table th {
+  background: var(--bg-body, #f8fafc);
+  color: var(--text-sub, #64748b);
+  font-weight: 600;
+}
+
+/* Lightbox Modal */
+.upv-lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  margin: auto;
+}
+
+.upv-lightbox-content img {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 12px;
+  display: block;
+}
+
+.upv-lightbox-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
