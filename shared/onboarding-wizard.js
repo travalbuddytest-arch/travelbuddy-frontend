@@ -72,12 +72,16 @@
           const errorEl = overlay.querySelector('#obError');
 
           btn.addEventListener('click', async () => {
-            const rawNumber = phoneInput.value.trim().replace(/[\s-]/g, '');
-            if (!rawNumber || rawNumber.length < 8) {
-              errorEl.textContent = 'Please enter a valid mobile number.';
+            const rawNumber = phoneInput.value.trim().replace(/\D/g, '');
+            const countryCode = overlay.querySelector('#obCountryCode').value;
+            const validation = window.CarryParcelPhone
+              ? window.CarryParcelPhone.validatePhoneNumber(rawNumber, countryCode)
+              : { isValid: rawNumber.length >= 8 && rawNumber.length <= 13, error: 'Please enter a valid mobile number.' };
+
+            if (!validation.isValid) {
+              errorEl.textContent = validation.error || 'Please enter a valid mobile number.';
               return;
             }
-            const countryCode = overlay.querySelector('#obCountryCode').value;
             phoneValue = `${countryCode}${rawNumber}`;
 
             btn.disabled = true;

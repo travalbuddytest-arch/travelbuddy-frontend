@@ -76,11 +76,22 @@
     showToast('For security, please type your password manually.', 'error');
   });
   function validatePhoneField() {
-    const v = phone.value.trim();
-    if (!v) { setError(phone, 'Phone number is required.'); return false; }
-    if (!PHONE_RE.test(v)) { setError(phone, 'Enter a valid phone number.'); return false; }
-    clearError(phone); return true;
+    const rawNumber = phone.value.trim().replace(/\D/g, '');
+    const code = countryCode.value;
+    const res = window.CarryParcelPhone
+      ? window.CarryParcelPhone.validatePhoneNumber(rawNumber, code)
+      : { isValid: rawNumber.length >= 8 && rawNumber.length <= 13 };
+    if (!res.isValid) {
+      setError(phone, res.error || 'Enter a valid phone number.');
+      return false;
+    }
+    clearError(phone);
+    return true;
   }
+
+  countryCode.addEventListener('change', () => {
+    if (phone.value.trim()) validatePhoneField();
+  });
 
   [[firstName, 'First name'], [lastName, 'Last name']].forEach(([input, label]) => {
     input.addEventListener('blur', () => validateRequired(input, label));

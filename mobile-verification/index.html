@@ -93,7 +93,7 @@
       <form id="otpForm" class="form-step" novalidate style="display: none;">
         <div class="phone-info-banner">
           <div class="phone-info-text">
-            <span class="sent-label">Verification code sent to email for</span>
+            <span class="sent-label">Verification code sent to <strong id="displayEmail">registered email</strong> for number</span>
             <strong id="displayPhone">+91 98765 43210</strong>
           </div>
           <button type="button" id="changePhoneBtn" class="btn-text">
@@ -142,6 +142,7 @@
 
   <script src="../shared/config.js?v=1"></script>
   <script src="../shared/auth-cookie-client.js?v=1"></script>
+  <script src="../shared/vendor/libphonenumber-js.min.js?v=1"></script>
   <script src="/mobile-verification/mobile-verification.js?v=1"></script>
 </body>
 </html>

@@ -15,14 +15,27 @@
   const changePhoneBtn = document.getElementById('changePhoneBtn');
   const cooldownTimer = document.getElementById('cooldownTimer');
   const displayPhone = document.getElementById('displayPhone');
+  const displayEmail = document.getElementById('displayEmail');
   const alertBox = document.getElementById('alertBox');
   const toast = document.getElementById('toast');
   const successOverlay = document.getElementById('successOverlay');
 
   let activePhone = '';
   let activeCountryCode = '+91';
+  let currentUserEmail = '';
   let timerInterval = null;
   let secondsRemaining = 0;
+
+  function maskEmail(email) {
+    if (!email || !email.includes('@')) return 'your registered email';
+    const parts = email.trim().split('@');
+    const name = parts[0];
+    const domain = parts[1];
+    if (name.length <= 2) {
+      return `${name[0]}***@${domain}`;
+    }
+    return `${name.slice(0, 2)}***${name.slice(-1)}@${domain}`;
+  }
 
   function getAuthHeaders(extra = {}) {
     const headers = { ...extra };
@@ -111,6 +124,7 @@
       }
       const data = await response.json().catch(() => ({}));
       if (data.user) {
+        currentUserEmail = data.user.email || '';
         if (data.user.isPhoneVerified) {
           const destination = getSafeRedirectTarget() || '../user-dashboard/overview.html';
           window.location.replace(destination);
@@ -131,19 +145,41 @@
     }
   }
 
+  function validatePhoneInput(showError = false) {
+    const rawNumber = phoneInput.value.trim().replace(/\D/g, '');
+    const code = countryCodeSelect.value;
+    const res = window.CarryParcelPhone ? window.CarryParcelPhone.validatePhoneNumber(rawNumber, code) : { isValid: rawNumber.length >= 8 && rawNumber.length <= 13 };
+    if (!res.isValid && showError) {
+      showAlert(res.error || 'Please enter a valid mobile number.', 'error');
+    } else if (res.isValid) {
+      hideAlert();
+    }
+    return res;
+  }
+
+  countryCodeSelect.addEventListener('change', () => {
+    if (phoneInput.value.trim()) {
+      validatePhoneInput(true);
+    }
+  });
+
+  phoneInput.addEventListener('blur', () => {
+    if (phoneInput.value.trim()) validatePhoneInput(true);
+  });
+
   // Send OTP handler
   phoneForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideAlert();
 
-    const rawNumber = phoneInput.value.trim().replace(/\D/g, '');
-    activeCountryCode = countryCodeSelect.value;
-
-    if (!rawNumber || rawNumber.length < 8 || rawNumber.length > 13) {
-      showAlert('Please enter a valid mobile number (e.g. 9876543210).', 'error');
+    const validation = validatePhoneInput(true);
+    if (!validation.isValid) {
       phoneInput.focus();
       return;
     }
+
+    const rawNumber = phoneInput.value.trim().replace(/\D/g, '');
+    activeCountryCode = countryCodeSelect.value;
 
     activePhone = rawNumber;
     const fullPhone = `${activeCountryCode}${activePhone}`;
@@ -170,15 +206,14 @@
         return;
       }
 
+      const maskedEmail = maskEmail(currentUserEmail);
+      if (displayEmail) displayEmail.textContent = maskedEmail;
       displayPhone.textContent = `${activeCountryCode} ${activePhone}`;
       phoneForm.style.display = 'none';
       otpForm.style.display = 'block';
       hideAlert();
 
-      showToast('Verification code sent to your registered email address!', 'success');
-      if (data.devOtp) {
-        showAlert(`[DEV MODE] Your verification code is: ${data.devOtp}`, 'success');
-      }
+      showToast(`Verification code sent to ${maskedEmail}! Check your inbox.`, 'success');
 
       startCooldownTimer(data.cooldown || 60);
       otpInput.focus();
@@ -271,10 +306,8 @@
         return;
       }
 
-      showToast('New verification code sent to your registered email address!', 'success');
-      if (data.devOtp) {
-        showAlert(`[DEV MODE] Your new verification code is: ${data.devOtp}`, 'success');
-      }
+      const maskedEmail = maskEmail(currentUserEmail);
+      showToast(`New verification code sent to ${maskedEmail}! Check your inbox.`, 'success');
 
       startCooldownTimer(data.cooldown || 60);
       otpInput.value = '';
@@ -283,6 +316,9 @@
       console.error('Resend OTP error:', err);
       showAlert('Network error. Please try again.', 'error');
     } finally {
+      setButtonLoading(resendOtpBtn, false);
+    }
+  });
       setButtonLoading(resendOtpBtn, false);
     }
   });

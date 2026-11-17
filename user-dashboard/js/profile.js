@@ -467,29 +467,13 @@
         window.showToast('Uploading profile photo...', 'info');
 
         try {
-          const res = await fetch(`${API_ORIGIN}/api/auth/me`, {
-            method: 'PUT',
-            headers: authHeaders(),
-            body: JSON.stringify({
-              firstName: currentUserData.firstName,
-              lastName: currentUserData.lastName,
-              phone: currentUserData.phone,
-              profilePhoto: base64Data
-            })
-          });
-          const data = await res.json();
-
-          if (!res.ok) {
-            window.showToast(data.error || 'Failed to update photo.', 'error');
-            return;
-          }
-
+          const updatedUser = await window.CarryParcel.saveDashboardPhoto(base64Data);
           window.showToast('Profile photo updated successfully!', 'success');
-          currentUserData = data.user;
+          currentUserData = updatedUser;
           renderProfileHeader(currentUserData);
         } catch (err) {
           console.error(err);
-          window.showToast('Network error uploading photo.', 'error');
+          window.showToast(err.message || 'Could not upload photo.', 'error');
         }
       };
       reader.readAsDataURL(file);
@@ -501,24 +485,12 @@
     removePhotoBtn.addEventListener('click', async () => {
       if (!confirm('Are you sure you want to remove your profile photo?')) return;
       try {
-        const res = await fetch(`${API_ORIGIN}/api/auth/me`, {
-          method: 'PUT',
-          headers: authHeaders(),
-          body: JSON.stringify({
-            firstName: currentUserData.firstName,
-            lastName: currentUserData.lastName,
-            phone: currentUserData.phone,
-            profilePhoto: ''
-          })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          window.showToast('Profile photo removed.', 'success');
-          currentUserData = data.user;
-          renderProfileHeader(currentUserData);
-        }
+        const updatedUser = await window.CarryParcel.saveDashboardPhoto('');
+        window.showToast('Profile photo removed.', 'success');
+        currentUserData = updatedUser;
+        renderProfileHeader(currentUserData);
       } catch (err) {
-        window.showToast('Could not reach server to remove photo.', 'error');
+        window.showToast(err.message || 'Could not remove photo.', 'error');
       }
     });
   }

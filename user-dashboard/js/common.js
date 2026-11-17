@@ -1349,6 +1349,7 @@
   function renderProfileAvatar(el, user, name) {
     if (!el) return;
     const photo = user?.profilePhoto || '';
+    const updatedAt = user?.updatedAt || null;
     el.style.backgroundImage = '';
     el.querySelectorAll('img.tb-profile-photo').forEach((img) => img.remove());
     if (photo) {
@@ -1356,6 +1357,7 @@
       const img = document.createElement('img');
       img.className = 'tb-profile-photo';
       img.src = resolveMediaUrl(photo, {
+        updatedAt: updatedAt,
         cacheBust: profilePhotoCacheBust && profilePhotoCacheBust.path === photo ? profilePhotoCacheBust.value : null,
       });
       img.alt = 'Profile photo';
@@ -1376,10 +1378,24 @@
   // Resolve them against Render, rather than the Netlify page origin.
   function resolveMediaUrl(value, options) {
     const source = String(value || '').trim();
-    if (!source || source.startsWith('data:') || /^https?:\/\//i.test(source)) return source;
+    if (!source || source.startsWith('data:')) return source;
     try {
-      const url = new URL(source, `${API_ORIGIN}/`);
-      if (options?.cacheBust) url.searchParams.set('v', String(options.cacheBust));
+      const url = /^https?:\/\//i.test(source) ? new URL(source) : new URL(source, `${API_ORIGIN}/`);
+      let v = null;
+      if (options) {
+        if (typeof options === 'object') {
+          v = options.cacheBust || (options.updatedAt ? new Date(options.updatedAt).getTime() : null);
+        } else if (typeof options === 'string' || typeof options === 'number') {
+          v = new Date(options).getTime() || options;
+        }
+      }
+      if (!v) {
+        const stored = parseStoredUser();
+        if (stored && stored.updatedAt) {
+          v = new Date(stored.updatedAt).getTime();
+        }
+      }
+      if (v && !isNaN(v)) url.searchParams.set('v', String(v));
       return url.href;
     } catch (err) {
       return source;
@@ -1440,6 +1456,20 @@
           </section>
 
           <section class="profile-tab-panel hidden" id="profileTabSettings">
+            <form class="stack-form" id="dashboardCreatePasswordForm" style="display:none;">
+              <div class="field">
+                <label for="createPasswordInput">New Password</label>
+                <input type="password" id="createPasswordInput" autocomplete="new-password" placeholder="At least 8 characters" required />
+              </div>
+              <div class="field">
+                <label for="createConfirmPasswordInput">Confirm Password</label>
+                <input type="password" id="createConfirmPasswordInput" autocomplete="new-password" placeholder="Re-enter new password" required />
+              </div>
+              <button type="submit" class="btn-primary">
+                <span class="btn-label"><i class="fa-solid fa-key"></i> Create Password</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+            </form>
             <form class="stack-form" id="dashboardPasswordForm">
               <div class="field">
                 <label for="currentPassword">Current Password</label>
@@ -1576,21 +1606,28 @@
     if (phone) phone.value = safeUser.phone || '';
 
     // Settings tab: Password form vs Google account banner
+    const hasPassword = Boolean(safeUser.hasPassword || safeUser.onboarding?.hasPassword);
     const passwordForm = document.getElementById('dashboardPasswordForm');
+    const createPasswordForm = document.getElementById('dashboardCreatePasswordForm');
     let googleNotice = document.getElementById('dashboardGooglePasswordNotice');
-    if (isGoogleAccount) {
+
+    if (!hasPassword) {
       if (passwordForm) passwordForm.style.display = 'none';
+      if (createPasswordForm) createPasswordForm.style.display = 'block';
+
       if (!googleNotice && passwordForm) {
         googleNotice = document.createElement('div');
         googleNotice.id = 'dashboardGooglePasswordNotice';
         googleNotice.style.cssText = 'padding:14px 16px; background:var(--bg); border:1px solid var(--border); border-radius:12px; margin-bottom:16px; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:10px;';
-        googleNotice.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--primary); font-size:16px;"></i> <span>Your account uses Google Sign-In. Password settings are managed through your Google Account.</span>`;
+        googleNotice.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--primary); font-size:16px;"></i> <span>Your account uses Google Sign-In. You can also create a CarryParcel password to log in using your registered email address.</span>`;
         passwordForm.parentNode.insertBefore(googleNotice, passwordForm);
       } else if (googleNotice) {
+        googleNotice.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--primary); font-size:16px;"></i> <span>Your account uses Google Sign-In. You can also create a CarryParcel password to log in using your registered email address.</span>`;
         googleNotice.style.display = 'flex';
       }
     } else {
       if (passwordForm) passwordForm.style.display = 'block';
+      if (createPasswordForm) createPasswordForm.style.display = 'none';
       if (googleNotice) googleNotice.style.display = 'none';
     }
   }
@@ -1702,6 +1739,50 @@
         }
         updateDashboardUser(data.user);
         showToast('Profile updated successfully.', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Unable to connect to the server.', 'error');
+      } finally {
+        setButtonLoading(submitBtn, false);
+      }
+    });
+
+    // Create password form submission
+    overlay.querySelector('#dashboardCreatePasswordForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = e.currentTarget.querySelector('.btn-primary');
+      const password = document.getElementById('createPasswordInput').value;
+      const confirmPassword = document.getElementById('createConfirmPasswordInput').value;
+
+      if (!password || password.length < 8) {
+        showToast('Password must be at least 8 characters long.', 'error');
+        return;
+      }
+      if (password !== confirmPassword) {
+        showToast('Passwords do not match.', 'error');
+        return;
+      }
+
+      setButtonLoading(submitBtn, true);
+      try {
+        const res = await fetch(`${API_ORIGIN}/api/auth/onboarding/create-password`, authFetchOptions({
+          method: 'POST',
+          body: JSON.stringify({ password, confirmPassword }),
+        }));
+        const data = await parseJsonSafe(res);
+        if (!res.ok) {
+          showToast(data.error || 'Could not create password.', 'error');
+          return;
+        }
+        e.currentTarget.reset();
+        showToast('Password created successfully! You can now log in using email & password or Google.', 'success');
+        if (data.user) {
+          updateDashboardUser(data.user);
+        } else {
+          const u = parseStoredUser();
+          u.hasPassword = true;
+          updateDashboardUser(u);
+        }
       } catch (err) {
         console.error(err);
         showToast('Unable to connect to the server.', 'error');
