@@ -166,7 +166,173 @@
         <section class="page" id="audit-logs" data-loaded="false"></section>
         <section class="page" id="system" data-loaded="false"></section>
         <section class="page" id="system-settings" data-loaded="false"></section>
-        <section class="page" id="user-profile-view" data-loaded="false"></section>
+        <section class="page" id="user-profile-view" data-loaded="true">
+          <section id="user-profile-view-panel" class="panel upv-panel">
+            <!-- Top Navigation & Header Action Bar -->
+            <div class="upv-top-bar">
+              <button type="button" class="btn secondary upv-back-btn" id="upvBackBtn">
+                <i class="fa-solid fa-arrow-left"></i> <span>Back to Users</span>
+              </button>
+              <div class="upv-top-actions">
+                <button type="button" class="btn sm secondary" id="upvActionAdjustWallet">
+                  <i class="fa-solid fa-wallet"></i> Adjust Wallet
+                </button>
+                <button type="button" class="btn sm secondary" id="upvActionChangeStatus">
+                  <i class="fa-solid fa-user-gear"></i> Change Status
+                </button>
+                <button type="button" class="btn sm secondary" id="upvActionReviewKyc">
+                  <i class="fa-solid fa-user-shield"></i> Review KYC
+                </button>
+                <button type="button" class="btn sm primary" id="upvActionPostParcel">
+                  <i class="fa-solid fa-box"></i> Post Parcel
+                </button>
+                <button type="button" class="btn sm primary" id="upvActionPostTrip">
+                  <i class="fa-solid fa-route"></i> Post Trip
+                </button>
+              </div>
+            </div>
+
+            <!-- User Profile Header Card -->
+            <div class="upv-header-card">
+              <div class="upv-avatar-wrapper">
+                <img id="upvAvatarImg" class="upv-avatar-img" src="" alt="User Profile Photo" />
+                <div id="upvAvatarInitials" class="upv-avatar-initials">--</div>
+              </div>
+              <div class="upv-header-info">
+                <div class="upv-name-row">
+                  <h2 id="upvUserName" class="upv-user-name">Loading User...</h2>
+                  <span id="upvStatusBadge" class="status-tag active">Active</span>
+                  <span id="upvAuthProviderBadge" class="status-tag info">Local</span>
+                </div>
+                <div class="upv-contact-row">
+                  <span><i class="fa-solid fa-envelope"></i> <strong id="upvUserEmail">—</strong></span>
+                  <span><i class="fa-solid fa-phone"></i> <strong id="upvUserPhone">—</strong></span>
+                  <span><i class="fa-solid fa-fingerprint"></i> ID: <span id="upvUserId" class="cell-mono">—</span></span>
+                  <span><i class="fa-solid fa-id-badge"></i> Public ID: <span id="upvPublicId" class="cell-mono">—</span></span>
+                </div>
+                <div class="upv-badges-row">
+                  <span id="upvMobileBadge" class="upv-badge"><i class="fa-solid fa-mobile-screen-button"></i> Mobile: <strong>Unverified</strong></span>
+                  <span id="upvKycBadge" class="upv-badge"><i class="fa-solid fa-shield-halved"></i> KYC: <strong>Not Submitted</strong></span>
+                  <span id="upvRatingBadge" class="upv-badge"><i class="fa-solid fa-star text-warning"></i> Rating: <strong>5.0</strong> (0 reviews)</span>
+                  <span id="upvRiskBadge" class="upv-badge"><i class="fa-solid fa-triangle-exclamation"></i> Risk Score: <strong>0</strong></span>
+                  <span id="upvJoinedBadge" class="upv-badge"><i class="fa-solid fa-calendar-check"></i> Joined: <strong>—</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 10 Responsive Navigation Tabs -->
+            <div class="upv-tabs-nav">
+              <button type="button" class="upv-tab-btn active" data-upv-tab="overview"><i class="fa-solid fa-gauge-high"></i> Overview</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="personal"><i class="fa-solid fa-address-card"></i> Personal Info</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="verification"><i class="fa-solid fa-user-shield"></i> Verification &amp; KYC</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="parcels"><i class="fa-solid fa-boxes-packing"></i> Parcels</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="trips"><i class="fa-solid fa-plane-departure"></i> Trips</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="wallet"><i class="fa-solid fa-wallet"></i> Wallet &amp; Txns</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="communication"><i class="fa-solid fa-comments"></i> Communication</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="support"><i class="fa-solid fa-headset"></i> Support &amp; Reports</button>
+              <button type="button" class="upv-tab-btn" data-upv-tab="security"><i class="fa-solid fa-shield-cat"></i> Activity &amp; Security</button>
+            </div>
+
+            <!-- Tab Content Area -->
+            <div class="upv-tab-content">
+              <!-- Tab A: Overview -->
+              <div class="upv-tab-pane active" id="upvTabOverview">
+                <div class="upv-grid-kpis">
+                  <div class="upv-kpi-card"><span>Parcels Posted</span><strong id="upvKpiPosted">0</strong></div>
+                  <div class="upv-kpi-card"><span>Parcels Carried</span><strong id="upvKpiCarried">0</strong></div>
+                  <div class="upv-kpi-card"><span>Completion Rate</span><strong id="upvKpiCompletion">0%</strong></div>
+                  <div class="upv-kpi-card"><span>Cancellation Rate</span><strong id="upvKpiCancellation">0%</strong></div>
+                  <div class="upv-kpi-card"><span>Wallet Balance</span><strong id="upvKpiWallet">₹0.00</strong></div>
+                </div>
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-chart-pie"></i> Account Performance &amp; Risk Overview</h3>
+                  <div id="upvOverviewDetails" class="upv-detail-grid"></div>
+                </div>
+              </div>
+
+              <!-- Tab B: Personal Info -->
+              <div class="upv-tab-pane" id="upvTabPersonal">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-user-gear"></i> Personal &amp; Account Identity</h3>
+                  <div id="upvPersonalDetails" class="upv-detail-grid"></div>
+                </div>
+              </div>
+
+              <!-- Tab C: Verification & KYC -->
+              <div class="upv-tab-pane" id="upvTabVerification">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-file-contract"></i> KYC &amp; Government Verification Documents</h3>
+                  <div id="upvKycDetails"></div>
+                </div>
+              </div>
+
+              <!-- Tab D: Parcels -->
+              <div class="upv-tab-pane" id="upvTabParcels">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-box"></i> Sender &amp; Traveler Parcel History</h3>
+                  <div id="upvParcelsList"></div>
+                </div>
+              </div>
+
+              <!-- Tab E: Trips -->
+              <div class="upv-tab-pane" id="upvTabTrips">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-route"></i> Posted Travel Routes &amp; Trips</h3>
+                  <div id="upvTripsList"></div>
+                </div>
+              </div>
+
+              <!-- Tab F: Wallet & Transactions -->
+              <div class="upv-tab-pane" id="upvTabWallet">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-receipt"></i> Wallet Balance &amp; Transaction Ledger</h3>
+                  <div id="upvWalletDetails"></div>
+                </div>
+              </div>
+
+              <!-- Tab G: Payments & Withdrawals -->
+              <div class="upv-tab-pane" id="upvTabWithdrawals">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-building-columns"></i> Withdrawal Requests &amp; Payout History</h3>
+                  <div id="upvWithdrawalsList"></div>
+                </div>
+              </div>
+
+              <!-- Tab H: Communication -->
+              <div class="upv-tab-pane" id="upvTabCommunication">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-comments"></i> Communication &amp; Messaging Records</h3>
+                  <div id="upvCommunicationDetails"></div>
+                </div>
+              </div>
+
+              <!-- Tab I: Support & Reports -->
+              <div class="upv-tab-pane" id="upvTabSupport">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-circle-exclamation"></i> Support Disputes &amp; User Ratings</h3>
+                  <div id="upvSupportDetails"></div>
+                </div>
+              </div>
+
+              <!-- Tab J: Activity & Security -->
+              <div class="upv-tab-pane" id="upvTabSecurity">
+                <div class="upv-card-section">
+                  <h3><i class="fa-solid fa-shield-halved"></i> Activity Timeline &amp; Administrative Audit History</h3>
+                  <div id="upvSecurityDetails"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Image Lightbox Modal for Photo Preview -->
+            <div id="upvImageLightbox" class="modal hidden">
+              <div class="upv-lightbox-content">
+                <button type="button" class="upv-lightbox-close" id="upvLightboxClose"><i class="fa-solid fa-xmark"></i></button>
+                <img id="upvLightboxImg" src="" alt="Full Preview" />
+              </div>
+            </div>
+          </section>
+        </section>
     </main>
 
     <!-- Search Modal -->

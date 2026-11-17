@@ -1,7 +1,7 @@
 // Frontend/admin_dashboard/js/user-profile-view.js
 // Dedicated Full-Screen User Profile View Controller for Super Admin
 
-const API_ORIGIN = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || '';
+const API_ORIGIN = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://api.carryparcel.in';
 
 let currentUserId = null;
 let currentUserData = null;
@@ -22,6 +22,31 @@ const timeAgo = d => {
   return `${Math.floor(h / 24)}d ago`;
 };
 
+// Canonical Media URL Resolution for Admin Dashboard
+export function resolveAdminMediaUrl(value, options) {
+  const source = String(value || '').trim();
+  if (!source || source.startsWith('data:')) return source;
+  try {
+    const url = /^https?:\/\//i.test(source) ? new URL(source) : new URL(source, `${API_ORIGIN}/`);
+    const v = (options && options.cacheBust) || (options && options.updatedAt ? new Date(options.updatedAt).getTime() : null);
+    if (v && !isNaN(v)) url.searchParams.set('v', String(v));
+    return url.href;
+  } catch (err) {
+    return source;
+  }
+}
+window.resolveAdminMediaUrl = resolveAdminMediaUrl;
+
+function setText(selector, value) {
+  const el = $(selector);
+  if (el) el.textContent = value;
+}
+
+function setHtml(selector, html) {
+  const el = $(selector);
+  if (el) el.innerHTML = html;
+}
+
 async function apiGet(url) {
   const res = await fetch(`${API_ORIGIN}${url}`, {
     credentials: 'include',
@@ -38,13 +63,21 @@ export async function openUserProfileView(userId) {
 
   // Determine previous active page
   const activePageEl = $('main section.page.active') || $('main section.panel.active');
-  if (activePageEl && activePageEl.id !== 'user-profile-view-panel') {
+  if (activePageEl && activePageEl.id !== 'user-profile-view' && activePageEl.id !== 'user-profile-view-panel') {
     previousActivePage = activePageEl.id;
   }
 
   // Switch workspace to full-screen profile panel
-  $$('main section.page, main section.panel').forEach(el => el.classList.remove('active'));
+  $$('main section.page, main section.panel').forEach(el => {
+    el.classList.remove('active');
+    if (el.style && el.id !== 'user-profile-view') el.style.display = '';
+  });
+  let upvPage = $('#user-profile-view');
   let upvPanel = $('#user-profile-view-panel');
+  if (upvPage) {
+    upvPage.classList.add('active');
+    upvPage.style.display = 'block';
+  }
   if (upvPanel) {
     upvPanel.classList.add('active');
     upvPanel.style.display = 'flex';
@@ -68,7 +101,12 @@ export async function openUserProfileView(userId) {
 }
 
 export function backToUsersView() {
+  let upvPage = $('#user-profile-view');
   let upvPanel = $('#user-profile-view-panel');
+  if (upvPage) {
+    upvPage.classList.remove('active');
+    upvPage.style.display = 'none';
+  }
   if (upvPanel) {
     upvPanel.classList.remove('active');
     upvPanel.style.display = 'none';
@@ -81,13 +119,11 @@ export function backToUsersView() {
 }
 
 function renderLoadingState() {
-  const nameEl = $('#upvUserName');
-  if (nameEl) nameEl.textContent = 'Loading user details...';
+  setText('#upvUserName', 'Loading user details...');
 }
 
 function renderErrorState(msg) {
-  const nameEl = $('#upvUserName');
-  if (nameEl) nameEl.textContent = `Error: ${msg}`;
+  setText('#upvUserName', `Error: ${msg}`);
 }
 
 function renderUserProfileHeader(data) {
@@ -95,16 +131,16 @@ function renderUserProfileHeader(data) {
   const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'CarryParcel User';
   const initials = ((u.firstName?.[0] || '') + (u.lastName?.[0] || '')).toUpperCase() || 'CP';
 
-  $('#upvUserName').textContent = name;
-  $('#upvUserEmail').textContent = u.email || 'No email';
-  $('#upvUserPhone').textContent = u.phone || 'No phone';
-  $('#upvUserId').textContent = u._id || '—';
-  $('#upvPublicId').textContent = u.senderPublicId || u.travelerPublicId || '—';
+  setText('#upvUserName', name);
+  setText('#upvUserEmail', u.email || 'No email');
+  setText('#upvUserPhone', u.phone || 'No phone');
+  setText('#upvUserId', u._id || '—');
+  setText('#upvPublicId', u.senderPublicId || u.travelerPublicId || '—');
 
   // Avatar Photo Resolution
   const imgEl = $('#upvAvatarImg');
   const initEl = $('#upvAvatarInitials');
-  const photoUrl = u.profilePhoto ? (window.CarryParcel && window.CarryParcel.resolveMediaUrl ? window.CarryParcel.resolveMediaUrl(u.profilePhoto, u) : u.profilePhoto) : null;
+  const photoUrl = u.profilePhoto ? resolveAdminMediaUrl(u.profilePhoto, u) : null;
 
   if (photoUrl && imgEl) {
     imgEl.src = photoUrl;
@@ -128,11 +164,11 @@ function renderUserProfileHeader(data) {
   }
 
   const kycStatus = u.verification?.governmentId || 'not_submitted';
-  $('#upvMobileBadge').innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Mobile: <strong>${u.isPhoneVerified ? 'Verified' : 'Unverified'}</strong>`;
-  $('#upvKycBadge').innerHTML = `<i class="fa-solid fa-shield-halved"></i> KYC: <strong>${esc(kycStatus.replace(/_/g, ' '))}</strong>`;
-  $('#upvRatingBadge').innerHTML = `<i class="fa-solid fa-star text-warning"></i> Rating: <strong>${(u.rating || 0).toFixed(1)}</strong> (${u.ratingCount || 0} reviews)`;
-  $('#upvRiskBadge').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Risk Score: <strong>${u.riskScore || 0}</strong>`;
-  $('#upvJoinedBadge').innerHTML = `<i class="fa-solid fa-calendar-check"></i> Joined: <strong>${fmtDate(u.createdAt)}</strong>`;
+  setHtml('#upvMobileBadge', `<i class="fa-solid fa-mobile-screen-button"></i> Mobile: <strong>${u.isPhoneVerified ? 'Verified' : 'Unverified'}</strong>`);
+  setHtml('#upvKycBadge', `<i class="fa-solid fa-shield-halved"></i> KYC: <strong>${esc(kycStatus.replace(/_/g, ' '))}</strong>`);
+  setHtml('#upvRatingBadge', `<i class="fa-solid fa-star text-warning"></i> Rating: <strong>${(u.rating || 0).toFixed(1)}</strong> (${u.ratingCount || 0} reviews)`);
+  setHtml('#upvRiskBadge', `<i class="fa-solid fa-triangle-exclamation"></i> Risk Score: <strong>${u.riskScore || 0}</strong>`);
+  setHtml('#upvJoinedBadge', `<i class="fa-solid fa-calendar-check"></i> Joined: <strong>${fmtDate(u.createdAt)}</strong>`);
 }
 
 function renderAllTabs(data) {
@@ -151,11 +187,11 @@ function renderAllTabs(data) {
 function renderOverviewTab(data) {
   const p = data.performance || {};
   const u = data.user || {};
-  $('#upvKpiPosted').textContent = p.postedParcels || 0;
-  $('#upvKpiCarried').textContent = p.acceptedDeliveries || 0;
-  $('#upvKpiCompletion').textContent = `${p.completionRate != null ? p.completionRate : 0}%`;
-  $('#upvKpiCancellation').textContent = `${p.cancellationRate || 0}%`;
-  $('#upvKpiWallet').textContent = fmtMoney(u.walletBalance || 0);
+  setText('#upvKpiPosted', p.postedParcels || 0);
+  setText('#upvKpiCarried', p.acceptedDeliveries || 0);
+  setText('#upvKpiCompletion', `${p.completionRate != null ? p.completionRate : 0}%`);
+  setText('#upvKpiCancellation', `${p.cancellationRate || 0}%`);
+  setText('#upvKpiWallet', fmtMoney(u.walletBalance || 0));
 
   const container = $('#upvOverviewDetails');
   if (!container) return;
@@ -201,7 +237,7 @@ function renderVerificationTab(data) {
             <td>${esc(d.type || 'ID Document')}</td>
             <td><span class="status-tag ${d.status === 'verified' ? 'active' : 'warning'}">${esc(d.status)}</span></td>
             <td>${fmtDate(d.uploadedAt)}</td>
-            <td>${d.url ? `<button class="btn sm secondary" onclick="window.openUpvLightbox('${esc(d.url)}')">View Image</button>` : '—'}</td>
+            <td>${d.url ? `<button class="btn sm secondary" onclick="window.openUpvLightbox('${esc(resolveAdminMediaUrl(d.url))}')">View Image</button>` : '—'}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -435,7 +471,7 @@ window.openUpvLightbox = function(url) {
   const modal = $('#upvImageLightbox');
   const img = $('#upvLightboxImg');
   if (modal && img) {
-    img.src = url;
+    img.src = resolveAdminMediaUrl(url);
     modal.classList.remove('hidden');
   }
 };

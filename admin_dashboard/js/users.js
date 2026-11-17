@@ -22,7 +22,7 @@ const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 const fmtDate = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatDate(d) : (d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—');
 const fmtMoney = n => '₹' + ((n||0)/100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const timeAgo = d => window.TravelBuddyDate ? window.TravelBuddyDate.formatRelative(d) : (d ? (()=>{ if(!d) return 'Never'; const m=Math.floor((Date.now()-new Date(d))/60000); if(m<1) return 'Just now'; if(m<60) return m+'m ago'; const h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago'; })() : 'Never');
-const avatarSrc = u => u.profilePhoto ? u.profilePhoto : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
+const avatarSrc = u => u.profilePhoto ? (window.resolveAdminMediaUrl ? window.resolveAdminMediaUrl(u.profilePhoto, u) : u.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.firstName||'')+' '+(u.lastName||''))}&background=eff6ff&color=1769ff&bold=true`;
 
 async function api(url, opts = {}) {
   const headers = {
