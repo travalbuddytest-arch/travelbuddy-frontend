@@ -271,7 +271,7 @@
         loadAsset(basePath + 'toast.css', 'css');
         loadAsset(basePath + 'toast.js', 'js');
         loadAsset(basePath + 'ai-assistant.css', 'css');
-        loadAsset(basePath + 'ai-assistant.js', 'js');
+        // loadAsset(basePath + 'ai-assistant.js', 'js'); // Chatbot hidden from UI
         loadAsset(basePath + 'nav-dropdown.js', 'js');
     });
     loadAsset(basePath + 'nav-basic-behavior.js', 'js');

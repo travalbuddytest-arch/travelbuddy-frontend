@@ -481,18 +481,12 @@
   const AI_ASSISTANT_KEY = 'tb_ai_assistant';
 
   function isAiAssistantEnabled() {
-    return localStorage.getItem(AI_ASSISTANT_KEY) !== 'false';
+    return false; // Chatbot UI hidden
   }
 
   function setAiAssistantEnabled(enabled) {
     localStorage.setItem(AI_ASSISTANT_KEY, String(Boolean(enabled)));
-    if (enabled) {
-      loadAsset('/shared/ai-assistant.css', 'css');
-      loadAsset('/shared/ai-assistant.js', 'js');
-    } else {
-      document.querySelectorAll('.tb-ai-widget').forEach((el) => el.remove());
-    }
-    showToast(`AI assistant ${enabled ? 'enabled' : 'disabled'}.`, 'info');
+    document.querySelectorAll('.tb-ai-widget').forEach((el) => el.remove());
   }
 
   // Display-only money mask for privacy mode. It only changes on-screen text —
